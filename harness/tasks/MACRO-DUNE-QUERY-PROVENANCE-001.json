@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DUNE-QUERY-PROVENANCE-001",
+  "title": "Pinned Spellbook provenance and unexecuted query blueprints for daily macro metrics",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Produce reproducible, SHA-pinned source evidence and unexecuted DuneSQL blueprints for the offline macro metric whitelist. This research must not execute Dune queries or use credentials.",
+  "dependencies": [
+    "MACRO-DUNE-RESEARCH-001",
+    "MACRO-DAILY-OFFLINE-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/research/MACRO-DUNE-RESEARCH-001.md",
+    "docs/audits/MACRO-DAILY-OFFLINE-AUDIT-001.md",
+    "harness/tasks/MACRO-DAILY-OFFLINE-001.json",
+    "db/migrations/002_macro_daily_metrics.sql",
+    "src/domain/macro-daily.ts"
+  ],
+  "write_set": [
+    "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not read, use, print or store API keys, cookies, browser state, credentials or environment values.",
+    "Do not execute Dune API, CLI, dashboard or paid queries; do not create, edit or save a Dune query/dashboard.",
+    "Do not modify repository SQL, source, migrations, tests, task specifications, ledger, provider configuration or schedules.",
+    "Do not infer SQL body, query freshness or coverage from dashboard screenshots/titles, query IDs, or current Spellbook main without a pinned commit SHA.",
+    "Do not claim all-chain Robinhood coverage, Four.meme launch coverage, stablecoin supply, bridge flow, global TVL, market cap/FDV, or survival/drawdown cohorts."
+  ],
+  "deliverables": [
+    "A source-lock matrix with full Spellbook commit SHA, immutable GitHub URL, table/model path, exact field names, chain values, timestamp semantics, dedup grain and coverage limits for every permitted metric.",
+    "Unexecuted DuneSQL blueprints using explicit report-day/profile-window parameters for the permitted global, Solana, BSC and Uniswap-scoped Robinhood metrics and UTC hourly profiles.",
+    "A mapping from each blueprint to macro metric name, unit, section, registry_version, coverage_status, query_ref/query_version fields, expected completeness and warnings.",
+    "An explicit execution boundary: no blueprint may be called VERIFIED-as-executed until a separately Owner-authorized run stores query ID, SQL hash, execution ID, source_as_of and result checksum."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DUNE-QUERY-PROVENANCE-001.json",
+    "npm run typecheck",
+    "npm test",
+    "git diff --check"
+  ]
+}

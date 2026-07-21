@@ -1,0 +1,62 @@
+{
+  "mint": "Mint111111111111111111111111111111111111111",
+  "rpcMint": { "decimals": 6, "supplyRaw": "1000000" },
+  "metadata": {
+    "name": "Fixture Token",
+    "symbol": "FIX",
+    "createdAt": "2026-07-01T00:00:00.000Z",
+    "creationTx": "create-signature"
+  },
+  "tokenAccounts": [
+    { "tokenAccount": "ata-alice-1", "owner": "alice", "amountRaw": "100" },
+    { "tokenAccount": "ata-alice-2", "owner": "alice", "amountRaw": "25" },
+    { "tokenAccount": "ata-bob", "owner": "bob", "amountRaw": "75" }
+  ],
+  "transactions": [
+    {
+      "signature": "buy-signature",
+      "slot": "100",
+      "blockTime": "2026-07-10T12:00:00.000Z",
+      "swap": {
+        "user": "buyer",
+        "tokenInputs": [],
+        "tokenOutputs": [{ "mint": "Mint111111111111111111111111111111111111111", "amountRaw": "300" }],
+        "quoteInputRaw": "2000000",
+        "quoteUsd": 20,
+        "venue": "pump_fun"
+      },
+      "tokenTransfers": [{ "eventIndex": 1, "mint": "Mint111111111111111111111111111111111111111", "from": "curve", "to": "buyer", "amountRaw": "300", "kind": "swap" }],
+      "nativeTransfers": []
+    },
+    {
+      "signature": "sell-signature",
+      "slot": "101",
+      "blockTime": "2026-07-10T12:01:00.000Z",
+      "swap": {
+        "user": "seller",
+        "tokenInputs": [{ "mint": "Mint111111111111111111111111111111111111111", "amountRaw": "120" }],
+        "tokenOutputs": [],
+        "quoteOutputRaw": "800000",
+        "quoteUsd": 8,
+        "venue": "pump_fun"
+      },
+      "tokenTransfers": [{ "eventIndex": 2, "mint": "Mint111111111111111111111111111111111111111", "from": "seller", "to": "curve", "amountRaw": "120", "kind": "swap" }],
+      "nativeTransfers": []
+    },
+    {
+      "signature": "transfer-signature",
+      "slot": "102",
+      "blockTime": "2026-07-10T12:02:00.000Z",
+      "tokenTransfers": [{ "eventIndex": 3, "mint": "Mint111111111111111111111111111111111111111", "from": "creator", "to": "related", "amountRaw": "50", "kind": "transfer" }],
+      "nativeTransfers": [{ "eventIndex": 4, "from": "funder", "to": "buyer", "amountRaw": "100000000" }]
+    }
+  ],
+  "tags": [{ "address": "curve", "role": "bonding_curve", "source": "system", "confidence": 1 }],
+  "walletFacts": [{
+    "address": "buyer",
+    "firstSeenAt": "2026-07-09T00:00:00.000Z",
+    "transactionCount": 2,
+    "swapsLast24h": 1,
+    "tags": []
+  }]
+}

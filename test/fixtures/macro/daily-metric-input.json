@@ -1,0 +1,19 @@
+{
+  "report_day": "2026-07-20",
+  "computed_at": "2026-07-21T00:05:00Z",
+  "global_metrics": [
+    { "metric_name": "dex_volume_usd", "subject": "tracked_dexes", "value": 1250000, "unit": "usd", "history_window_days": 60 },
+    { "metric_name": "btc_transaction_count", "subject": "bitcoin", "value": 325000, "unit": "count" }
+  ],
+  "chain_metrics": [
+    { "chain": "solana", "section": "capital", "metric_name": "dex_volume_usd", "value": 500000, "unit": "usd", "registry_version": "spellbook:dex_solana@deadbeef" },
+    { "chain": "solana", "section": "supply", "metric_name": "pump_launch_count", "value": 120, "unit": "count", "registry_version": "spellbook:pumpdotfun@deadbeef" },
+    { "chain": "bsc", "section": "supply", "metric_name": "pancakeswap_pool_created_count", "value": 40, "unit": "count", "registry_version": "spellbook:pancakeswap_bnb@deadbeef" },
+    { "chain": "robinhood", "section": "supply", "metric_name": "uniswap_pool_created_count", "value": 5, "unit": "count", "registry_version": "spellbook:dex_robinhood:uniswap_v2_v3_v4@deadbeef" }
+  ],
+  "hourly_profiles": [
+    { "chain": "solana", "profile_window_days": 60, "metric_name": "dex_volume_usd", "hour_utc": 2, "sample_day_count": 60, "metric_value": 31000, "metric_share": 0.08, "registry_version": "spellbook:dex_solana@deadbeef" },
+    { "chain": "bsc", "profile_window_days": 90, "metric_name": "pancakeswap_pool_created_count", "hour_utc": 13, "sample_day_count": 90, "metric_value": 4, "metric_share": 0.06, "registry_version": "spellbook:pancakeswap_bnb@deadbeef" },
+    { "chain": "robinhood", "profile_window_days": 60, "metric_name": "uniswap_pool_created_count", "hour_utc": 19, "sample_day_count": 60, "metric_value": 1, "metric_share": 0.03, "registry_version": "spellbook:dex_robinhood:uniswap_v2_v3_v4@deadbeef" }
+  ]
+}

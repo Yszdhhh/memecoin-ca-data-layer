@@ -1,0 +1,29 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DESIGN-REPAIR-001",
+  "title": "Incorporate non-blocking provenance and readiness audit advisories",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Apply the bounded documentation-only corrections identified by MACRO-DAILY-DESIGN-AUDIT-001 without expanding data-provider or chain-adapter scope.",
+  "dependencies": ["MACRO-DAILY-DESIGN-AUDIT-001"],
+  "inputs": [
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/audits/MACRO-DAILY-DESIGN-AUDIT-001.md"
+  ],
+  "write_set": [
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, providers, credentials, schedules, BSC or Robinhood adapters.",
+    "Do not promote any PARK or UNVERIFIED metric to a verified implementation input."
+  ],
+  "deliverables": [
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

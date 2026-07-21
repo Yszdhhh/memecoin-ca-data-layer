@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-RETRIEVAL-REPAIR-001",
+  "title": "Fail closed on invalid Pump RPC retrieval watermarks",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Resolve SOL-PUMP-REPAIR-AUDIT-001 by rejecting missing, malformed or non-finalized RPC retrieval watermarks before decoding while preserving safe raw provenance for unsupported inputs.",
+  "dependencies": ["SOL-PUMP-REPAIR-001", "SOL-PUMP-REPAIR-AUDIT-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-PUMP-REPAIR-AUDIT-001.md",
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts",
+    "test/fixtures/solana/pump/buy.json"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/pump/**",
+    "test/solana/pump/**"
+  ],
+  "forbidden_actions": [
+    "Do not fetch network data, use provider credentials or modify pinned fixtures.",
+    "Do not modify holder or Dev calculation rules.",
+    "Do not weaken creator provenance, raw-integer handling or exact account-layout checks.",
+    "Do not modify task specifications, task ledger or audit reports."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

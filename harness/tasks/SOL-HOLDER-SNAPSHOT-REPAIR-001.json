@@ -1,0 +1,16 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-001",
+  "title": "Fail closed on inconsistent Solana holder snapshot pages",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Require a common finalized snapshot boundary, reject duplicate token accounts across holder pages, and return partial with no concentration when enumeration consistency is not proven.",
+  "dependencies": ["SOL-HOLDER-001", "SOL-HOLDER-AUDIT-001"],
+  "inputs": ["PROJECT_CONSTITUTION.md", "docs/audits/SOL-HOLDER-AUDIT-001.md", "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts", "test/solana/holders/solana-holder-snapshot-service.test.ts", "test/fixtures/solana/holders/holder-snapshot.json"],
+  "write_set": ["src/infrastructure/solana/holders/**", "test/solana/holders/**", "test/fixtures/solana/holders/**"],
+  "forbidden_actions": ["Do not use network or credentials.", "Do not calculate concentration from mixed finalized boundaries.", "Do not modify domain holder rules, tasks, ledger or audit reports."],
+  "deliverables": ["src/infrastructure/solana/holders/solana-holder-snapshot-service.ts", "test/solana/holders/solana-holder-snapshot-service.test.ts"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build"]
+}

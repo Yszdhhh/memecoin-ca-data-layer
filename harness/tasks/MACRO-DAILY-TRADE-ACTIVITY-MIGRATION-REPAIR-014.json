@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-TRADE-ACTIVITY-MIGRATION-REPAIR-014",
+  "title": "Repair the activity-metric migration constraint target",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Correct migration 006 so it replaces the metric-name CHECK constraint actually created by migration 002, preserving every existing chain metric and adding only the audited activity section plus transaction and trade-leg metrics.",
+  "dependencies": ["MACRO-DAILY-TRADE-ACTIVITY-012", "MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012", "MACRO-DAILY-TRADE-ACTIVITY-LIVE-013"],
+  "owner_authorization": "The failed migration transaction was rolled back before any schema change. This repair is offline; it must not execute Dune, database, Feishu, Hermes, or Lark operations before independent audit GREEN.",
+  "inputs": ["db/migrations/002_macro_daily_metrics.sql", "db/migrations/006_macro_trade_activity_metrics.sql", "docs/runs/MACRO-DAILY-TRADE-ACTIVITY-LIVE-013.md"],
+  "write_set": ["harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-MIGRATION-REPAIR-014.json", "db/migrations/006_macro_trade_activity_metrics.sql"],
+  "deliverables": ["db/migrations/006_macro_trade_activity_metrics.sql"],
+  "forbidden_actions": ["Do not execute PostgreSQL migrations, Dune, Feishu, Hermes, Lark, external providers, or chain adapters.", "Do not modify source, tests, other migrations, query definitions, task ledger, stage configuration, or audit reports.", "Do not relax chain, coverage_status, Robinhood partial_coverage, completeness, UNIQUE, or existing metric-name constraints.", "Do not print, persist, or commit credentials, DATABASE_URL, target IDs, tokens, cookies, raw database records, or provider payloads."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-MIGRATION-REPAIR-014.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

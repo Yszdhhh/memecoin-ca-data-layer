@@ -1,0 +1,16 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DEV-REPAIR-001",
+  "title": "Preserve and bind Solana creator provenance in Dev history",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Retain valid creator evidence for incomplete history, bind it to the pinned Pump creation contract, and filter related balances to declared related addresses.",
+  "dependencies": ["SOL-DEV-001", "SOL-DEV-AUDIT-001", "SOL-PUMP-001"],
+  "inputs": ["PROJECT_CONSTITUTION.md", "docs/audits/SOL-DEV-AUDIT-001.md", "src/infrastructure/solana/dev/solana-dev-history-service.ts", "test/solana/dev/solana-dev-history-service.test.ts", "src/infrastructure/solana/pump/pump-instruction-decoder.ts"],
+  "write_set": ["src/infrastructure/solana/dev/**", "test/solana/dev/**", "test/fixtures/solana/dev/**"],
+  "forbidden_actions": ["Do not use network or credentials.", "Do not treat transfers as sales or merge related activity into direct creator activity.", "Do not modify holder rules, tasks, ledger or audit reports."],
+  "deliverables": ["src/infrastructure/solana/dev/solana-dev-history-service.ts", "test/solana/dev/solana-dev-history-service.test.ts"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build"]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012",
+  "title": "Independent audit of scoped DEX trade activity daily metrics",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": null,
+  "status": "READY",
+  "objective": "Independently verify the separate daily DEX transaction and trade-leg activity blueprints, schema constraints, card semantics, and offline boundaries before any Dune, PostgreSQL, or CardKit execution.",
+  "dependencies": ["MACRO-DAILY-TRADE-ACTIVITY-012", "MACRO-MICRO-DUNE-RESEARCH-010"],
+  "owner_authorization": "Owner authorized daily aggregate reporting. This audit is read-only except for its report; it must not execute Dune, PostgreSQL, Feishu, Hermes, Lark, or provider operations.",
+  "inputs": ["harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-012.json", "docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/application/macro-daily-core-run-service.ts", "db/migrations/002_macro_daily_metrics.sql", "db/migrations/006_macro_trade_activity_metrics.sql", "test/macro-daily-core-run-service.test.ts", "test/macro-daily-brief-service.test.ts", "test/macro-daily-brief-card.test.ts"],
+  "write_set": ["harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012.json", "docs/audits/MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012.md"],
+  "deliverables": ["docs/audits/MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012.md"],
+  "forbidden_actions": ["Do not modify production code, tests, migrations, query definitions, runtime configuration, or any task specification.", "Do not execute Dune queries, PostgreSQL writes, migrations, CardKit sends, Hermes, lark-cli, external providers, backfills, or chain adapters.", "Do not read, print, persist, or commit Dune credentials, DATABASE_URL, Feishu target IDs, tokens, cookies, or raw provider payloads.", "Do not approve changes to existing G1/S1/B1/R1 capital query SQL or their historical query versions.", "Do not approve a trade leg as a user trade, wallet, buyer, seller, smart-money event, net liquidity event, active pool, market-cap/FDV, Kline, graduation, cohort, recommendation, score, or full Robinhood measure.", "Do not approve BSC or Robinhood beyond their declared aggregate Dune registry; Robinhood must remain Uniswap v2/v3/v4 partial coverage with an explicit qualifier."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

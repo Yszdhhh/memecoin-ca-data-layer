@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DESIGN-001",
+  "title": "Global crypto and per-chain daily market brief contract",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Define an auditable once-daily global crypto attention layer plus separate Solana, BSC and Robinhood battle reports without activating BSC/Robinhood CA adapters, credentials or production data collection.",
+  "dependencies": ["SOL-MARKET-DATA-DESIGN-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "流动性监控需求评估.md",
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md",
+    "solana_dex_volume.sql",
+    "robinhood_dex_volume.sql",
+    "db/migrations/001_initial.sql"
+  ],
+  "write_set": [
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, provider configuration, credentials or production schedules.",
+    "Do not activate BSC or Robinhood CA adapters, webhooks, backfills or trading capability.",
+    "Do not state unverified Dune schemas, query fields or dashboard calculations as facts.",
+    "Do not define a market indicator as a trading recommendation or execution gate."
+  ],
+  "deliverables": [
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

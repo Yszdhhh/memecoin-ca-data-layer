@@ -1,0 +1,29 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001",
+  "title": "Owner-authorized saved Dune query provenance smoke",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Create and execute one private saved G2 Bitcoin transaction-count query to validate durable Dune query identity before broad collector implementation.",
+  "dependencies": ["MACRO-DAILY-DUNE-SMOKE-001"],
+  "owner_authorization": "Owner authorized Dune query creation and execution for the daily macro workflow.",
+  "inputs": ["docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md"],
+  "write_set": ["docs/runs/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.md"],
+  "forbidden_actions": [
+    "Do not expose credentials.",
+    "Do not create more than one private saved query; do not create dashboards or visualizations.",
+    "Do not execute any query other than the saved completed-day BTC transaction-count query.",
+    "Do not write PostgreSQL data or send Hermes/Feishu messages.",
+    "Do not enable BSC/Robinhood adapters, backfills, trading, signing or execution capability."
+  ],
+  "deliverables": ["A sanitized report with saved query ID, SQL hash, execution state/times, result checksum, aggregate value, and cleanup/retention decision."],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.json",
+    "dune query create --private",
+    "dune query run <query-id> --output json",
+    "npm run typecheck",
+    "npm test"
+  ]
+}

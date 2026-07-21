@@ -1,0 +1,16 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "BSC-STAGE-001",
+  "title": "BSC and Four.meme stage activation",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "bsc",
+  "status": "BLOCKED_STAGE",
+  "objective": "Activate BSC implementation only after the Solana E2E gate is GREEN and the Owner confirms the stage transition.",
+  "dependencies": ["SOL-E2E-001"],
+  "inputs": ["OWNER_DECISIONS_NEEDED.md"],
+  "write_set": ["harness/config/project.json", "harness/tasks/BSC-*.json"],
+  "forbidden_actions": ["Do not implement or activate BSC before the stage gate."],
+  "deliverables": ["harness/reports/BSC-STAGE-001/activation.md"],
+  "acceptance_commands": ["npm run harness:doctor"]
+}

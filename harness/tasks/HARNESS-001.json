@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-001",
+  "title": "Establish the multi-agent harness and Solana stage lock",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Create auditable task contracts, run manifests, quality gates, collaboration rules, and an explicit Solana-first roadmap.",
+  "dependencies": [],
+  "inputs": [
+    "README.md",
+    "docs/DESIGN.md"
+  ],
+  "write_set": [
+    "AGENTS.md",
+    "PROJECT_*.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/**",
+    "package.json",
+    "tsconfig.json",
+    ".gitignore"
+  ],
+  "forbidden_actions": [
+    "Do not add credentials or call paid providers.",
+    "Do not implement BSC, Robinhood, trading, signing, UI, or Telegram code."
+  ],
+  "deliverables": [
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/cli.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

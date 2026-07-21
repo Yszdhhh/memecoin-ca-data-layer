@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-CORE-LIVE-ADAPTER-003",
+  "title": "Live Dune adapter and guarded core daily runner",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Make the audited core daily aggregate collector executable through the Dune CLI and a guarded local runner, without activating chain CA adapters or sending a live brief before independent audit GREEN.",
+  "dependencies": ["MACRO-DAILY-CORE-COLLECTOR-002", "MACRO-DAILY-G2-COLLECTOR-REPAIR-AUDIT-001"],
+  "owner_authorization": "Owner authorized daily aggregate Dune collection, local PostgreSQL persistence, and Hermes delivery to 投研分析. This authorization covers aggregate-only Dune metrics for Solana, BSC, and Uniswap-scoped Robinhood; it does not activate BSC/Robinhood CA/RPC adapters, trading, or backfills. First multi-metric send remains gated on independent audit GREEN.",
+  "inputs": ["src/application/macro-daily-core-run-service.ts", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/infrastructure/dune/macro-dune-cli.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "src/infrastructure/hermes/hermes-feishu-publisher.ts", "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md"],
+  "write_set": ["harness/tasks/MACRO-DAILY-CORE-LIVE-ADAPTER-003.json", "package.json", "src/infrastructure/dune/macro-dune-cli.ts", "src/application/macro-daily-core-live-run.ts", "src/cli/run-macro-daily-core.ts", "test/macro-dune-cli-core.test.ts", "test/macro-daily-core-live-run.test.ts"],
+  "deliverables": ["A generic CoreDuneQueryGateway implementation that validates completed Dune responses and deterministic result hashes; an explicit CLI runner defaulting to dry-run and resolving the Hermes target in memory; focused tests with no real external calls."],
+  "forbidden_actions": ["Do not execute Dune, PostgreSQL, or Hermes during implementation tests.", "Do not send the multi-metric brief before independent audit GREEN.", "Do not read, print, store, or commit Dune keys, DATABASE_URL, target IDs, cookies, or raw provider payloads.", "Do not modify project stage configuration or activate BSC/Robinhood CA/RPC adapters.", "Do not add B3, R2, hourly profiles, Four.meme, stablecoin, bridge, TVL, FDV/market-cap, cohorts, backfills, signing, trading, or execution capability."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-CORE-LIVE-ADAPTER-003.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

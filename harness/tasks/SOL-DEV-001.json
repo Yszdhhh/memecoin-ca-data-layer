@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DEV-001",
+  "title": "Solana creator and Dev history integration",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Build creator evidence and complete-from-creation Dev trade aggregation with separate direct, related-wallet and outbound-transfer metrics.",
+  "dependencies": ["SOL-INGEST-001", "SOL-PUMP-001"],
+  "inputs": [
+    "src/domain/rules/dev-behavior.ts",
+    "src/domain/types.ts"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/dev/**",
+    "test/solana/dev/**",
+    "test/fixtures/solana/dev/**"
+  ],
+  "forbidden_actions": [
+    "Do not treat transfers as sells.",
+    "Do not merge related-wallet activity into direct creator metrics.",
+    "Do not claim completeness without creation-to-watermark coverage."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/dev/solana-dev-history-service.ts",
+    "test/solana/dev/solana-dev-history-service.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "token_address": "fixture-mint",
+  "total_supply_raw": "1000",
+  "pages": [
+    {
+      "accounts": [
+        { "token_account_address": "alice-ata-1", "owner_address": "alice", "balance_raw": "100" },
+        { "token_account_address": "curve-ata", "owner_address": "curve", "balance_raw": "300" },
+        { "token_account_address": "high-cluster-ata", "owner_address": "high-cluster", "balance_raw": "120" }
+      ],
+      "next_cursor": "page-2",
+      "watermark": {
+        "source": "fixture",
+        "observed_at": "2026-07-20T00:00:00.000Z",
+        "finalized_slot": "434047820",
+        "cursor": "page-1",
+        "completeness": "complete"
+      }
+    },
+    {
+      "accounts": [
+        { "token_account_address": "alice-ata-2", "owner_address": "alice", "balance_raw": "50" },
+        { "token_account_address": "bob-ata", "owner_address": "bob", "balance_raw": "360" },
+        { "token_account_address": "low-cluster-ata", "owner_address": "low-cluster", "balance_raw": "70" }
+      ],
+      "watermark": {
+        "source": "fixture",
+        "observed_at": "2026-07-20T00:00:01.000Z",
+        "finalized_slot": "434047820",
+        "cursor": "page-2",
+        "completeness": "complete"
+      }
+    }
+  ],
+  "address_tags": [
+    { "address": "curve", "role": "bonding_curve", "source": "system", "confidence": 1 }
+  ],
+  "cluster_members": [
+    {
+      "address": "high-cluster",
+      "cluster_id": "funding-cluster-1",
+      "confidence": 0.92,
+      "evidence": { "funder": "source-wallet", "sibling_count": 2 }
+    },
+    {
+      "address": "low-cluster",
+      "cluster_id": "weak-cluster",
+      "confidence": 0.7,
+      "evidence": { "funder": "unconfirmed" }
+    }
+  ]
+}

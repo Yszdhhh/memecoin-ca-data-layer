@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-PROVENANCE-001",
+  "title": "Pump.fun program and fixture provenance research",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Produce a reproducible evidence pack for the Pump.fun decoder: official program and IDL version sources, version-selection rules, and Owner-authorized fixed create, buy, sell and migrate transaction fixtures with retrieval watermarks and SHA-256 hashes.",
+  "dependencies": ["HARNESS-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "KNOWN_LIMITATIONS.md",
+    "docs/DESIGN.md",
+    "harness/tasks/SOL-PUMP-001.json"
+  ],
+  "write_set": [
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "test/fixtures/solana/pump/**",
+    "harness/tasks/SOL-PUMP-PROVENANCE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/CURRENT_WAVE.md"
+  ],
+  "forbidden_actions": [
+    "Do not use a mutable fixture URL as evidence without recording the retrieval watermark and SHA-256 hash.",
+    "Do not infer Pump instruction semantics from secondary sources when an official source is available.",
+    "Do not add secrets, provider keys, request headers, raw provider envelopes or an Owner-unapproved CA to the repository.",
+    "Retain only the minimum scrubbed, finalized on-chain transaction fields required for deterministic fixture replay."
+  ],
+  "deliverables": [
+    "docs/research/SOL-PUMP-PROVENANCE-001.md"
+  ],
+  "acceptance_commands": [
+    "test -s docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "git diff --check"
+  ]
+}

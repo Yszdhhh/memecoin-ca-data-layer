@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-REPAIR-AUDIT-001",
+  "title": "Independent audit of Pump.fun decoder remediation",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently verify that SOL-PUMP-REPAIR-001 resolves every blocking finding in SOL-PUMP-AUDIT-001 without weakening the pinned-fixture, creator-provenance or raw-integer contracts.",
+  "dependencies": ["SOL-PUMP-AUDIT-001", "SOL-PUMP-REPAIR-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-PUMP-REPAIR-001.json",
+    "docs/audits/SOL-PUMP-AUDIT-001.md",
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts",
+    "test/fixtures/solana/pump/manifest.json",
+    "test/fixtures/solana/pump/create-v2.json",
+    "test/fixtures/solana/pump/buy.json",
+    "test/fixtures/solana/pump/sell.json",
+    "test/fixtures/solana/pump/migrate.json"
+  ],
+  "write_set": [
+    "docs/audits/SOL-PUMP-REPAIR-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger, task specifications or the original audit report.",
+    "Do not use mutable network data, provider credentials or an unpinned transaction as evidence.",
+    "Do not accept a retrieval watermark that is absent, untyped or not asserted from every pinned fixture.",
+    "Do not accept minimum-only account-layout validation for a registered instruction form."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-PUMP-REPAIR-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

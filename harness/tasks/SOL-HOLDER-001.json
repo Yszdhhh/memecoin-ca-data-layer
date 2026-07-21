@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HOLDER-001",
+  "title": "Solana holder snapshot integration",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Connect owner-aggregated holder enumeration, infrastructure labels and funding clusters to a reproducible holder snapshot with cleaning evidence.",
+  "dependencies": ["SOL-INGEST-001", "SOL-PUMP-001"],
+  "inputs": [
+    "src/domain/rules/real-holders.ts",
+    "src/domain/rules/funding-clusters.ts"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/holders/**",
+    "test/solana/holders/**",
+    "test/fixtures/solana/holders/**"
+  ],
+  "forbidden_actions": [
+    "Do not calculate Top20 from only 20 raw accounts.",
+    "Do not exclude low-confidence clusters.",
+    "Do not discard raw balances or cleaning evidence."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts",
+    "test/solana/holders/solana-holder-snapshot-service.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

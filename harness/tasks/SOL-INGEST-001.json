@@ -1,0 +1,34 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-INGEST-001",
+  "title": "Solana Helius and RPC normalization adapter",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Implement a fixture-testable Solana adapter boundary for token metadata, holders, transactions, transfers, wallet facts and source watermarks without requiring a live key in tests.",
+  "dependencies": ["HARNESS-001"],
+  "inputs": [
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "PROJECT_CONSTITUTION.md"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/helius/**",
+    "test/solana/helius/**",
+    "test/fixtures/solana/helius/**"
+  ],
+  "forbidden_actions": [
+    "Do not persist or print API keys.",
+    "Do not use Dexscreener as an on-chain fact source.",
+    "Do not modify domain rule semantics or future-chain code."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "test/solana/helius/helius-solana-adapter.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

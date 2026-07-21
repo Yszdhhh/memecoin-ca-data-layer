@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-MICRO-DUNE-RESEARCH-010",
+  "title": "Verified daily micro-dynamics metric research",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": null,
+  "status": "READY",
+  "objective": "Produce an evidence-labelled, source-pinned research report for daily micro-dynamics metrics that can enrich the macro CardKit brief without misrepresenting addresses, pools, launches, or third-party labels.",
+  "dependencies": ["MACRO-DUNE-QUERY-PROVENANCE-001", "MACRO-DAILY-LARK-SHIM-RESOLUTION-009"],
+  "owner_authorization": "Research only. No Dune API/CLI execution, paid query, PostgreSQL write, CardKit send, or credential access is authorized.",
+  "inputs": ["docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md", "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md", "src/infrastructure/dune/macro-core-query-definitions.ts", "db/migrations/002_macro_daily_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-MICRO-DUNE-RESEARCH-010.json", "docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md"],
+  "deliverables": ["docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md"],
+  "forbidden_actions": ["Do not execute Dune queries, use Dune CLI/API, access cookies or credentials, modify SQL, modify database schema, or send Feishu messages.", "Do not claim buys, buyers, graduation rate, full Robinhood coverage, Four.meme coverage, market-cap/FDV, liquidity net flow, smart money, Kline, or survival/drawdown verification without authoritative source evidence."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-MICRO-DUNE-RESEARCH-010.json", "npm run typecheck", "npm test", "git diff --check"]
+}

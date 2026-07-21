@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-G2-COLLECTOR-001",
+  "title": "Saved-query G2 daily macro collector, persistence, and Hermes dry run",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Implement the first production macro slice for the verified G2 BTC transaction-count metric: durable saved-query provenance, aggregate-only PostgreSQL persistence, Markdown generation, and Hermes dry-run delivery.",
+  "dependencies": ["MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001", "MACRO-DAILY-POSTGRES-BOOTSTRAP-001"],
+  "owner_authorization": "Owner authorized Dune execution, local PostgreSQL, and Hermes delivery to 投研分析; first real Hermes delivery remains gated on independent audit GREEN.",
+  "inputs": ["docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md", "docs/runs/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.md", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts"],
+  "write_set": ["db/migrations/003_macro_query_registry.sql", "src/application/macro-daily-g2-run-service.ts", "src/infrastructure/dune/macro-dune-cli.ts", "src/infrastructure/postgres/postgres-macro-daily-repository.ts", "src/infrastructure/hermes/hermes-feishu-publisher.ts", "test/macro-daily-g2-run-service.test.ts"],
+  "deliverables": ["A saved-query G2 runner with injected external command boundary, aggregate-only PostgreSQL persistence, Markdown rendering, and Hermes dry-run delivery interface."],
+  "forbidden_actions": ["Do not print/store credentials or full DATABASE_URL.", "Do not execute Dune or Hermes during tests or implementation; use injected fakes.", "Do not send a real Hermes message before MACRO-DAILY-G2-COLLECTOR-AUDIT-001 is GREEN.", "Do not implement BSC/Robinhood CA adapters, collectors, backfills, trading, signing, or execution capability.", "Do not collect unverified BSC LP USD, Four.meme, full Robinhood, stablecoin, bridge, TVL, FDV/market-cap, or cohort metrics."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-G2-COLLECTOR-001.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

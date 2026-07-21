@@ -1,0 +1,16 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "ROBIN-STAGE-001",
+  "title": "Robinhood Chain stage activation",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "robinhood",
+  "status": "BLOCKED_STAGE",
+  "objective": "Activate Robinhood implementation only after the agreed BSC gate and a separate Owner confirmation.",
+  "dependencies": ["BSC-STAGE-001"],
+  "inputs": ["OWNER_DECISIONS_NEEDED.md"],
+  "write_set": ["harness/config/project.json", "harness/tasks/ROBIN-*.json"],
+  "forbidden_actions": ["Do not implement or activate Robinhood before the stage gate."],
+  "deliverables": ["harness/reports/ROBIN-STAGE-001/activation.md"],
+  "acceptance_commands": ["npm run harness:doctor"]
+}

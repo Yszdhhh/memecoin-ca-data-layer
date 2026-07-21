@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DUNE-QUERY-UPDATE-006",
+  "title": "Reuse saved Dune query IDs for blueprint SQL updates",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Prevent private-query quota exhaustion by updating the existing saved query for a known blueprint when its SQL hash changes, then registering the new hash before execution.",
+  "dependencies": ["MACRO-DAILY-CARD-BRIEF-REPAIR-005"],
+  "owner_authorization": "Owner authorized daily aggregate Dune collection. This task only changes saved-query reuse behavior; it must not execute Dune, PostgreSQL, Hermes, or CardKit before independent audit GREEN.",
+  "inputs": ["src/application/macro-daily-core-run-service.ts", "src/infrastructure/dune/macro-dune-cli.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "db/migrations/003_macro_query_registry.sql"],
+  "write_set": ["harness/tasks/MACRO-DAILY-DUNE-QUERY-UPDATE-006.json", "src/application/macro-daily-core-run-service.ts", "src/infrastructure/dune/macro-dune-cli.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-core-run-service.test.ts", "test/macro-daily-core-live-run.test.ts", "test/macro-dune-cli-core.test.ts"],
+  "deliverables": ["src/application/macro-daily-core-run-service.ts", "src/infrastructure/dune/macro-dune-cli.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-core-run-service.test.ts", "test/macro-dune-cli-core.test.ts"],
+  "forbidden_actions": ["Do not execute Dune, PostgreSQL, Hermes, lark-cli, or migrations in tests.", "Do not send a CardKit brief before independent audit GREEN.", "Do not print, persist, or commit Dune keys, Lark tokens, DATABASE_URL, chat IDs, target lookup responses, or raw provider payloads.", "Do not add metric families, chain CA/RPC adapters, trading, signing, backfills, B3, R2, hourly profiles, Four.meme, stablecoin, bridge, TVL, FDV/market-cap, or cohorts."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-DUNE-QUERY-UPDATE-006.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

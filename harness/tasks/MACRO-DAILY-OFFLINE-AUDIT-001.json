@@ -1,0 +1,56 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-OFFLINE-AUDIT-001",
+  "title": "Independent audit of offline daily macro metric contracts",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Independently verify that MACRO-DAILY-OFFLINE-001 implements only the research-verified, offline macro metric contract with complete provenance, strict Robinhood partial coverage and no provider, collector or future-chain activation.",
+  "dependencies": ["MACRO-DAILY-OFFLINE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/tasks/MACRO-DAILY-OFFLINE-001.json",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/audits/MACRO-DAILY-DESIGN-AUDIT-001.md",
+    "docs/research/MACRO-DUNE-RESEARCH-001.md",
+    "db/migrations/001_initial.sql",
+    "db/migrations/002_macro_daily_metrics.sql",
+    "src/domain/macro-daily.ts",
+    "src/application/macro-daily-brief-service.ts",
+    "test/macro-daily-brief-service.test.ts",
+    "test/fixtures/macro/daily-metric-input.json"
+  ],
+  "write_set": [
+    "docs/audits/MACRO-DAILY-OFFLINE-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, fixtures, task specifications, ledger, provider configuration, credentials, schedules or delivery integration.",
+    "Do not execute Dune queries, use credentials, make network calls, or run a database migration against any database.",
+    "Do not approve a BSC or Robinhood CA adapter, production collector, webhook, backfill, Feishu delivery, trading, signing or execution capability.",
+    "Do not treat a test fixture identifier as evidence of a real Dune query execution or a real Spellbook git pin."
+  ],
+  "deliverables": [
+    "docs/audits/MACRO-DAILY-OFFLINE-AUDIT-001.md"
+  ],
+  "acceptance_criteria": [
+    "All changed implementation files are inside MACRO-DAILY-OFFLINE-001 write_set; existing migrations and source remain unchanged.",
+    "Migration creates exactly the three scoped macro tables and no cohort table, with query_ref, query_version, source_as_of, computed_at, completeness and warnings retained in every observation table.",
+    "Only the task whitelist is accepted; Four.meme, stablecoin, bridge, TVL, market-cap, FDV and survival/drawdown cohort metrics are rejected or absent.",
+    "Global and per-chain outputs remain separate and contain no score, recommendation or execution rule.",
+    "Robinhood requires partial_coverage and a syntactically pinned Uniswap v2/v3/v4 Spellbook registry string for both daily metrics and hourly profiles.",
+    "Hourly profiles require UTC hours 0 through 23 and query version provenance.",
+    "No task file introduces network, provider, scheduler, Feishu, credentials, live Dune, BSC/Robinhood adapter, collector or database-execution behavior."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-OFFLINE-AUDIT-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

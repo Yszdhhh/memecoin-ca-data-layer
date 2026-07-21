@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-TRADE-ACTIVITY-LIVE-013",
+  "title": "Owner-authorized first live daily trade-activity collection",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "READY",
+  "objective": "Apply the audited activity-metric migration, create or reuse only the required private Dune query registry entries, execute the aggregate-only core daily collection in dry-run delivery mode, and write a sanitized run report.",
+  "dependencies": ["MACRO-DAILY-TRADE-ACTIVITY-012", "MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012"],
+  "owner_authorization": "Owner authorized Dune key use, writable local PostgreSQL, and daily aggregate reporting. The Owner-approved Feishu target remains available, but this task uses dry-run delivery only; no message is sent.",
+  "inputs": ["docs/audits/MACRO-DAILY-TRADE-ACTIVITY-AUDIT-012.md", "db/migrations/002_macro_daily_metrics.sql", "db/migrations/003_macro_query_registry.sql", "db/migrations/004_macro_lark_card_delivery.sql", "db/migrations/005_macro_query_create_reservation.sql", "db/migrations/006_macro_trade_activity_metrics.sql", "src/cli/run-macro-daily-core.ts", "src/infrastructure/dune/macro-core-query-definitions.ts"],
+  "write_set": ["harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-LIVE-013.json", "docs/runs/MACRO-DAILY-TRADE-ACTIVITY-LIVE-013.md"],
+  "deliverables": ["docs/runs/MACRO-DAILY-TRADE-ACTIVITY-LIVE-013.md"],
+  "forbidden_actions": ["Do not print, store, commit, or expose Dune credentials, DATABASE_URL, Feishu IDs, tokens, cookies, raw Dune payloads, or full database records.", "Do not send a Feishu message, invoke Hermes, or use --send.", "Do not run raw Dune SQL, use a performance override, backfill history, activate BSC/Robinhood CA/RPC adapters, or alter project stage configuration.", "Do not create duplicate saved queries: reuse an exact blueprint plus SQL hash match, update a prior blueprint query in place, and record only sanitized IDs and hashes.", "Do not claim full BSC or Robinhood coverage, Four.meme, buy/sell, net liquidity, market-cap/FDV, Kline, cohort, recommendation, score, signing, or trading capability."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-LIVE-013.json", "npm run typecheck", "npm test", "npm run build", "npm run macro:daily:core", "git diff --check"]
+}

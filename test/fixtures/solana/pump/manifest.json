@@ -1,0 +1,68 @@
+{
+  "schema_version": "pump-fixture-manifest-v1",
+  "source_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+  "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49",
+  "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+  "fixtures": [
+    {
+      "action": "create",
+      "instruction_form": "create_v2",
+      "signature": "4VXF3mBhmFYkSXuminmxq9g3VK59bVtBESy3dE3NVjFdEQXPpwvmT8DwobgwNZALiJzv8BgQsp2tDBoPTL73rMq9",
+      "slot": 434047786,
+      "block_time": 1784528592,
+      "rpc_endpoint": "https://solana-rpc.publicnode.com",
+      "commitment": "finalized",
+      "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+      "idl_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+      "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49",
+      "discriminator": [214, 144, 76, 236, 95, 139, 49, 180],
+      "fixture_path": "test/fixtures/solana/pump/create-v2.json",
+      "fixture_sha256": "fb300d0db2bdb5c7f5dfbf8cddc1323d71457eaab075e907954bf9fd5b8cb89a"
+    },
+    {
+      "action": "buy",
+      "instruction_form": "buy",
+      "signature": "2DS1pF9ZCRCyk3S1BkEeoZqhnnDFzffVYy4uzo6iPXqjXLXhWKLvFrzLK55Rq7Ze2X4m3Up7cyqR8nE5q1qTW7ER",
+      "slot": 434047816,
+      "block_time": 1784528606,
+      "rpc_endpoint": "https://solana-rpc.publicnode.com",
+      "commitment": "finalized",
+      "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+      "idl_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+      "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49",
+      "discriminator": [102, 6, 61, 18, 1, 218, 235, 234],
+      "fixture_path": "test/fixtures/solana/pump/buy.json",
+      "fixture_sha256": "c3e3cbe3112f4c7e9b9ad607040d0c361bf3268366b5561a2e531315b1e0aa95"
+    },
+    {
+      "action": "sell",
+      "instruction_form": "sell",
+      "signature": "3DEYyFfxBa7wey9Cj53JNYeU9frT5PKTz8tdrHduaSrsjpe7EkhwoifXW926L2uodCHNB4F6Wz7VJQ2QP42gXgmN",
+      "slot": 434047820,
+      "block_time": 1784528607,
+      "rpc_endpoint": "https://solana-rpc.publicnode.com",
+      "commitment": "finalized",
+      "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+      "idl_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+      "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49",
+      "discriminator": [51, 230, 133, 164, 1, 127, 131, 173],
+      "fixture_path": "test/fixtures/solana/pump/sell.json",
+      "fixture_sha256": "097134849841c5f1acae2cdb4d9856413c2321957c7e851f3379b7ce83114dbd"
+    },
+    {
+      "action": "migrate",
+      "instruction_form": "migrate",
+      "signature": "4E9PEac1ndE2smnGcfrbmDKwwMMMPRZnn7J6enNrPSPSpGU5L5W3xgZ8TWzjE6WUoVxuwCQP3BBXm8C73iAukBDA",
+      "slot": 434047842,
+      "block_time": 1784528616,
+      "rpc_endpoint": "https://solana-rpc.publicnode.com",
+      "commitment": "finalized",
+      "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+      "idl_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+      "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49",
+      "discriminator": [155, 234, 231, 146, 236, 158, 162, 30],
+      "fixture_path": "test/fixtures/solana/pump/migrate.json",
+      "fixture_sha256": "222df022fd8ae0532696c9860391e68a359682c3ef0a9630075b6b4b381c1632"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-001",
+  "title": "Versioned Pump.fun instruction decoder",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Decode pinned Pump.fun create, buy, sell and migrate fixtures while preserving creator-vs-user semantics, program version and raw provenance.",
+  "dependencies": ["HARNESS-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "src/domain/types.ts",
+    "PROJECT_CONSTITUTION.md"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/pump/**",
+    "test/solana/pump/**",
+    "test/fixtures/solana/pump/**"
+  ],
+  "forbidden_actions": [
+    "Do not infer creator from payer when create.creator is present.",
+    "Do not fetch mutable fixtures during tests.",
+    "Do not modify holder or Dev calculation rules."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

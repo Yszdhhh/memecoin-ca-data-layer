@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-BRIEF-RENDERER-001",
+  "title": "Offline Markdown renderer for the daily macro brief",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Render a deterministic Chinese Markdown daily brief from the normalized offline macro model. The renderer is presentation-only: it performs no collection, scoring, provider call, schedule or Feishu delivery.",
+  "dependencies": [
+    "MACRO-DAILY-OFFLINE-001",
+    "MACRO-DUNE-QUERY-PROVENANCE-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md",
+    "src/domain/macro-daily.ts",
+    "src/application/macro-daily-brief-service.ts",
+    "test/fixtures/macro/daily-metric-input.json"
+  ],
+  "write_set": [
+    "src/application/macro-daily-brief-renderer.ts",
+    "test/macro-daily-brief-renderer.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not modify existing source, migrations, fixtures, task specifications, ledger, providers, credentials, schedules or delivery integration.",
+    "Do not read or use API keys, invoke Dune, make network calls, send Feishu messages or create a scheduler.",
+    "Do not add a cross-chain score, trading recommendation, execution decision, market prediction, or a claim that a blueprint is execution-verified.",
+    "Do not render an unverified metric as a real value; unavailable data must remain explicitly unavailable with provenance warnings."
+  ],
+  "deliverables": [
+    "A pure renderer from MacroDailyBrief to Chinese Markdown.",
+    "Stable sections for global attention, Solana, BSC, Robinhood and data quality.",
+    "Formatting for units, source/query provenance, completeness, coverage and machine-readable warnings.",
+    "Focused tests that prove deterministic order, Robinhood partial coverage, warnings, unavailable sections and no recommendation wording."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-BRIEF-RENDERER-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

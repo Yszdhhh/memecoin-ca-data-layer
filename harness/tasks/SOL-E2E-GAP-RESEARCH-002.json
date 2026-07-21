@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-E2E-GAP-RESEARCH-002",
+  "title": "Solana CA analysis end-to-end gap and dispatch research",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Map the exact remaining work to turn accepted Solana ingestion, Pump decoding, holder snapshots, and Dev history into the constitution-defined fixture plus Owner-authorized live-CA E2E analysis, without selecting a CA or provider.",
+  "dependencies": ["SOL-INGEST-001", "SOL-PUMP-RETRIEVAL-AUDIT-001", "SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001", "SOL-DEV-REPAIR-AUDIT-001"],
+  "owner_authorization": "Read-only local research only. A live CA, Helius/RPC endpoint, credentials, live payload retention, and production backfill remain explicit Owner decisions.",
+  "inputs": ["PROJECT_CONSTITUTION.md", "KNOWN_LIMITATIONS.md", "OWNER_DECISIONS_NEEDED.md", "harness/tasks/SOL-E2E-001.json", "src/application/analysis-service.ts", "src/infrastructure/solana/helius/helius-solana-adapter.ts", "src/infrastructure/solana/pump/pump-instruction-decoder.ts", "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts", "src/infrastructure/solana/dev/solana-dev-history-service.ts", "docs/audits/SOL-PUMP-RETRIEVAL-AUDIT-001.md", "docs/audits/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.md", "docs/audits/SOL-DEV-REPAIR-AUDIT-001.md"],
+  "write_set": ["harness/tasks/SOL-E2E-GAP-RESEARCH-002.json", "docs/research/SOL-E2E-GAP-RESEARCH-002.md"],
+  "deliverables": ["docs/research/SOL-E2E-GAP-RESEARCH-002.md"],
+  "forbidden_actions": ["Do not use network, browser state, RPC, Helius, provider credentials, Dune, database, Hermes, Lark, or any external API.", "Do not select, look up, or retain a live CA; do not activate BSC or Robinhood.", "Do not write code, tests, fixtures, task ledgers, audit reports, or configuration.", "Do not claim fixture tests equal live E2E readiness or weaken holder, creator, Dev, transfer, or completeness rules."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/SOL-E2E-GAP-RESEARCH-002.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

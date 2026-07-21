@@ -1,0 +1,35 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DUNE-RESEARCH-001",
+  "title": "Dune schema and query provenance research for daily macro briefs",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Verify the Dune datasets, field names, query IDs, time windows and coverage needed for global crypto attention and separate Solana, BSC and Robinhood once-daily reports.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "KNOWN_LIMITATIONS.md",
+    "harness/tasks/MACRO-DAILY-DESIGN-001.json",
+    "solana_dex_volume.sql",
+    "robinhood_dex_volume.sql",
+    "memecoin_revenue.sql"
+  ],
+  "write_set": [
+    "docs/research/MACRO-DUNE-RESEARCH-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not use, print or store API keys, cookies, browser state or credentials.",
+    "Do not modify repository source, migrations, task ledger, task specifications or dashboard queries.",
+    "Do not claim full Robinhood coverage without query-level evidence and completeness limits.",
+    "Do not execute paid queries or make production data changes."
+  ],
+  "deliverables": [
+    "docs/research/MACRO-DUNE-RESEARCH-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

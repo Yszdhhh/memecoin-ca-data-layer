@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-POSTGRES-BOOTSTRAP-001",
+  "title": "Owner-authorized isolated PostgreSQL bootstrap for daily macro data",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Create an isolated local PostgreSQL 16 container for this project, persist a user-scoped DATABASE_URL without exposing its value, and apply only the repository's 001 and 002 additive migrations.",
+  "dependencies": ["MACRO-DAILY-LIVE-PREFLIGHT-001"],
+  "owner_authorization": "Owner explicitly authorized creation of a PostgreSQL target after no DATABASE_URL was available to the current process.",
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "db/migrations/001_initial.sql",
+    "db/migrations/002_macro_daily_metrics.sql"
+  ],
+  "write_set": [
+    "docs/runs/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not inspect, stop, restart, alter, connect to, or reuse existing containers or databases, including quantdinger-db.",
+    "Do not print, store in the repository, or include in the report any database password or full DATABASE_URL.",
+    "Do not run migrations other than db/migrations/001_initial.sql and db/migrations/002_macro_daily_metrics.sql.",
+    "Do not create a production remote database, run a historical backfill, execute Dune, or send a Hermes/Feishu message.",
+    "Do not activate BSC or Robinhood CA adapters, collectors, trading, signing, or execution capability."
+  ],
+  "deliverables": [
+    "A dedicated local Docker PostgreSQL 16 container named onchain-trench-postgres on loopback port 5433.",
+    "A user-scoped DATABASE_URL available to future local sessions, with only a presence check documented.",
+    "Successful application of migrations 001 and 002, a read-only connectivity check, and a sanitized run report."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.json",
+    "docker exec onchain-trench-postgres pg_isready -U onchain_trench -d onchain_trench",
+    "npm run typecheck",
+    "npm test"
+  ]
+}

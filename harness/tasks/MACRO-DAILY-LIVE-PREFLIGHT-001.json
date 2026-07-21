@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-LIVE-PREFLIGHT-001",
+  "title": "Owner-authorized Dune and runtime preflight for daily macro execution",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "PARK",
+  "objective": "Validate, without exposing secrets or mutating external data, that the owner-authorized Dune CLI can be used for the next daily macro execution slice and that PostgreSQL/Hermes runtime prerequisites are present.",
+  "dependencies": [
+    "MACRO-DAILY-BRIEF-RENDERER-AUDIT-001",
+    "MACRO-DUNE-QUERY-PROVENANCE-001"
+  ],
+  "owner_authorization": "Owner authorized use of the existing Dune credential and a writable PostgreSQL target for the daily macro workflow. Hermes delivery remains pending a concrete callable integration contract.",
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md",
+    "docs/audits/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.md"
+  ],
+  "write_set": [
+    "docs/runs/MACRO-DAILY-LIVE-PREFLIGHT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not read, print, persist, copy or place credential values in a command, report, repository file or run artifact.",
+    "Do not create, edit, execute or pay for a Dune query/dashboard during this preflight.",
+    "Do not run a database migration, write to a database, retain provider payloads, or send a Feishu/Hermes message.",
+    "Do not activate BSC or Robinhood CA adapters, collectors, webhooks, backfills, trading, signing or execution capability."
+  ],
+  "deliverables": [
+    "A preflight report recording only boolean/sanitized Dune CLI authentication capability, supported query-management commands, PostgreSQL configuration presence, Hermes callable-contract presence, and the exact next gate."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-LIVE-PREFLIGHT-001.json",
+    "dune --help",
+    "dune auth status",
+    "dune query --help",
+    "npm run typecheck",
+    "npm test"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "pump-fixture-v1",
+  "action": "create_v2",
+  "retrieval": {
+    "rpc_endpoint": "https://solana-rpc.publicnode.com",
+    "commitment": "finalized",
+    "retrieved_at_utc": "2026-07-20T06:38:51.888Z"
+  },
+  "transaction": {
+    "signature": "4VXF3mBhmFYkSXuminmxq9g3VK59bVtBESy3dE3NVjFdEQXPpwvmT8DwobgwNZALiJzv8BgQsp2tDBoPTL73rMq9",
+    "slot": 434047786,
+    "block_time": 1784528592,
+    "status": "success"
+  },
+  "instruction": {
+    "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+    "discriminator": [214, 144, 76, 236, 95, 139, 49, 180],
+    "data_base58": "7A4gXKnR533VcdxJ85Szdwps5LxLpGqNVoc4sdGn4NHgM27Yw6VPdUJFwatvexkZC5gGtQv7BTEd4ejHJJuWhgCgqEinjcfokqS59qHwbi1T2aXN6gvt4xaAjq7xoCUg425fYeBFBcyjEPG1uifa",
+    "accounts": [
+      "GyjN383QnJvUPbgNxaJBcWsKK35wU8HUnorKACsDpump",
+      "TSLvdd1pWpHVjahSpsvCXUbgwsL3JAcvokwaKt1eokM",
+      "264oL748gtjJ1DVMFxyAMxsZMVo1ZS4aSVG6i7VAqwWw",
+      "AKjd7FPHnHbA4EDJNs9jWiUFs6Y3H6SKrfUjGBABDbEb",
+      "4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf",
+      "AjqkgiKvFqDs44wZQ3Zzd1FwkzrGN2hQ68FgrkyS6J9t",
+      "11111111111111111111111111111111",
+      "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+      "MAyhSmzXzV1pTf7LsNkrNwkWKTo4ougAJ1PPg47MD4e",
+      "13ec7XdrjF3h3YcqBTFDSReRcUFwbCnJaAQspM4j6DDJ",
+      "BwWK17cbHxwWBKZkUYvzxLcNQ1YVyaFezduWbtm2de6s",
+      "Hh6rWxCLXgkZ3Kc7weSzSwggrTeQCmrySYh1JhjNgtJF",
+      "EMxKgzhkK1YdqTCK2kwQr9XhrmVb6N22agZbwJsRD7sY",
+      "Ce6TQqeHC9p8KetsN6JsjHK7UTZk7nasjjnr7XxXp9F1",
+      "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"
+    ]
+  }
+}

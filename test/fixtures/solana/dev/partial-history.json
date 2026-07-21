@@ -1,0 +1,12 @@
+{
+  "token_id": "pump-token-1",
+  "creation_slot": "500",
+  "watermark": {
+    "oldest_observed_slot": "525",
+    "newest_observed_slot": "580",
+    "finalized_slot": "590",
+    "cursor": "history-page-1",
+    "has_gaps": false,
+    "observed_at": "2026-07-20T00:10:00.000Z"
+  }
+}

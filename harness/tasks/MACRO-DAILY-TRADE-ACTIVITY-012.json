@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-TRADE-ACTIVITY-012",
+  "title": "Add scoped DEX transaction and trade-leg activity to the daily brief",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Add separate daily Dune aggregate queries and display fields for deduplicated DEX transaction count, trade-leg count, and legs per transaction for Solana, BSC, and Robinhood's declared Uniswap v2/v3/v4 scope, without changing existing capital-query versions.",
+  "dependencies": ["MACRO-MICRO-DUNE-RESEARCH-010", "MACRO-DAILY-DERIVED-DYNAMICS-011"],
+  "owner_authorization": "Owner authorized daily aggregate reporting. This task creates no real Dune query, database write, migration execution, CardKit send, Hermes call, backfill, or chain adapter action before independent audit GREEN.",
+  "inputs": ["docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/application/macro-daily-core-run-service.ts", "db/migrations/002_macro_daily_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-012.json", "db/migrations/006_macro_trade_activity_metrics.sql", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-core-run-service.test.ts", "test/macro-daily-brief-service.test.ts", "test/macro-daily-brief-renderer.test.ts", "test/macro-daily-brief-card.test.ts", "test/macro-dune-cli-core.test.ts"],
+  "deliverables": ["src/infrastructure/dune/macro-core-query-definitions.ts", "db/migrations/006_macro_trade_activity_metrics.sql", "src/application/macro-daily-brief-card.ts", "test/macro-daily-core-run-service.test.ts"],
+  "forbidden_actions": ["Do not execute Dune queries, PostgreSQL writes, migrations, CardKit sends, Hermes, lark-cli, external providers, backfills, or chain adapters before independent audit GREEN.", "Do not modify existing G1/S1/B1/R1 capital SQL or query versions; add separate activity blueprints so historical series remain version-consistent.", "Do not call addresses buyers, users, wallets, smart money, or traders beyond the pinned observed DEX transaction field; do not add buy/sell, net liquidity, active-pool, Four.meme, full Robinhood, FDV/market-cap, TVL, Kline, graduation, cohort, recommendation, score, or trading claims.", "Do not count raw transfer events as trade legs, claim a trade leg is a completed user swap, or compare Robinhood beyond its declared Uniswap v2/v3/v4 partial coverage.", "Do not print, persist, or commit Dune credentials, DATABASE_URL, Feishu target IDs, tokens, cookies, or raw provider payloads."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-TRADE-ACTIVITY-012.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

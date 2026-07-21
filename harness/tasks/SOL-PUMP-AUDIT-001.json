@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-AUDIT-001",
+  "title": "Independent audit of the versioned Pump.fun instruction decoder",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently assess SOL-PUMP-001 against the Constitution, official provenance and pinned fixtures before Holder and Dev work may consume the decoder contract.",
+  "dependencies": ["SOL-PUMP-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-PUMP-001.json",
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts",
+    "test/fixtures/solana/pump/manifest.json",
+    "test/fixtures/solana/pump/create-v2.json",
+    "test/fixtures/solana/pump/buy.json",
+    "test/fixtures/solana/pump/sell.json",
+    "test/fixtures/solana/pump/migrate.json"
+  ],
+  "write_set": [
+    "docs/audits/SOL-PUMP-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger or task specifications.",
+    "Do not use mutable network data, provider credentials or an unpinned transaction as evidence.",
+    "Do not accept creator inference from payer or signer when create.creator is present.",
+    "Do not approve unsupported Pump versions that lack explicit raw provenance."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-PUMP-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

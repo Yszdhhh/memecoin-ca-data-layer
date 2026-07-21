@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DERIVED-DYNAMICS-011",
+  "title": "Version-consistent daily and seven-day market dynamics",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Add display-only day-over-day change and seven-day relative water-level derivations to the daily CardKit brief using only complete, version-consistent persisted observations, with explicit insufficient-history states.",
+  "dependencies": ["MACRO-MICRO-DUNE-RESEARCH-010"],
+  "owner_authorization": "Owner authorized daily aggregate reporting. This task reads existing local aggregate history only; it does not add Dune queries, new external providers, backfills, or CardKit sends before independent audit GREEN.",
+  "inputs": ["docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "src/application/macro-daily-core-run-service.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "db/migrations/002_macro_daily_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-DAILY-DERIVED-DYNAMICS-011.json", "src/application/macro-daily-core-run-service.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/lark/lark-cardkit-publisher.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-core-run-service.test.ts", "test/macro-daily-core-live-run.test.ts", "test/macro-daily-brief-card.test.ts", "test/lark-cardkit-publisher.test.ts"],
+  "deliverables": ["src/application/macro-daily-core-run-service.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-brief-card.test.ts"],
+  "forbidden_actions": ["Do not add or execute Dune queries, external providers, migrations, backfills, or CardKit sends before independent audit GREEN.", "Do not compare values across query_version, registry_version, coverage status, subject, or completeness boundaries.", "Do not infer a missing prior day as zero, display a 7D baseline with fewer than seven complete prior UTC days, or build a cross-chain score/recommendation.", "Do not add buying, selling, buyer, graduation, full Robinhood, Four.meme, FDV/market-cap, TVL, smart money, Kline, chain adapter, signing, or trading claims."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-DERIVED-DYNAMICS-011.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

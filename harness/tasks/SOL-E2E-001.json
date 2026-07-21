@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-E2E-001",
+  "title": "Pump.fun quick and deep analysis end-to-end acceptance",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Prove fixture and explicitly authorized live-CA analysis with source watermarks, hashes, completeness warnings and an independent audit.",
+  "dependencies": ["SOL-HOLDER-001", "SOL-DEV-001"],
+  "inputs": [
+    "src/application/analysis-service.ts",
+    "OWNER_DECISIONS_NEEDED.md"
+  ],
+  "write_set": [
+    "test/integration/solana/**",
+    "test/fixtures/solana/e2e/**",
+    "harness/reports/SOL-E2E-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not select or retain a live CA without Owner authorization.",
+    "Do not store credentials or unsanitized provider payloads.",
+    "Do not activate BSC or Robinhood."
+  ],
+  "deliverables": [
+    "test/integration/solana/pump-analysis.e2e.test.ts",
+    "harness/reports/SOL-E2E-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run check",
+    "npm run harness:doctor"
+  ]
+}

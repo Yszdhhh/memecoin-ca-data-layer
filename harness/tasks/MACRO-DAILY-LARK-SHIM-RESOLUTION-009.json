@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-LARK-SHIM-RESOLUTION-009",
+  "title": "Secure Windows Lark CLI shim resolution",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Launch the Windows Lark CLI safely without shell parsing by resolving an approved lark-cli.cmd Node shim at runtime and executing its fixed script path through the current Node executable.",
+  "dependencies": ["MACRO-DAILY-LARK-WINDOWS-LAUNCH-008"],
+  "owner_authorization": "Owner authorized native Feishu CardKit delivery. No CardKit send may occur before this repair is independently audited GREEN.",
+  "inputs": ["src/infrastructure/lark/lark-cardkit-publisher.ts", "src/cli/run-macro-daily-core.ts"],
+  "write_set": ["harness/tasks/MACRO-DAILY-LARK-SHIM-RESOLUTION-009.json", "src/infrastructure/lark/lark-cardkit-publisher.ts", "src/cli/run-macro-daily-core.ts", "test/lark-cardkit-publisher.test.ts"],
+  "deliverables": ["src/infrastructure/lark/lark-cardkit-publisher.ts", "src/cli/run-macro-daily-core.ts", "test/lark-cardkit-publisher.test.ts"],
+  "forbidden_actions": ["Do not use shell:true, cmd /c, PowerShell command strings, or any user-controlled shell interpolation.", "Do not execute Dune, PostgreSQL, Hermes, lark-cli, or migrations in tests.", "Do not send a CardKit brief before independent audit GREEN.", "Do not print, persist, or commit Dune keys, Lark tokens, DATABASE_URL, chat IDs, target lookup responses, or raw provider payloads.", "Do not change metrics, query SQL, CardKit payload semantics, chain adapters, trading, signing, backfills, B3, R2, hourly profiles, Four.meme, stablecoin, bridge, TVL, FDV/market-cap, or cohorts."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-LARK-SHIM-RESOLUTION-009.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

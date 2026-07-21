@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-CARD-BRIEF-004",
+  "title": "Compact Feishu CardKit daily market brief",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Replace the verbose Markdown delivery with a compact native Feishu interactive CardKit brief while retaining full provenance in PostgreSQL, and improve display semantics for DEX-unique trading addresses and compact USD values.",
+  "dependencies": ["MACRO-DAILY-CORE-LIVE-ADAPTER-003"],
+  "owner_authorization": "Owner authorized delivery to 投研分析 and explicitly requested native Feishu CardKit delivery. The bot target may be resolved in memory only; no chat ID, credential, DATABASE_URL, raw payload, or secret may be printed or committed. First CardKit send remains gated on independent audit GREEN.",
+  "inputs": ["src/application/macro-daily-core-run-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-core-live-run.ts", "src/cli/run-macro-daily-core.ts", "src/domain/macro-daily.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts"],
+  "write_set": ["harness/tasks/MACRO-DAILY-CARD-BRIEF-004.json", "db/migrations/004_macro_lark_card_delivery.sql", "src/application/macro-daily-core-run-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/application/macro-daily-core-live-run.ts", "src/cli/run-macro-daily-core.ts", "src/infrastructure/lark/lark-cardkit-publisher.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "test/macro-daily-brief-renderer.test.ts", "test/macro-daily-brief-card.test.ts", "test/macro-daily-core-run-service.test.ts", "test/macro-daily-core-live-run.test.ts", "test/macro-daily-g2-run-service.test.ts", "test/lark-cardkit-publisher.test.ts"],
+  "deliverables": ["A compact renderer without inline query provenance, a native Feishu interactive CardKit payload builder, a publisher using argument-array lark-cli invocation, in-memory bot chat resolution, default dry-run behavior, and focused tests."],
+  "forbidden_actions": ["Do not send a CardKit brief before independent audit GREEN.", "Do not execute Dune, PostgreSQL, Hermes, or lark-cli in tests.", "Do not print, persist, or commit chat IDs, Dune keys, Lark tokens, DATABASE_URL, target lookup responses, or raw provider payloads.", "Do not add unverified micro metrics, scores, trading recommendations, execution, BSC/Robinhood CA/RPC adapters, backfills, B3, R2, hourly profiles, Four.meme, stablecoin, bridge, TVL, FDV/market-cap, or cohorts."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DAILY-CARD-BRIEF-004.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

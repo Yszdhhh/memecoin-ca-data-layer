@@ -1,0 +1,39 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DUNE-SMOKE-001",
+  "title": "Owner-authorized minimal Dune execution smoke for daily macro data",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Execute the smallest possible owner-authorized DuneSQL smoke and one completed-day Bitcoin metric blueprint to validate Dune response/execution metadata before implementing the collector.",
+  "dependencies": [
+    "MACRO-DAILY-POSTGRES-BOOTSTRAP-001",
+    "MACRO-DUNE-QUERY-PROVENANCE-001"
+  ],
+  "owner_authorization": "Owner authorized use of the existing Dune credential for the daily macro workflow.",
+  "inputs": [
+    "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md",
+    "docs/runs/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.md"
+  ],
+  "write_set": [
+    "docs/runs/MACRO-DAILY-DUNE-SMOKE-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not print, copy, store, or expose credential values.",
+    "Do not create, update, archive, or share a saved Dune query or dashboard; use only query run-sql.",
+    "Do not execute any query outside SELECT 1 and the exact completed-day BTC transaction-count blueprint in this task.",
+    "Do not write to PostgreSQL, retain raw Dune payloads, send Hermes/Feishu, or start a schedule.",
+    "Do not activate BSC or Robinhood adapters, collectors, webhooks, backfills, trading, signing, or execution capability."
+  ],
+  "deliverables": [
+    "A sanitized run report containing SQL SHA-256, execution identifier/state if returned, result checksum, source-as-of observation time, row count, and the aggregate BTC value only.",
+    "A clear GREEN/PARK/FAIL verdict for the Dune response contract."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-DUNE-SMOKE-001.json",
+    "dune query run-sql --sql \"SELECT 1 AS smoke_ok\" --output json",
+    "npm run typecheck",
+    "npm test"
+  ]
+}

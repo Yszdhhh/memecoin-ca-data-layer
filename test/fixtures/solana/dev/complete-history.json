@@ -1,0 +1,37 @@
+{
+  "token_id": "pump-token-1",
+  "total_supply_raw": "1000000",
+  "creator_evidence": {
+    "source": "pump_create.creator",
+    "creator_address": "creator-wallet",
+    "signature": "create-signature",
+    "slot": "500",
+    "block_time": "2026-07-20T00:00:00.000Z",
+    "program_id": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+    "source_commit": "9c82f61cb711b044a17f770ab8ce9f9bdf78f333",
+    "idl_sha256": "b90bc471327f671449271d5d1d42354d1fae6f5a06502f5834459a3108138e49"
+  },
+  "creation_slot": "500",
+  "watermark": {
+    "oldest_observed_slot": "500",
+    "newest_observed_slot": "580",
+    "finalized_slot": "590",
+    "cursor": "history-page-3",
+    "has_gaps": false,
+    "observed_at": "2026-07-20T00:10:00.000Z"
+  },
+  "direct_current_balance_raw": "100000",
+  "related_current_balances": [["related-wallet", "30000"]],
+  "related_addresses": ["related-wallet"],
+  "trades": [
+    { "chain": "solana", "token_id": "pump-token-1", "tx_hash": "buy-direct", "event_index": 0, "block_number": "510", "block_time": "2026-07-20T00:01:00.000Z", "trader": "creator-wallet", "side": "buy", "token_amount_raw": "200000", "quote_amount_raw": "200", "venue": "pump_fun" },
+    { "chain": "solana", "token_id": "pump-token-1", "tx_hash": "sell-direct", "event_index": 0, "block_number": "520", "block_time": "2026-07-20T00:02:00.000Z", "trader": "creator-wallet", "side": "sell", "token_amount_raw": "50000", "quote_amount_raw": "80", "venue": "pump_fun" },
+    { "chain": "solana", "token_id": "pump-token-1", "tx_hash": "sell-related", "event_index": 0, "block_number": "530", "block_time": "2026-07-20T00:03:00.000Z", "trader": "related-wallet", "side": "sell", "token_amount_raw": "40000", "quote_amount_raw": "60", "venue": "pump_fun" },
+    { "chain": "solana", "token_id": "other-token", "tx_hash": "other-sell", "event_index": 0, "block_number": "540", "block_time": "2026-07-20T00:04:00.000Z", "trader": "creator-wallet", "side": "sell", "token_amount_raw": "999999", "quote_amount_raw": "1", "venue": "pump_fun" }
+  ],
+  "transfers": [
+    { "chain": "solana", "token_id": "pump-token-1", "tx_hash": "transfer-external", "event_index": 0, "block_time": "2026-07-20T00:05:00.000Z", "from": "creator-wallet", "to": "external-wallet", "amount_raw": "25000" },
+    { "chain": "solana", "token_id": "pump-token-1", "tx_hash": "transfer-related", "event_index": 0, "block_time": "2026-07-20T00:06:00.000Z", "from": "creator-wallet", "to": "related-wallet", "amount_raw": "10000" },
+    { "chain": "solana", "token_id": "other-token", "tx_hash": "transfer-other", "event_index": 0, "block_time": "2026-07-20T00:07:00.000Z", "from": "creator-wallet", "to": "external-wallet", "amount_raw": "999999" }
+  ]
+}

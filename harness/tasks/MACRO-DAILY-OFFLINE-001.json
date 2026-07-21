@@ -1,0 +1,61 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-OFFLINE-001",
+  "title": "Offline daily macro metric contracts and brief normalization",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Add an additive, offline-only persistence contract and deterministic brief normalizer for the Dune research-verified daily global and chain metrics. This task must not execute Dune, collect live chain data, or activate BSC/Robinhood adapters.",
+  "dependencies": [
+    "MACRO-DAILY-DESIGN-REPAIR-001",
+    "MACRO-DUNE-RESEARCH-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/audits/MACRO-DAILY-DESIGN-AUDIT-001.md",
+    "docs/research/MACRO-DUNE-RESEARCH-001.md",
+    "db/migrations/001_initial.sql",
+    "src/domain/types.ts"
+  ],
+  "write_set": [
+    "db/migrations/002_macro_daily_metrics.sql",
+    "src/domain/macro-daily.ts",
+    "src/application/macro-daily-brief-service.ts",
+    "test/macro-daily-brief-service.test.ts",
+    "test/fixtures/macro/daily-metric-input.json"
+  ],
+  "forbidden_actions": [
+    "Do not read, use, print or store API keys, cookies, browser state, live payloads or credentials.",
+    "Do not execute Dune queries, add a Dune client, make network calls, create a scheduler, send Feishu messages, or configure providers.",
+    "Do not activate BSC or Robinhood CA adapters, collectors, webhooks, backfills, trading, signing, or order execution.",
+    "Do not modify existing migrations, existing source files, task specifications, ledger, provider configuration, or files outside write_set.",
+    "Do not add stablecoin supply, bridge net flow, global TVL, Four.meme launches, all-chain Robinhood metrics, market-cap/FDV cohorts, or drawdown/valuation cohort collection."
+  ],
+  "deliverables": [
+    "An additive migration for macro_daily_global_metrics, macro_daily_chain_metrics and macro_hourly_chain_profile only.",
+    "Offline domain contracts and a deterministic normalizer that accepts injected metric observations and emits the daily brief model without I/O.",
+    "Pinned synthetic fixture and focused tests."
+  ],
+  "acceptance_criteria": [
+    "Every accepted observation retains source, query_ref, query_version, source_as_of, computed_at, completeness and machine-readable warnings.",
+    "Only these metric families are accepted: global dex_volume_usd, active_trader_count, btc_transaction_count and btc_fee_usd; Solana dex_volume_usd, active_trader_count, pump_launch_count and external_pool_count; BSC dex_volume_usd, active_trader_count, pancakeswap_pool_created_count and pancakeswap_lp_net_change_usd; Robinhood dex_volume_usd, active_trader_count and uniswap_pool_created_count; and the corresponding UTC hourly profiles.",
+    "Robinhood observations must use coverage_status=partial_coverage and registry_version=spellbook:dex_robinhood:uniswap_v2_v3_v4@<pinned-sha>; otherwise reject them.",
+    "BSC Four.meme, stablecoin, bridge, TVL, market-cap, FDV and all survival/drawdown cohort metric names are rejected as unsupported in this task.",
+    "No cohort persistence table or cohort-producing code is created; that work remains PARK pending a pinned valuation-series source.",
+    "The normalizer keeps global and per-chain sections separate and produces no recommendation, ranking score or execution decision.",
+    "Hourly profiles require hour_utc in [0,23], use UTC semantics, and retain query_version provenance."
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-OFFLINE-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

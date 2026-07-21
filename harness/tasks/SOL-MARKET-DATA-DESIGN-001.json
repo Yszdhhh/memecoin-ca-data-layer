@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-MARKET-DATA-DESIGN-001",
+  "title": "Solana market-data provenance and conflict-contract design",
+  "tier": "T2",
+  "role": "researcher",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Produce an auditable Solana-only design for append-only market observations, provider trust separation, conflict handling and candidate-pool polling without implementing a provider or asserting unverified third-party API capability.",
+  "dependencies": ["SOL-PUMP-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "docs/DESIGN.md",
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "src/application/analysis-service.ts",
+    "db/migrations/001_initial.sql"
+  ],
+  "write_set": [
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, fixtures, task ledger or task specifications.",
+    "Do not call network APIs, use provider credentials or retain raw provider payloads.",
+    "Do not activate BSC or Robinhood, production webhooks, database backfills or external providers.",
+    "Do not present unverified third-party API behavior or labels as chain facts."
+  ],
+  "deliverables": [
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-INGEST-AUDIT-001",
+  "title": "Independent audit of Solana ingestion normalization",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently assess SOL-INGEST-001 for holder-owner aggregation, swap-versus-transfer separation, raw-integer handling, source-watermark retention, fixture quality and task-boundary compliance before coordinator integration.",
+  "dependencies": ["SOL-INGEST-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "test/solana/helius/helius-solana-adapter.test.ts",
+    "test/fixtures/solana/helius/adapter-fixture.json"
+  ],
+  "write_set": [
+    "docs/audits/SOL-INGEST-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger or task specifications.",
+    "Do not accept transfers as sales without verified swap evidence.",
+    "Do not use a passing test suite as a substitute for checking the task boundary and Constitution requirements."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-INGEST-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "test -s docs/audits/SOL-INGEST-AUDIT-001.md"
+  ]
+}

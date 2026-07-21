@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001",
+  "title": "Independent audit of Solana holder snapshot consistency remediation",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently verify that SOL-HOLDER-SNAPSHOT-REPAIR-001 closes the holder snapshot boundary and duplicate-account findings without weakening owner aggregation or reversible exclusion evidence.",
+  "dependencies": [
+    "SOL-HOLDER-001",
+    "SOL-HOLDER-AUDIT-001",
+    "SOL-HOLDER-SNAPSHOT-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-HOLDER-AUDIT-001.md",
+    "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts",
+    "test/solana/holders/solana-holder-snapshot-service.test.ts",
+    "test/fixtures/solana/holders/holder-snapshot.json",
+    "src/domain/rules/real-holders.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger or task specifications.",
+    "Do not use network APIs, RPC, credentials or mutable provider data.",
+    "Do not accept concentration from mixed or missing finalized snapshot boundaries.",
+    "Do not accept duplicate token accounts across pages or low-confidence cluster exclusion."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

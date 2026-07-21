@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-DESIGN-AUDIT-001",
+  "title": "Independent audit of daily global and chain macro contract",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Independently verify that MACRO-DAILY-DESIGN-001 separates global crypto attention from chain battle reports, preserves provenance and completeness, and does not activate provider, BSC/Robinhood CA or execution scope.",
+  "dependencies": ["MACRO-DAILY-DESIGN-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/tasks/MACRO-DAILY-DESIGN-001.json",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "harness/tasks/MACRO-DUNE-RESEARCH-001.json",
+    "docs/research/MACRO-DUNE-RESEARCH-001.md",
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md"
+  ],
+  "write_set": [
+    "docs/audits/MACRO-DAILY-DESIGN-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, schedules, provider configuration, credentials, task ledger or task specifications.",
+    "Do not verify unresearched Dune schemas or dashboard claims by assumption.",
+    "Do not activate BSC or Robinhood CA adapters, production collection, Feishu delivery or trading capability."
+  ],
+  "deliverables": [
+    "docs/audits/MACRO-DAILY-DESIGN-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test"
+  ]
+}

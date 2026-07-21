@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-REPAIR-001",
+  "title": "Repair Pump.fun decoder provenance and exact account-layout validation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Resolve SOL-PUMP-AUDIT-001 findings by preserving the pinned RPC retrieval watermark in decoded provenance and rejecting every unsupported or truncated registered account layout.",
+  "dependencies": ["SOL-PUMP-001", "SOL-PUMP-AUDIT-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-PUMP-AUDIT-001.md",
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts",
+    "test/fixtures/solana/pump/manifest.json",
+    "test/fixtures/solana/pump/create-v2.json",
+    "test/fixtures/solana/pump/buy.json",
+    "test/fixtures/solana/pump/sell.json",
+    "test/fixtures/solana/pump/migrate.json"
+  ],
+  "write_set": [
+    "src/infrastructure/solana/pump/**",
+    "test/solana/pump/**",
+    "test/fixtures/solana/pump/**"
+  ],
+  "forbidden_actions": [
+    "Do not fetch network data, use provider credentials or replace pinned fixtures.",
+    "Do not modify holder or Dev calculation rules.",
+    "Do not infer creator from payer or signer when create.creator is present.",
+    "Do not accept account layouts by minimum count when the pinned form requires an exact layout.",
+    "Do not modify task specifications, task ledger or audit reports."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

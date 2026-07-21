@@ -1,0 +1,45 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DEV-REPAIR-AUDIT-001",
+  "title": "Independent audit of Solana Dev provenance remediation",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently verify that SOL-DEV-REPAIR-001 closes every finding from SOL-DEV-AUDIT-001 without weakening creator provenance, coverage completeness, or direct/related/transfer separation.",
+  "dependencies": [
+    "SOL-DEV-001",
+    "SOL-DEV-AUDIT-001",
+    "SOL-DEV-REPAIR-001",
+    "SOL-PUMP-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-DEV-AUDIT-001.md",
+    "harness/tasks/SOL-DEV-REPAIR-001.json",
+    "src/infrastructure/solana/dev/solana-dev-history-service.ts",
+    "test/solana/dev/solana-dev-history-service.test.ts",
+    "test/fixtures/solana/dev/complete-history.json",
+    "test/fixtures/solana/dev/partial-history.json",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "src/domain/rules/dev-behavior.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-DEV-REPAIR-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger or task specifications.",
+    "Do not use network APIs, RPC, credentials or mutable provider data.",
+    "Do not accept creator evidence that is not bound to the pinned Pump program, IDL commit, IDL hash and creation slot.",
+    "Do not accept incomplete or non-finalized history as complete-from-creation.",
+    "Do not accept related balances outside relatedAddresses or transfers as sales."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-DEV-REPAIR-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

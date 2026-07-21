@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-PUMP-RETRIEVAL-AUDIT-001",
+  "title": "Independent final audit of Pump RPC retrieval watermark validation",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently verify that SOL-PUMP-RETRIEVAL-REPAIR-001 closes all remaining Pump decoder audit findings and that only verified, finalized retrieval provenance can produce a decoded instruction.",
+  "dependencies": ["SOL-PUMP-AUDIT-001", "SOL-PUMP-REPAIR-AUDIT-001", "SOL-PUMP-RETRIEVAL-REPAIR-001", "SOL-PUMP-PROVENANCE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-PUMP-RETRIEVAL-REPAIR-001.json",
+    "docs/audits/SOL-PUMP-AUDIT-001.md",
+    "docs/audits/SOL-PUMP-REPAIR-AUDIT-001.md",
+    "docs/research/SOL-PUMP-PROVENANCE-001.md",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "test/solana/pump/pump-instruction-decoder.test.ts",
+    "test/fixtures/solana/pump/manifest.json",
+    "test/fixtures/solana/pump/create-v2.json",
+    "test/fixtures/solana/pump/buy.json",
+    "test/fixtures/solana/pump/sell.json",
+    "test/fixtures/solana/pump/migrate.json"
+  ],
+  "write_set": [
+    "docs/audits/SOL-PUMP-RETRIEVAL-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger, task specifications or prior audit reports.",
+    "Do not use mutable network data, provider credentials or unpinned transactions as evidence.",
+    "Do not accept decoded output for an absent, malformed, blank-endpoint or non-finalized retrieval watermark.",
+    "Do not weaken exact account-layout, creator-provenance or raw-integer requirements."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-PUMP-RETRIEVAL-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

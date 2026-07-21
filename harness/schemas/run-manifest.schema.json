@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memecoin-run-manifest-v1",
+  "type": "object",
+  "required": [
+    "schema_version", "run_id", "task_id", "status", "created_at_utc",
+    "git", "config_versions", "inputs", "source_watermarks", "outputs",
+    "acceptance", "integrity", "unresolved_items"
+  ],
+  "properties": {
+    "schema_version": { "const": "run-v1" },
+    "status": { "enum": ["RUNNING", "GREEN", "GREEN_WITH_ADVISORY", "PARK", "FAIL", "QUARANTINED"] }
+  }
+}

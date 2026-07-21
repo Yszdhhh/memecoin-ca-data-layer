@@ -1,0 +1,27 @@
+{
+  "schema_version": "harness-v1",
+  "project": "memecoin-ca-data-layer",
+  "active_stage": "solana-pumpfun-e2e",
+  "active_chains": ["solana"],
+  "blocked_chains": ["bsc", "robinhood"],
+  "verdicts": ["GREEN", "GREEN_WITH_ADVISORY", "PARK", "FAIL", "QUARANTINED"],
+  "rule_versions": {
+    "real_holders": "v1",
+    "funding_clusters": "v1",
+    "dev_behavior": "v1",
+    "wallet_quality": "v1"
+  },
+  "quality_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "forbidden_repository_patterns": [
+    ".env",
+    "*.pem",
+    "*.key",
+    "wallet*.json",
+    "*secret*"
+  ],
+  "future_stage_gate": "Solana fixture + authorized live CA E2E must be GREEN before activating BSC; Robinhood remains after BSC."
+}

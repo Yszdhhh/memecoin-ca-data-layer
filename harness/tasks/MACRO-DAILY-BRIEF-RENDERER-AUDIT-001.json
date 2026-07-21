@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DAILY-BRIEF-RENDERER-AUDIT-001",
+  "title": "Independent audit of offline Markdown daily brief renderer",
+  "tier": "T1",
+  "role": "auditor",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Independently verify that MACRO-DAILY-BRIEF-RENDERER-001 renders only injected offline macro observations, preserves provenance and unavailable states, and introduces no collection, delivery, recommendation or execution behavior.",
+  "dependencies": ["MACRO-DAILY-BRIEF-RENDERER-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "harness/config/project.json",
+    "harness/tasks/MACRO-DAILY-BRIEF-RENDERER-001.json",
+    "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md",
+    "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md",
+    "src/domain/macro-daily.ts",
+    "src/application/macro-daily-brief-renderer.ts",
+    "test/macro-daily-brief-renderer.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, fixtures, task specifications, ledger, credentials, providers, schedules or delivery integration.",
+    "Do not execute Dune queries, use credentials, make network calls, send Feishu messages or run a database migration.",
+    "Do not approve any BSC/Robinhood adapter, collector, webhook, backfill, trading, signing or execution behavior."
+  ],
+  "acceptance_criteria": [
+    "Only renderer and renderer-test files were added by the implementation task.",
+    "Output ordering is global, Solana, BSC, Robinhood, then data quality; Robinhood visibly states partial Uniswap v2/v3/v4 coverage.",
+    "Each rendered observation exposes query_ref, query_version, source_as_of, completeness and warning codes.",
+    "A completeness-zero observation is rendered unavailable and never leaks its numeric value.",
+    "No cross-chain score, market prediction, trading recommendation, buy/sell instruction or execution wording appears in renderer output.",
+    "No network, provider, Dune, credential, scheduler, Feishu or database-execution behavior is introduced."
+  ],
+  "deliverables": [
+    "docs/audits/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
