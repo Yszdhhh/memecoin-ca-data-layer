@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-HOURLY-LIFECYCLE-DESIGN-015",
+  "title": "Solana hourly, liquidity, conversion, and lifecycle metric-contract design",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Produce an evidence-labelled Solana-first metric-contract design for UTC hourly activity profiles, pool liquidity retention, launch-to-first-external-pool conversion, concentration, and lifecycle decay. Define exact event/time windows, UTC boundaries, cohort inclusion, coverage, missingness, right-censoring, warnings, and deterministic worked examples. Sentiment may be specified only as a separate source-labelled observation-layer boundary; it must not overwrite or be presented as chain-fact demand.",
+  "dependencies": ["MACRO-MICRO-DUNE-RESEARCH-010", "MACRO-DUNE-QUERY-PROVENANCE-001", "MACRO-DAILY-LARK-SHIM-RESOLUTION-009"],
+  "owner_authorization": "Offline design and source-provenance research only. No Dune API/CLI/query execution, credential access, database write, schedule, delivery, chain-adapter activation, or live payload retention is authorized.",
+  "inputs": ["docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "docs/research/MACRO-DUNE-QUERY-PROVENANCE-001.md", "docs/designs/DAILY-MARKET-MACRO-DESIGN-001.md", "src/infrastructure/dune/macro-core-query-definitions.ts", "db/migrations/002_macro_daily_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-HOURLY-LIFECYCLE-DESIGN-015.json", "docs/designs/MACRO-HOURLY-LIFECYCLE-DESIGN-015.md"],
+  "deliverables": ["docs/designs/MACRO-HOURLY-LIFECYCLE-DESIGN-015.md"],
+  "forbidden_actions": ["Do not execute Dune queries, use Dune API/CLI, access cookies or credentials, modify SQL, modify database schema, create collectors, activate a chain adapter, schedule a job, write a database, retain live payloads, or send Feishu messages.", "Do not modify or redefine CA creator facts, holder cleaning, creator rules, Dev behavior, wallet-cluster rules, or transaction-wallet quality rules.", "Do not claim buys, buyers, smart money, demand, net liquidity flow, graduation, full Robinhood coverage, Four.meme coverage, market-cap/FDV, survival, drawdown, or sentiment verification without source-pinned authoritative evidence.", "Do not make BSC or Robinhood implementation-ready. They may appear only as reporting-boundary and partial-coverage statements; Robinhood must remain explicitly Uniswap v2/v3/v4 partial coverage."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-HOURLY-LIFECYCLE-DESIGN-015.json", "npm run typecheck", "npm test", "git diff --check"]
+}
