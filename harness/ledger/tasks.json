@@ -35,7 +35,7 @@
     { "task_id": "MACRO-DAILY-POSTGRES-BOOTSTRAP-001", "spec": "harness/tasks/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.json", "status": "DONE" },
     { "task_id": "MACRO-DAILY-DUNE-SMOKE-001", "spec": "harness/tasks/MACRO-DAILY-DUNE-SMOKE-001.json", "status": "DONE" },
     { "task_id": "MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001", "spec": "harness/tasks/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.json", "status": "DONE" },
-    { "task_id": "SOL-E2E-001", "spec": "harness/tasks/SOL-E2E-001.json", "status": "BLOCKED_DEPENDENCY" },
+    { "task_id": "SOL-E2E-001", "spec": "harness/tasks/SOL-E2E-001.json", "status": "PARK" },
     { "task_id": "BSC-STAGE-001", "spec": "harness/tasks/BSC-STAGE-001.json", "status": "BLOCKED_STAGE" },
     { "task_id": "ROBIN-STAGE-001", "spec": "harness/tasks/ROBIN-STAGE-001.json", "status": "BLOCKED_STAGE" },
     { "task_id": "HARNESS-CA-WAVE-002", "spec": "harness/tasks/HARNESS-CA-WAVE-002.json", "status": "DONE" },
@@ -43,6 +43,10 @@
     { "task_id": "SOL-CA-ORCHESTRATION-AUDIT-001", "spec": "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json", "status": "BLOCKED_DEPENDENCY" },
     { "task_id": "SOL-WALLET-CLEANING-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-003.json", "status": "BLOCKED_DEPENDENCY" },
     { "task_id": "SOL-WALLET-CLEANING-AUDIT-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json", "status": "BLOCKED_DEPENDENCY" },
-    { "task_id": "SEC-HARNESS-CONTENT-SCAN-001", "spec": "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json", "status": "PARK" }
+    { "task_id": "SEC-HARNESS-CONTENT-SCAN-001", "spec": "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json", "status": "PARK" },
+    { "task_id": "SOL-E2E-GAP-RESEARCH-002", "spec": "harness/tasks/SOL-E2E-GAP-RESEARCH-002.json", "status": "READY" },
+    { "task_id": "HARNESS-AO-WAVE-003", "spec": "harness/tasks/HARNESS-AO-WAVE-003.json", "status": "DONE" },
+    { "task_id": "HARNESS-AO-AUTOMATION-001", "spec": "harness/tasks/HARNESS-AO-AUTOMATION-001.json", "status": "READY" },
+    { "task_id": "HARNESS-AO-AUTOMATION-AUDIT-001", "spec": "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json", "status": "BLOCKED_DEPENDENCY" }
   ]
 }

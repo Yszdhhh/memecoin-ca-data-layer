@@ -24,6 +24,17 @@ holder and Dev facts rather than bypassing their completeness gates.
 5. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
    the above audits and credential containment are complete.
 
+## Harness automation sequence
+
+1. `HARNESS-AO-AUTOMATION-001` is ready: add an offline, deterministic
+   lifecycle planner/verifier that derives readiness only from verified local
+   manifests and declared dependencies.
+2. `HARNESS-AO-AUTOMATION-AUDIT-001`: independent verification that the
+   lifecycle cannot bypass audit, ledger/spec consistency, or Owner gates.
+3. Agent Orchestrator may consume the verified planner output to dispatch
+   isolated workers, but network, credentials, and all live provider choices
+   remain outside the Harness and behind their existing Owner gates.
+
 ## Ready for dispatch
 
 - `SOL-HOLDER-001`: Solana holder snapshot integration.

@@ -1,0 +1,36 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-AO-AUTOMATION-001",
+  "title": "Implement deterministic offline AI harness task lifecycle",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Add deterministic local Harness lifecycle operations that derive runnable work from dependency-complete tasks, fail closed on missing independent-audit evidence, and atomically keep task specs and the ledger in sync. The implementation must be an offline planner and verifier only; it must not invoke AO, agents, providers, or credentials.",
+  "dependencies": ["HARNESS-AO-WAVE-003"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "harness/cli.ts",
+    "harness/lib/contracts.ts",
+    "harness/lib/validation.ts",
+    "harness/ledger/tasks.json",
+    "test/harness.test.ts"
+  ],
+  "write_set": [
+    "harness/cli.ts",
+    "harness/lib/contracts.ts",
+    "harness/lib/validation.ts",
+    "harness/schemas/run-manifest.schema.json",
+    "harness/schemas/task-spec.schema.json",
+    "test/harness.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not call Agent Orchestrator, agents, model gateways, network APIs, browsers, providers, package registries, credentials, or external commands other than the declared local acceptance commands.",
+    "Do not automatically mark a task GREEN, DONE, READY, or otherwise change a task state without a matching verified local manifest and declared dependency state.",
+    "Do not treat an implementer run as an independent audit, bypass auditor-agent identity separation, weaken T2/T3 gates, or alter Solana, BSC, Robinhood, macro, provider, database, or business-code behavior.",
+    "Do not add secrets, environment files, or executable live-operation configuration."
+  ],
+  "deliverables": ["test/harness.test.ts"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-AO-WAVE-003",
+  "title": "Register deterministic AI harness automation wave",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Register a bounded, offline-safe harness automation implementation and independent audit, while repairing the task-ledger integrity errors that prevent deterministic dispatch.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/tasks/SOL-E2E-001.json",
+    "harness/tasks/SOL-E2E-GAP-RESEARCH-002.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-AO-WAVE-003.json",
+    "harness/tasks/HARNESS-AO-AUTOMATION-001.json",
+    "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/CURRENT_WAVE.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify application, domain, infrastructure, provider, database, chain, or macro business code.",
+    "Do not invoke Agent Orchestrator, model gateways, external providers, credentials, browser state, or live data sources.",
+    "Do not alter chain-stage locks, E2E Owner gates, or task semantics beyond repairing the declared ledger/spec mismatch."
+  ],
+  "deliverables": [
+    "harness/tasks/HARNESS-AO-AUTOMATION-001.json",
+    "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-AO-WAVE-003.json",
+    "npm run harness:task -- validate harness/tasks/HARNESS-AO-AUTOMATION-001.json",
+    "npm run harness:task -- validate harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json",
+    "npm run harness:doctor",
+    "git diff --check"
+  ]
+}
