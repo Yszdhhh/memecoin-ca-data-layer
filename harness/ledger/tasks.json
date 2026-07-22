@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-21T02:45:00.000Z",
+  "updated_at_utc": "2026-07-21T15:42:00.000Z",
   "tasks": [
     { "task_id": "HARNESS-001", "spec": "harness/tasks/HARNESS-001.json", "status": "DONE" },
     { "task_id": "SOL-INGEST-001", "spec": "harness/tasks/SOL-INGEST-001.json", "status": "DONE" },
@@ -37,6 +37,12 @@
     { "task_id": "MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001", "spec": "harness/tasks/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.json", "status": "DONE" },
     { "task_id": "SOL-E2E-001", "spec": "harness/tasks/SOL-E2E-001.json", "status": "BLOCKED_DEPENDENCY" },
     { "task_id": "BSC-STAGE-001", "spec": "harness/tasks/BSC-STAGE-001.json", "status": "BLOCKED_STAGE" },
-    { "task_id": "ROBIN-STAGE-001", "spec": "harness/tasks/ROBIN-STAGE-001.json", "status": "BLOCKED_STAGE" }
+    { "task_id": "ROBIN-STAGE-001", "spec": "harness/tasks/ROBIN-STAGE-001.json", "status": "BLOCKED_STAGE" },
+    { "task_id": "HARNESS-CA-WAVE-002", "spec": "harness/tasks/HARNESS-CA-WAVE-002.json", "status": "DONE" },
+    { "task_id": "SOL-CA-ORCHESTRATION-001", "spec": "harness/tasks/SOL-CA-ORCHESTRATION-001.json", "status": "READY" },
+    { "task_id": "SOL-CA-ORCHESTRATION-AUDIT-001", "spec": "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json", "status": "BLOCKED_DEPENDENCY" },
+    { "task_id": "SOL-WALLET-CLEANING-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-003.json", "status": "BLOCKED_DEPENDENCY" },
+    { "task_id": "SOL-WALLET-CLEANING-AUDIT-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json", "status": "BLOCKED_DEPENDENCY" },
+    { "task_id": "SEC-HARNESS-CONTENT-SCAN-001", "spec": "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json", "status": "PARK" }
   ]
 }

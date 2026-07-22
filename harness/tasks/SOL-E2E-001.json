@@ -5,11 +5,13 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
-  "objective": "Prove fixture and explicitly authorized live-CA analysis with source watermarks, hashes, completeness warnings and an independent audit.",
-  "dependencies": ["SOL-HOLDER-001", "SOL-DEV-001"],
+  "status": "PARK",
+  "objective": "Prove fixture and explicitly authorized live-CA analysis with source watermarks, hashes, holder-cleaning evidence, creator evidence, Dev sell totals, quality-labelled large orders, completeness warnings and an independent audit.",
+  "dependencies": ["SOL-CA-ORCHESTRATION-AUDIT-001", "SOL-WALLET-CLEANING-AUDIT-003", "SEC-HARNESS-CONTENT-SCAN-001"],
   "inputs": [
     "src/application/analysis-service.ts",
+    "docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md",
+    "docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md",
     "OWNER_DECISIONS_NEEDED.md"
   ],
   "write_set": [
@@ -18,6 +20,7 @@
     "harness/reports/SOL-E2E-001/**"
   ],
   "forbidden_actions": [
+    "Do not start until the Owner has authorized a live CA, provider endpoint or plan, payload-retention policy and credential-containment status.",
     "Do not select or retain a live CA without Owner authorization.",
     "Do not store credentials or unsanitized provider payloads.",
     "Do not activate BSC or Robinhood."

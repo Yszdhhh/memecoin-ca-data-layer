@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-CA-WAVE-002",
+  "title": "Register the CA integration, wallet-cleaning and security work wave",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": null,
+  "status": "DONE",
+  "objective": "Record the externally reviewed Solana CA gaps as bounded implementation and independent-audit tasks, update the E2E gate, and preserve a separate owner-gated security containment task without changing business code or external state.",
+  "dependencies": ["SOL-E2E-GAP-RESEARCH-002"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/CURRENT_WAVE.md",
+    "harness/tasks/SOL-E2E-001.json",
+    "docs/research/SOL-E2E-GAP-RESEARCH-002.md"
+  ],
+  "write_set": [
+    "docs/research/EXTERNAL-CA-REVIEW-2026-07-21.md",
+    "harness/tasks/HARNESS-CA-WAVE-002.json",
+    "harness/tasks/SOL-CA-ORCHESTRATION-001.json",
+    "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json",
+    "harness/tasks/SOL-WALLET-CLEANING-003.json",
+    "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json",
+    "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json",
+    "harness/tasks/SOL-E2E-001.json",
+    "harness/ledger/tasks.json",
+    "harness/CURRENT_WAVE.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify application, domain, infrastructure, test, fixture, migration or provider code.",
+    "Do not use, print, copy, retain or rotate any credential, including the value identified by the external review.",
+    "Do not activate BSC, Robinhood, a live Solana provider, Dune execution, database deployment or message delivery.",
+    "Do not represent external-review recommendations as verified chain facts."
+  ],
+  "deliverables": [
+    "docs/research/EXTERNAL-CA-REVIEW-2026-07-21.md",
+    "harness/tasks/SOL-CA-ORCHESTRATION-001.json",
+    "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json",
+    "harness/tasks/SOL-WALLET-CLEANING-003.json",
+    "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json",
+    "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-CA-WAVE-002.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

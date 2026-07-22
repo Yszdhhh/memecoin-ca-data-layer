@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-ORCHESTRATION-001",
+  "title": "Wire audited Solana facts into the final CA analysis result",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Make the final Solana CA result consume pinned Pump creator evidence, the complete-only holder snapshot and complete-from-creation Dev history services, and expose structured evidence, completeness and warnings without making a live provider call.",
+  "dependencies": [
+    "HARNESS-CA-WAVE-002",
+    "SOL-INGEST-001",
+    "SOL-PUMP-RETRIEVAL-AUDIT-001",
+    "SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001",
+    "SOL-DEV-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "KNOWN_LIMITATIONS.md",
+    "src/application/analysis-service.ts",
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts",
+    "src/infrastructure/solana/dev/solana-dev-history-service.ts",
+    "docs/audits/SOL-PUMP-RETRIEVAL-AUDIT-001.md",
+    "docs/audits/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.md",
+    "docs/audits/SOL-DEV-REPAIR-AUDIT-001.md"
+  ],
+  "write_set": [
+    "src/application/analysis-service.ts",
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "test/application/solana/**",
+    "test/solana/helius/**",
+    "test/fixtures/solana/helius/**"
+  ],
+  "forbidden_actions": [
+    "Do not call RPC, Helius, Dune or any external provider; tests must use pinned fixtures only.",
+    "Do not modify the Pump decoder, holder snapshot service, Dev history service, their fixtures or their rule semantics.",
+    "Do not infer a creator from payer, signer, metadata or a third-party label when pinned Pump create evidence is absent.",
+    "Do not return holder concentration for a partial snapshot or Dev totals for incomplete-from-creation history.",
+    "Do not treat a token transfer as a sale, merge related-wallet activity into direct Dev activity, or use wallet quality as a holder-exclusion rule.",
+    "Do not activate BSC, Robinhood or a live data source."
+  ],
+  "deliverables": [
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

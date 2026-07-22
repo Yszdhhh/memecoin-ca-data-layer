@@ -1,0 +1,31 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-ORCHESTRATION-AUDIT-001",
+  "title": "Independent audit of final Solana CA fact orchestration",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify that the final CA result uses only pinned creator evidence, complete holder snapshots and complete-from-creation Dev history, preserving evidence and fail-closed behavior.",
+  "dependencies": ["SOL-CA-ORCHESTRATION-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-CA-ORCHESTRATION-001.json",
+    "src/application/analysis-service.ts",
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts",
+    "src/infrastructure/solana/dev/solana-dev-history-service.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "write_set": ["docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md"],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task specifications, task ledger or configuration.",
+    "Do not use network APIs, credentials, live providers or mutable data.",
+    "Do not accept a report that silently bypasses snapshot completeness, creator provenance or Dev-history completeness gates."
+  ],
+  "deliverables": ["docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

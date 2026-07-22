@@ -1,0 +1,31 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CLEANING-AUDIT-003",
+  "title": "Independent audit of Solana wallet cleaning evidence",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify that service-funder suppression is evidence-backed, only high-confidence clusters affect holder concentration, and wallet-quality labels remain separate from holder exclusion.",
+  "dependencies": ["SOL-WALLET-CLEANING-003"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-WALLET-CLEANING-003.json",
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "src/domain/rules/real-holders.ts",
+    "test/application/solana/wallet-cleaning-evidence.test.ts",
+    "test/funding-clusters.test.ts",
+    "test/wallet-quality.test.ts"
+  ],
+  "write_set": ["docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md"],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task specifications, task ledger or configuration.",
+    "Do not use network APIs, credentials, live providers or mutable data.",
+    "Do not accept any wallet-quality label as a substitute for chain evidence or a holder-exclusion reason."
+  ],
+  "deliverables": ["docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

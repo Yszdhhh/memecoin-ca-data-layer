@@ -2,8 +2,27 @@
 
 ## Goal
 
-Reach reproducible Solana/Pump.fun end-to-end analysis before any BSC or
-Robinhood implementation.
+Reach reproducible Solana/Pump.fun end-to-end CA analysis before any BSC or
+Robinhood implementation. The final CA result must compose audited creator,
+holder and Dev facts rather than bypassing their completeness gates.
+
+## Completed in this wave
+
+- `HARNESS-CA-WAVE-002`: recorded the 2026-07-21 external CA review as bounded
+  implementation, audit and security-containment tasks. It introduced no
+  business-code or external-provider change.
+
+## Next CA sequence
+
+1. `SOL-CA-ORCHESTRATION-001` is ready: connect pinned creator evidence, holder snapshot
+   completeness and Dev-history completeness to the final CA result.
+2. `SOL-CA-ORCHESTRATION-AUDIT-001`: independent confirmation that the final
+   result cannot bypass those gates.
+3. `SOL-WALLET-CLEANING-003`: retain evidence-backed service-funder suppression
+   and keep wallet quality separate from holder exclusion.
+4. `SOL-WALLET-CLEANING-AUDIT-003`: independent confirmation of that separation.
+5. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
+   the above audits and credential containment are complete.
 
 ## Ready for dispatch
 

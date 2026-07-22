@@ -1,0 +1,39 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CLEANING-003",
+  "title": "Strengthen Solana wallet cleaning and quality evidence",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Separate holder exclusion from wallet-quality labelling, suppress known service funders from same-source cluster inference with retained evidence, and expose the resulting wallet and cluster evidence in the CA result.",
+  "dependencies": ["SOL-CA-ORCHESTRATION-AUDIT-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "KNOWN_LIMITATIONS.md",
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "src/domain/rules/real-holders.ts",
+    "test/funding-clusters.test.ts",
+    "test/wallet-quality.test.ts"
+  ],
+  "write_set": [
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "test/application/solana/**",
+    "test/funding-clusters.test.ts",
+    "test/wallet-quality.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not lower the high-confidence cluster exclusion threshold or change the real-holder rule without a separate Owner decision.",
+    "Do not exclude a holder because it is bot-like, blacklisted, newly created or supplied by a third-party label.",
+    "Do not discard source, confidence, reason or scope for service-funder suppression and wallet-quality evidence.",
+    "Do not call external providers, use credentials, activate BSC or Robinhood, or modify the holder snapshot service."
+  ],
+  "deliverables": ["test/application/solana/wallet-cleaning-evidence.test.ts"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
