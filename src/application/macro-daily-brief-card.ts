@@ -29,7 +29,7 @@ export function buildMacroDailyBriefCard(brief: MacroDailyBrief, dynamics?: Macr
     ];
     entries.push(["DEX \u4ea4\u6613\u7b14\u6570", metrics.swap_transaction_count], ["DEX \u4ea4\u6613\u817f\u6570", metrics.trade_leg_count]);
     const activityLine = `\n${formatLegsPerTransaction(metrics.swap_transaction_count, metrics.trade_leg_count)}`;
-    if (chain === "solana") entries.push(["交易强度", intensity(metrics.dex_volume_usd, metrics.active_trader_count)], ["Pump 发射", metrics.pump_launch_count], ["PumpSwap 外部池", metrics.external_pool_count]);
+    if (chain === "solana") entries.push(["交易强度", intensity(metrics.dex_volume_usd, metrics.active_trader_count)], ["Pump 发射", metrics.pump_launch_count], ["PumpSwap 有效建池事件", metrics.external_pool_count]);
     if (chain === "bsc") entries.push(["Pancake 新池", metrics.pancakeswap_pool_created_count]);
     const dynamicsLine = chain === "solana" ? `\n日变动 / 7D 水位：${formatDynamics(dynamics?.chain["solana:dex_volume_usd"])}` : "";
     sections.push({ tag: "hr" }, markdown(`${heading}\n${lines(entries)}${activityLine}${dynamicsLine}`));

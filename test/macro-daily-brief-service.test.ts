@@ -151,3 +151,32 @@ test("rejects incomplete provenance and non-UTC hourly bounds", async () => {
   invalidHour.hourlyProfiles[0] = { ...invalidHour.hourlyProfiles[0]!, hourUtc: 24 };
   assert.throws(() => service.normalize(invalidHour), /hourUtc must be an integer/);
 });
+
+test("derives a complete Solana hourly summary only from a full UTC profile contract", async () => {
+  const input = await loadInput();
+  const base = input.hourlyProfiles[0]!;
+  input.hourlyProfiles = Array.from({ length: 24 }, (_value, hourUtc) => {
+    const metricValue = hourUtc === 0 ? 50 : hourUtc === 1 ? 30 : hourUtc === 2 ? 20 : 0;
+    return {
+      ...base,
+      queryRef: "fixture:hourly-profile",
+      warnings: [{ code: "volume_is_leg_sum" }],
+      chain: "solana" as const,
+      profileWindowDays: 60 as const,
+      profileEndDayUtc: "2026-07-19",
+      coveredDayCount: 60 as const,
+      expectedDayCount: 60 as const,
+      sampleDayCount: 60,
+      hourUtc,
+      metricValue,
+      metricShare: metricValue / 100,
+    };
+  });
+
+  const brief = service.normalize(input);
+  const summary = brief.chainReports.find((report) => report.chain === "solana")!.hourlyProfileSummaries![0]!;
+  assert.equal(summary.analysisStatus, "complete");
+  assert.equal(summary.peakHourUtc, 0);
+  assert.equal(summary.highActivityWindowUtc, "00:00–01:00 UTC");
+  assert.equal(summary.intradayTimeConcentrationHhi, 0.38);
+});

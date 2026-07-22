@@ -108,3 +108,27 @@ test("renders no recommendation or execution language", () => {
   assert.doesNotMatch(rendered, /交易建议|执行决策|买入|卖出|预测/);
   assert.match(rendered, /完整溯源、查询版本与告警已持久化/);
 });
+
+test("renders complete hourly time concentration and keeps unsupported lifecycle lines PARK", () => {
+  const input = brief();
+  input.chainReports.find((report) => report.chain === "solana")!.hourlyProfileSummaries = [{
+    chain: "solana",
+    metricName: "dex_volume_usd",
+    profileWindowDays: 60,
+    profileEndDayUtc: "2026-07-19",
+    coveredDayCount: 60,
+    expectedDayCount: 60,
+    totalMetricValue: 100,
+    analysisStatus: "complete",
+    peakHourUtc: 0,
+    highActivityWindowUtc: "00:00–01:00 UTC",
+    intradayTimeConcentrationHhi: 0.38,
+    effectiveActiveHours: 1 / 0.38,
+    warnings: [],
+  }];
+  const rendered = renderMacroDailyBrief(input);
+
+  assert.match(rendered, /DEX 成交额 60日 UTC 小时画像：峰值 00:00 UTC；高活跃窗口 00:00–01:00 UTC；时间 HHI 0\.3800/);
+  assert.match(rendered, /流动性留存、首次验证外部池转化、生命周期阈值与情绪观察目前均为 PARK/);
+  assert.match(rendered, /PumpSwap 有效建池事件不等于外盘、迁移、毕业或 token 级转化/);
+});

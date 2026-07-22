@@ -17,6 +17,12 @@ export type MacroChainMetricName =
   | "pancakeswap_lp_net_change_usd"
   | "uniswap_pool_created_count";
 
+export type MacroHourlyProfileMetricName =
+  | MacroChainMetricName
+  | "active_trader_address_hour_count"
+  | "pump_create_event_count"
+  | "valid_pumpswap_pool_create_event_count";
+
 export type MacroCoverageStatus = "declared_registry" | "partial_coverage";
 
 export interface MacroWarning {
@@ -58,13 +64,32 @@ export interface MacroChainMetricObservation extends MacroProvenance {
 export interface MacroHourlyChainProfileObservation extends MacroProvenance {
   chain: MacroChain;
   profileWindowDays: 60 | 90;
-  metricName: MacroChainMetricName;
+  metricName: MacroHourlyProfileMetricName;
   hourUtc: number;
   sampleDayCount: number;
   metricValue: number;
   metricShare: number;
   registryVersion: string;
   coverageStatus: MacroCoverageStatus;
+  profileEndDayUtc?: string;
+  coveredDayCount?: number;
+  expectedDayCount?: 60 | 90;
+}
+
+export interface MacroHourlyProfileSummary {
+  chain: "solana";
+  profileWindowDays: 60 | 90;
+  profileEndDayUtc: string;
+  metricName: MacroHourlyProfileMetricName;
+  coveredDayCount: number;
+  expectedDayCount: number;
+  totalMetricValue: number;
+  analysisStatus: "complete" | "partial" | "not_applicable";
+  peakHourUtc?: number;
+  highActivityWindowUtc?: string;
+  intradayTimeConcentrationHhi?: number;
+  effectiveActiveHours?: number;
+  warnings: MacroWarning[];
 }
 
 export interface MacroDailyBriefInput {
@@ -78,6 +103,7 @@ export interface MacroChainBriefSection {
   chain: MacroChain;
   metrics: MacroChainMetricObservation[];
   hourlyProfiles: MacroHourlyChainProfileObservation[];
+  hourlyProfileSummaries?: MacroHourlyProfileSummary[];
 }
 
 export interface MacroDailyBrief {

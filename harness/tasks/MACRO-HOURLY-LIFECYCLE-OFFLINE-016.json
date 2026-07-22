@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-HOURLY-LIFECYCLE-OFFLINE-016",
+  "title": "Implement Solana offline hourly activity contracts and fail-closed lifecycle fixtures",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement an offline-only Solana hourly market-activity path: versioned, unexecuted DuneSQL blueprints; UTC 60/90-day profile contracts; deterministic report rendering; and fixed V1-V5 contract tests. Real pool liquidity retention, token-to-pool linkage, first verified external-pool conversion, drawdown/lifecycle survival, and sentiment remain PARK/fail-closed fixtures until an authoritative reproducible source study is approved.",
+  "dependencies": ["MACRO-MICRO-DUNE-RESEARCH-010", "MACRO-HOURLY-LIFECYCLE-DESIGN-015"],
+  "owner_authorization": "Offline contracts, unexecuted query blueprints, deterministic fixtures, tests, and local report rendering only. No Dune API/CLI/query execution, credential access, database write or migration, scheduling, delivery, chain-adapter activation, live payload retention, or sentiment collection is authorized.",
+  "inputs": ["docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "docs/designs/MACRO-HOURLY-LIFECYCLE-DESIGN-015.md", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/dune/macro-core-query-definitions.ts", "test/fixtures/macro/daily-metric-input.json"],
+  "write_set": ["harness/tasks/MACRO-HOURLY-LIFECYCLE-OFFLINE-016.json", "src/domain/macro-daily.ts", "src/application/macro-hourly-lifecycle-contracts.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "src/infrastructure/dune/macro-core-query-definitions.ts", "test/fixtures/macro/daily-metric-input.json", "test/macro-hourly-lifecycle-contracts.test.ts", "test/macro-daily-brief-service.test.ts", "test/macro-daily-brief-renderer.test.ts", "test/macro-daily-brief-card.test.ts"],
+  "deliverables": ["src/application/macro-hourly-lifecycle-contracts.ts", "src/infrastructure/dune/macro-core-query-definitions.ts", "test/macro-hourly-lifecycle-contracts.test.ts"],
+  "forbidden_actions": ["Do not execute Dune queries or use Dune API/CLI; do not access keys, cookies, credentials, external APIs, or live payloads.", "Do not modify CA creator facts, holder cleaning, creator rules, Dev behavior, wallet-cluster rules, or transaction-wallet quality rules.", "Do not modify database migrations, repositories, live-run services, Dune CLI, scheduling, delivery, Lark/Feishu publishing, or CLI entrypoints.", "Do not activate BSC or Robinhood adapters. Robinhood remains explicitly Uniswap v2/v3/v4 partial_coverage; Four.meme remains PARK.", "Do not call a valid PumpSwap pool-create event an external listing, external pool conversion, migration, graduation, or token-level linkage. Do not calculate real liquidity retention, real conversion/graduation, real drawdown/survival, or sentiment values.", "Do not present address observations as people, buyers, demand, wallet quality, or a token-buy signal; time concentration is not holder, wallet, or entity concentration."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-HOURLY-LIFECYCLE-OFFLINE-016.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

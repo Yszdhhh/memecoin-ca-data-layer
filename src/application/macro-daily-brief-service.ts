@@ -1,3 +1,6 @@
+import {
+  summarizeHourlyProfile,
+} from "./macro-hourly-lifecycle-contracts.js";
 import type {
   MacroChain,
   MacroChainBriefSection,
@@ -7,6 +10,8 @@ import type {
   MacroDailyBriefInput,
   MacroGlobalMetricObservation,
   MacroHourlyChainProfileObservation,
+  MacroHourlyProfileMetricName,
+  MacroHourlyProfileSummary,
   MacroProvenance,
 } from "../domain/macro-daily.js";
 
@@ -33,6 +38,28 @@ const CHAIN_UNITS: Record<MacroChainMetricName, MacroChainMetricObservation["uni
   pancakeswap_pool_created_count: "count",
   pancakeswap_lp_net_change_usd: "usd",
   uniswap_pool_created_count: "count",
+};
+
+const HOURLY_UNITS: Record<MacroHourlyProfileMetricName, MacroChainMetricObservation["unit"]> = {
+  ...CHAIN_UNITS,
+  active_trader_address_hour_count: "count",
+  pump_create_event_count: "count",
+  valid_pumpswap_pool_create_event_count: "count",
+};
+
+const HOURLY_SOLANA_ONLY = new Set<MacroHourlyProfileMetricName>([
+  "active_trader_address_hour_count",
+  "pump_create_event_count",
+  "valid_pumpswap_pool_create_event_count",
+]);
+
+const PROFILE_WARNING_CODES: Partial<Record<MacroHourlyProfileMetricName, string>> = {
+  dex_volume_usd: "volume_is_leg_sum",
+  active_trader_address_hour_count: "priced_trade_rows_only",
+  swap_transaction_count: "deduplicated_trade_legs",
+  trade_leg_count: "deduplicated_trade_legs",
+  pump_create_event_count: "pump_only",
+  valid_pumpswap_pool_create_event_count: "not_migrate",
 };
 
 const CHAIN_SECTIONS: Record<MacroChainMetricName, MacroChainMetricObservation["section"]> = {
@@ -64,6 +91,7 @@ export class MacroDailyBriefService {
     input.chainMetrics.forEach((metric) => this.validateChainMetric(metric, input.reportDay));
     input.hourlyProfiles.forEach((profile) => this.validateHourlyProfile(profile));
     assertUniqueObservations(input);
+    const hourlyProfileSummaries = buildHourlyProfileSummaries(input.hourlyProfiles);
 
     const chainReports: MacroChainBriefSection[] = (["solana", "bsc", "robinhood"] as const).map((chain) => ({
       chain,
@@ -75,6 +103,7 @@ export class MacroDailyBriefService {
         .filter((profile) => profile.chain === chain)
         .slice()
         .sort(compareHourlyProfiles),
+      hourlyProfileSummaries: hourlyProfileSummaries.filter((summary) => summary.chain === chain),
     }));
 
     return {
@@ -109,13 +138,12 @@ export class MacroDailyBriefService {
   }
 
   private validateHourlyProfile(profile: MacroHourlyChainProfileObservation): void {
-    this.validateChainMetricIdentity(
-      profile.chain,
-      profile.metricName,
-      CHAIN_UNITS[profile.metricName],
-      profile.registryVersion,
-      profile.coverageStatus,
-    );
+    if (isSolanaOnlyHourlyMetric(profile.metricName)) {
+      if (profile.chain !== "solana") throw new MacroDailyValidationError(`unsupported hourly metric for ${profile.chain}: ${profile.metricName}`);
+      if (!profile.registryVersion.trim()) throw new MacroDailyValidationError("registryVersion is required");
+    } else {
+      this.validateChainMetricIdentity(profile.chain, profile.metricName as MacroChainMetricName, HOURLY_UNITS[profile.metricName], profile.registryVersion, profile.coverageStatus);
+    }
     if (!Number.isInteger(profile.hourUtc) || profile.hourUtc < 0 || profile.hourUtc > 23) {
       throw new MacroDailyValidationError("hourly profile hourUtc must be an integer from zero through twenty-three");
     }
@@ -127,6 +155,7 @@ export class MacroDailyBriefService {
       throw new MacroDailyValidationError("hourly profile metricShare must be between zero and one");
     }
     assertProvenance(profile);
+    assertHourlyProfileContractMetadata(profile);
   }
 
   private validateChainMetricIdentity(
@@ -152,6 +181,81 @@ export class MacroDailyBriefService {
       }
     }
   }
+}
+
+function isSolanaOnlyHourlyMetric(metricName: MacroHourlyProfileMetricName): metricName is "active_trader_address_hour_count" | "pump_create_event_count" | "valid_pumpswap_pool_create_event_count" {
+  return HOURLY_SOLANA_ONLY.has(metricName);
+}
+function assertHourlyProfileContractMetadata(profile: MacroHourlyChainProfileObservation): void {
+  const hasContractMetadata = profile.profileEndDayUtc !== undefined || profile.coveredDayCount !== undefined || profile.expectedDayCount !== undefined;
+  if (!hasContractMetadata) return;
+  if (profile.chain !== "solana" || profile.profileEndDayUtc === undefined || profile.coveredDayCount === undefined || profile.expectedDayCount === undefined) {
+    throw new MacroDailyValidationError("hourly profile contract metadata must be complete and Solana-only");
+  }
+  assertReportDay(profile.profileEndDayUtc);
+  if (profile.expectedDayCount !== profile.profileWindowDays || profile.coveredDayCount !== profile.sampleDayCount || profile.coveredDayCount < 0 || profile.coveredDayCount > profile.expectedDayCount) {
+    throw new MacroDailyValidationError("hourly profile coverage metadata is inconsistent");
+  }
+  if (Math.abs(profile.completeness - profile.coveredDayCount / profile.expectedDayCount) > Number.EPSILON) {
+    throw new MacroDailyValidationError("hourly profile completeness must equal covered days divided by expected days");
+  }
+  const requiredWarning = PROFILE_WARNING_CODES[profile.metricName];
+  if (requiredWarning && !profile.warnings.some((warning) => warning.code === requiredWarning)) {
+    throw new MacroDailyValidationError(`hourly profile requires warning: ${requiredWarning}`);
+  }
+}
+
+function buildHourlyProfileSummaries(profiles: readonly MacroHourlyChainProfileObservation[]): MacroHourlyProfileSummary[] {
+  const groups = new Map<string, MacroHourlyChainProfileObservation[]>();
+  for (const profile of profiles) {
+    if (profile.chain !== "solana" || profile.profileEndDayUtc === undefined) continue;
+    const key = `${profile.profileWindowDays}:${profile.profileEndDayUtc}:${profile.metricName}`;
+    const group = groups.get(key) ?? [];
+    group.push(profile);
+    groups.set(key, group);
+  }
+
+  return Array.from(groups.values(), (group) => {
+    const first = group[0]!;
+    if (group.some((profile) => profile.coveredDayCount !== first.coveredDayCount || profile.expectedDayCount !== first.expectedDayCount || profile.registryVersion !== first.registryVersion || profile.queryVersion !== first.queryVersion || profile.coverageStatus !== first.coverageStatus)) {
+      throw new MacroDailyValidationError("hourly profile contract group has mixed coverage or provenance versions");
+    }
+    const summary = summarizeHourlyProfile({
+      profileWindowDays: first.profileWindowDays,
+      profileEndDayUtc: first.profileEndDayUtc!,
+      coveredDayCount: first.coveredDayCount!,
+      expectedDayCount: first.expectedDayCount!,
+      points: group.map((profile) => ({ hourUtc: profile.hourUtc, metricValue: profile.metricValue })),
+    });
+    const total = summary.totalMetricValue;
+    for (const profile of group) {
+      const expectedShare = total === 0 ? 0 : profile.metricValue / total;
+      if (Math.abs(profile.metricShare - expectedShare) > 1e-12) {
+        throw new MacroDailyValidationError("hourly profile metricShare does not match its UTC profile total");
+      }
+    }
+    const result: MacroHourlyProfileSummary = {
+      chain: "solana",
+      metricName: first.metricName,
+      profileWindowDays: summary.profileWindowDays,
+      profileEndDayUtc: summary.profileEndDayUtc,
+      coveredDayCount: summary.coveredDayCount,
+      expectedDayCount: summary.expectedDayCount,
+      totalMetricValue: summary.totalMetricValue,
+      analysisStatus: summary.analysisStatus,
+      warnings: summary.warnings,
+    };
+    if (summary.analysisStatus === "complete") {
+      if (summary.peakHourUtc === undefined || summary.highActivityWindowUtc === undefined || summary.intradayTimeConcentrationHhi === undefined || summary.effectiveActiveHours === undefined) {
+        throw new MacroDailyValidationError("complete hourly profile summary is missing a derived value");
+      }
+      result.peakHourUtc = summary.peakHourUtc;
+      result.highActivityWindowUtc = summary.highActivityWindowUtc;
+      result.intradayTimeConcentrationHhi = summary.intradayTimeConcentrationHhi;
+      result.effectiveActiveHours = summary.effectiveActiveHours;
+    }
+    return result;
+  }).sort((a, b) => a.metricName.localeCompare(b.metricName) || a.profileWindowDays - b.profileWindowDays || a.profileEndDayUtc.localeCompare(b.profileEndDayUtc));
 }
 
 function assertProvenance(provenance: MacroProvenance): void {
@@ -192,7 +296,7 @@ function assertUniqueObservations(input: MacroDailyBriefInput): void {
   input.globalMetrics.forEach((metric) => add(`global:${metric.reportDay}:${metric.metricName}:${metric.subject}`));
   input.chainMetrics.forEach((metric) => add(`chain:${metric.reportDay}:${metric.chain}:${metric.metricName}`));
   input.hourlyProfiles.forEach((profile) =>
-    add(`hour:${profile.chain}:${profile.profileWindowDays}:${profile.metricName}:${profile.hourUtc}`),
+    add(`hour:${profile.chain}:${profile.profileWindowDays}:${profile.profileEndDayUtc ?? "legacy"}:${profile.metricName}:${profile.hourUtc}`),
   );
 }
 
