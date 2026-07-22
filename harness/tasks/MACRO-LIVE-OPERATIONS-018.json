@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-LIVE-OPERATIONS-018",
+  "title": "Design macro daily-brief live-operation preflight and Owner authorization gates",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Produce a fail-closed, Solana-only live-operation design for the approved macro daily brief. Define Dune saved-query allowlisting, aggregate-only storage, a 400-day retention policy, complete-UTC-day scheduling at D+1 14:00 UTC, test-destination delivery gating, retries, idempotency, monitoring, and an authorization matrix. This task designs and documents the preflight only; it must not execute Dune, write a database, schedule a job, or deliver a report.",
+  "dependencies": ["MACRO-MICRO-DUNE-RESEARCH-010", "MACRO-HOURLY-LIFECYCLE-DESIGN-015", "MACRO-HOURLY-LIFECYCLE-OFFLINE-016"],
+  "owner_authorization": "Owner authorizes task-card and design creation only. The operating policy is: Dune saved-query allowlist only with no dynamic SQL; aggregate-only database storage; aggregate, manifest, and rendered-report retention for 400 days with raw provider payloads retained for 0 days by default; complete UTC report day with first run at D+1 14:00 UTC; delivery starts only at an Owner-specified test chat/destination and expands only after seven GREEN runs; retries at 5m, 15m, and 60m with a UTC-day idempotency key; alert on execution failure, coverage insufficiency, delivery failure, and version drift. Dune credentials, concrete database target, concrete delivery/alert targets, live execution, database writes, scheduling, and delivery remain unauthorized until separately supplied or approved in a later execution task.",
+  "inputs": ["OWNER_DECISIONS_NEEDED.md", "harness/config/project.json", "docs/research/MACRO-MICRO-DUNE-RESEARCH-010.md", "docs/designs/MACRO-HOURLY-LIFECYCLE-DESIGN-015.md", "harness/tasks/MACRO-HOURLY-LIFECYCLE-OFFLINE-016.json", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "db/migrations/002_macro_daily_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-LIVE-OPERATIONS-018.json", "docs/designs/MACRO-LIVE-OPERATIONS-018.md"],
+  "deliverables": ["docs/designs/MACRO-LIVE-OPERATIONS-018.md"],
+  "forbidden_actions": ["Do not execute Dune queries or use Dune API/CLI; do not access keys, cookies, credentials, external APIs, or live payloads.", "Do not create or modify database migrations, repositories, collectors, schedulers, delivery implementations, Lark/Feishu publishing, CLI entrypoints, or runtime configuration.", "Do not treat placeholder database, test-delivery, or alert destinations as resolved. They must be recorded as PARK/Owner decision required.", "Do not activate BSC or Robinhood. Robinhood remains explicitly Uniswap v2/v3/v4 partial_coverage; Four.meme remains PARK.", "Do not modify CA creator facts, holder cleaning, creator rules, Dev behavior, wallet-cluster rules, or transaction-wallet quality rules.", "Do not calculate or claim real liquidity retention, token-to-pool linkage, external-pool conversion, drawdown/survival, sentiment values, real users, buyers, demand, smart money, net flows, wallet quality, or a token trading signal."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-LIVE-OPERATIONS-018.json", "npm run typecheck", "npm test", "git diff --check"]
+}
