@@ -92,11 +92,90 @@ export interface MacroHourlyProfileSummary {
   warnings: MacroWarning[];
 }
 
+/**
+ * A deliberately fail-closed boundary for a future observation-only sentiment source.
+ * It cannot carry a score, count, or demand assertion until a separately authorized
+ * source and coverage contract is implemented.
+ */
+export interface MacroSentimentObservationLayer {
+  layer: "sentiment";
+  sourceLabel: string;
+  sourceAuthorization: "not_authorized";
+  coverageStatus: "unknown";
+  observationStatus: "park";
+  warnings: MacroWarning[];
+}
+
+export interface MacroMarketActivitySummary {
+  reportDay: string;
+  basis: "complete_declared_daily_dex_activity";
+  analysisStatus: "complete" | "not_comparable";
+  eligibleChains: MacroChain[];
+  leadingChains?: MacroChain[];
+  excludedChains: Array<{
+    chain: MacroChain;
+    reason: "partial_coverage" | "missing_or_partial_activity_inputs";
+  }>;
+  warnings: MacroWarning[];
+}
+
+/**
+ * A source-labelled, manually captured external snapshot. It is intentionally
+ * separate from Dune UTC-day observations and carries no liquidity or demand claim.
+ */
+export interface MacroDexScreenerRolling24hObservation {
+  layer: "dexscreener_realtime";
+  sourceLabel: string;
+  chain: "solana";
+  capturedAt: Date;
+  rollingWindowStart: Date;
+  rollingWindowEnd: Date;
+  volumeUsd: number;
+  transactionCount: number;
+  latestBlock: number;
+  warnings: MacroWarning[];
+}
+
+export interface MacroDuneRolling24hObservation extends MacroProvenance {
+  chain: "solana";
+  rollingWindowStart: Date;
+  rollingWindowEnd: Date;
+  dataWatermark: Date;
+  volumeUsd: number;
+  uniqueSwapTransactionCount: number;
+  tradeLegCount: number;
+  registryVersion: string;
+  coverageStatus: "declared_registry";
+}
+
+export type MacroDexDuneReconciliationStatus =
+  | "park_dune_unavailable"
+  | "park_window_mismatch"
+  | "park_dune_watermark_behind"
+  | "park_dune_incomplete"
+  | "aligned_pending_calibration";
+
+export interface MacroDexDuneReconciliation {
+  layer: "dex_dune_reconciliation";
+  chain: "solana";
+  dexscreener: MacroDexScreenerRolling24hObservation;
+  dune?: MacroDuneRolling24hObservation;
+  analysisStatus: MacroDexDuneReconciliationStatus;
+  directComparisonStatus: "not_directly_comparable";
+  volumeDifferencePct?: number;
+  transactionDifferenceVsUniqueSwapPct?: number;
+  transactionDifferenceVsTradeLegPct?: number;
+  warnings: MacroWarning[];
+}
+
 export interface MacroDailyBriefInput {
   reportDay: string;
   globalMetrics: MacroGlobalMetricObservation[];
   chainMetrics: MacroChainMetricObservation[];
   hourlyProfiles: MacroHourlyChainProfileObservation[];
+  sentimentLayer?: MacroSentimentObservationLayer;
+  dexscreenerRolling24hObservation?: MacroDexScreenerRolling24hObservation;
+  duneRolling24hObservation?: MacroDuneRolling24hObservation;
 }
 
 export interface MacroChainBriefSection {
@@ -110,4 +189,7 @@ export interface MacroDailyBrief {
   reportDay: string;
   globalMetrics: MacroGlobalMetricObservation[];
   chainReports: MacroChainBriefSection[];
+  marketActivitySummary?: MacroMarketActivitySummary;
+  sentimentLayer?: MacroSentimentObservationLayer;
+  dexDuneReconciliation?: MacroDexDuneReconciliation;
 }

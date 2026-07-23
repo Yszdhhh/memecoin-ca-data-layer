@@ -2,6 +2,7 @@ import type { MacroChain, MacroChainMetricName, MacroGlobalMetricName, MacroHour
 
 const SPELLBOOK_SHA = "b553234af744bef843a51e7f1cfd319d5cced24d";
 const REPORT_DAY_SQL = "CURRENT_DATE - INTERVAL '2' DAY";
+const SOLANA_LIVE_REPORT_DAY_SQL = "CAST('{{report_day}}' AS date)";
 
 export type CoreBlueprintId =
   | "G1_global_evm_dex_day"
@@ -91,6 +92,17 @@ export const CORE_QUERY_DEFINITIONS: readonly CoreQueryDefinition[] = [
   { blueprintId: "B3_bsc_trade_activity_day", sql: `WITH trade_legs AS (SELECT DISTINCT tx_hash, evt_index FROM dex.trades WHERE blockchain = 'bnb' AND block_date = ${REPORT_DAY_SQL}) SELECT ${REPORT_DAY_SQL} AS report_day, COUNT(DISTINCT tx_hash) AS swap_transaction_count, COUNT(*) AS trade_leg_count FROM trade_legs`, metrics: bscTradeActivityMetrics },
   { blueprintId: "R2_robinhood_uni_trade_activity_day", sql: `WITH trade_legs AS (SELECT DISTINCT tx_hash, evt_index FROM dex.trades WHERE blockchain = 'robinhood' AND project = 'uniswap' AND version IN ('2', '3', '4') AND block_date = ${REPORT_DAY_SQL}) SELECT ${REPORT_DAY_SQL} AS report_day, COUNT(DISTINCT tx_hash) AS swap_transaction_count, COUNT(*) AS trade_leg_count FROM trade_legs`, metrics: robinhoodTradeActivityMetrics },
 ];
+
+// Live Solana uses a reviewed Dune saved-query parameter. It is deliberately
+// separate from the legacy core definitions so that old CLI runs keep their
+// fixed historical window and cannot accidentally execute a parameterized query.
+export const LIVE_SOLANA_QUERY_DEFINITIONS: readonly CoreQueryDefinition[] = [
+  { blueprintId: "S1_solana_capital_day", sql: `SELECT ${SOLANA_LIVE_REPORT_DAY_SQL} AS report_day, SUM(amount_usd) AS dex_volume_usd, COUNT(DISTINCT trader_id) AS active_trader_count FROM dex_solana.trades WHERE block_date = ${SOLANA_LIVE_REPORT_DAY_SQL} AND amount_usd IS NOT NULL`, metrics: solanaCapitalMetrics },
+  { blueprintId: "S2_solana_pump_launch_day", sql: `SELECT ${SOLANA_LIVE_REPORT_DAY_SQL} AS report_day, COUNT(*) AS pump_launch_count FROM solana.instruction_calls WHERE executing_account = '6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P' AND bytearray_substring(data, 1, 8) = 0x181ec828051c0777 AND tx_success = true AND CAST(block_time AS date) = ${SOLANA_LIVE_REPORT_DAY_SQL}`, metrics: [{ scope: "chain", column: "pump_launch_count", chain: "solana", section: "supply", metricName: "pump_launch_count", unit: "count", registryVersion: `spellbook:pumpdotfun:create@${SPELLBOOK_SHA}`, coverageStatus: "declared_registry", warningCodes: ["pump_only"] }] },
+  { blueprintId: "S3_solana_pumpswap_pool_day", sql: `SELECT ${SOLANA_LIVE_REPORT_DAY_SQL} AS report_day, COUNT(*) AS external_pool_count FROM pumpswap_solana.pools WHERE CAST(created_at AS date) = ${SOLANA_LIVE_REPORT_DAY_SQL} AND is_valid_pool = true`, metrics: [{ scope: "chain", column: "external_pool_count", chain: "solana", section: "supply", metricName: "external_pool_count", unit: "count", registryVersion: `spellbook:pumpswap:pools@${SPELLBOOK_SHA}`, coverageStatus: "declared_registry", warningCodes: ["not_migrate", "not_external_listing", "not_graduation"] }] },
+  { blueprintId: "S4_solana_trade_activity_day", sql: `WITH trade_legs AS (SELECT DISTINCT tx_id, outer_instruction_index, inner_instruction_index, tx_index, block_month FROM dex_solana.trades WHERE block_date = ${SOLANA_LIVE_REPORT_DAY_SQL}) SELECT ${SOLANA_LIVE_REPORT_DAY_SQL} AS report_day, COUNT(DISTINCT tx_id) AS swap_transaction_count, COUNT(*) AS trade_leg_count FROM trade_legs`, metrics: solanaTradeActivityMetrics },
+];
+
 export type OfflineHourlyProfileBlueprintId = "S5_solana_hourly_dex_activity_60d" | "S6_solana_hourly_dex_activity_90d" | "S7_solana_hourly_pump_activity_60d" | "S8_solana_hourly_pump_activity_90d";
 
 export interface OfflineHourlyMetricDefinition {

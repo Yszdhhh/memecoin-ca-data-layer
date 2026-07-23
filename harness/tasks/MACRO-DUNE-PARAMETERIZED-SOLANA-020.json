@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DUNE-PARAMETERIZED-SOLANA-020",
+  "title": "Solana-only parameterized live-query contract and manual-query default",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Reconcile the Solana S1-S4 live-query UTC day with the D+1 14:00 UTC policy by using a fixed saved-query report_day parameter, and make manual query/no-send the default. Test-only Feishu delivery remains an explicit opt-in. This task does not provision credentials, create Dune resources, execute live queries, schedule delivery, or activate another chain.",
+  "dependencies": ["MACRO-DUNE-LIVE-SOLANA-019"],
+  "owner_authorization": "Owner authorizes the Solana-only parameterized query contract and confirms: test runs may send to the fixed Feishu test group; normal use is manual query only after an explicit Owner instruction and must not auto-send to Feishu. Solana remains the only active chain. A newly rotated DUNE_API_KEY and DATABASE_URL remain runtime-only external configuration for a later real-data run.",
+  "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_OPERATING_PLAYBOOK.md", "KNOWN_LIMITATIONS.md", "OWNER_DECISIONS_NEEDED.md", "harness/config/project.json", "harness/tasks/MACRO-DUNE-LIVE-SOLANA-019.json", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/infrastructure/dune/macro-dune-rest.ts", "src/application/macro-live-timeseries-service.ts"],
+  "write_set": ["harness/tasks/MACRO-DUNE-PARAMETERIZED-SOLANA-020.json", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/infrastructure/dune/macro-dune-rest.ts", "src/application/macro-live-timeseries-service.ts", "test/macro-dune-rest.test.ts", "test/macro-live-timeseries-service.test.ts", "docs/designs/MACRO-DUNE-PARAMETERIZED-SOLANA-020.md"],
+  "deliverables": ["src/infrastructure/dune/macro-core-query-definitions.ts", "src/infrastructure/dune/macro-dune-rest.ts", "src/application/macro-live-timeseries-service.ts", "docs/designs/MACRO-DUNE-PARAMETERIZED-SOLANA-020.md"],
+  "forbidden_actions": ["Do not read, print, write, commit, or include any credential, .env file, database connection string, browser state, token, cookie, or raw provider payload in a repository or run artifact.", "Do not create, update, execute, or infer a Dune saved query; saved-query provisioning is a separate explicitly instructed runtime operation after this contract is GREEN.", "Do not accept arbitrary SQL, arbitrary parameters, or arbitrary Dune query IDs. Only the S1-S4 Solana saved-query allowlist may carry the exact report_day parameter.", "Do not schedule, auto-send, or expand delivery beyond explicit test-only Feishu sends. Normal use must remain manual query/no-send until an explicit Owner instruction.", "Do not activate BSC, Four.meme, or Robinhood, and do not modify CA facts, holder cleaning, creator precedence, Dev behavior, wallet clusters, wallet-quality rules, sentiment facts, or recommendation/trading language."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DUNE-PARAMETERIZED-SOLANA-020.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

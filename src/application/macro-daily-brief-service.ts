@@ -1,6 +1,7 @@
 import {
   summarizeHourlyProfile,
 } from "./macro-hourly-lifecycle-contracts.js";
+import { reconcileDexScreenerRolling24h } from "./macro-dex-dune-reconciliation.js";
 import type {
   MacroChain,
   MacroChainBriefSection,
@@ -12,7 +13,9 @@ import type {
   MacroHourlyChainProfileObservation,
   MacroHourlyProfileMetricName,
   MacroHourlyProfileSummary,
+  MacroMarketActivitySummary,
   MacroProvenance,
+  MacroSentimentObservationLayer,
 } from "../domain/macro-daily.js";
 
 const CHAIN_METRICS: Record<MacroChain, readonly MacroChainMetricName[]> = {
@@ -76,6 +79,14 @@ const CHAIN_SECTIONS: Record<MacroChainMetricName, MacroChainMetricObservation["
 
 const ROBINHOOD_REGISTRY_PREFIX = "spellbook:dex_robinhood:uniswap_v2_v3_v4@";
 const REPORT_DAY = /^\d{4}-\d{2}-\d{2}$/;
+const DEFAULT_SENTIMENT_LAYER: MacroSentimentObservationLayer = {
+  layer: "sentiment",
+  sourceLabel: "未授权",
+  sourceAuthorization: "not_authorized",
+  coverageStatus: "unknown",
+  observationStatus: "park",
+  warnings: [{ code: "source_not_authorized" }],
+};
 
 export class MacroDailyValidationError extends Error {
   constructor(message: string) {
@@ -90,6 +101,14 @@ export class MacroDailyBriefService {
     input.globalMetrics.forEach((metric) => this.validateGlobalMetric(metric, input.reportDay));
     input.chainMetrics.forEach((metric) => this.validateChainMetric(metric, input.reportDay));
     input.hourlyProfiles.forEach((profile) => this.validateHourlyProfile(profile));
+    const sentimentLayer = input.sentimentLayer ?? DEFAULT_SENTIMENT_LAYER;
+    this.validateSentimentLayer(sentimentLayer);
+    if (input.duneRolling24hObservation && !input.dexscreenerRolling24hObservation) {
+      throw new MacroDailyValidationError("Dune rolling 24H observation requires its DexScreener snapshot");
+    }
+    const dexDuneReconciliation = input.dexscreenerRolling24hObservation
+      ? reconcileDexScreenerRolling24h(input.dexscreenerRolling24hObservation, input.duneRolling24hObservation)
+      : undefined;
     assertUniqueObservations(input);
     const hourlyProfileSummaries = buildHourlyProfileSummaries(input.hourlyProfiles);
 
@@ -110,6 +129,9 @@ export class MacroDailyBriefService {
       reportDay: input.reportDay,
       globalMetrics: input.globalMetrics.slice().sort(compareGlobalMetrics),
       chainReports,
+      marketActivitySummary: summarizeMarketActivity(input.reportDay, chainReports),
+      sentimentLayer,
+      ...(dexDuneReconciliation ? { dexDuneReconciliation } : {}),
     };
   }
 
@@ -156,6 +178,22 @@ export class MacroDailyBriefService {
     }
     assertProvenance(profile);
     assertHourlyProfileContractMetadata(profile);
+  }
+
+  private validateSentimentLayer(layer: MacroSentimentObservationLayer): void {
+    if (layer.layer !== "sentiment" || !layer.sourceLabel.trim()) {
+      throw new MacroDailyValidationError("sentiment layer requires a source label");
+    }
+    if (layer.sourceAuthorization !== "not_authorized" || layer.coverageStatus !== "unknown" || layer.observationStatus !== "park") {
+      throw new MacroDailyValidationError("sentiment layer must remain not_authorized, unknown, and park");
+    }
+    if (!layer.warnings.some((warning) => warning.code === "source_not_authorized")) {
+      throw new MacroDailyValidationError("sentiment layer requires source_not_authorized warning");
+    }
+    const unsupported = layer as MacroSentimentObservationLayer & Record<string, unknown>;
+    if ("value" in unsupported || "score" in unsupported || "demand" in unsupported) {
+      throw new MacroDailyValidationError("sentiment layer cannot carry a value, score, or demand assertion");
+    }
   }
 
   private validateChainMetricIdentity(
@@ -256,6 +294,53 @@ function buildHourlyProfileSummaries(profiles: readonly MacroHourlyChainProfileO
     }
     return result;
   }).sort((a, b) => a.metricName.localeCompare(b.metricName) || a.profileWindowDays - b.profileWindowDays || a.profileEndDayUtc.localeCompare(b.profileEndDayUtc));
+}
+
+function summarizeMarketActivity(reportDay: string, reports: readonly MacroChainBriefSection[]): MacroMarketActivitySummary {
+  const eligibleChains: MacroChain[] = [];
+  const excludedChains: MacroMarketActivitySummary["excludedChains"] = [];
+  const volumes = new Map<MacroChain, number>();
+
+  for (const report of reports) {
+    if (report.chain === "robinhood") {
+      excludedChains.push({ chain: report.chain, reason: "partial_coverage" });
+      continue;
+    }
+    const metrics = new Map(report.metrics.map((metric) => [metric.metricName, metric]));
+    const required = ["dex_volume_usd", "swap_transaction_count", "trade_leg_count"] as const;
+    const complete = required.every((metricName) => {
+      const metric = metrics.get(metricName);
+      return metric?.completeness === 1 && metric.coverageStatus === "declared_registry";
+    });
+    if (!complete) {
+      excludedChains.push({ chain: report.chain, reason: "missing_or_partial_activity_inputs" });
+      continue;
+    }
+    eligibleChains.push(report.chain);
+    volumes.set(report.chain, metrics.get("dex_volume_usd")!.value);
+  }
+
+  if (eligibleChains.length < 2) {
+    return {
+      reportDay,
+      basis: "complete_declared_daily_dex_activity",
+      analysisStatus: "not_comparable",
+      eligibleChains,
+      excludedChains,
+      warnings: [{ code: "insufficient_comparable_markets" }],
+    };
+  }
+
+  const highestVolume = Math.max(...eligibleChains.map((chain) => volumes.get(chain)!));
+  return {
+    reportDay,
+    basis: "complete_declared_daily_dex_activity",
+    analysisStatus: "complete",
+    eligibleChains,
+    leadingChains: eligibleChains.filter((chain) => volumes.get(chain) === highestVolume),
+    excludedChains,
+    warnings: [{ code: "volume_is_leg_sum" }, { code: "not_real_users_or_demand" }],
+  };
 }
 
 function assertProvenance(provenance: MacroProvenance): void {

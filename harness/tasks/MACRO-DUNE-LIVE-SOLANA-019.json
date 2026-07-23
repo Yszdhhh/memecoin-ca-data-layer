@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DUNE-LIVE-SOLANA-019",
+  "title": "Owner-authorized controlled Solana Dune REST aggregate time-series path",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement a Solana-only controlled Dune REST path for allowlisted saved aggregate queries, aggregate-only PostgreSQL persistence through the existing macro schema, and an idempotent Feishu test-chat delivery adapter. The path must reject query/schema/version drift, incomplete UTC report-day timing, unregistered query IDs, BSC/Robinhood activation, raw payload persistence, sentiment values, and market-signal language.",
+  "dependencies": ["MACRO-HOURLY-LIFECYCLE-OFFLINE-016", "MACRO-HOURLY-LIFECYCLE-OFFLINE-AUDIT-016", "MACRO-LIVE-OPERATIONS-018"],
+  "owner_authorization": "Owner authorizes Solana-only Dune live execution, aggregate-only PostgreSQL storage, and test-only Feishu delivery. DUNE_API_KEY must be a newly rotated Read-scope runtime secret and may only be injected as an environment variable. The approved Feishu test chat is supplied at runtime as FEISHU_TEST_CHAT_ID. PostgreSQL is the selected aggregate/manifest target via DATABASE_URL. No BSC, Robinhood, production-delivery expansion, raw-payload retention, scheduling, or trading capability is authorized.",
+  "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_OPERATING_PLAYBOOK.md", "docs/designs/MACRO-LIVE-OPERATIONS-018.md", "src/infrastructure/dune/macro-core-query-definitions.ts", "src/application/macro-daily-core-run-service.ts", "src/infrastructure/postgres/postgres-macro-core-repository.ts", "db/migrations/002_macro_daily_metrics.sql", "db/migrations/003_macro_query_registry.sql", "db/migrations/004_macro_lark_card_delivery.sql", "db/migrations/006_macro_trade_activity_metrics.sql"],
+  "write_set": ["harness/tasks/MACRO-DUNE-LIVE-SOLANA-019.json", "src/infrastructure/dune/macro-dune-rest.ts", "src/application/macro-live-timeseries-service.ts", "src/application/macro-feishu-delivery.ts", "test/macro-dune-rest.test.ts", "test/macro-live-timeseries-service.test.ts", "docs/designs/MACRO-DUNE-LIVE-SOLANA-019.md"],
+  "deliverables": ["src/infrastructure/dune/macro-dune-rest.ts", "src/application/macro-live-timeseries-service.ts", "src/application/macro-feishu-delivery.ts", "docs/designs/MACRO-DUNE-LIVE-SOLANA-019.md"],
+  "forbidden_actions": ["Do not read, print, write, commit, or include any credential, .env file, database connection string, browser state, token, cookie, or raw provider payload in a repository or run artifact.", "Do not submit dynamic SQL, create/update Dune saved queries, or run a query outside the Solana S1-S4 fixed allowlist.", "Do not activate BSC, Four.meme, or Robinhood; Robinhood remains Uniswap v2/v3/v4 partial_coverage and is excluded from this run.", "Do not modify CA facts, holder cleaning, creator precedence, Dev behavior, wallet clusters, or wallet-quality rules.", "Do not claim users, buyers, demand, smart money, liquidity retention, lifecycle decay, external-pool conversion, sentiment, a recommendation, or a trading signal from these aggregates.", "Do not schedule a job, retain raw Dune responses, or expand from the test chat to production delivery."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DUNE-LIVE-SOLANA-019.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

@@ -3,11 +3,14 @@ import type {
   MacroChainBriefSection,
   MacroChainMetricName,
   MacroDailyBrief,
+  MacroDexDuneReconciliation,
   MacroGlobalMetricName,
   MacroHourlyChainProfileObservation,
   MacroHourlyProfileMetricName,
   MacroHourlyProfileSummary,
+  MacroMarketActivitySummary,
   MacroProvenance,
+  MacroSentimentObservationLayer,
 } from "../domain/macro-daily.js";
 
 const CHAIN_ORDER: readonly MacroChain[] = ["solana", "bsc", "robinhood"];
@@ -47,6 +50,8 @@ const HOURLY_LABELS: Record<MacroHourlyProfileMetricName, string> = {
 export function renderMacroDailyBrief(brief: MacroDailyBrief): string {
   const lines = [`# 每日链上市场简讯 · ${brief.reportDay}`, "", "## 全球市场关注"];
   lines.push(...renderMetrics(brief.globalMetrics, (metric) => GLOBAL_LABELS[metric.metricName]));
+  lines.push("", "## 市场环境", renderMarketActivitySummary(brief.marketActivitySummary));
+  lines.push(...renderDexDuneReconciliation(brief.dexDuneReconciliation));
 
   for (const chain of CHAIN_ORDER) {
     const report = brief.chainReports.find((section) => section.chain === chain) ?? emptyReport(chain);
@@ -58,9 +63,55 @@ export function renderMacroDailyBrief(brief: MacroDailyBrief): string {
 
   lines.push("", "## 数据质量", "- 完整溯源、查询版本与告警已持久化，简讯正文不展开原始查询信息。");
   lines.push("- 完整度为 0% 的条目不会展示数值。");
-  lines.push("- 流动性留存、首次验证外部池转化、生命周期阈值与情绪观察目前均为 PARK；不以建池、成交或价格替代它们。");
+  lines.push("- 流动性留存、首次验证外部池转化和生命周期阈值目前均为 PARK；固定样本合同不构成链上结论，也不以建池、成交或价格替代它们。");
+  lines.push(renderSentimentLayer(brief.sentimentLayer));
   lines.push("- PumpSwap 有效建池事件不等于外盘、迁移、毕业或 token 级转化；本简讯不构成 token 交易信号。");
   return lines.join("\n");
+}
+
+function renderMarketActivitySummary(summary: MacroMarketActivitySummary | undefined): string {
+  if (!summary || summary.analysisStatus === "not_comparable") {
+    return "- 跨市场 DEX 活动：不可比较。只有完整、声明注册表覆盖的成交额、交易笔数和交易腿数才可比较；Robinhood 为 Uniswap v2/v3/v4 部分覆盖，不参与全链比较。";
+  }
+  const leaders = summary.leadingChains!.map((chain) => CHAIN_LABELS[chain]).join(" / ");
+  const eligible = summary.eligibleChains.map((chain) => CHAIN_LABELS[chain]).join(" / ");
+  return `- 跨市场 DEX 活动：${leaders} 在可比市场中成交额最高（比较集：${eligible}；按完整、声明注册表覆盖的日度 DEX 成交额）。这不是用户、需求或交易信号结论。`;
+}
+
+function renderDexDuneReconciliation(reconciliation: MacroDexDuneReconciliation | undefined): string[] {
+  if (!reconciliation) {
+    return ["- 实时市场温度：PARK（尚未录入 DexScreener 独立快照）。"];
+  }
+
+  const snapshot = reconciliation.dexscreener;
+  const lines = [
+    `- 实时市场温度（${snapshot.sourceLabel}，滚动24H，截至 ${snapshot.capturedAt.toISOString()}）：Solana Volume ${formatUsd(snapshot.volumeUsd)}；Txns ${formatCount(snapshot.transactionCount)}；Latest Block ${formatCount(snapshot.latestBlock)}。`,
+    "- 说明：这是外部滚动24小时观察，不是 UTC 日线；Volume 是交易量，不是流动性；Latest Block 只表示链上新鲜度。",
+  ];
+  if (reconciliation.analysisStatus !== "aligned_pending_calibration") {
+    lines.push(`- Dex–Dune 可比性：PARK（${reconciliationStatusLabel(reconciliation.analysisStatus)}）。不与 Dune 完整 UTC 日或历史水位直接同比。`);
+    return lines;
+  }
+
+  const dune = reconciliation.dune!;
+  lines.push(`- Dex–Dune 校准：窗口已对齐，Dune 同窗 Volume ${formatUsd(dune.volumeUsd)}；Unique Swap Txns ${formatCount(dune.uniqueSwapTransactionCount)}；Trade Legs ${formatCount(dune.tradeLegCount)}。`);
+  lines.push(`- 校准状态：待累计样本；Volume 差异 ${formatOptionalSignedPercent(reconciliation.volumeDifferencePct)}。Dex Txns 与 Dune Unique Swaps / Trade Legs 均仅作候选对照，不可直接等同。`);
+  return lines;
+}
+
+function reconciliationStatusLabel(status: Exclude<MacroDexDuneReconciliation["analysisStatus"], "aligned_pending_calibration">): string {
+  const labels: Record<Exclude<MacroDexDuneReconciliation["analysisStatus"], "aligned_pending_calibration">, string> = {
+    park_dune_unavailable: "等待 Dune 同窗口数据",
+    park_window_mismatch: "Dune 与 Dex 时间窗口不一致",
+    park_dune_watermark_behind: "Dune 数据水位落后于 Dex 窗口终点",
+    park_dune_incomplete: "Dune 同窗口覆盖不完整",
+  };
+  return labels[status];
+}
+
+function renderSentimentLayer(layer: MacroSentimentObservationLayer | undefined): string {
+  const sourceLabel = layer?.sourceLabel ?? "未授权";
+  return `- 情绪观察层（独立层；来源标签：${sourceLabel}）：PARK。它不会覆盖链上事实，也不被表述为已验证需求、买盘或交易信号。`;
 }
 
 function renderMetrics<T extends MacroProvenance & { value: number; unit: "usd" | "count" }>(
@@ -128,6 +179,11 @@ function formatCount(value: number): string {
 
 function formatPercent(value: number): string {
   return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value * 100)}%`;
+}
+
+function formatOptionalSignedPercent(value: number | undefined): string {
+  if (value === undefined) return "不可用";
+  return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 }
 
 function padHour(hour: number): string {

@@ -7,6 +7,7 @@ import type {
   MacroDailyBriefInput,
   MacroGlobalMetricObservation,
   MacroHourlyChainProfileObservation,
+  MacroSentimentObservationLayer,
   MacroWarning,
 } from "../src/domain/macro-daily.js";
 
@@ -99,6 +100,70 @@ test("normalizes a deterministic brief while retaining separate global and chain
   assert.deepEqual(brief.chainReports.map((section) => section.chain), ["solana", "bsc", "robinhood"]);
   assert.equal(brief.chainReports[2]?.metrics[0]?.coverageStatus, "partial_coverage");
   assert.equal(brief.chainReports[2]?.hourlyProfiles[0]?.hourUtc, 19);
+  assert.equal(brief.marketActivitySummary?.analysisStatus, "not_comparable");
+  assert.deepEqual(brief.marketActivitySummary?.warnings, [{ code: "insufficient_comparable_markets" }]);
+});
+
+test("compares declared complete daily DEX activity while excluding Robinhood partial coverage", async () => {
+  const input = await loadInput();
+  const base = input.chainMetrics.find((metric) => metric.chain === "solana" && metric.metricName === "dex_volume_usd")!;
+  const activityMetric = (
+    chain: "solana" | "bsc",
+    metricName: "dex_volume_usd" | "swap_transaction_count" | "trade_leg_count",
+    value: number,
+  ): MacroChainMetricObservation => ({
+    ...base,
+    chain,
+    metricName,
+    value,
+    unit: metricName === "dex_volume_usd" ? "usd" : "count",
+    section: metricName === "dex_volume_usd" ? "capital" : "activity",
+    registryVersion: `spellbook:${chain}:fixture@deadbeef`,
+    coverageStatus: "declared_registry",
+  });
+  input.chainMetrics.push(
+    activityMetric("solana", "swap_transaction_count", 100),
+    activityMetric("solana", "trade_leg_count", 150),
+    activityMetric("bsc", "dex_volume_usd", 750_000),
+    activityMetric("bsc", "swap_transaction_count", 120),
+    activityMetric("bsc", "trade_leg_count", 180),
+  );
+
+  const summary = service.normalize(input).marketActivitySummary!;
+  assert.equal(summary.analysisStatus, "complete");
+  assert.deepEqual(summary.eligibleChains, ["solana", "bsc"]);
+  assert.deepEqual(summary.leadingChains, ["bsc"]);
+  assert.deepEqual(summary.excludedChains, [{ chain: "robinhood", reason: "partial_coverage" }]);
+  assert.deepEqual(summary.warnings, [{ code: "volume_is_leg_sum" }, { code: "not_real_users_or_demand" }]);
+});
+
+test("keeps sentiment as a separate source-labelled PARK layer and rejects values", async () => {
+  const input = await loadInput();
+  const defaultBrief = service.normalize(input);
+  assert.deepEqual(defaultBrief.sentimentLayer, {
+    layer: "sentiment",
+    sourceLabel: "未授权",
+    sourceAuthorization: "not_authorized",
+    coverageStatus: "unknown",
+    observationStatus: "park",
+    warnings: [{ code: "source_not_authorized" }],
+  });
+
+  const layer: MacroSentimentObservationLayer = {
+    layer: "sentiment",
+    sourceLabel: "fixture-source-not-authorized",
+    sourceAuthorization: "not_authorized",
+    coverageStatus: "unknown",
+    observationStatus: "park",
+    warnings: [{ code: "source_not_authorized" }],
+  };
+  const labelledBrief = service.normalize({ ...input, sentimentLayer: layer });
+  assert.equal(labelledBrief.sentimentLayer?.sourceLabel, "fixture-source-not-authorized");
+
+  assert.throws(
+    () => service.normalize({ ...input, sentimentLayer: { ...layer, value: 1 } as unknown as MacroSentimentObservationLayer }),
+    MacroDailyValidationError,
+  );
 });
 
 test("rejects an unverified metric family instead of treating it as a normal macro input", async () => {
@@ -179,4 +244,47 @@ test("derives a complete Solana hourly summary only from a full UTC profile cont
   assert.equal(summary.peakHourUtc, 0);
   assert.equal(summary.highActivityWindowUtc, "00:00–01:00 UTC");
   assert.equal(summary.intradayTimeConcentrationHhi, 0.38);
+});
+test("normalizes a source-labelled DexScreener snapshot as a separate PARK observation", async () => {
+  const input = await loadInput();
+  input.dexscreenerRolling24hObservation = {
+    layer: "dexscreener_realtime",
+    sourceLabel: "DexScreener manual fixture",
+    chain: "solana",
+    capturedAt: new Date("2026-07-21T12:00:00.000Z"),
+    rollingWindowStart: new Date("2026-07-20T12:00:00.000Z"),
+    rollingWindowEnd: new Date("2026-07-21T12:00:00.000Z"),
+    volumeUsd: 100,
+    transactionCount: 50,
+    latestBlock: 400_000_000,
+    warnings: [],
+  };
+
+  const brief = service.normalize(input);
+  assert.equal(brief.dexDuneReconciliation?.analysisStatus, "park_dune_unavailable");
+  assert.equal(brief.dexDuneReconciliation?.directComparisonStatus, "not_directly_comparable");
+});
+
+test("rejects a Dune rolling observation without its source-labelled DexScreener snapshot", async () => {
+  const input = await loadInput();
+  input.duneRolling24hObservation = {
+    source: "dune",
+    queryRef: "fixture:dune:rolling-24h",
+    queryVersion: "1",
+    sourceAsOf: new Date("2026-07-21T13:00:00.000Z"),
+    computedAt: new Date("2026-07-21T13:01:00.000Z"),
+    completeness: 1,
+    warnings: [],
+    chain: "solana",
+    rollingWindowStart: new Date("2026-07-20T12:00:00.000Z"),
+    rollingWindowEnd: new Date("2026-07-21T12:00:00.000Z"),
+    dataWatermark: new Date("2026-07-21T12:00:00.000Z"),
+    volumeUsd: 100,
+    uniqueSwapTransactionCount: 50,
+    tradeLegCount: 75,
+    registryVersion: "spellbook:dex_solana@fixture",
+    coverageStatus: "declared_registry",
+  };
+
+  assert.throws(() => service.normalize(input), /requires its DexScreener snapshot/);
 });

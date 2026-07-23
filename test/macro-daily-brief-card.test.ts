@@ -17,7 +17,39 @@ test("builds a compact CardKit payload without inline query provenance", () => {
   assert.match(serialized, /594\.3K/);
   assert.match(serialized, /交易强度：\$2\.5K/);
   assert.match(serialized, /Robinhood（Uniswap v2\/v3\/v4 部分覆盖）/);
+  assert.match(serialized, /情绪观察（独立层；来源标签：未授权）：PARK/);
+  assert.match(serialized, /不覆盖链上事实或验证需求/);
   assert.doesNotMatch(serialized, /dune:query:fixture|saved:fixture@deadbeef|2026-07-21T00:00:00/);
+});
+
+test("renders a compact coverage-gated cross-market activity leader", () => {
+  const input = brief();
+  input.marketActivitySummary = {
+    reportDay: "2026-07-19",
+    basis: "complete_declared_daily_dex_activity",
+    analysisStatus: "complete",
+    eligibleChains: ["solana", "bsc"],
+    leadingChains: ["solana"],
+    excludedChains: [{ chain: "robinhood", reason: "partial_coverage" }],
+    warnings: [{ code: "volume_is_leg_sum" }, { code: "not_real_users_or_demand" }],
+  };
+
+  const serialized = JSON.stringify(buildMacroDailyBriefCard(input));
+  assert.match(serialized, /跨市场 DEX 活动：Solana 成交额最高（不代表用户、需求或交易信号）/);
+});
+
+test("binds the CardKit PARK disclosure to the sentiment source label", () => {
+  const input = brief();
+  input.sentimentLayer = {
+    layer: "sentiment",
+    sourceLabel: "fixture-source-not-authorized",
+    sourceAuthorization: "not_authorized",
+    coverageStatus: "unknown",
+    observationStatus: "park",
+    warnings: [{ code: "source_not_authorized" }],
+  };
+
+  assert.match(JSON.stringify(buildMacroDailyBriefCard(input)), /来源标签：fixture-source-not-authorized）：PARK/);
 });
 
 test("renders Solana day change and seven-day relative level only from a complete baseline", () => {
@@ -59,3 +91,31 @@ function brief(): MacroDailyBrief {
     ],
   };
 }
+
+test("renders a source-labelled DexScreener observation without treating it as a Dune day", () => {
+  const input = brief();
+  input.dexDuneReconciliation = {
+    layer: "dex_dune_reconciliation",
+    chain: "solana",
+    dexscreener: {
+      layer: "dexscreener_realtime",
+      sourceLabel: "DexScreener manual fixture",
+      chain: "solana",
+      capturedAt: new Date("2026-07-20T12:00:00.000Z"),
+      rollingWindowStart: new Date("2026-07-19T12:00:00.000Z"),
+      rollingWindowEnd: new Date("2026-07-20T12:00:00.000Z"),
+      volumeUsd: 120_000_000,
+      transactionCount: 300_000,
+      latestBlock: 400_000_000,
+      warnings: [],
+    },
+    analysisStatus: "park_dune_unavailable",
+    directComparisonStatus: "not_directly_comparable",
+    warnings: [{ code: "dune_rolling_window_unavailable" }],
+  };
+
+  const serialized = JSON.stringify(buildMacroDailyBriefCard(input));
+  assert.match(serialized, /DexScreener manual fixture，滚动24H/);
+  assert.match(serialized, /不与 Dune UTC 日或历史水位直接同比/);
+  assert.doesNotMatch(serialized, /买入|卖出|用户|买家/);
+});

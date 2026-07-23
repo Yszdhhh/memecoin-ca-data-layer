@@ -11,13 +11,15 @@ export interface FeishuInteractiveCard {
 
 export function buildMacroDailyBriefCard(brief: MacroDailyBrief, dynamics?: MacroDailyDynamics): FeishuInteractiveCard {
   const global = metricMap(brief.globalMetrics);
+  const marketActivityLine = formatMarketActivity(brief);
+  const realtimeObservationLine = formatDexDuneReconciliation(brief);
   const sections: Array<Record<string, unknown>> = [
     markdown("**全球市场关注**\n" + lines([
       ["DEX 成交额", global.dex_volume_usd],
       ["DEX 独立交易地址", global.active_trader_count],
       ["BTC 链上交易数", global.btc_transaction_count],
       ["BTC 手续费", global.btc_fee_usd],
-    ])),
+    ]) + `\n${marketActivityLine}\n${realtimeObservationLine}`),
   ];
   for (const chain of ["solana", "bsc", "robinhood"] as const) {
     const report = brief.chainReports.find((item) => item.chain === chain);
@@ -34,12 +36,36 @@ export function buildMacroDailyBriefCard(brief: MacroDailyBrief, dynamics?: Macr
     const dynamicsLine = chain === "solana" ? `\n日变动 / 7D 水位：${formatDynamics(dynamics?.chain["solana:dex_volume_usd"])}` : "";
     sections.push({ tag: "hr" }, markdown(`${heading}\n${lines(entries)}${activityLine}${dynamicsLine}`));
   }
-  sections.push({ tag: "hr" }, markdown(`数据质量：${qualitySummary(brief)}。完整溯源已持久化，不在卡片展开。`));
+  const sentimentSourceLabel = brief.sentimentLayer?.sourceLabel ?? "未授权";
+  sections.push({ tag: "hr" }, markdown(`数据质量：${qualitySummary(brief)}。完整溯源已持久化，不在卡片展开。
+情绪观察（独立层；来源标签：${sentimentSourceLabel}）：PARK，不覆盖链上事实或验证需求。`));
   return { schema: "2.0", config: { wide_screen_mode: true }, header: { title: { tag: "plain_text", content: `每日链上市场简讯 · ${brief.reportDay}` }, template: "blue" }, body: { elements: sections } };
 }
 
 export function hashMacroDailyBriefCard(card: FeishuInteractiveCard): string {
   return createHash("sha256").update(JSON.stringify(card)).digest("hex");
+}
+
+function formatMarketActivity(brief: MacroDailyBrief): string {
+  const summary = brief.marketActivitySummary;
+  if (!summary || summary.analysisStatus === "not_comparable") {
+    return "跨市场 DEX 活动：不可比较（仅完整、声明注册表覆盖可比较；Robinhood 为 Uniswap v2/v3/v4 部分覆盖）。";
+  }
+  return `跨市场 DEX 活动：${summary.leadingChains!.map(chainLabel).join(" / ")} 成交额最高（不代表用户、需求或交易信号）。`;
+}
+
+function formatDexDuneReconciliation(brief: MacroDailyBrief): string {
+  const reconciliation = brief.dexDuneReconciliation;
+  if (!reconciliation) return "实时市场温度：PARK（尚未录入 DexScreener 独立快照）。";
+
+  const snapshot = reconciliation.dexscreener;
+  const prefix = `实时市场温度（${snapshot.sourceLabel}，滚动24H）：Solana Volume ${formatUsd(snapshot.volumeUsd)}；Txns ${formatCount(snapshot.transactionCount)}；Latest Block ${formatCount(snapshot.latestBlock)}。`;
+  if (reconciliation.analysisStatus !== "aligned_pending_calibration") {
+    return `${prefix}\nDex–Dune 可比性：PARK；外部滚动24H快照不与 Dune UTC 日或历史水位直接同比。`;
+  }
+
+  const dune = reconciliation.dune!;
+  return `${prefix}\nDex–Dune 校准：窗口已对齐，Dune Volume ${formatUsd(dune.volumeUsd)}；Unique Swap Txns ${formatCount(dune.uniqueSwapTransactionCount)}；Trade Legs ${formatCount(dune.tradeLegCount)}。仍在累计样本，不可直接等同。`;
 }
 
 function metricMap<T extends { metricName: string }>(metrics: readonly T[]): Record<string, T> {

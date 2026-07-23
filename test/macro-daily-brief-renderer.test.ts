@@ -92,6 +92,23 @@ test("renders stable compact global and chain sections without inline provenance
   assert.ok(rendered.indexOf("## BSC") < rendered.indexOf("## Robinhood"));
 });
 
+test("renders a coverage-gated cross-market activity leader without a demand claim", () => {
+  const input = brief();
+  input.marketActivitySummary = {
+    reportDay: "2026-07-20",
+    basis: "complete_declared_daily_dex_activity",
+    analysisStatus: "complete",
+    eligibleChains: ["solana", "bsc"],
+    leadingChains: ["solana"],
+    excludedChains: [{ chain: "robinhood", reason: "partial_coverage" }],
+    warnings: [{ code: "volume_is_leg_sum" }, { code: "not_real_users_or_demand" }],
+  };
+
+  const rendered = renderMacroDailyBrief(input);
+  assert.match(rendered, /跨市场 DEX 活动：Solana 在可比市场中成交额最高（比较集：Solana \/ BSC；按完整、声明注册表覆盖的日度 DEX 成交额）/);
+  assert.match(rendered, /这不是用户、需求或交易信号结论/);
+});
+
 test("does not render values for unavailable observations or inline query metadata", () => {
   const input = brief();
   input.globalMetrics[0] = { ...input.globalMetrics[0]!, value: 999, completeness: 0, warnings: [{ code: "UNEXECUTED_BLUEPRINT" }] };
@@ -107,6 +124,20 @@ test("renders no recommendation or execution language", () => {
 
   assert.doesNotMatch(rendered, /交易建议|执行决策|买入|卖出|预测/);
   assert.match(rendered, /完整溯源、查询版本与告警已持久化/);
+});
+
+test("renders the source label from the separate PARK sentiment layer", () => {
+  const input = brief();
+  input.sentimentLayer = {
+    layer: "sentiment",
+    sourceLabel: "fixture-source-not-authorized",
+    sourceAuthorization: "not_authorized",
+    coverageStatus: "unknown",
+    observationStatus: "park",
+    warnings: [{ code: "source_not_authorized" }],
+  };
+
+  assert.match(renderMacroDailyBrief(input), /来源标签：fixture-source-not-authorized）：PARK/);
 });
 
 test("renders complete hourly time concentration and keeps unsupported lifecycle lines PARK", () => {
@@ -129,6 +160,36 @@ test("renders complete hourly time concentration and keeps unsupported lifecycle
   const rendered = renderMacroDailyBrief(input);
 
   assert.match(rendered, /DEX 成交额 60日 UTC 小时画像：峰值 00:00 UTC；高活跃窗口 00:00–01:00 UTC；时间 HHI 0\.3800/);
-  assert.match(rendered, /流动性留存、首次验证外部池转化、生命周期阈值与情绪观察目前均为 PARK/);
+  assert.match(rendered, /流动性留存、首次验证外部池转化和生命周期阈值目前均为 PARK/);
+  assert.match(rendered, /情绪观察层（独立层；来源标签：未授权）：PARK/);
+  assert.match(rendered, /不会覆盖链上事实，也不被表述为已验证需求、买盘或交易信号/);
   assert.match(rendered, /PumpSwap 有效建池事件不等于外盘、迁移、毕业或 token 级转化/);
+});
+test("renders a DexScreener rolling-24H snapshot separately from Dune history", () => {
+  const input = brief();
+  input.dexDuneReconciliation = {
+    layer: "dex_dune_reconciliation",
+    chain: "solana",
+    dexscreener: {
+      layer: "dexscreener_realtime",
+      sourceLabel: "DexScreener manual fixture",
+      chain: "solana",
+      capturedAt: new Date("2026-07-20T12:00:00.000Z"),
+      rollingWindowStart: new Date("2026-07-19T12:00:00.000Z"),
+      rollingWindowEnd: new Date("2026-07-20T12:00:00.000Z"),
+      volumeUsd: 120_000_000,
+      transactionCount: 300_000,
+      latestBlock: 400_000_000,
+      warnings: [],
+    },
+    analysisStatus: "park_dune_unavailable",
+    directComparisonStatus: "not_directly_comparable",
+    warnings: [{ code: "dune_rolling_window_unavailable" }],
+  };
+
+  const rendered = renderMacroDailyBrief(input);
+  assert.match(rendered, /DexScreener manual fixture，滚动24H/);
+  assert.match(rendered, /Volume 是交易量，不是流动性/);
+  assert.match(rendered, /Dex–Dune 可比性：PARK/);
+  assert.doesNotMatch(rendered, /买入|卖出|预测|执行建议/);
 });

@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "MACRO-DEX-DUNE-RECONCILIATION-SOLANA-021",
+  "title": "Solana DexScreener rolling-24H and Dune historical-calibration contract",
+  "tier": "T1",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Add a Solana-only, source-labelled report path that keeps a manually captured DexScreener rolling-24H snapshot separate from Dune UTC-day history, and records an exact-window Dune calibration candidate without treating provider counts as equivalent or producing trading signals.",
+  "dependencies": ["MACRO-DUNE-PARAMETERIZED-SOLANA-020"],
+  "owner_authorization": "Owner authorizes this Solana-only offline contract and report-path implementation. This task may use deterministic fixture observations only; it does not authorize DexScreener scraping, Dune query execution, credentials, database writes, scheduling, automatic delivery, BSC activation, or Robinhood activation.",
+  "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_OPERATING_PLAYBOOK.md", "KNOWN_LIMITATIONS.md", "OWNER_DECISIONS_NEEDED.md", "harness/config/project.json", "harness/tasks/MACRO-DUNE-PARAMETERIZED-SOLANA-020.json", "src/domain/macro-daily.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts"],
+  "write_set": ["harness/tasks/MACRO-DEX-DUNE-RECONCILIATION-SOLANA-021.json", "src/domain/macro-daily.ts", "src/application/macro-dex-dune-reconciliation.ts", "src/application/macro-daily-brief-service.ts", "src/application/macro-daily-brief-renderer.ts", "src/application/macro-daily-brief-card.ts", "test/macro-dex-dune-reconciliation.test.ts", "test/macro-daily-brief-service.test.ts", "test/macro-daily-brief-renderer.test.ts", "test/macro-daily-brief-card.test.ts", "docs/designs/MACRO-DEX-DUNE-RECONCILIATION-SOLANA-021.md"],
+  "deliverables": ["src/application/macro-dex-dune-reconciliation.ts", "docs/designs/MACRO-DEX-DUNE-RECONCILIATION-SOLANA-021.md"],
+  "forbidden_actions": ["Do not read, print, write, commit, or include any credential, .env file, database connection string, browser state, token, cookie, raw provider payload, or destination identifier in a repository or run artifact.", "Do not scrape the DexScreener dashboard, call an undocumented endpoint, execute Dune, create or update Dune saved queries, or persist/query external data in this task.", "Do not directly compare a DexScreener rolling 24H value to a Dune completed UTC day, do not label Dex volume as liquidity, and do not claim that Dex transaction counts equal Dune unique swaps or trade legs.", "Do not activate BSC, Four.meme, or Robinhood; do not modify CA facts, holder cleaning, creator precedence, Dev behavior, wallet clusters, wallet-quality rules, sentiment facts, or recommendation/trading language.", "Do not schedule or auto-send a report. Feishu remains outside this task; rendering a local card representation is not delivery."],
+  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/MACRO-DEX-DUNE-RECONCILIATION-SOLANA-021.json", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
