@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T03:50:00.000Z",
+  "updated_at_utc": "2026-07-27T04:20:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -280,7 +280,7 @@
     {
       "task_id": "SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001",
       "spec": "harness/tasks/SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-OBSERVATION-SCHEMA-001",

@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that SOL-WALLET-CLEANING-FUNDER-TAGS-001 closes SOL-WALLET-CLEANING-AUDIT-003 FIND-1: funder-address tags are fetched in both the generic and snapshot-aligned passes so service-funder suppression fires on non-holder funders, the exclusion warning counts only members at or above the 0.85 exclusion confidence, and no threshold was lowered or holder-exclusion path weakened.",
   "dependencies": [
     "SOL-WALLET-CLEANING-FUNDER-TAGS-001"
