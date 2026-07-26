@@ -130,7 +130,8 @@ export class AnalysisService {
       adapter.getFundingEdges(ownerAddresses, fundingSince),
     ]);
     const firstBuys: FirstBuy[] = firstBuyPerWallet(trades);
-    const clusterMembers = detectFundingClusters(fundingEdges, firstBuys);
+    const clusterDetection = detectFundingClusters(fundingEdges, firstBuys, { funderTags: addressTags });
+    const clusterMembers = clusterDetection.members;
     const largeTrades = trades.filter((trade) => (trade.quoteUsd ?? 0) >= this.config.largeOrderMinimumUsd);
     const largeTradeAddresses = [...new Set(largeTrades.map((trade) => trade.trader))];
     const walletFacts = await adapter.getWalletFacts(largeTradeAddresses, now);
@@ -146,6 +147,19 @@ export class AnalysisService {
         trade.blockTime,
       ),
     }));
+    // Wallet quality labels large orders only — never fed into holder exclusion inputs.
+    const walletCleaningEvidence = {
+      clusterMembers: clusterMembers.map((member) => ({
+        ...member,
+        evidence: { ...member.evidence },
+      })),
+      suppressedServiceFunders: clusterDetection.suppressedFunders.map((item) => ({ ...item })),
+      largeOrderWalletQuality: largeOrders.map((order) => ({
+        trader: order.trader,
+        quality: { ...order.walletQuality, labels: [...order.walletQuality.labels], reasons: [...order.walletQuality.reasons] },
+      })),
+      holderExclusionUsesWalletQuality: false as const,
+    };
 
     const warnings: string[] = [...marketResult.warnings];
     let resultToken = token;
@@ -244,6 +258,7 @@ export class AnalysisService {
       largeOrders,
       ...(creatorProfile ? { creatorProfile } : {}),
       ...(solanaEvidence ? { solanaEvidence } : {}),
+      walletCleaningEvidence,
       warnings,
       dataAsOf: now,
     };

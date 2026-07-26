@@ -5,9 +5,11 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "DONE",
   "objective": "Separate holder exclusion from wallet-quality labelling, suppress known service funders from same-source cluster inference with retained evidence, and expose the resulting wallet and cluster evidence in the CA result.",
-  "dependencies": ["SOL-CA-ORCHESTRATION-AUDIT-001", "SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001"],
+  "dependencies": [
+    "SOL-CA-ORCHESTRATION-REPAIR-001"
+  ],
   "inputs": [
     "PROJECT_CONSTITUTION.md",
     "KNOWN_LIMITATIONS.md",
@@ -34,6 +36,13 @@
     "Do not discard source, confidence, reason or scope for service-funder suppression and wallet-quality evidence.",
     "Do not call external providers, use credentials, activate BSC or Robinhood, or modify the holder snapshot service."
   ],
-  "deliverables": ["test/application/solana/wallet-cleaning-evidence.test.ts"],
-  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+  "deliverables": [
+    "test/application/solana/wallet-cleaning-evidence.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
 }

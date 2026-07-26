@@ -5,9 +5,11 @@
   "tier": "T2",
   "role": "auditor",
   "chain": null,
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently verify that the offline Harness lifecycle derives state only from verified manifests and declared dependencies, preserves spec/ledger consistency, and cannot bypass independent-auditor or Owner gates.",
-  "dependencies": ["HARNESS-AO-AUTOMATION-001"],
+  "dependencies": [
+    "HARNESS-AO-AUTOMATION-001"
+  ],
   "inputs": [
     "PROJECT_CONSTITUTION.md",
     "PROJECT_OPERATING_PLAYBOOK.md",
@@ -18,12 +20,22 @@
     "harness/ledger/tasks.json",
     "test/harness.test.ts"
   ],
-  "write_set": ["docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md"],
+  "write_set": [
+    "docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md"
+  ],
   "forbidden_actions": [
     "Do not modify source, tests, schemas, task specifications, task ledger, configuration, run manifests, or Agent Orchestrator configuration.",
     "Do not call Agent Orchestrator, agents, model gateways, network APIs, browsers, providers, credentials, package registries, or live data sources.",
     "Do not accept any implementation that infers a completed dependency, self-audits a T2 milestone, changes a T3 Owner gate, or silently repairs a mismatched ledger/spec pair."
   ],
-  "deliverables": ["docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md"],
-  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+  "deliverables": [
+    "docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
 }

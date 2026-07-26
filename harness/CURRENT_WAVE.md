@@ -18,24 +18,20 @@ holder and Dev facts rather than bypassing their completeness gates.
 2. `SOL-CA-ORCHESTRATION-AUDIT-001` — DONE with **FAIL** (run
    `20260726_SOL_CA_ORCH_AUDIT_001`); report at
    `docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md`.
-3. `SOL-CA-ORCHESTRATION-REPAIR-001`: close P1 ownerBalances serialization and
-   P2 `devCompleteness` matrix; surface FIND-4 exclusion-input warnings.
-4. `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001`: independent re-audit (for fable /
-   independent auditor; not the implementer).
-5. `SOL-WALLET-CLEANING-003`: retain evidence-backed service-funder suppression
-   and keep wallet quality separate from holder exclusion (blocked until repair
-   audit is accepted).
-6. `SOL-WALLET-CLEANING-AUDIT-003`: independent confirmation of that separation.
-7. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
+3. `SOL-CA-ORCHESTRATION-REPAIR-001` — DONE (run `20260726_SOL_CA_ORCH_REPAIR_001` GREEN).
+4. `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001` — **evening audit queue**.
+5. `SOL-WALLET-CLEANING-003` — implementer wave (service-funder suppression +
+   `walletCleaningEvidence` on CA result). Independent audit deferred to evening.
+6. `SOL-WALLET-CLEANING-AUDIT-003` — **evening audit queue**.
+7. `SOL-E2E-GAP-RESEARCH-002` — research refreshed for post-orchestration reality.
+8. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
    the above audits and credential containment are complete.
 
 ## Harness automation sequence
 
-1. `HARNESS-AO-AUTOMATION-001` is ready: add an offline, deterministic
-   lifecycle planner/verifier that derives readiness only from verified local
-   manifests and declared dependencies.
-2. `HARNESS-AO-AUTOMATION-AUDIT-001`: independent verification that the
-   lifecycle cannot bypass audit, ledger/spec consistency, or Owner gates.
+1. `HARNESS-AO-AUTOMATION-001` — offline lifecycle planner/verifier
+   (`lifecycle plan|verify|apply-readiness`); implementer wave.
+2. `HARNESS-AO-AUTOMATION-AUDIT-001` — **evening audit queue**.
 3. Agent Orchestrator may consume the verified planner output to dispatch
    isolated workers, but network, credentials, and all live provider choices
    remain outside the Harness and behind their existing Owner gates.

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { ProjectConfig, TaskSpec } from "../harness/lib/contracts.js";
+import type { ProjectConfig, TaskLedger, TaskSpec } from "../harness/lib/contracts.js";
 import { globMatches } from "../harness/lib/files.js";
-import { validateTask } from "../harness/lib/validation.js";
+import { applyReadinessUpdates, deriveLifecyclePlan, validateTask } from "../harness/lib/validation.js";
 
 const config: ProjectConfig = {
   schema_version: "harness-v1",
@@ -52,4 +52,121 @@ test("auditor cannot write production source", () => {
 test("write-set glob matches only its bounded subtree", () => {
   assert.equal(globMatches("src/infrastructure/solana/pump/**", "src/infrastructure/solana/pump/decoder.ts"), true);
   assert.equal(globMatches("src/infrastructure/solana/pump/**", "src/infrastructure/solana/helius/client.ts"), false);
+});
+
+test("lifecycle plan marks dependency-complete READY tasks runnable and never auto-DONE", () => {
+  const implementer = task({
+    task_id: "SOL-IMPL-001",
+    role: "implementer",
+    tier: "T2",
+    status: "DONE",
+    dependencies: [],
+    write_set: ["src/a/**"],
+  });
+  const audit = task({
+    task_id: "SOL-IMPL-AUDIT-001",
+    role: "auditor",
+    tier: "T2",
+    status: "READY",
+    dependencies: ["SOL-IMPL-001"],
+    write_set: ["docs/audits/SOL-IMPL-AUDIT-001.md"],
+    deliverables: ["docs/audits/SOL-IMPL-AUDIT-001.md"],
+  });
+  const blocked = task({
+    task_id: "SOL-NEXT-001",
+    role: "implementer",
+    status: "BLOCKED_DEPENDENCY",
+    dependencies: ["SOL-IMPL-AUDIT-001"],
+    write_set: ["src/b/**"],
+  });
+  const specs = new Map<string, TaskSpec>([
+    [implementer.task_id, implementer],
+    [audit.task_id, audit],
+    [blocked.task_id, blocked],
+  ]);
+  const ledger: TaskLedger = {
+    schema_version: "ledger-v1",
+    updated_at_utc: "2026-07-26T00:00:00.000Z",
+    tasks: [
+      { task_id: implementer.task_id, spec: "harness/tasks/SOL-IMPL-001.json", status: "DONE" },
+      { task_id: audit.task_id, spec: "harness/tasks/SOL-IMPL-AUDIT-001.json", status: "READY" },
+      { task_id: blocked.task_id, spec: "harness/tasks/SOL-NEXT-001.json", status: "BLOCKED_DEPENDENCY" },
+    ],
+  };
+
+  const plan = deriveLifecyclePlan(specs, ledger, []);
+  assert.equal(plan.sync_errors.length, 0);
+  assert.ok(plan.runnable.some((item) => item.task_id === "SOL-IMPL-AUDIT-001"));
+  assert.ok(!plan.runnable.some((item) => item.task_id === "SOL-NEXT-001"));
+  assert.ok(plan.audit_evidence_gaps.some((gap) => gap.includes("SOL-IMPL-001")));
+  assert.ok(!plan.readiness_updates.some((item) => item.to === "DONE" as never));
+});
+
+test("lifecycle plan fails closed on ledger/spec mismatch and apply refuses DONE", async () => {
+  const ready = task({ task_id: "SOL-A-001", status: "READY", dependencies: [] });
+  const specs = new Map<string, TaskSpec>([[ready.task_id, ready]]);
+  const ledger: TaskLedger = {
+    schema_version: "ledger-v1",
+    updated_at_utc: "2026-07-26T00:00:00.000Z",
+    tasks: [{ task_id: ready.task_id, spec: "harness/tasks/SOL-A-001.json", status: "DONE" }],
+  };
+  const plan = deriveLifecyclePlan(specs, ledger, []);
+  assert.ok(plan.sync_errors.some((error) => error.includes("ledger status") || error.includes("!=")));
+
+  const forged = {
+    ...plan,
+    sync_errors: [],
+    readiness_updates: [{
+      task_id: ready.task_id,
+      from: "READY" as const,
+      to: "DONE" as unknown as "READY",
+      reason: "should reject",
+    }],
+  };
+  const result = await applyReadinessUpdates(
+    forged,
+    specs,
+    { ...ledger, tasks: [{ task_id: ready.task_id, spec: "x", status: "READY" }] },
+    async () => undefined,
+    async () => undefined,
+  );
+  assert.ok(result.rejected.length > 0 || result.applied.length === 0);
+});
+
+test("apply-readiness flips BLOCKED_DEPENDENCY to READY when deps are DONE", async () => {
+  const dep = task({ task_id: "SOL-DEP-001", status: "DONE", dependencies: [], write_set: ["src/d/**"] });
+  const next = task({
+    task_id: "SOL-NEXT-002",
+    status: "BLOCKED_DEPENDENCY",
+    dependencies: ["SOL-DEP-001"],
+    write_set: ["src/n/**"],
+  });
+  const specs = new Map<string, TaskSpec>([[dep.task_id, dep], [next.task_id, { ...next }]]);
+  const ledger: TaskLedger = {
+    schema_version: "ledger-v1",
+    updated_at_utc: "2026-07-26T00:00:00.000Z",
+    tasks: [
+      { task_id: dep.task_id, spec: "harness/tasks/SOL-DEP-001.json", status: "DONE" },
+      { task_id: next.task_id, spec: "harness/tasks/SOL-NEXT-002.json", status: "BLOCKED_DEPENDENCY" },
+    ],
+  };
+  const plan = deriveLifecyclePlan(specs, ledger, []);
+  assert.ok(plan.readiness_updates.some((item) => item.task_id === "SOL-NEXT-002" && item.to === "READY"));
+
+  const written: string[] = [];
+  const result = await applyReadinessUpdates(
+    plan,
+    specs,
+    ledger,
+    async (taskId, spec) => {
+      written.push(`${taskId}:${spec.status}`);
+    },
+    async (nextLedger) => {
+      written.push(`ledger:${nextLedger.tasks.find((t) => t.task_id === "SOL-NEXT-002")?.status}`);
+    },
+  );
+  assert.deepEqual(result.rejected, []);
+  assert.ok(result.applied.includes("SOL-NEXT-002:BLOCKED_DEPENDENCY->READY"));
+  assert.ok(written.includes("SOL-NEXT-002:READY"));
+  assert.ok(written.includes("ledger:READY"));
 });

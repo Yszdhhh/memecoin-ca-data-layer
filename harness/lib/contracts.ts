@@ -88,3 +88,30 @@ export interface RunManifest {
   };
   unresolved_items: string[];
 }
+
+/** Offline planner output — never invokes agents or providers. */
+export interface LifecyclePlan {
+  schema_version: "lifecycle-plan-v1";
+  generated_at_utc: string;
+  runnable: Array<{
+    task_id: string;
+    role: Role;
+    tier: Tier;
+    chain: Chain | null;
+  }>;
+  not_runnable: Array<{
+    task_id: string;
+    status: TaskStatus;
+    blockers: string[];
+  }>;
+  sync_errors: string[];
+  /** T2 implementer work marked DONE without a finished auditor run for a declared *-AUDIT-* task. */
+  audit_evidence_gaps: string[];
+  /** Proposed READY/BLOCKED_DEPENDENCY flips only (never DONE/GREEN). */
+  readiness_updates: Array<{
+    task_id: string;
+    from: TaskStatus;
+    to: "READY" | "BLOCKED_DEPENDENCY";
+    reason: string;
+  }>;
+}

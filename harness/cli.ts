@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import type {
@@ -26,7 +26,7 @@ import {
   gitIsRepository,
   gitTrackedFiles,
 } from "./lib/git.js";
-import { validateLedger, validateTask } from "./lib/validation.js";
+import { applyReadinessUpdates, deriveLifecyclePlan, validateLedger, validateTask } from "./lib/validation.js";
 
 const CONFIG_PATH = "harness/config/project.json";
 const LEDGER_PATH = "harness/ledger/tasks.json";
@@ -283,6 +283,88 @@ async function status(): Promise<number> {
   return 0;
 }
 
+async function loadSpecs(ledger: TaskLedger): Promise<Map<string, TaskSpec>> {
+  const specs = new Map<string, TaskSpec>();
+  for (const entry of ledger.tasks) {
+    specs.set(entry.task_id, await readJson<TaskSpec>(entry.spec));
+  }
+  return specs;
+}
+
+async function loadFinishedRuns(): Promise<Array<Pick<RunManifest, "task_id" | "role" | "status">>> {
+  const runsRoot = resolveRepoPath("harness/runs");
+  let names: string[] = [];
+  try {
+    names = await readdir(runsRoot);
+  } catch {
+    return [];
+  }
+  const finished: Array<Pick<RunManifest, "task_id" | "role" | "status">> = [];
+  for (const name of names) {
+    if (name.startsWith(".")) continue;
+    const manifestPath = `harness/runs/${name}/manifest.json`;
+    if (!(await exists(manifestPath))) continue;
+    try {
+      const manifest = await readJson<RunManifest>(manifestPath);
+      if (manifest.status === "RUNNING") continue;
+      finished.push({ task_id: manifest.task_id, role: manifest.role, status: manifest.status });
+    } catch {
+      // skip corrupt run dirs
+    }
+  }
+  return finished;
+}
+
+async function lifecyclePlanCommand(): Promise<number> {
+  const ledger = await readJson<TaskLedger>(LEDGER_PATH);
+  const specs = await loadSpecs(ledger);
+  const plan = deriveLifecyclePlan(specs, ledger, await loadFinishedRuns());
+  console.log(JSON.stringify(plan, null, 2));
+  return plan.sync_errors.length === 0 ? 0 : 1;
+}
+
+async function lifecycleVerifyCommand(): Promise<number> {
+  const config = await readJson<ProjectConfig>(CONFIG_PATH);
+  const ledger = await readJson<TaskLedger>(LEDGER_PATH);
+  const specs = await loadSpecs(ledger);
+  const ledgerErrors = await validateLedger(ledger, config);
+  const plan = deriveLifecyclePlan(specs, ledger, await loadFinishedRuns());
+  const status = ledgerErrors.length === 0 && plan.sync_errors.length === 0 ? "GREEN" : "FAIL";
+  console.log(JSON.stringify({
+    status,
+    ledger_errors: ledgerErrors,
+    sync_errors: plan.sync_errors,
+    audit_evidence_gaps: plan.audit_evidence_gaps,
+    readiness_updates: plan.readiness_updates,
+    runnable_count: plan.runnable.length,
+  }, null, 2));
+  return status === "GREEN" ? 0 : 1;
+}
+
+async function lifecycleApplyReadinessCommand(): Promise<number> {
+  const ledger = await readJson<TaskLedger>(LEDGER_PATH);
+  const specs = await loadSpecs(ledger);
+  const plan = deriveLifecyclePlan(specs, ledger, await loadFinishedRuns());
+  const result = await applyReadinessUpdates(
+    plan,
+    specs,
+    ledger,
+    async (taskId, spec) => {
+      const entry = ledger.tasks.find((item) => item.task_id === taskId);
+      if (!entry) throw new Error(`missing ledger entry for ${taskId}`);
+      await writeJson(entry.spec, spec);
+    },
+    async (next) => writeJson(LEDGER_PATH, next),
+  );
+  console.log(JSON.stringify({
+    status: result.rejected.length === 0 ? "GREEN" : "FAIL",
+    applied: result.applied,
+    rejected: result.rejected,
+    proposed: plan.readiness_updates,
+  }, null, 2));
+  return result.rejected.length === 0 ? 0 : 1;
+}
+
 function normalizeRunDir(input: string): string {
   const normalized = input.replaceAll("\\", "/").replace(/\/$/, "");
   return normalized.startsWith("harness/runs/")
@@ -300,9 +382,13 @@ async function main(): Promise<number> {
   if (command === "run" && subcommand === "finish" && arg1 && arg2) {
     return finishRun(arg1, arg2 as Verdict, rest.join(" "));
   }
+  if (command === "lifecycle" && subcommand === "plan") return lifecyclePlanCommand();
+  if (command === "lifecycle" && subcommand === "verify") return lifecycleVerifyCommand();
+  if (command === "lifecycle" && subcommand === "apply-readiness") return lifecycleApplyReadinessCommand();
   console.error(
     "Usage: doctor | status | task validate <spec> | run start <spec> [run_id] | "
-    + "run verify <run_dir> | run finish <run_dir> <verdict> <reason>",
+    + "run verify <run_dir> | run finish <run_dir> <verdict> <reason> | "
+    + "lifecycle plan | lifecycle verify | lifecycle apply-readiness",
   );
   return 2;
 }

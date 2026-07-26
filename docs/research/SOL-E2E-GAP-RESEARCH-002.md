@@ -1,50 +1,143 @@
-# SOL-E2E-GAP-RESEARCH-002: Solana E2E Gap and Dispatch Research
+# SOL-E2E-GAP-RESEARCH-002: Solana E2E gap and dispatch research
 
-## 1. Executive Summary
-This research maps the remaining gaps between the currently accepted standalone Solana components (Pump decoding, Holder snapshots, Dev history) and the constitutionally required end-to-end (E2E) analysis. The analysis identifies missing integrations in the application layer and required Owner decisions before the `SOL-E2E-001` milestone can be achieved.
+**Role:** researcher (T1, read-only)  
+**Updated:** 2026-07-26 (post CA orchestration + evidence-integrity repair + wallet cleaning wave)  
+**Owner bound:** no live CA, credentials, or provider selection
 
-## 2. Current State vs. E2E Gap Analysis
+## 1. Executive summary
 
-### 2.1. Creator Evidence & Pump Decoding
-* **Current State:** `PumpInstructionDecoder` is fully audited (`GREEN`) and properly extracts creator evidence from pinned fixtures.
-* **Gap:** `HeliusSolanaAdapter.getToken()` explicitly omits `creatorAddress` (line 164: `// Creator is intentionally omitted`). Because of this, `AnalysisService` fails to invoke Dev metrics (`dev: null` and warning emitted: "未能从创建指令/工厂事件中确认 creator"). The decoder is not yet wired to the adapter.
+Standalone Solana fact services (Pump decoder, holder snapshot, Dev history) are
+accepted. Final CA **orchestration** is implemented and repair-implemented; independent
+repair/wallet/harness audits are queued for an evening batch.
 
-### 2.2. Holder Snapshot Processing
-* **Current State:** `SolanaHolderSnapshotService` is audited (`GREEN`), properly handling duplicate cursors, `finalizedSlot` boundaries, and low-confidence clusters.
-* **Gap:** `HeliusSolanaAdapter.getHolders()` currently performs naive token account aggregation directly from RPC responses. It completely bypasses `SolanaHolderSnapshotService`. Similarly, `AnalysisService` directly calls `calculateRealHolderConcentration` without utilizing the validated snapshot service's completeness and boundary checks.
+Remaining gaps to constitution-defined **fixture + Owner-authorized live** E2E
+(`SOL-E2E-001`) are no longer “wire adapter only.” They are:
 
-### 2.3. Dev History & Behavior
-* **Current State:** `SolanaDevHistoryService` is audited (`GREEN`), guaranteeing fail-closed creator binding and rejecting completeness on gapped/unfinalized history.
-* **Gap:** `AnalysisService` implements its own isolated `buildDevBehavior()` (lines 193-218) that directly calls the domain logic `calculateDevBehavior`. This bypasses the audited `SolanaDevHistoryService`'s strict coverage checks (e.g., `hasTrustedCreatorEvidence`, `assessCoverage`), negating the protections verified in `SOL-DEV-REPAIR-AUDIT-001`.
+1. **Independent audit batch** on recent implementer work  
+2. **Wallet cleaning acceptance** (implementer done or in flight; auditor pending)  
+3. **FIND-4 residual** — exclusion tags/clusters still narrower than full snapshot  
+4. **Live provider + CA Owner decisions** (T3)  
+5. **Security containment** (`SEC-HARNESS-CONTENT-SCAN-001`)  
+6. **Fixture E2E package + optional live run** under Owner gates  
 
-### 2.4. Live CA & Provider Authorization
-* **Current State:** Constitution mandates E2E analysis using both a pinned fixture and an explicitly authorized live-CA.
-* **Gap:** As outlined in `OWNER_DECISIONS_NEEDED.md`, no live CA, RPC endpoint (Helius plan/key), or payload retention policy has been authorized by the Owner yet. `SOL-E2E-001` is currently blocked by these decisions.
+Verdict for this research task: **GREEN for dispatch mapping** (offline).  
+`SOL-E2E-001` itself remains **PARK** until Owner gates and audits close.
 
-## 3. Subsequent Task Dispatch
+## 2. Current state (facts, not chat)
 
-To reach `SOL-E2E-001` GREEN, the remaining work should be split into the following tasks:
+| Building block | Status | Evidence |
+|---|---|---|
+| Pump retrieval decoder | Accepted | `SOL-PUMP-RETRIEVAL-AUDIT-001` GREEN |
+| Holder snapshot + repair | Accepted | `SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001` |
+| Dev history + repair | Accepted | `SOL-DEV-REPAIR-AUDIT-001` |
+| CA orchestration | Implementer DONE | run `20260726_SOL_CA_ORCHESTRATION_001` GREEN |
+| Orchestration audit | DONE **FAIL** | `docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md` |
+| Orchestration repair | Implementer DONE | run `20260726_SOL_CA_ORCH_REPAIR_001` GREEN |
+| Orchestration repair audit | **Queued evening** | task READY |
+| Wallet cleaning | Implementer wave | service-funder suppression + evidence on result |
+| Wallet cleaning audit | **Queued evening** | blocked until implementer DONE + batch |
+| Harness AO automation | Implementer wave | offline `lifecycle plan/verify/apply-readiness` |
+| Live Helius/RPC | Not wired | `KNOWN_LIMITATIONS.md` |
+| Live CA / credentials | Owner-gated | `OWNER_DECISIONS_NEEDED.md`, `SOL-E2E-001` PARK |
 
-### Task 1: `SOL-ADAPTER-INTEGRATION-001` (Implementation)
-**Objective:** Wire the audited data services into the application adapter.
-* Inject `PumpInstructionDecoder` into `HeliusSolanaAdapter` to populate `token.creatorAddress`.
-* Replace `HeliusSolanaAdapter.getHolders()` naive aggregation with `SolanaHolderSnapshotService`.
-* Refactor `AnalysisService` to use `SolanaDevHistoryService` instead of its internal `buildDevBehavior()`.
-* **Deliverable:** Updated `analysis-service.ts` and `helius-solana-adapter.ts` with passing unit tests.
+### 2.1 What the stale 2026-07 earlier draft got wrong
 
-### Task 2: `SOL-OWNER-DECISION-001` (Governance)
-**Objective:** Unblock live E2E testing by securing Owner authorization.
-* Select a production Helius RPC endpoint/key.
-* Nominate and authorize a specific live Pump.fun CA for the acceptance manifest.
-* Define the retention policy for live response payloads.
-* **Deliverable:** Updated `OWNER_DECISIONS_NEEDED.md` with explicit owner sign-off.
+An older draft claimed creator/holder/Dev were unwired into `AnalysisService`. That is
+**obsolete** after `SOL-CA-ORCHESTRATION-001`: audited Solana facts are composed into
+the final result with fail-closed completeness gates. Do not re-dispatch
+“adapter integration” as if orchestration never landed.
 
-### Task 3: `SOL-E2E-001` (Milestone Execution)
-**Objective:** Execute the E2E analysis pipeline and generate the acceptance manifest.
-* Implement `test/integration/solana/pump-analysis.e2e.test.ts` utilizing the fully integrated `AnalysisService`.
-* Run analysis against the pinned fixture and the Owner-authorized live CA.
-* **Deliverable:** `harness/reports/SOL-E2E-001/acceptance.md` containing source watermarks, hashes, cleaning evidence, and correct metrics.
+## 3. Residual technical gaps (before live E2E)
 
-## 4. Conclusion
-**Verdict: PARK**
-The gaps are isolated purely to the application adapter layer (wiring) and pending governance decisions. However, the verdict is `PARK` because the project's `node_modules` is populated for `win32-x64` (from the G: drive), causing `tsx` (via `esbuild`) to crash with a missing binary error on this Darwin/arm64 agent. I am restricted from using the network to run `npm install` to correct the environment, so the required acceptance commands (`npm run harness:task` and `npm test`) cannot be completed successfully without a pristine environment.
+### G1 — Independent audit backlog (process)
+
+Implementer GREEN ≠ accepted T2 milestone. Evening batch should cover at least:
+
+- `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001`
+- `SOL-WALLET-CLEANING-AUDIT-003` (after wallet implementer finish)
+- `HARNESS-AO-AUTOMATION-AUDIT-001`
+
+### G2 — FIND-4 exclusion input width
+
+Orchestration still derives tag/cluster exclusion inputs from generic top-100 owners
+and the recent-trade window, then passes them into the audited snapshot. Warnings are
+emitted; root rewiring (enumerate from snapshot itself) is still required **before**
+any live source is trusted for concentration.
+
+### G3 — Service funder coverage
+
+Wallet cleaning suppresses `exchange` / `router` tags at confidence ≥ 0.8. Bridge and
+batch-service funders are not first-class roles yet; expand only with evidence-backed
+tags (no silent heuristic).
+
+### G4 — Persistence / CA case keys (advisories)
+
+Base58 case-folding on cache/Postgres keys remains a pre-existing advisory. Optional
+hardening task, not E2E-blocking for fixture-only acceptance.
+
+### G5 — Non-Solana completeness hardcodes
+
+Non-Solana branch still hard-codes completeness; unreachable while BSC/Robinhood
+stage-blocked. Future stage tasks must not inherit blindly.
+
+### G6 — Live data plane
+
+No live adapter, credentials, payload retention policy, or Owner-named CA. Fixture E2E
+can proceed offline; live leg cannot.
+
+## 4. Recommended dispatch sequence
+
+```text
+[evening] SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001
+       → if GREEN: accept repair; else REPAIR-00N
+[impl]    SOL-WALLET-CLEANING-003 (this wave)
+[evening] SOL-WALLET-CLEANING-AUDIT-003
+[impl]    HARNESS-AO-AUTOMATION-001 (this wave)
+[evening] HARNESS-AO-AUTOMATION-AUDIT-001
+[design]  SOL-HOLDER-EXCLUSION-INPUT-REPAIR (FIND-4; name TBD) before live
+[owner]   T3 decisions: CA, endpoint/plan, retention, credential containment
+[sec]     SEC-HARNESS-CONTENT-SCAN-001
+[coord]   SOL-E2E-001 fixture package + optional Owner live run
+```
+
+### Task sketch — FIND-4 follow-up (not registered in this research write)
+
+- **Objective:** Derive exclusion tags/clusters from the audited snapshot’s own owner set
+  (or emit hard fail if inputs are narrower than completeness claims).  
+- **Must not:** lower cluster confidence threshold; call live providers.
+
+### Task sketch — fixture E2E
+
+- Offline multi-service fixture under `test/integration/solana/**`  
+- Assert watermarks, cleaning evidence, creator pin, Dev completeness gates, wallet
+  cleaning evidence, and absence of network.
+
+## 5. Owner decisions still required (unchanged gates)
+
+From `OWNER_DECISIONS_NEEDED.md` / `SOL-E2E-001`:
+
+1. Authorize a specific live Pump.fun CA (or explicitly fixture-only acceptance).  
+2. Authorize Helius/RPC endpoint or plan and credential containment.  
+3. Define live payload retention / redaction policy.  
+4. Any threshold relaxation remains a separate Owner decision.
+
+## 6. Acceptance of this research task
+
+Commands (local, offline):
+
+```text
+npm run harness:task -- validate harness/tasks/SOL-E2E-GAP-RESEARCH-002.json
+npm run typecheck
+npm test
+npm run build
+git diff --check
+```
+
+**No network, no CA selection, no code changes outside the research write set.**
+
+## 7. Conclusion
+
+The path to E2E is **audit batch → finish wallet/harness acceptance → FIND-4 repair
+before live → Owner T3 gates → SOL-E2E-001**. Orchestration wiring is no longer the
+primary gap; evidence integrity, independent review, exclusion-input honesty, and
+Owner-gated live policy are.

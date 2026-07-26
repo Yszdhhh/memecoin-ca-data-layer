@@ -248,6 +248,26 @@ export interface MarketSnapshot {
   source: string;
 }
 
+/**
+ * Wallet cleaning / quality evidence exposed on the CA result.
+ * Wallet-quality labels never drive holder exclusion (constitution rule 4 / task bound).
+ */
+export interface WalletCleaningEvidence {
+  clusterMembers: ClusterMember[];
+  suppressedServiceFunders: Array<{
+    funder: string;
+    role: AddressRole;
+    confidence: number;
+    source: string;
+    ruleVersion: string;
+    suppressedEdgeCount: number;
+  }>;
+  /** Large-order wallet quality only; not an exclusion input. */
+  largeOrderWalletQuality: Array<{ trader: string; quality: WalletQuality }>;
+  /** Explicit contract pin for auditors and consumers. */
+  holderExclusionUsesWalletQuality: false;
+}
+
 export interface AnalysisResult {
   token: TokenRef;
   market: MarketSnapshot | null;
@@ -258,6 +278,7 @@ export interface AnalysisResult {
   largeOrders: LargeOrder[];
   creatorProfile?: CreatorProfile;
   solanaEvidence?: SolanaAnalysisEvidence;
+  walletCleaningEvidence?: WalletCleaningEvidence;
   warnings: string[];
   dataAsOf: Date;
 }

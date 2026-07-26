@@ -10,7 +10,9 @@
 - Holder enumeration must fetch beyond RPC `getTokenLargestAccounts`; the exact
   production provider/path is not selected yet.
 - Dev history currently assumes normalized trades are complete from creation time.
-- Funding clusters do not yet suppress exchange/bridge/batch-service funders.
+- Funding clusters suppress high-confidence `exchange`/`router` service funders with
+  retained evidence (`service-funder-v1`). Bridge/batch-service funders still need
+  explicit evidence-backed roles before they can be suppressed the same way.
 - PostgreSQL migration has not been exercised against a disposable database in CI.
 - The repository has no CI workflow yet; the local Harness is the current gate.
 - BSC and Robinhood are intentionally stage-blocked.

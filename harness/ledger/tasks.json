@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-26T11:50:00.000Z",
+  "updated_at_utc": "2026-07-26T11:49:06.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -210,12 +210,12 @@
     {
       "task_id": "SOL-WALLET-CLEANING-003",
       "spec": "harness/tasks/SOL-WALLET-CLEANING-003.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-WALLET-CLEANING-AUDIT-003",
       "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     },
     {
       "task_id": "SEC-HARNESS-CONTENT-SCAN-001",
@@ -225,7 +225,7 @@
     {
       "task_id": "SOL-E2E-GAP-RESEARCH-002",
       "spec": "harness/tasks/SOL-E2E-GAP-RESEARCH-002.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-AO-WAVE-003",
@@ -235,12 +235,12 @@
     {
       "task_id": "HARNESS-AO-AUTOMATION-001",
       "spec": "harness/tasks/HARNESS-AO-AUTOMATION-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-AO-AUTOMATION-AUDIT-001",
       "spec": "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }
