@@ -1,7 +1,7 @@
 import type {
+  FinishedRunEvidence,
   LifecyclePlan,
   ProjectConfig,
-  RunManifest,
   TaskLedger,
   TaskSpec,
   TaskStatus,
@@ -13,7 +13,13 @@ const TASK_ID = /^[A-Z][A-Z0-9-]{2,63}$/;
 const TIERS = new Set(["T1", "T2", "T3"]);
 const ROLES = new Set(["coordinator", "implementer", "researcher", "auditor"]);
 const STATUSES = new Set(["READY", "BLOCKED_DEPENDENCY", "BLOCKED_STAGE", "IN_PROGRESS", "DONE", "PARK"]);
-const ACCEPTING_AUDIT_VERDICTS = new Set<Verdict>(["GREEN", "GREEN_WITH_ADVISORY", "FAIL"]);
+// Only a passing audit closes an audit-evidence gap. FAIL/PARK/QUARANTINED are
+// "finished" but do NOT certify the milestone, so they must never satisfy it.
+const ACCEPTING_AUDIT_VERDICTS = new Set<Verdict>(["GREEN", "GREEN_WITH_ADVISORY"]);
+// A readiness flip may only move a task between these two states; any other
+// `from` (DONE, PARK, BLOCKED_STAGE, IN_PROGRESS) is illegal even if it matches
+// the current status of a forged plan.
+const READINESS_FLIP_STATES = new Set<TaskStatus>(["READY", "BLOCKED_DEPENDENCY"]);
 
 export function validateTask(spec: TaskSpec, config: ProjectConfig): string[] {
   const errors: string[] = [];
@@ -100,7 +106,7 @@ export async function validateLedger(ledger: TaskLedger, config: ProjectConfig):
 export function deriveLifecyclePlan(
   specs: Map<string, TaskSpec>,
   ledger: TaskLedger,
-  finishedRuns: ReadonlyArray<Pick<RunManifest, "task_id" | "role" | "status">>,
+  finishedRuns: ReadonlyArray<FinishedRunEvidence>,
 ): LifecyclePlan {
   const sync_errors: string[] = [];
   const ledgerById = new Map(ledger.tasks.map((entry) => [entry.task_id, entry]));
@@ -146,15 +152,30 @@ export function deriveLifecyclePlan(
       const depSpec = specs.get(dep);
       if (!depSpec || depSpec.role !== "implementer") continue;
       if (statusOf(dep) !== "DONE") continue;
-      const hasFinishedAuditRun = finishedRuns.some(
+      // agent_ids that produced a finished run for the implementer milestone; the
+      // auditor run must be a DIFFERENT identity (playbook + constitution: the
+      // implementer cannot be the sole final auditor of a milestone).
+      const implementerAgents = new Set(
+        finishedRuns
+          .filter((run) => run.task_id === dep && run.role === "implementer" && run.agent_id)
+          .map((run) => run.agent_id),
+      );
+      const acceptedAuditRuns = finishedRuns.filter(
         (run) =>
           run.task_id === taskId
           && run.role === "auditor"
-          && ACCEPTING_AUDIT_VERDICTS.has(run.status as Verdict),
+          && run.evidence_valid
+          && ACCEPTING_AUDIT_VERDICTS.has(run.status),
       );
-      if (!hasFinishedAuditRun) {
+      const independentAuditRun = acceptedAuditRuns.find(
+        (run) => run.agent_id && !implementerAgents.has(run.agent_id),
+      );
+      if (!independentAuditRun) {
+        const reason = acceptedAuditRuns.length === 0
+          ? "without a finished, valid, passing auditor run"
+          : "but every passing auditor run shares the implementer's agent identity";
         audit_evidence_gaps.push(
-          `${dep}: implementer DONE but auditor task ${taskId} is ${statusOf(taskId) ?? "unknown"} without a finished auditor run`,
+          `${dep}: implementer DONE, auditor task ${taskId} is ${statusOf(taskId) ?? "unknown"} ${reason}`,
         );
       }
     }
@@ -247,8 +268,12 @@ export async function applyReadinessUpdates(
   };
 
   for (const update of plan.readiness_updates) {
-    if (update.to !== "READY" && update.to !== "BLOCKED_DEPENDENCY") {
+    if (!READINESS_FLIP_STATES.has(update.to)) {
       rejected.push(`${update.task_id}: refusing non-readiness target ${update.to}`);
+      continue;
+    }
+    if (!READINESS_FLIP_STATES.has(update.from)) {
+      rejected.push(`${update.task_id}: refusing non-readiness source ${update.from}`);
       continue;
     }
     const spec = specs.get(update.task_id);

@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-26T15:20:00.000Z",
+  "updated_at_utc": "2026-07-27T02:00:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -270,12 +270,12 @@
     {
       "task_id": "HARNESS-AO-AUTOMATION-REPAIR-001",
       "spec": "harness/tasks/HARNESS-AO-AUTOMATION-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-AO-AUTOMATION-REPAIR-AUDIT-001",
       "spec": "harness/tasks/HARNESS-AO-AUTOMATION-REPAIR-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }

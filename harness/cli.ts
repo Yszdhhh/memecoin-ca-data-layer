@@ -3,6 +3,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import type {
   ArtifactRecord,
+  FinishedRunEvidence,
   ProjectConfig,
   RunManifest,
   TaskLedger,
@@ -291,7 +292,28 @@ async function loadSpecs(ledger: TaskLedger): Promise<Map<string, TaskSpec>> {
   return specs;
 }
 
-async function loadFinishedRuns(): Promise<Array<Pick<RunManifest, "task_id" | "role" | "status">>> {
+/**
+ * A run manifest may only count as audit evidence if it is structurally a run-v1
+ * manifest, every acceptance command PASSED, and every integrity flag is exactly
+ * true. This is what stops a hand-forged or half-finished manifest from closing
+ * an audit-evidence gap.
+ */
+function manifestIsValidEvidence(manifest: RunManifest): boolean {
+  if (manifest.schema_version !== "run-v1") return false;
+  if (typeof manifest.task_id !== "string" || !manifest.task_id) return false;
+  if (typeof manifest.agent_id !== "string" || !manifest.agent_id) return false;
+  if (typeof manifest.role !== "string") return false;
+  if (!Array.isArray(manifest.acceptance) || manifest.acceptance.length === 0) return false;
+  if (!manifest.acceptance.every((record) => record.status === "PASSED")) return false;
+  const integrity = manifest.integrity;
+  if (!integrity || typeof integrity !== "object") return false;
+  return integrity.task_spec_valid === true
+    && integrity.active_stage_allowed === true
+    && integrity.write_scope_valid === true
+    && integrity.secrets_absent === true;
+}
+
+async function loadFinishedRuns(): Promise<FinishedRunEvidence[]> {
   const runsRoot = resolveRepoPath("harness/runs");
   let names: string[] = [];
   try {
@@ -299,7 +321,7 @@ async function loadFinishedRuns(): Promise<Array<Pick<RunManifest, "task_id" | "
   } catch {
     return [];
   }
-  const finished: Array<Pick<RunManifest, "task_id" | "role" | "status">> = [];
+  const finished: FinishedRunEvidence[] = [];
   for (const name of names) {
     if (name.startsWith(".")) continue;
     const manifestPath = `harness/runs/${name}/manifest.json`;
@@ -307,7 +329,13 @@ async function loadFinishedRuns(): Promise<Array<Pick<RunManifest, "task_id" | "
     try {
       const manifest = await readJson<RunManifest>(manifestPath);
       if (manifest.status === "RUNNING") continue;
-      finished.push({ task_id: manifest.task_id, role: manifest.role, status: manifest.status });
+      finished.push({
+        task_id: manifest.task_id,
+        role: manifest.role,
+        status: manifest.status,
+        agent_id: manifest.agent_id,
+        evidence_valid: manifestIsValidEvidence(manifest),
+      });
     } catch {
       // skip corrupt run dirs
     }
@@ -329,7 +357,14 @@ async function lifecycleVerifyCommand(): Promise<number> {
   const specs = await loadSpecs(ledger);
   const ledgerErrors = await validateLedger(ledger, config);
   const plan = deriveLifecyclePlan(specs, ledger, await loadFinishedRuns());
-  const status = ledgerErrors.length === 0 && plan.sync_errors.length === 0 ? "GREEN" : "FAIL";
+  // Fail closed: an outstanding audit-evidence gap means a DONE implementer
+  // milestone lacks an independent, valid, passing auditor run. Verify must not
+  // report GREEN while that is true.
+  const status = ledgerErrors.length === 0
+    && plan.sync_errors.length === 0
+    && plan.audit_evidence_gaps.length === 0
+    ? "GREEN"
+    : "FAIL";
   console.log(JSON.stringify({
     status,
     ledger_errors: ledgerErrors,

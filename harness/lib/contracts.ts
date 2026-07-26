@@ -89,6 +89,20 @@ export interface RunManifest {
   unresolved_items: string[];
 }
 
+/**
+ * A finished run reduced to the fields the lifecycle planner may trust as audit
+ * evidence. `evidence_valid` is true only when the manifest passed its schema
+ * shape check, every acceptance command PASSED, and every integrity flag is true.
+ * A run that is not `evidence_valid` must never satisfy an audit-evidence gap.
+ */
+export interface FinishedRunEvidence {
+  task_id: string;
+  role: Role;
+  status: Verdict;
+  agent_id: string;
+  evidence_valid: boolean;
+}
+
 /** Offline planner output — never invokes agents or providers. */
 export interface LifecyclePlan {
   schema_version: "lifecycle-plan-v1";
