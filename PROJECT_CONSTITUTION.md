@@ -2,9 +2,20 @@
 
 ## Mission
 
-Build an auditable data layer that returns cleaner holder concentration, Dev
-behavior, large-order quality, and creator history for a submitted token address.
-This repository does not implement Telegram, UI, trading, signing, or order execution.
+Build a CA-driven primary-market decision entrypoint: paste a token address (or
+wallet, or old token) and get a fast, structured, replayable on-chain research
+card, then sediment the wallets and relationships into a reusable, reverse-
+searchable **address-intelligence library**. The auditable data layer (cleaner
+holder concentration, Dev behavior, large-order quality, creator history) is the
+first-hand trust foundation under that entrypoint. Third parties supply factual
+data; this project supplies the long-term cognitive asset.
+
+This repository does not implement UI, trading, signing, or order execution, and
+does not treat Telegram/social as a truth source (hint layer only). The binding
+architecture — four layers, data trust tiers, hot/cold separation, external
+labels as features not conclusions, parser contract, and the four harness test
+dimensions — is defined in `PROJECT_ARCHITECTURE.md` and has the same authority
+as this constitution.
 
 ## Current stage
 
