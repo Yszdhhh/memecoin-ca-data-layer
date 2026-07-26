@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Make the final Solana CA result consume pinned Pump creator evidence, the complete-only holder snapshot and complete-from-creation Dev history services, and expose structured evidence, completeness and warnings without making a live provider call.",
   "dependencies": [
     "HARNESS-CA-WAVE-002",
