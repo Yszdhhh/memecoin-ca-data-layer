@@ -166,16 +166,24 @@ export class AnalysisService {
           solanaAdapter.getAuditedHolderSnapshot(token, addressTags, clusterMembers),
           solanaAdapter.getPinnedPumpCreatorEvidence(token),
         ]);
+        // Exclusion tags/clusters are still derived from the generic top-100 list and the
+        // recent-trade window, which can be narrower than a complete audited snapshot.
+        warnings.push("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100");
+        warnings.push("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW");
         holderCompleteness = snapshotCompleteness(holderSnapshot);
         if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration !== null) {
           holders = holderSnapshot.concentration;
         } else {
+          // complete + null concentration is an invalid snapshot contract state
+          if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration === null) {
+            holderCompleteness = "unavailable";
+          }
           warnings.push("HOLDER_CONCENTRATION_INDETERMINATE");
           if (holderSnapshot) warnings.push(...holderSnapshot.warnings);
         }
 
         if (creatorEvidence === null) {
-          devCompleteness = "partial";
+          devCompleteness = "unavailable";
           warnings.push("CREATOR_EVIDENCE_MISSING_OR_UNTRUSTED");
           warnings.push("DEV_TOTALS_INDETERMINATE");
           solanaEvidence = {
@@ -189,14 +197,17 @@ export class AnalysisService {
           const devHistory = holderSnapshot?.completeness === "complete"
             ? await solanaAdapter.getAuditedDevHistory({ token, creatorEvidence, holderSnapshot, relatedAddresses, at: now })
             : null;
-          devCompleteness = devHistory === null
-            ? (holderSnapshot?.completeness === "partial" ? "partial" : "unavailable")
-            : (devHistory.coverage.completeFromCreation ? "complete" : "partial");
+          // complete only when both totals and complete-from-creation coverage are present
           if (devHistory?.dev !== null && devHistory?.coverage.completeFromCreation) {
             dev = devHistory.dev;
-          } else {
+            devCompleteness = "complete";
+          } else if (devHistory === null) {
+            devCompleteness = holderSnapshot?.completeness === "partial" ? "partial" : "unavailable";
             warnings.push("DEV_TOTALS_INDETERMINATE");
-            if (devHistory) warnings.push(...devHistory.warnings);
+          } else {
+            devCompleteness = "partial";
+            warnings.push("DEV_TOTALS_INDETERMINATE");
+            warnings.push(...devHistory.warnings);
           }
           solanaEvidence = {
             creator: creatorEvidence,
@@ -289,7 +300,8 @@ function holderSnapshotEvidence(snapshot: SolanaHolderSnapshot): HolderSnapshotE
       ownerAddress: account.ownerAddress,
       balanceRaw: account.balanceRaw,
     })),
-    ownerBalances: new Map(snapshot.ownerBalances),
+    // Array entries survive JSON/JSONB; Map serializes to {} in Redis and Postgres.
+    ownerBalances: [...snapshot.ownerBalances.entries()].map(([owner, balanceRaw]) => ({ owner, balanceRaw })),
     watermarks: snapshot.watermarks.map((watermark) => ({ ...watermark, observedAt: new Date(watermark.observedAt) })),
     cleaningEvidence: snapshot.cleaningEvidence.map(copyCleaningEvidence),
     warnings: [...snapshot.warnings],

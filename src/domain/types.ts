@@ -122,10 +122,16 @@ export interface HolderCleaningEvidenceFact {
   evidence: Record<string, unknown>;
 }
 
+/** Owner-aggregation evidence (constitution rule 3). Array form is JSON-safe for Redis/Postgres. */
+export interface OwnerBalanceEntry {
+  owner: string;
+  balanceRaw: bigint;
+}
+
 export interface HolderSnapshotEvidence {
   completeness: "complete" | "partial";
   rawTokenAccounts: HolderBalance[];
-  ownerBalances: ReadonlyMap<string, bigint>;
+  ownerBalances: ReadonlyArray<OwnerBalanceEntry>;
   watermarks: SourceWatermarkEvidence[];
   cleaningEvidence: HolderCleaningEvidenceFact[];
   warnings: string[];

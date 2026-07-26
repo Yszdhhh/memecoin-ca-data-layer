@@ -168,10 +168,15 @@ test("uses pinned Pump creator plus complete audited facts and preserves direct,
   assert.equal(result.devCompleteness, "complete");
   assert.equal(result.holders?.top10Pct, 100);
   assert.equal(result.solanaEvidence?.creator?.source, "pump_create.creator");
-  assert.equal(result.solanaEvidence?.holderSnapshot?.ownerBalances.get("creator"), 400n);
+  assert.equal(
+    result.solanaEvidence?.holderSnapshot?.ownerBalances.find((entry) => entry.owner === "creator")?.balanceRaw,
+    400n,
+  );
   assert.equal(result.dev?.grossSoldPct, 5);
   assert.equal(result.dev?.relatedGrossSoldPct, 4);
   assert.equal(result.dev?.outboundTransferPct, 2.5);
+  assert.ok(result.warnings.includes("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100"));
+  assert.ok(result.warnings.includes("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW"));
   assert.equal(fixture.devHistoryRequests(), 1);
 });
 
@@ -194,11 +199,27 @@ test("does not query Dev history or report Dev totals without pinned Pump creato
 
   assert.equal(result.token.creatorAddress, undefined);
   assert.equal(result.dev, null);
-  assert.equal(result.devCompleteness, "partial");
+  assert.equal(result.devCompleteness, "unavailable");
   assert.equal(result.solanaEvidence?.creator, null);
   assert.ok(result.warnings.includes("CREATOR_EVIDENCE_MISSING_OR_UNTRUSTED"));
   assert.ok(result.warnings.includes("DEV_TOTALS_INDETERMINATE"));
   assert.equal(fixture.devHistoryRequests(), 0);
+});
+
+test("never reports complete Dev coverage when the Dev service returns null totals", async () => {
+  const rejected: SolanaDevHistoryResult = {
+    ...completeDevHistory(),
+    dev: null,
+    warnings: ["CREATOR_EVIDENCE_MISSING_OR_UNTRUSTED"],
+  };
+  const fixture = fixtureAdapter({ devHistory: rejected });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  assert.equal(result.dev, null);
+  assert.equal(result.devCompleteness, "partial");
+  assert.equal(result.solanaEvidence?.devHistory?.completeFromCreation, true);
+  assert.ok(result.warnings.includes("DEV_TOTALS_INDETERMINATE"));
+  assert.ok(result.warnings.includes("CREATOR_EVIDENCE_MISSING_OR_UNTRUSTED"));
 });
 
 test("retains creator and Dev coverage but refuses totals when Dev history is incomplete from creation", async () => {
