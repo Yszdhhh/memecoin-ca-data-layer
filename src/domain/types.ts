@@ -88,6 +88,66 @@ export interface HolderConcentration {
   rows: CleanHolderRow[];
 }
 
+/** Declares whether a fact set is safe to use for a conclusion. */
+export type FactCompleteness = "complete" | "partial" | "unavailable";
+
+/** Replay metadata kept with a source-derived Solana fact. */
+export interface SourceWatermarkEvidence {
+  source: string;
+  observedAt: Date;
+  finalizedSlot?: bigint;
+  cursor?: string;
+  completeness: "complete" | "partial";
+}
+
+/** Creator identity is only a fact when it comes from the pinned Pump create instruction. */
+export interface PumpCreatorEvidenceFact {
+  source: "pump_create.creator";
+  creatorAddress: string;
+  signature: string;
+  slot: bigint;
+  blockTime: Date;
+  programId: string;
+  sourceCommit: string;
+  idlSha256: string;
+}
+
+export interface HolderCleaningEvidenceFact {
+  address: string;
+  balanceRaw: bigint;
+  exclusionReason: HolderExclusionReason;
+  confidence: number;
+  ruleVersion: string;
+  rawTokenAccounts: HolderBalance[];
+  evidence: Record<string, unknown>;
+}
+
+export interface HolderSnapshotEvidence {
+  completeness: "complete" | "partial";
+  rawTokenAccounts: HolderBalance[];
+  ownerBalances: ReadonlyMap<string, bigint>;
+  watermarks: SourceWatermarkEvidence[];
+  cleaningEvidence: HolderCleaningEvidenceFact[];
+  warnings: string[];
+}
+
+export interface DevHistoryCoverageEvidence {
+  creationSlot: bigint;
+  oldestObservedSlot: bigint;
+  newestObservedSlot: bigint;
+  finalizedSlot: bigint;
+  cursor: string;
+  hasGaps: boolean;
+  observedAt: Date;
+  completeFromCreation: boolean;
+}
+
+export interface SolanaAnalysisEvidence {
+  creator: PumpCreatorEvidenceFact | null;
+  holderSnapshot: HolderSnapshotEvidence | null;
+  devHistory: DevHistoryCoverageEvidence | null;
+}
+
 export type TradeSide = "buy" | "sell";
 
 export interface NormalizedTrade {
@@ -185,10 +245,13 @@ export interface MarketSnapshot {
 export interface AnalysisResult {
   token: TokenRef;
   market: MarketSnapshot | null;
-  holders: HolderConcentration;
+  holders: HolderConcentration | null;
+  holderCompleteness: FactCompleteness;
   dev: DevBehavior | null;
+  devCompleteness: FactCompleteness;
   largeOrders: LargeOrder[];
   creatorProfile?: CreatorProfile;
+  solanaEvidence?: SolanaAnalysisEvidence;
   warnings: string[];
   dataAsOf: Date;
 }

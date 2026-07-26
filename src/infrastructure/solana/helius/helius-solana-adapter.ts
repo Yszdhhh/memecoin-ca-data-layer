@@ -9,7 +9,15 @@ import type {
   TokenTransfer,
   WalletFacts,
 } from "../../../domain/types.js";
-import type { ChainDataAdapter } from "../../../application/ports.js";
+import type { AuditedSolanaFactsAdapter } from "../../../application/ports.js";
+import {
+  PUMP_IDL_COMMIT,
+  PUMP_IDL_SHA256,
+  PUMP_PROGRAM_ID,
+} from "../pump/pump-instruction-decoder.js";
+import type { PumpCreatorEvidence, SolanaDevHistoryResult } from "../dev/solana-dev-history-service.js";
+import type { ClusterMember } from "../../../domain/types.js";
+import type { SolanaHolderSnapshot } from "../holders/solana-holder-snapshot-service.js";
 
 /**
  * A reproducible cursor for a response used to build an analysis.  The concrete
@@ -121,6 +129,20 @@ export interface SolanaHeliusDataSource {
   getAddressTags(addresses: string[]): Promise<SourceResponse<HeliusAddressTag[]>>;
   getWalletFacts(addresses: string[], at: Date): Promise<SourceResponse<HeliusWalletFacts[]>>;
   getCreatorProfile?(creatorAddress: string, at: Date): Promise<SourceResponse<CreatorProfile | null>>;
+  /** Outputs are built by the pinned, offline-verifiable services, not inferred from labels. */
+  getHolderSnapshot?(
+    token: TokenRef,
+    addressTags: AddressTag[],
+    clusterMembers: ClusterMember[],
+  ): Promise<SourceResponse<SolanaHolderSnapshot>>;
+  getPumpCreatorEvidence?(token: TokenRef): Promise<SourceResponse<PumpCreatorEvidence | null>>;
+  getDevHistory?(input: {
+    token: TokenRef;
+    creatorEvidence: PumpCreatorEvidence;
+    holderSnapshot: SolanaHolderSnapshot;
+    relatedAddresses: string[];
+    at: Date;
+  }): Promise<SourceResponse<SolanaDevHistoryResult>>;
 }
 
 export class SourceDataUnavailableError extends Error {
@@ -130,7 +152,7 @@ export class SourceDataUnavailableError extends Error {
   }
 }
 
-export class HeliusSolanaAdapter implements ChainDataAdapter {
+export class HeliusSolanaAdapter implements AuditedSolanaFactsAdapter {
   readonly chain = "solana" as const;
   private readonly watermarks: SourceWatermark[] = [];
 
@@ -272,6 +294,45 @@ export class HeliusSolanaAdapter implements ChainDataAdapter {
     return profile;
   }
 
+  hasAuditedSolanaFacts(): boolean {
+    return this.source.getHolderSnapshot !== undefined
+      && this.source.getPumpCreatorEvidence !== undefined
+      && this.source.getDevHistory !== undefined;
+  }
+
+  async getAuditedHolderSnapshot(
+    token: TokenRef,
+    addressTags: AddressTag[],
+    clusterMembers: ClusterMember[],
+  ): Promise<SolanaHolderSnapshot | null> {
+    if (!this.source.getHolderSnapshot) return null;
+    return this.record(this.source.getHolderSnapshot(token, addressTags, clusterMembers));
+  }
+
+  async getPinnedPumpCreatorEvidence(token: TokenRef): Promise<PumpCreatorEvidence | null> {
+    if (!this.source.getPumpCreatorEvidence) return null;
+    const evidence = await this.record(this.source.getPumpCreatorEvidence(token));
+    return isPinnedPumpCreatorEvidence(evidence) ? copyCreatorEvidence(evidence) : null;
+  }
+
+  async getAuditedDevHistory(input: {
+    token: TokenRef;
+    creatorEvidence: PumpCreatorEvidence;
+    holderSnapshot: SolanaHolderSnapshot;
+    relatedAddresses: string[];
+    at: Date;
+  }): Promise<SolanaDevHistoryResult | null> {
+    if (!this.source.getDevHistory) return null;
+    if (!isPinnedPumpCreatorEvidence(input.creatorEvidence)) return null;
+    if (input.holderSnapshot.completeness !== "complete") return null;
+    return this.record(this.source.getDevHistory({
+      ...input,
+      creatorEvidence: copyCreatorEvidence(input.creatorEvidence),
+      relatedAddresses: [...input.relatedAddresses],
+      at: new Date(input.at),
+    }));
+  }
+
   private async record<T>(request: Promise<SourceResponse<T>>): Promise<T> {
     const response = await request;
     this.watermarks.push({ ...response.watermark, observedAt: new Date(response.watermark.observedAt) });
@@ -326,4 +387,21 @@ function date(value: string, context: string): Date {
 
 function compareBigintDesc(left: bigint, right: bigint): number {
   return left === right ? 0 : left > right ? -1 : 1;
+}
+
+function isPinnedPumpCreatorEvidence(evidence: PumpCreatorEvidence | null): evidence is PumpCreatorEvidence {
+  return evidence !== null
+    && evidence.source === "pump_create.creator"
+    && evidence.creatorAddress.trim().length > 0
+    && evidence.signature.trim().length > 0
+    && evidence.slot >= 0n
+    && evidence.blockTime instanceof Date
+    && !Number.isNaN(evidence.blockTime.getTime())
+    && evidence.programId === PUMP_PROGRAM_ID
+    && evidence.sourceCommit === PUMP_IDL_COMMIT
+    && evidence.idlSha256 === PUMP_IDL_SHA256;
+}
+
+function copyCreatorEvidence(evidence: PumpCreatorEvidence): PumpCreatorEvidence {
+  return { ...evidence, blockTime: new Date(evidence.blockTime) };
 }

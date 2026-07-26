@@ -2,16 +2,21 @@ import type {
   AnalysisOptions,
   AnalysisResult,
   Chain,
+  ClusterMember,
   FirstBuy,
   HolderBalance,
+  HolderSnapshotEvidence,
   LargeOrder,
+  SolanaAnalysisEvidence,
   TokenRef,
 } from "../domain/types.js";
-import { calculateDevBehavior } from "../domain/rules/dev-behavior.js";
 import { detectFundingClusters } from "../domain/rules/funding-clusters.js";
+import { calculateDevBehavior } from "../domain/rules/dev-behavior.js";
 import { calculateRealHolderConcentration } from "../domain/rules/real-holders.js";
 import { classifyWallet } from "../domain/rules/wallet-quality.js";
-import type { AnalysisCache, AnalysisRepository, ChainDataAdapter, MarketDataProvider } from "./ports.js";
+import type { AnalysisCache, AnalysisRepository, AuditedSolanaFactsAdapter, ChainDataAdapter, MarketDataProvider } from "./ports.js";
+import type { PumpCreatorEvidence, SolanaDevHistoryResult } from "../infrastructure/solana/dev/solana-dev-history-service.js";
+import type { HolderCleaningEvidence, SolanaHolderSnapshot } from "../infrastructure/solana/holders/solana-holder-snapshot-service.js";
 
 export interface AnalysisServiceConfig {
   quickCacheTtlSeconds: number;
@@ -111,8 +116,8 @@ export class AnalysisService {
     const since = new Date(now.getTime() - this.config.recentTradeWindowMinutes * 60_000);
     const token = await adapter.getToken(ca);
 
-    const [market, rawHolders, trades, transfers] = await Promise.all([
-      this.marketData.getMarket(token),
+    const [marketResult, rawHolders, trades, transfers] = await Promise.all([
+      this.getMarketSafely(token),
       adapter.getHolders(token),
       adapter.getRecentTrades(token, since),
       adapter.getTransfers(token, token.createdAt ?? new Date(0)),
@@ -126,13 +131,6 @@ export class AnalysisService {
     ]);
     const firstBuys: FirstBuy[] = firstBuyPerWallet(trades);
     const clusterMembers = detectFundingClusters(fundingEdges, firstBuys);
-    const holders = calculateRealHolderConcentration({
-      holders: rawHolders,
-      totalSupplyRaw: token.totalSupplyRaw,
-      addressTags,
-      clusterMembers,
-    });
-
     const largeTrades = trades.filter((trade) => (trade.quoteUsd ?? 0) >= this.config.largeOrderMinimumUsd);
     const largeTradeAddresses = [...new Set(largeTrades.map((trade) => trade.trader))];
     const walletFacts = await adapter.getWalletFacts(largeTradeAddresses, now);
@@ -149,25 +147,103 @@ export class AnalysisService {
       ),
     }));
 
-    const dev = token.creatorAddress
-      ? buildDevBehavior(token, rawHolders, trades, transfers, fundingEdges, now)
-      : null;
-    const creatorProfile = deep && token.creatorAddress ? await adapter.getCreatorProfile(token) : undefined;
-    const warnings: string[] = [];
-    if (!token.creatorAddress) warnings.push("未能从创建指令/工厂事件中确认 creator，Dev 指标暂缺");
-    if (!market) warnings.push("补充市场数据不可用；链上持仓与交易口径不受影响");
+    const warnings: string[] = [...marketResult.warnings];
+    let resultToken = token;
+    let holders = null;
+    let holderCompleteness: AnalysisResult["holderCompleteness"] = "unavailable";
+    let dev = null;
+    let devCompleteness: AnalysisResult["devCompleteness"] = "unavailable";
+    let solanaEvidence: SolanaAnalysisEvidence | undefined;
+
+    if (adapter.chain === "solana") {
+      const solanaAdapter = asAuditedSolanaFactsAdapter(adapter);
+      if (!solanaAdapter || !solanaAdapter.hasAuditedSolanaFacts()) {
+        warnings.push("SOLANA_AUDITED_FACT_SERVICES_UNAVAILABLE");
+        warnings.push("HOLDER_CONCENTRATION_INDETERMINATE");
+        warnings.push("DEV_TOTALS_INDETERMINATE");
+      } else {
+        const [holderSnapshot, creatorEvidence] = await Promise.all([
+          solanaAdapter.getAuditedHolderSnapshot(token, addressTags, clusterMembers),
+          solanaAdapter.getPinnedPumpCreatorEvidence(token),
+        ]);
+        holderCompleteness = snapshotCompleteness(holderSnapshot);
+        if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration !== null) {
+          holders = holderSnapshot.concentration;
+        } else {
+          warnings.push("HOLDER_CONCENTRATION_INDETERMINATE");
+          if (holderSnapshot) warnings.push(...holderSnapshot.warnings);
+        }
+
+        if (creatorEvidence === null) {
+          devCompleteness = "partial";
+          warnings.push("CREATOR_EVIDENCE_MISSING_OR_UNTRUSTED");
+          warnings.push("DEV_TOTALS_INDETERMINATE");
+          solanaEvidence = {
+            creator: null,
+            holderSnapshot: holderSnapshot ? holderSnapshotEvidence(holderSnapshot) : null,
+            devHistory: null,
+          };
+        } else {
+          resultToken = { ...token, creatorAddress: creatorEvidence.creatorAddress };
+          const relatedAddresses = relatedAddressesFor(creatorEvidence.creatorAddress, fundingEdges);
+          const devHistory = holderSnapshot?.completeness === "complete"
+            ? await solanaAdapter.getAuditedDevHistory({ token, creatorEvidence, holderSnapshot, relatedAddresses, at: now })
+            : null;
+          devCompleteness = devHistory === null
+            ? (holderSnapshot?.completeness === "partial" ? "partial" : "unavailable")
+            : (devHistory.coverage.completeFromCreation ? "complete" : "partial");
+          if (devHistory?.dev !== null && devHistory?.coverage.completeFromCreation) {
+            dev = devHistory.dev;
+          } else {
+            warnings.push("DEV_TOTALS_INDETERMINATE");
+            if (devHistory) warnings.push(...devHistory.warnings);
+          }
+          solanaEvidence = {
+            creator: creatorEvidence,
+            holderSnapshot: holderSnapshot ? holderSnapshotEvidence(holderSnapshot) : null,
+            devHistory: devHistory ? copyDevCoverage(devHistory) : null,
+          };
+        }
+      }
+    } else {
+      holders = calculateRealHolderConcentration({
+        holders: rawHolders,
+        totalSupplyRaw: token.totalSupplyRaw,
+        addressTags,
+        clusterMembers,
+      });
+      holderCompleteness = "complete";
+      dev = token.creatorAddress
+        ? buildDevBehavior(token, rawHolders, trades, transfers, fundingEdges, now)
+        : null;
+      devCompleteness = token.creatorAddress ? "complete" : "unavailable";
+    }
+
+    const creatorProfile = deep && resultToken.creatorAddress ? await adapter.getCreatorProfile(resultToken) : undefined;
+    if (!marketResult.market) warnings.push("补充市场数据不可用；链上持仓与交易口径不受影响");
     if (clusterMembers.length > 0) warnings.push(`已从真实集中度中排除 ${clusterMembers.length} 个高置信同源地址`);
 
     return {
-      token,
-      market,
+      token: resultToken,
+      market: marketResult.market,
       holders,
+      holderCompleteness,
       dev,
+      devCompleteness,
       largeOrders,
       ...(creatorProfile ? { creatorProfile } : {}),
+      ...(solanaEvidence ? { solanaEvidence } : {}),
       warnings,
       dataAsOf: now,
     };
+  }
+
+  private async getMarketSafely(token: TokenRef): Promise<{ market: AnalysisResult["market"]; warnings: string[] }> {
+    try {
+      return { market: await this.marketData.getMarket(token), warnings: [] };
+    } catch {
+      return { market: null, warnings: ["MARKET_ENRICHMENT_UNAVAILABLE"] };
+    }
   }
 }
 
@@ -190,6 +266,63 @@ function firstBuyPerWallet(trades: import("../domain/types.js").NormalizedTrade[
   return [...first.values()];
 }
 
+function asAuditedSolanaFactsAdapter(adapter: ChainDataAdapter): AuditedSolanaFactsAdapter | null {
+  if (adapter.chain !== "solana") return null;
+  return "getAuditedHolderSnapshot" in adapter
+    && "getPinnedPumpCreatorEvidence" in adapter
+    && "getAuditedDevHistory" in adapter
+    && "hasAuditedSolanaFacts" in adapter
+    ? adapter as AuditedSolanaFactsAdapter
+    : null;
+}
+
+function snapshotCompleteness(snapshot: SolanaHolderSnapshot | null): AnalysisResult["holderCompleteness"] {
+  if (snapshot === null) return "unavailable";
+  return snapshot.completeness;
+}
+
+function holderSnapshotEvidence(snapshot: SolanaHolderSnapshot): HolderSnapshotEvidence {
+  return {
+    completeness: snapshot.completeness,
+    rawTokenAccounts: snapshot.rawTokenAccounts.map((account) => ({
+      address: account.tokenAccountAddress,
+      ownerAddress: account.ownerAddress,
+      balanceRaw: account.balanceRaw,
+    })),
+    ownerBalances: new Map(snapshot.ownerBalances),
+    watermarks: snapshot.watermarks.map((watermark) => ({ ...watermark, observedAt: new Date(watermark.observedAt) })),
+    cleaningEvidence: snapshot.cleaningEvidence.map(copyCleaningEvidence),
+    warnings: [...snapshot.warnings],
+  };
+}
+
+function copyCleaningEvidence(evidence: HolderCleaningEvidence) {
+  return {
+    address: evidence.address,
+    balanceRaw: evidence.balanceRaw,
+    exclusionReason: evidence.exclusionReason,
+    confidence: evidence.confidence,
+    ruleVersion: evidence.ruleVersion,
+    rawTokenAccounts: evidence.rawTokenAccounts.map((account) => ({
+      address: account.tokenAccountAddress,
+      ownerAddress: account.ownerAddress,
+      balanceRaw: account.balanceRaw,
+    })),
+    evidence: {
+      ...(evidence.label ? { label: { ...evidence.label, ...(evidence.label.expiresAt ? { expiresAt: new Date(evidence.label.expiresAt) } : {}) } } : {}),
+      ...(evidence.cluster ? { cluster: { ...evidence.cluster, evidence: { ...evidence.cluster.evidence } } } : {}),
+    },
+  };
+}
+
+function copyDevCoverage(history: SolanaDevHistoryResult) {
+  return { ...history.coverage, observedAt: new Date(history.coverage.observedAt) };
+}
+
+function relatedAddressesFor(creatorAddress: string, fundingEdges: import("../domain/types.js").FundingEdge[]): string[] {
+  return [...new Set(fundingEdges.filter((edge) => edge.funder === creatorAddress).map((edge) => edge.recipient))];
+}
+
 function buildDevBehavior(
   token: TokenRef,
   holders: HolderBalance[],
@@ -199,7 +332,7 @@ function buildDevBehavior(
   now: Date,
 ) {
   const creator = token.creatorAddress!;
-  const relatedAddresses = [...new Set(fundingEdges.filter((edge) => edge.funder === creator).map((edge) => edge.recipient))];
+  const relatedAddresses = relatedAddressesFor(creator, fundingEdges);
   const balanceByOwner = new Map<string, bigint>();
   for (const holder of holders) {
     const owner = holder.ownerAddress ?? holder.address;
