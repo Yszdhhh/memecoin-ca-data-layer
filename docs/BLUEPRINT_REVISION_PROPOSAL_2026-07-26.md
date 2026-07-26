@@ -71,14 +71,16 @@ CA 粘贴 → resolve chain → 并行:
 **协作方式（快与可信统一）**：热路径 Tier-B 秒出初判 → 异步 Tier-A 确认/推翻 → 升降级库标签 → 刷新卡片。
 库里永远分得清哪条核实过。
 
-### 3b. Provider 选型（详见调研）
-- 热路径主引擎（三选一，单次 REST 出 持币榜+TopTrader PnL榜+狙击名单 <1s）：
-  Birdeye Starter $99（独有 wallet_tags）/ Moralis Pro $199（独有 snipers-by-pair + pump.fun bonding）/ SolanaTracker €50（最直白榜单+无限速）。
-- 富化借用：Dexscreener 免费（价格/流动性）+ Jupiter 免费（元数据校验）。
-- 一手底层：Helius Dev $49（DAS 持币 + 解析 swap + Funding-Source 追首笔 SOL 来源=聚类种子）。
-- 回填/离线：Bitquery Pro $79 或 Dune。
-- **入门成本（solo 按需）≈ $150–250/月**。
-- 限速墙（影响并发设计）：Birdeye 钱包类 API 全等级 5rps/75rpm、Vybe 免费 4rpm、Helius 免费 DAS 2rps、GMGN 1rps → 热路径每 CA 控制 4–6 路调用 + 缓存。
+### 3b. Provider 选型 —— 全免费栈（Owner 2026-07-26 决策 D-A/B/D）
+
+Owner 定调：**能免费就免费；Helius 已在免费 1M 档**。单人按需分析（一次一个 CA，非批量），免费档 ~1 req/s 够用，"选哪个付费商"全部收敛为免费档。
+- **热路径（全免费）**：Birdeye 免费档 + Dexscreener 免费无 key + GMGN 免费官方 OpenAPI + Helius 免费 1M。首屏该有的（价格/流动性/持币/聪明钱/狙击/榜单）都覆盖。
+- **一手底层**：Helius 免费 1M（DAS 持币 + 解析 swap + Funding-Source 追首笔 SOL 来源=聚类种子）。
+- **富化**：Dexscreener 免费 + Jupiter 免费（元数据校验）。
+- **成本 = $0**（先零成本验证好不好用，好用了再针对被证实的瓶颈升级）。**只走官方/免费 API，不爬网页不绕 Cloudflare**（D-A）。
+- 额度纪律：Helius 免费 1M 有限，盈利榜一手重算耗额度 → 节流/排队 + 缓存 `token_analyses`（D-D）。
+- 限速墙（免费档，单 CA 够用）：Birdeye 免费 1rps、GMGN 1rps、Helius 免费 DAS 2rps → 热路径每 CA 控制 4–6 路调用 + 缓存。
+- 升级路径（仅当免费限速被证实挡路）：SolanaTracker €50 无限速 / Birdeye 付费档。**默认不升级**。
 
 ### 3c. 盈利榜两条路径
 - 路径 B（借，快，热路径默认）：GMGN/Birdeye/Moralis/SolanaTracker/Bitquery 直接拿榜。标 unverified，只用于筛选。

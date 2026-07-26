@@ -12,24 +12,39 @@ The following remain Owner gates:
 6. Activation of the BSC stage after Solana E2E is GREEN.
 7. Activation of the Robinhood stage after the agreed BSC gate.
 
-## New decisions from the 2026-07-26 blueprint revision
+## Decisions from the 2026-07-26 blueprint revision — DECIDED (Owner, 2026-07-26)
 
-See `docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md` for full context. The
-direction shifted to a hybrid "borrowed platform data + first-hand chain data"
-tool optimized for instant CA analysis. These need Owner sign-off before the
-Phase 1+ tasks in that proposal can start:
+See `docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md`. Owner steer: **free
+interfaces first; Helius is already on the free 1M-credit plan.** Because the
+Owner is a solo, on-demand analyst (one CA at a time, not mass scale), the free
+providers' ~1 req/s limits are sufficient, so the "which paid provider" gates
+collapse.
 
-8.  **Borrowed-data ToS risk (D-A):** whether it is acceptable to consume
-    platform data (GMGN, Birdeye, Dexscreener, etc.), including the ToS /
-    rate-limit / IP-ban risk of GMGN — official OpenAPI vs. web scraping.
-9.  **Hot-path main engine (D-B):** which analysis engine to license —
-    Birdeye (~$99, unique wallet_tags), Moralis (~$199, native snipers-by-pair),
-    or SolanaTracker (~€50, plainest leaderboards, unmetered paid tier).
-10. **Profit-leaderboard policy (D-C):** default to borrowed (fast, not
-    reproducible), first-hand reconstruction (slow, auditable), or borrow-then-
-    confirm before a wallet is promoted in the address library.
-11. **First-hand source + budget (D-D):** Helius plan/key selection — this is
-    the same gate as item 1, now load-bearing because the hot path depends on it.
-    Entry stack estimated at ~$150–250/month.
-12. **Address-library confidence thresholds (D-E):** how strict the bar is to
-    label a wallet smart-money / bot / cluster member.
+8.  **Borrowed-data ToS risk (D-A):** DECIDED — consume platform data via
+    **official/free APIs only** (Birdeye free, Dexscreener free/no-key, GMGN free
+    official OpenAPI, Helius free). No web scraping / no Cloudflare bypass.
+9.  **Hot-path stack (D-B):** DECIDED — **all-free stack first**: Birdeye free +
+    Dexscreener free + GMGN free OpenAPI + Helius free 1M. No paid engine until a
+    free rate limit is proven to block real use. Reason: zero-cost validation that
+    the tool is actually useful before spending; upgrade only against a proven
+    bottleneck.
+10. **Profit-leaderboard policy (D-C):** DECIDED — **borrow first, confirm before
+    persisting**: use free platform leaderboards for day-to-day speed (lead only);
+    reconstruct from first-hand Helius swaps only when a wallet is to be promoted
+    into the address library as confirmed.
+11. **First-hand source + budget (D-D):** DECIDED — **Helius free 1M plan** (Owner
+    already has it). Reconstruction jobs must budget against the 1M credit ceiling
+    (batch recompute can exhaust it — throttle/queue, cache `token_analyses`).
+12. **Telegram/social ingestion (D-G):** DECIDED — **do not ingest for now**;
+    chain data first. Revisit (manual forward, then possibly TDLib) after the
+    first-screen + address library are stable. No account/ToS risk taken now.
+
+## Still open (safe defaults applied until Owner revisits)
+
+- **Address-library confidence thresholds (D-E):** defaulting to the method-doc
+  values (`cluster` fires at fused C ≥ 0.85 reusing the existing exclusion gate;
+  `bot_sniper` S ≥ 0.75; `independent_smart_money` I ≥ 0.80 with Tier-A PnL).
+  Tunable later via a versioned `label-tolerance` file; no blocker.
+- **Daily growth-loop automation (D-F):** defaulting to **manual/off** — the
+  auto-scan of hot tokens (which consumes provider quota) stays a manual trigger
+  until Owner enables it. No blocker.
