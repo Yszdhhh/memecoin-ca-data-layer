@@ -12,31 +12,43 @@ holder and Dev facts rather than bypassing their completeness gates.
   implementation, audit and security-containment tasks. It introduced no
   business-code or external-provider change.
 
-## Next CA sequence
+## CA sequence — all offline implementation + independent audits COMPLETE
 
 1. `SOL-CA-ORCHESTRATION-001` — DONE (run `20260726_SOL_CA_ORCHESTRATION_001` GREEN).
-2. `SOL-CA-ORCHESTRATION-AUDIT-001` — DONE with **FAIL** (run
-   `20260726_SOL_CA_ORCH_AUDIT_001`); report at
+2. `SOL-CA-ORCHESTRATION-AUDIT-001` — DONE with **FAIL**; report at
    `docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md`.
 3. `SOL-CA-ORCHESTRATION-REPAIR-001` — DONE (run `20260726_SOL_CA_ORCH_REPAIR_001` GREEN).
-4. `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001` — **evening audit queue**.
-5. `SOL-WALLET-CLEANING-003` — implementer wave (service-funder suppression +
-   `walletCleaningEvidence` on CA result). Independent audit deferred to evening.
-6. `SOL-WALLET-CLEANING-AUDIT-003` — **evening audit queue**.
-7. `SOL-E2E-GAP-RESEARCH-002` — research refreshed for post-orchestration reality.
-8. CA FIND-4 exclusion-input alignment + offline market/liquidity observation
-   selection (`market-select-v1`, migration `007_market_observations.sql`).
-9. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
-   the above audits and credential containment are complete.
+4. `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001` — DONE **GREEN_WITH_ADVISORY** (run
+   `20260726_SOL_CA_ORCH_REPAIR_AUDIT_001`); FIND-1/2/3 closed, no gate weakened.
+5. `SOL-WALLET-CLEANING-003` — DONE (service-funder suppression + evidence).
+6. `SOL-WALLET-CLEANING-AUDIT-003` — DONE **GREEN_WITH_ADVISORY**; FIND-1 (funder
+   tags not fetched for non-holder funders) → repair `SOL-WALLET-CLEANING-FUNDER-TAGS-001` READY.
+7. `SOL-HOLDER-EXCLUSION-INPUT-001` (CA FIND-4 two-pass alignment) — DONE;
+   `SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001` DONE **GREEN_WITH_ADVISORY**.
+8. `SOL-MARKET-OBSERVATION-001` (offline `market-select-v1`, migration
+   `007_market_observations.sql`) — DONE; `SOL-MARKET-OBSERVATION-AUDIT-001`
+   DONE **GREEN_WITH_ADVISORY**.
+9. `SOL-E2E-001`: fixture + Owner-authorized live CA acceptance — still PARK,
+   awaiting credential containment and Owner gates.
 
 ## Harness automation sequence
 
-1. `HARNESS-AO-AUTOMATION-001` — offline lifecycle planner/verifier
-   (`lifecycle plan|verify|apply-readiness`); implementer wave.
-2. `HARNESS-AO-AUTOMATION-AUDIT-001` — **evening audit queue**.
-3. Agent Orchestrator may consume the verified planner output to dispatch
-   isolated workers, but network, credentials, and all live provider choices
-   remain outside the Harness and behind their existing Owner gates.
+1. `HARNESS-AO-AUTOMATION-001` — offline lifecycle planner/verifier — DONE.
+2. `HARNESS-AO-AUTOMATION-AUDIT-001` — DONE with **FAIL**: the audit-evidence
+   gate enforces nothing, no agent-id independence check, evidence from
+   git-ignored unvalidated manifests, FAIL verdict counts as satisfied.
+   Governance held via **manual** harness discipline (apply-readiness was never
+   used to auto-flip state). Report at `docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md`.
+3. `HARNESS-AO-AUTOMATION-REPAIR-001` — READY (fix the four P1 gaps);
+   `HARNESS-AO-AUTOMATION-REPAIR-AUDIT-001` — BLOCKED_DEPENDENCY.
+
+## Next wave — 2026-07-26 blueprint revision (Owner confirmation pending)
+
+The project direction shifted to a hybrid "borrowed platform data + first-hand
+chain data" tool optimized for instant CA analysis, per
+`docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md`. Phased task breakdown (P0–P4)
+is in §5 of that proposal. Phase 0 (repair debt above) is dispatchable now;
+Phases 1+ wait on the new Owner decisions 8–12 in `OWNER_DECISIONS_NEEDED.md`.
 
 ## Ready for dispatch
 
