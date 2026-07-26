@@ -169,6 +169,7 @@ test("exposes service-funder suppression and keeps wallet quality out of holder 
 
   assert.ok(result.walletCleaningEvidence);
   assert.equal(result.walletCleaningEvidence?.holderExclusionUsesWalletQuality, false);
+  assert.equal(result.walletCleaningEvidence?.exclusionInputsAlignedToSnapshot, true);
   assert.equal(result.walletCleaningEvidence?.clusterMembers.length, 0);
   assert.equal(result.walletCleaningEvidence?.suppressedServiceFunders.length, 1);
   assert.equal(result.walletCleaningEvidence?.suppressedServiceFunders[0]?.funder, "cex-hot");

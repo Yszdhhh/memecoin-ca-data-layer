@@ -24,7 +24,9 @@ holder and Dev facts rather than bypassing their completeness gates.
    `walletCleaningEvidence` on CA result). Independent audit deferred to evening.
 6. `SOL-WALLET-CLEANING-AUDIT-003` — **evening audit queue**.
 7. `SOL-E2E-GAP-RESEARCH-002` — research refreshed for post-orchestration reality.
-8. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
+8. CA FIND-4 exclusion-input alignment + offline market/liquidity observation
+   selection (`market-select-v1`, migration `007_market_observations.sql`).
+9. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
    the above audits and credential containment are complete.
 
 ## Harness automation sequence

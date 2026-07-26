@@ -9,6 +9,8 @@ Owner 指示：白天继续实现，**有要审的晚上一起审**。
 | 1 | `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001` | T2 auditor | `docs/audits/SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001.md` | repair run GREEN |
 | 2 | `SOL-WALLET-CLEANING-AUDIT-003` | T2 auditor | `docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md` | wallet implementer DONE |
 | 3 | `HARNESS-AO-AUTOMATION-AUDIT-001` | T2 auditor | `docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md` | lifecycle implementer DONE |
+| 4 | `SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001` | T2 auditor | `docs/audits/SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001.md` | FIND-4 implementer DONE |
+| 5 | `SOL-MARKET-OBSERVATION-AUDIT-001` | T2 auditor | `docs/audits/SOL-MARKET-OBSERVATION-AUDIT-001.md` | market offline foundation DONE |
 
 ## 实现侧今日提交指针（审前先 `git log`）
 

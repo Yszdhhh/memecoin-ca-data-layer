@@ -1,0 +1,35 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HOLDER-EXCLUSION-INPUT-001",
+  "title": "Align holder exclusion inputs to complete audited snapshot owners",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Close FIND-4 by rebuilding address tags and funding-cluster exclusion inputs from the complete audited holder snapshot owner set (and history-window first buys), failing closed to the generic top-100 path only when the snapshot is not complete.",
+  "dependencies": ["SOL-CA-ORCHESTRATION-REPAIR-001", "SOL-WALLET-CLEANING-003"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md",
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "write_set": [
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "test/application/solana/**",
+    "KNOWN_LIMITATIONS.md"
+  ],
+  "forbidden_actions": [
+    "Do not lower the high-confidence cluster exclusion threshold.",
+    "Do not call live providers or use credentials.",
+    "Do not treat wallet quality as a holder exclusion rule.",
+    "Do not activate BSC or Robinhood."
+  ],
+  "deliverables": [
+    "src/application/analysis-service.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

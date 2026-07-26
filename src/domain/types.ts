@@ -246,6 +246,41 @@ export interface MarketSnapshot {
   pairAddress?: string;
   observedAt: Date;
   source: string;
+  /** Present when snapshot was selected from append-only market observations. */
+  selectedObservationId?: string;
+  trustClass?: MarketTrustClass;
+  selectionRuleVersion?: string;
+  freshnessStatus?: MarketFreshnessStatus;
+  completeness?: number;
+  selectionWarnings?: string[];
+}
+
+export type MarketTrustClass = "A" | "B" | "C" | "D" | "E";
+export type MarketFreshnessStatus = "fresh" | "stale" | "partial" | "rejected" | "unknown";
+
+/** Append-only market enrichment observation (liquidity/price/FDV). Never an on-chain fact. */
+export interface MarketObservation {
+  id: string;
+  chain: "solana";
+  tokenId: string;
+  pairAddress?: string;
+  venue?: string;
+  source: string;
+  trustClass: MarketTrustClass;
+  sourceObservedAt?: Date;
+  retrievedAt: Date;
+  ingestedAt: Date;
+  sourceRequestRef: string;
+  observationFingerprint: string;
+  priceUsd: number | null;
+  liquidityUsd: number | null;
+  fdvUsd: number | null;
+  marketCapUsd: number | null;
+  completeness: number;
+  freshnessStatus: MarketFreshnessStatus;
+  warnings: string[];
+  supersedesObservationId?: string;
+  recordedAt: Date;
 }
 
 /**
@@ -266,6 +301,8 @@ export interface WalletCleaningEvidence {
   largeOrderWalletQuality: Array<{ trader: string; quality: WalletQuality }>;
   /** Explicit contract pin for auditors and consumers. */
   holderExclusionUsesWalletQuality: false;
+  /** True when exclusion tags/clusters were rebuilt from the complete audited snapshot owners. */
+  exclusionInputsAlignedToSnapshot: boolean;
 }
 
 export interface AnalysisResult {

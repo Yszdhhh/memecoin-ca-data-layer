@@ -23,6 +23,8 @@ export interface AnalysisServiceConfig {
   deepCacheTtlSeconds: number;
   recentTradeWindowMinutes: number;
   largeOrderMinimumUsd: number;
+  /** When market liquidity is known, large-order floor is max(fixedUsd, liquidity * this ratio). */
+  largeOrderLiquidityRatio: number;
   devFundingLookbackDays: number;
 }
 
@@ -31,6 +33,7 @@ const DEFAULT_CONFIG: AnalysisServiceConfig = {
   deepCacheTtlSeconds: 300,
   recentTradeWindowMinutes: 30,
   largeOrderMinimumUsd: 5_000,
+  largeOrderLiquidityRatio: 0.01,
   devFundingLookbackDays: 30,
 };
 
@@ -115,24 +118,34 @@ export class AnalysisService {
     const now = new Date();
     const since = new Date(now.getTime() - this.config.recentTradeWindowMinutes * 60_000);
     const token = await adapter.getToken(ca);
+    const fundingSince = new Date(now.getTime() - this.config.devFundingLookbackDays * 86_400_000);
+    const historySince = token.createdAt ?? new Date(0);
 
     const [marketResult, rawHolders, trades, transfers] = await Promise.all([
       this.getMarketSafely(token),
       adapter.getHolders(token),
       adapter.getRecentTrades(token, since),
-      adapter.getTransfers(token, token.createdAt ?? new Date(0)),
+      adapter.getTransfers(token, historySince),
     ]);
 
-    const ownerAddresses = uniqueOwners(rawHolders).slice(0, 100);
-    const fundingSince = new Date(now.getTime() - this.config.devFundingLookbackDays * 86_400_000);
-    const [addressTags, fundingEdges] = await Promise.all([
-      adapter.getAddressTags(token, ownerAddresses),
-      adapter.getFundingEdges(ownerAddresses, fundingSince),
+    // Generic top-100 path remains for non-Solana and for wallet-quality on recent large trades.
+    const genericOwners = uniqueOwners(rawHolders).slice(0, 100);
+    const [genericTags, genericFunding] = await Promise.all([
+      adapter.getAddressTags(token, genericOwners),
+      adapter.getFundingEdges(genericOwners, fundingSince),
     ]);
-    const firstBuys: FirstBuy[] = firstBuyPerWallet(trades);
-    const clusterDetection = detectFundingClusters(fundingEdges, firstBuys, { funderTags: addressTags });
-    const clusterMembers = clusterDetection.members;
-    const largeTrades = trades.filter((trade) => (trade.quoteUsd ?? 0) >= this.config.largeOrderMinimumUsd);
+    let addressTags = genericTags;
+    let fundingEdges = genericFunding;
+    let clusterDetection = detectFundingClusters(
+      fundingEdges,
+      firstBuyPerWallet(trades),
+      { funderTags: addressTags },
+    );
+    let clusterMembers = clusterDetection.members;
+    let exclusionInputsAlignedToSnapshot = false;
+
+    const largeOrderFloorUsd = largeOrderMinimumUsd(this.config, marketResult.market);
+    const largeTrades = trades.filter((trade) => (trade.quoteUsd ?? 0) >= largeOrderFloorUsd);
     const largeTradeAddresses = [...new Set(largeTrades.map((trade) => trade.trader))];
     const walletFacts = await adapter.getWalletFacts(largeTradeAddresses, now);
     const largeOrders: LargeOrder[] = largeTrades.map((trade) => ({
@@ -147,21 +160,11 @@ export class AnalysisService {
         trade.blockTime,
       ),
     }));
-    // Wallet quality labels large orders only — never fed into holder exclusion inputs.
-    const walletCleaningEvidence = {
-      clusterMembers: clusterMembers.map((member) => ({
-        ...member,
-        evidence: { ...member.evidence },
-      })),
-      suppressedServiceFunders: clusterDetection.suppressedFunders.map((item) => ({ ...item })),
-      largeOrderWalletQuality: largeOrders.map((order) => ({
-        trader: order.trader,
-        quality: { ...order.walletQuality, labels: [...order.walletQuality.labels], reasons: [...order.walletQuality.reasons] },
-      })),
-      holderExclusionUsesWalletQuality: false as const,
-    };
 
     const warnings: string[] = [...marketResult.warnings];
+    if (marketResult.market?.liquidityUsd != null && largeOrderFloorUsd > this.config.largeOrderMinimumUsd) {
+      warnings.push("LARGE_ORDER_FLOOR_RAISED_BY_LIQUIDITY_RATIO");
+    }
     let resultToken = token;
     let holders = null;
     let holderCompleteness: AnalysisResult["holderCompleteness"] = "unavailable";
@@ -176,19 +179,45 @@ export class AnalysisService {
         warnings.push("HOLDER_CONCENTRATION_INDETERMINATE");
         warnings.push("DEV_TOTALS_INDETERMINATE");
       } else {
-        const [holderSnapshot, creatorEvidence] = await Promise.all([
-          solanaAdapter.getAuditedHolderSnapshot(token, addressTags, clusterMembers),
+        // Pass 1: enumerate complete owner set without exclusion inputs (FIND-4).
+        const [enumerationSnapshot, creatorEvidence] = await Promise.all([
+          solanaAdapter.getAuditedHolderSnapshot(token, [], []),
           solanaAdapter.getPinnedPumpCreatorEvidence(token),
         ]);
-        // Exclusion tags/clusters are still derived from the generic top-100 list and the
-        // recent-trade window, which can be narrower than a complete audited snapshot.
-        warnings.push("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100");
-        warnings.push("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW");
+        let holderSnapshot = enumerationSnapshot;
+
+        if (enumerationSnapshot?.completeness === "complete") {
+          const snapshotOwners = [...enumerationSnapshot.ownerBalances.keys()];
+          const [snapshotTags, snapshotFunding, historyTrades] = await Promise.all([
+            adapter.getAddressTags(token, snapshotOwners),
+            adapter.getFundingEdges(snapshotOwners, fundingSince),
+            adapter.getRecentTrades(token, historySince),
+          ]);
+          addressTags = snapshotTags;
+          fundingEdges = snapshotFunding;
+          clusterDetection = detectFundingClusters(
+            snapshotFunding,
+            firstBuyPerWallet(historyTrades),
+            { funderTags: snapshotTags },
+          );
+          clusterMembers = clusterDetection.members;
+          // Pass 2: re-run audited snapshot with exclusion inputs covering every snapshot owner.
+          holderSnapshot = await solanaAdapter.getAuditedHolderSnapshot(
+            token,
+            snapshotTags,
+            clusterMembers,
+          );
+          exclusionInputsAlignedToSnapshot = true;
+        } else {
+          warnings.push("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100");
+          warnings.push("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW");
+          holderSnapshot = await solanaAdapter.getAuditedHolderSnapshot(token, addressTags, clusterMembers);
+        }
+
         holderCompleteness = snapshotCompleteness(holderSnapshot);
         if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration !== null) {
           holders = holderSnapshot.concentration;
         } else {
-          // complete + null concentration is an invalid snapshot contract state
           if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration === null) {
             holderCompleteness = "unavailable";
           }
@@ -211,7 +240,6 @@ export class AnalysisService {
           const devHistory = holderSnapshot?.completeness === "complete"
             ? await solanaAdapter.getAuditedDevHistory({ token, creatorEvidence, holderSnapshot, relatedAddresses, at: now })
             : null;
-          // complete only when both totals and complete-from-creation coverage are present
           if (devHistory?.dev !== null && devHistory?.coverage.completeFromCreation) {
             dev = devHistory.dev;
             devCompleteness = "complete";
@@ -244,6 +272,21 @@ export class AnalysisService {
       devCompleteness = token.creatorAddress ? "complete" : "unavailable";
     }
 
+    // Wallet quality labels large orders only — never fed into holder exclusion inputs.
+    const walletCleaningEvidence = {
+      clusterMembers: clusterMembers.map((member) => ({
+        ...member,
+        evidence: { ...member.evidence },
+      })),
+      suppressedServiceFunders: clusterDetection.suppressedFunders.map((item) => ({ ...item })),
+      largeOrderWalletQuality: largeOrders.map((order) => ({
+        trader: order.trader,
+        quality: { ...order.walletQuality, labels: [...order.walletQuality.labels], reasons: [...order.walletQuality.reasons] },
+      })),
+      holderExclusionUsesWalletQuality: false as const,
+      exclusionInputsAlignedToSnapshot,
+    };
+
     const creatorProfile = deep && resultToken.creatorAddress ? await adapter.getCreatorProfile(resultToken) : undefined;
     if (!marketResult.market) warnings.push("补充市场数据不可用；链上持仓与交易口径不受影响");
     if (clusterMembers.length > 0) warnings.push(`已从真实集中度中排除 ${clusterMembers.length} 个高置信同源地址`);
@@ -271,6 +314,16 @@ export class AnalysisService {
       return { market: null, warnings: ["MARKET_ENRICHMENT_UNAVAILABLE"] };
     }
   }
+}
+
+function largeOrderMinimumUsd(
+  config: AnalysisServiceConfig,
+  market: AnalysisResult["market"],
+): number {
+  const liquidityFloor = market?.liquidityUsd != null && market.liquidityUsd > 0
+    ? market.liquidityUsd * config.largeOrderLiquidityRatio
+    : 0;
+  return Math.max(config.largeOrderMinimumUsd, liquidityFloor);
 }
 
 function uniqueOwners(holders: HolderBalance[]): string[] {

@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-MARKET-OBSERVATION-001",
+  "title": "Offline Solana market/liquidity observation selection foundation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Implement the offline market observation domain, deterministic selection rule, in-memory idempotent store, observation-backed MarketDataProvider, additive migration, and liquidity-aware large-order floor without calling any live market provider.",
+  "dependencies": ["SOL-MARKET-DATA-DESIGN-001", "SOL-MARKET-DATA-DESIGN-AUDIT-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md",
+    "docs/audits/SOL-MARKET-DATA-DESIGN-AUDIT-001.md",
+    "src/domain/types.ts",
+    "src/application/ports.ts",
+    "src/application/analysis-service.ts"
+  ],
+  "write_set": [
+    "src/domain/types.ts",
+    "src/domain/rules/market-observation.ts",
+    "src/infrastructure/market/**",
+    "src/application/analysis-service.ts",
+    "db/migrations/007_market_observations.sql",
+    "test/market-observation.test.ts",
+    "KNOWN_LIMITATIONS.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Dexscreener, GeckoTerminal, Birdeye, or any network market API.",
+    "Do not store credentials or raw provider payloads.",
+    "Do not let market enrichment override on-chain holder, creator, or Dev facts.",
+    "Do not activate BSC or Robinhood."
+  ],
+  "deliverables": [
+    "src/domain/rules/market-observation.ts",
+    "src/infrastructure/market/observation-market-data-provider.ts",
+    "db/migrations/007_market_observations.sql",
+    "test/market-observation.test.ts"
+  ],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

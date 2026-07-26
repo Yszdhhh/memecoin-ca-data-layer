@@ -1,0 +1,27 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-MARKET-OBSERVATION-AUDIT-001",
+  "title": "Independent audit of offline market/liquidity observation foundation",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Independently verify that market observation selection is offline, never invents missing liquidity/price, preserves append-only idempotency, prefers A-class over C-class, and cannot override on-chain CA facts.",
+  "dependencies": ["SOL-MARKET-OBSERVATION-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/designs/SOL-MARKET-DATA-DESIGN-001.md",
+    "harness/tasks/SOL-MARKET-OBSERVATION-001.json",
+    "src/domain/rules/market-observation.ts",
+    "src/infrastructure/market/observation-market-data-provider.ts",
+    "db/migrations/007_market_observations.sql",
+    "test/market-observation.test.ts"
+  ],
+  "write_set": ["docs/audits/SOL-MARKET-OBSERVATION-AUDIT-001.md"],
+  "forbidden_actions": [
+    "Do not modify source, tests, migrations, ledger or task specs.",
+    "Do not use network, credentials or live market providers."
+  ],
+  "deliverables": ["docs/audits/SOL-MARKET-OBSERVATION-AUDIT-001.md"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

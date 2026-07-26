@@ -175,8 +175,9 @@ test("uses pinned Pump creator plus complete audited facts and preserves direct,
   assert.equal(result.dev?.grossSoldPct, 5);
   assert.equal(result.dev?.relatedGrossSoldPct, 4);
   assert.equal(result.dev?.outboundTransferPct, 2.5);
-  assert.ok(result.warnings.includes("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100"));
-  assert.ok(result.warnings.includes("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW"));
+  assert.equal(result.walletCleaningEvidence?.exclusionInputsAlignedToSnapshot, true);
+  assert.ok(!result.warnings.includes("HOLDER_EXCLUSION_TAGS_BOUNDED_TO_GENERIC_TOP100"));
+  assert.ok(!result.warnings.includes("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW"));
   assert.equal(fixture.devHistoryRequests(), 1);
 });
 

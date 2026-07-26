@@ -1,0 +1,25 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001",
+  "title": "Independent audit of snapshot-aligned holder exclusion inputs",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Independently verify that complete audited snapshots no longer exclude holders using only generic top-100/recent-trade inputs, and that partial snapshots still fail closed with explicit warnings.",
+  "dependencies": ["SOL-HOLDER-EXCLUSION-INPUT-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-HOLDER-EXCLUSION-INPUT-001.json",
+    "docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md",
+    "src/application/analysis-service.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "write_set": ["docs/audits/SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001.md"],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, ledger or task specs.",
+    "Do not use network or credentials."
+  ],
+  "deliverables": ["docs/audits/SOL-HOLDER-EXCLUSION-INPUT-AUDIT-001.md"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
