@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OBSERVATION-SCHEMA-AUDIT-001",
+  "title": "Independent audit of the observation record and address-library schema",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify SOL-OBSERVATION-SCHEMA-001: the ObservationRecord and six snapshots match the methods doc; chain amounts are raw-integer strings; borrowed fields stay unverified until first-hand confirmation; partial data lowers completeness without fabricating precision; migration 008 is additive-only and matches the object schema.",
+  "dependencies": [
+    "SOL-OBSERVATION-SCHEMA-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "src/domain/observation/observation-record.ts",
+    "db/migrations/008_address_library_and_observations.sql",
+    "test/observation/observation-schema.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-OBSERVATION-SCHEMA-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, migrations, specs, ledger or configuration.",
+    "Do not use network, credentials or live providers."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-OBSERVATION-SCHEMA-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

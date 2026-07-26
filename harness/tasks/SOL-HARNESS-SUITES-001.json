@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HARNESS-SUITES-001",
+  "title": "Four offline harness acceptance suites: latency, replay, source-degradation, label-decision",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement the four required harness acceptance dimensions from PROJECT_ARCHITECTURE.md section 6 and docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md Part 3.4 as offline, deterministic tsx test suites plus runner CLIs under src/harness-suites, each exiting non-zero on failure and writing a JSON report. Latency uses a virtual clock with fixture-declared per-source latency (hot-path budget under 2s); replay reproduces pinned old-token timelines field-by-field; source-degradation asserts a usable DEGRADED result with warnings and completeness (never crash, never fake precision, never substitute borrowed data for authoritative concentration); label-decision measures detector FP/FN against a versioned tolerance file. No live network.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "harness/cli.ts",
+    "harness/lib/contracts.ts"
+  ],
+  "write_set": [
+    "src/harness-suites/**",
+    "test/fixtures/harness/**",
+    "test/harness-suites/**"
+  ],
+  "forbidden_actions": [
+    "Do not use network APIs, credentials, live providers or real timers for latency measurement (use a virtual clock).",
+    "Do not edit package.json; invoke suites via npx tsx.",
+    "Do not make any suite pass without a versioned budget or tolerance file.",
+    "Do not put secrets or raw provider payloads into fixtures."
+  ],
+  "deliverables": [
+    "src/harness-suites/latency.ts",
+    "src/harness-suites/replay.ts",
+    "src/harness-suites/source-degradation.ts",
+    "src/harness-suites/label-decision.ts",
+    "test/harness-suites/suites.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

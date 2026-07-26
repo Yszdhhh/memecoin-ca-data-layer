@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DAILY-TOPTOKEN-MINING-001",
+  "title": "Daily/weekly top-traded-token address-mining growth loop (offline pipeline; live trigger Owner-gated)",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Implement the daily/weekly growth loop from PROJECT_ARCHITECTURE.md section on the daily loop and blueprint section nine: (1) take a top-traded-token list for a window (daily and weekly are parameters) from the free borrow layer via the versioned parser into observations; (2) for each token pull Top Buyers/Sellers/Early Buyers/profit leaderboard (borrow path for speed); (3) run the detectors and Alpha Score over the addresses; (4) for wallets crossing the promotion bar, run first-hand Helius leaderboard confirmation; (5) sediment confirmed wallet-level conclusions into the address library; (6) emit a run report of tokens scanned, wallets mined, new smart-money/cluster/bot labels, and quota consumed. The whole pipeline is built and accepted OFFLINE on fixtures (a fixed top-token list plus fixture provider responses). The live top-list fetch and scheduled trigger are Owner-gated (decision D-F) and throttled against the Helius free 1M ceiling.",
+  "dependencies": [
+    "SOL-LEADERBOARD-001",
+    "SOL-ADDRESS-LIBRARY-SEDIMENTATION-001",
+    "SOL-DETECTORS-001",
+    "SOL-ALPHA-SCORE-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md"
+  ],
+  "write_set": [
+    "src/application/growth-loop/**",
+    "test/application/growth-loop/**"
+  ],
+  "forbidden_actions": [
+    "Do not perform live network fetches or scheduled runs in-stage; the live top-list fetch and scheduler are Owner-gated (D-F).",
+    "Do not exceed the configured first-hand recompute quota per run; when the budget is hit, stop and report what was skipped (no silent truncation).",
+    "Do not promote a borrowed leaderboard wallet to a confirmed library label without first-hand path-A confirmation.",
+    "Do not write a mined label without source, confidence, rule_version and a reversible evidence snapshot.",
+    "Do not put secrets, keys, credentials or raw provider payloads into the repo or fixtures."
+  ],
+  "deliverables": [
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

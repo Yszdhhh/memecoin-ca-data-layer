@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OBSERVATION-SCHEMA-001",
+  "title": "Unified observation record, six snapshot schemas, and address-library migration",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement the versioned-parser ingress contract from docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md Part 3: the ObservationRecord type, the six typed snapshot schemas (market/security/holder_concentration/wallet_signal/promotion_and_social/call_source), and additive migration 008_address_library_and_observations.sql creating wallets, wallet_token_edges and observations. Chain amounts are raw-integer strings; borrowed fields carry origin=borrowed and verification_status=unverified until first-hand confirms; partial data lowers completeness and never fabricates precision. No live network.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "db/migrations/001_initial.sql",
+    "db/migrations/007_market_observations.sql"
+  ],
+  "write_set": [
+    "src/domain/observation/**",
+    "db/migrations/008_address_library_and_observations.sql",
+    "test/observation/**"
+  ],
+  "forbidden_actions": [
+    "Do not use network APIs, credentials, live providers or scraping.",
+    "Do not store chain quantities as floating-point numbers; raw-integer strings only.",
+    "Do not mark any borrowed (platform-sourced) field as verified without a first-hand confirmation path.",
+    "Do not write destructive ALTER/DROP against existing tables; migration 008 is additive only.",
+    "Do not put any secret, key, credential or raw provider payload into fixtures or the repo."
+  ],
+  "deliverables": [
+    "src/domain/observation/observation-record.ts",
+    "db/migrations/008_address_library_and_observations.sql",
+    "test/observation/observation-schema.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

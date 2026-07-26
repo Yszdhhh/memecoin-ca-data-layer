@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HARNESS-SUITES-AUDIT-001",
+  "title": "Independent audit of the four harness acceptance suites",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify SOL-HARNESS-SUITES-001: the four suites are offline and deterministic, fail-closed (non-zero exit on failure), use versioned budget/tolerance files, and actually enforce their guarantees (latency virtual clock and under-2s budget; replay field-by-field reproduction; source-degradation never crashes or fakes precision or substitutes borrowed for authoritative concentration; label-decision FP/FN within tolerance).",
+  "dependencies": [
+    "SOL-HARNESS-SUITES-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "src/harness-suites/latency.ts",
+    "src/harness-suites/replay.ts",
+    "src/harness-suites/source-degradation.ts",
+    "src/harness-suites/label-decision.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-HARNESS-SUITES-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, specs, ledger or configuration.",
+    "Do not use network, credentials or live providers."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HARNESS-SUITES-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

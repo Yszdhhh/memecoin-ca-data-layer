@@ -42,13 +42,23 @@ holder and Dev facts rather than bypassing their completeness gates.
 3. `HARNESS-AO-AUTOMATION-REPAIR-001` — READY (fix the four P1 gaps);
    `HARNESS-AO-AUTOMATION-REPAIR-AUDIT-001` — BLOCKED_DEPENDENCY.
 
-## Next wave — 2026-07-26 blueprint revision (Owner confirmation pending)
+## Next wave — Owner-confirmed direction; see harness/DISPATCH_PLAN.md
 
-The project direction shifted to a hybrid "borrowed platform data + first-hand
-chain data" tool optimized for instant CA analysis, per
-`docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md`. Phased task breakdown (P0–P4)
-is in §5 of that proposal. Phase 0 (repair debt above) is dispatchable now;
-Phases 1+ wait on the new Owner decisions 8–12 in `OWNER_DECISIONS_NEEDED.md`.
+The project direction (hybrid borrowed + first-hand data, instant CA analysis)
+is confirmed and the all-free data stack is decided (`OWNER_DECISIONS_NEEDED.md`
+items 8–12). **`harness/DISPATCH_PLAN.md` is now the single source of truth** for
+the task breakdown (Waves A–E), per-task implementation approach, acceptance
+criteria (incl. the four harness dimensions), collaboration mechanism, and the
+handoff procedure. Binding architecture is in `PROJECT_ARCHITECTURE.md`; method
+detail in `docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md`.
+
+Phase 0 repair debt is DONE (harness governance repair + funder-tag repair, both
+GREEN, funder-tag audit in flight). Dispatchable now (offline, no live access):
+`SOL-OBSERVATION-SCHEMA-001`, `SOL-HARNESS-SUITES-001` (READY), then
+`SOL-ALPHA-SCORE-001` → `SOL-DETECTORS-001`, and Wave B adapters. The daily/weekly
+top-token address-mining growth loop is authored as
+`SOL-DAILY-TOPTOKEN-MINING-001` (offline pipeline; live trigger Owner-gated D-F).
+All live flips (Wave E) stay PARK until Owner items 1–4 open.
 
 ## Ready for dispatch
 
