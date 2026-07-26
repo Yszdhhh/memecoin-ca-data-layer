@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that SOL-CA-ORCHESTRATION-REPAIR-001 closes every blocking and required P2 finding in SOL-CA-ORCHESTRATION-AUDIT-001 without weakening fail-closed holder, creator or Dev gates, and without silent evidence corruption on Redis/Postgres round-trips.",
   "dependencies": [
     "SOL-CA-ORCHESTRATION-AUDIT-001",
