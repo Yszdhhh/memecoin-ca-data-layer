@@ -130,16 +130,22 @@ export class AnalysisService {
 
     // Generic top-100 path remains for non-Solana and for wallet-quality on recent large trades.
     const genericOwners = uniqueOwners(rawHolders).slice(0, 100);
-    const [genericTags, genericFunding] = await Promise.all([
+    const genericFunding = await adapter.getFundingEdges(genericOwners, fundingSince);
+    // Funder addresses are usually NOT holders (a CEX hot wallet funds buyers but
+    // holds no token), so their tags must be fetched separately or service-funder
+    // suppression can never fire and exchange fan-outs get wrongly clustered.
+    const genericFunders = uniqueFunders(genericFunding);
+    const [genericOwnerTags, genericFunderTags] = await Promise.all([
       adapter.getAddressTags(token, genericOwners),
-      adapter.getFundingEdges(genericOwners, fundingSince),
+      genericFunders.length > 0 ? adapter.getAddressTags(token, genericFunders) : Promise.resolve([]),
     ]);
-    let addressTags = genericTags;
+    let addressTags = genericOwnerTags;
+    let funderTags = mergeTags(genericOwnerTags, genericFunderTags);
     let fundingEdges = genericFunding;
     let clusterDetection = detectFundingClusters(
       fundingEdges,
       firstBuyPerWallet(trades),
-      { funderTags: addressTags },
+      { funderTags },
     );
     let clusterMembers = clusterDetection.members;
     let exclusionInputsAlignedToSnapshot = false;
@@ -188,23 +194,30 @@ export class AnalysisService {
 
         if (enumerationSnapshot?.completeness === "complete") {
           const snapshotOwners = [...enumerationSnapshot.ownerBalances.keys()];
-          const [snapshotTags, snapshotFunding, historyTrades] = await Promise.all([
+          const [snapshotOwnerTags, snapshotFunding, historyTrades] = await Promise.all([
             adapter.getAddressTags(token, snapshotOwners),
             adapter.getFundingEdges(snapshotOwners, fundingSince),
             adapter.getRecentTrades(token, historySince),
           ]);
-          addressTags = snapshotTags;
+          // Fetch funder tags too (funders are usually not snapshot owners) so
+          // service-funder suppression covers the snapshot-aligned pass as well.
+          const snapshotFunders = uniqueFunders(snapshotFunding);
+          const snapshotFunderTags = snapshotFunders.length > 0
+            ? await adapter.getAddressTags(token, snapshotFunders)
+            : [];
+          addressTags = snapshotOwnerTags;
+          funderTags = mergeTags(snapshotOwnerTags, snapshotFunderTags);
           fundingEdges = snapshotFunding;
           clusterDetection = detectFundingClusters(
             snapshotFunding,
             firstBuyPerWallet(historyTrades),
-            { funderTags: snapshotTags },
+            { funderTags },
           );
           clusterMembers = clusterDetection.members;
           // Pass 2: re-run audited snapshot with exclusion inputs covering every snapshot owner.
           holderSnapshot = await solanaAdapter.getAuditedHolderSnapshot(
             token,
-            snapshotTags,
+            addressTags,
             clusterMembers,
           );
           exclusionInputsAlignedToSnapshot = true;
@@ -289,7 +302,10 @@ export class AnalysisService {
 
     const creatorProfile = deep && resultToken.creatorAddress ? await adapter.getCreatorProfile(resultToken) : undefined;
     if (!marketResult.market) warnings.push("补充市场数据不可用；链上持仓与交易口径不受影响");
-    if (clusterMembers.length > 0) warnings.push(`已从真实集中度中排除 ${clusterMembers.length} 个高置信同源地址`);
+    const excludedClusterCount = clusterMembers.filter(
+      (member) => member.confidence >= CLUSTER_EXCLUSION_MIN_CONFIDENCE,
+    ).length;
+    if (excludedClusterCount > 0) warnings.push(`已从真实集中度中排除 ${excludedClusterCount} 个高置信同源地址`);
 
     return {
       token: resultToken,
@@ -328,6 +344,29 @@ function largeOrderMinimumUsd(
 
 function uniqueOwners(holders: HolderBalance[]): string[] {
   return [...new Set(holders.sort((a, b) => (a.balanceRaw > b.balanceRaw ? -1 : 1)).map((item) => item.ownerAddress ?? item.address))];
+}
+
+/** Confidence at which a cluster member is actually excluded from real holders (mirrors real-holders.ts default). */
+const CLUSTER_EXCLUSION_MIN_CONFIDENCE = 0.85;
+
+function uniqueFunders(edges: import("../domain/types.js").FundingEdge[]): string[] {
+  return [...new Set(edges.map((edge) => edge.funder))];
+}
+
+/** Merge address-tag lists, de-duplicating by chain+address (first occurrence wins). */
+function mergeTags(
+  a: import("../domain/types.js").AddressTag[],
+  b: import("../domain/types.js").AddressTag[],
+): import("../domain/types.js").AddressTag[] {
+  const seen = new Set<string>();
+  const merged: import("../domain/types.js").AddressTag[] = [];
+  for (const tag of [...a, ...b]) {
+    const key = `${tag.chain}:${tag.address}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(tag);
+  }
+  return merged;
 }
 
 function firstBuyPerWallet(trades: import("../domain/types.js").NormalizedTrade[]): FirstBuy[] {

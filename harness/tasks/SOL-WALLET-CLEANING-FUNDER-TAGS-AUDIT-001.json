@@ -1,0 +1,39 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001",
+  "title": "Independent audit of funder-tag coverage repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Independently verify that SOL-WALLET-CLEANING-FUNDER-TAGS-001 closes SOL-WALLET-CLEANING-AUDIT-003 FIND-1: funder-address tags are fetched in both the generic and snapshot-aligned passes so service-funder suppression fires on non-holder funders, the exclusion warning counts only members at or above the 0.85 exclusion confidence, and no threshold was lowered or holder-exclusion path weakened.",
+  "dependencies": [
+    "SOL-WALLET-CLEANING-FUNDER-TAGS-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md",
+    "harness/tasks/SOL-WALLET-CLEANING-FUNDER-TAGS-001.json",
+    "src/application/analysis-service.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "test/application/solana/wallet-cleaning-evidence.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task specs, task ledger or configuration.",
+    "Do not use network APIs, credentials or live providers.",
+    "Do not accept a repair that lowers the 0.85 cluster exclusion threshold or the 0.8 service-funder tag threshold, or that feeds funder tags into holder exclusion in a way that over-excludes legitimate holders."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
