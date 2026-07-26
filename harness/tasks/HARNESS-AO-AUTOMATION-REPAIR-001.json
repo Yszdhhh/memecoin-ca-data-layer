@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-AO-AUTOMATION-REPAIR-001",
+  "title": "Repair deterministic AI harness lifecycle audit-evidence and independence gates",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Close the blocking findings in HARNESS-AO-AUTOMATION-AUDIT-001: make the lifecycle audit-evidence gate actually enforce (verify must fail-closed when audit_evidence_gaps is non-empty), require auditor/implementer agent_id independence when counting audit evidence, validate finished-run manifests against the run-manifest schema plus acceptance/integrity before they count as evidence, exclude FAIL/PARK/QUARANTINED from ACCEPTING_AUDIT_VERDICTS, validate the readiness update `from` status, and add regression tests for every closed hole.",
+  "dependencies": [
+    "HARNESS-AO-AUTOMATION-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "docs/audits/HARNESS-AO-AUTOMATION-AUDIT-001.md",
+    "harness/cli.ts",
+    "harness/lib/validation.ts",
+    "harness/lib/contracts.ts",
+    "harness/schemas/run-manifest.schema.json",
+    "test/harness.test.ts"
+  ],
+  "write_set": [
+    "harness/cli.ts",
+    "harness/lib/validation.ts",
+    "harness/lib/contracts.ts",
+    "test/harness.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not weaken any fail-closed gate or accept a FAIL/PARK/QUARANTINED auditor verdict as satisfied audit evidence.",
+    "Do not count an audit whose agent_id equals the implementer's agent_id as independent evidence.",
+    "Do not use network APIs, agents, credentials or live data sources.",
+    "Do not modify task specs, the task ledger, run manifests, or business source under src/."
+  ],
+  "deliverables": [
+    "harness/lib/validation.ts",
+    "test/harness.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

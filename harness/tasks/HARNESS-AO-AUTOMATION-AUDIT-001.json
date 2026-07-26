@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that the offline Harness lifecycle derives state only from verified manifests and declared dependencies, preserves spec/ledger consistency, and cannot bypass independent-auditor or Owner gates.",
   "dependencies": [
     "HARNESS-AO-AUTOMATION-001"
