@@ -290,7 +290,7 @@
     {
       "task_id": "SOL-OBSERVATION-SCHEMA-AUDIT-001",
       "spec": "harness/tasks/SOL-OBSERVATION-SCHEMA-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-HARNESS-SUITES-001",
