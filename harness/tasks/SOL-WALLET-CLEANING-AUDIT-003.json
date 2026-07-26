@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that service-funder suppression is evidence-backed, only high-confidence clusters affect holder concentration, and wallet-quality labels remain separate from holder exclusion.",
   "dependencies": [
     "SOL-WALLET-CLEANING-003"

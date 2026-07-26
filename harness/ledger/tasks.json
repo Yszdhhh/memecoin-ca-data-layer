@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-26T13:30:00.000Z",
+  "updated_at_utc": "2026-07-26T14:10:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -215,7 +215,7 @@
     {
       "task_id": "SOL-WALLET-CLEANING-AUDIT-003",
       "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SEC-HARNESS-CONTENT-SCAN-001",
@@ -260,6 +260,11 @@
     {
       "task_id": "SOL-MARKET-OBSERVATION-AUDIT-001",
       "spec": "harness/tasks/SOL-MARKET-OBSERVATION-AUDIT-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-WALLET-CLEANING-FUNDER-TAGS-001",
+      "spec": "harness/tasks/SOL-WALLET-CLEANING-FUNDER-TAGS-001.json",
       "status": "READY"
     }
   ]

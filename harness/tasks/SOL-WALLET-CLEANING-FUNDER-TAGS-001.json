@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CLEANING-FUNDER-TAGS-001",
+  "title": "Fetch funder address tags so service-funder suppression fires on non-holder funders",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Close SOL-WALLET-CLEANING-AUDIT-003 FIND-1: address tags are only fetched for holder/owner addresses, so a non-holder exchange hot wallet funder is never tagged and service-funder suppression silently never fires, wrongly excluding exchange fan-outs as same-source clusters. Fetch tags for funding-edge funder addresses in both the generic and snapshot-aligned passes, fix the exclusion warning to count only members actually used for exclusion, and add differential tests including the 0.8/0.79 suppression boundary and a non-holder funder scenario.",
+  "dependencies": [
+    "SOL-WALLET-CLEANING-AUDIT-003"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-WALLET-CLEANING-AUDIT-003.md",
+    "src/application/analysis-service.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "test/application/solana/wallet-cleaning-evidence.test.ts",
+    "test/funding-clusters.test.ts"
+  ],
+  "write_set": [
+    "src/application/analysis-service.ts",
+    "test/application/solana/**",
+    "test/funding-clusters.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not lower any confidence threshold or widen SERVICE_FUNDER_ROLES.",
+    "Do not modify src/domain/rules/real-holders.ts or holder snapshot services.",
+    "Do not use network APIs, credentials or live providers."
+  ],
+  "deliverables": [
+    "src/application/analysis-service.ts",
+    "test/application/solana/wallet-cleaning-evidence.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
