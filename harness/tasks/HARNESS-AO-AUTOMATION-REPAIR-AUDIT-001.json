@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that HARNESS-AO-AUTOMATION-REPAIR-001 closes every blocking finding in HARNESS-AO-AUTOMATION-AUDIT-001: the audit-evidence gate fails closed, agent-id independence is enforced, manifest evidence is schema/acceptance/integrity validated, incoherent verdicts no longer satisfy the gate, and readiness `from` is validated, without weakening any gate.",
   "dependencies": [
     "HARNESS-AO-AUTOMATION-AUDIT-001",
