@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Implement the versioned-parser ingress contract from docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md Part 3: the ObservationRecord type, the six typed snapshot schemas (market/security/holder_concentration/wallet_signal/promotion_and_social/call_source), and additive migration 008_address_library_and_observations.sql creating wallets, wallet_token_edges and observations. Chain amounts are raw-integer strings; borrowed fields carry origin=borrowed and verification_status=unverified until first-hand confirms; partial data lowers completeness and never fabricates precision. No live network.",
   "dependencies": [],
   "inputs": [

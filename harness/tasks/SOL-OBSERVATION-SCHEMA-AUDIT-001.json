@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently verify SOL-OBSERVATION-SCHEMA-001: the ObservationRecord and six snapshots match the methods doc; chain amounts are raw-integer strings; borrowed fields stay unverified until first-hand confirmation; partial data lowers completeness without fabricating precision; migration 008 is additive-only and matches the object schema.",
   "dependencies": [
     "SOL-OBSERVATION-SCHEMA-001"
