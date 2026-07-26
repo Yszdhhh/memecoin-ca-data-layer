@@ -1,6 +1,10 @@
 # Known limitations
 
 - Real Helius, Solana RPC, Dexscreener, Pump.fun and PumpSwap adapters are not yet wired.
+- Solana CA orchestration still derives holder exclusion tags/clusters from the generic
+  top-100 owner list and the recent-trade window, not from the audited snapshot's full
+  enumeration. Explicit warnings are emitted; live wiring must narrow this residual
+  (FIND-4 in `docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md`).
 - Current tests cover rule behavior, not provider payload drift or live chain replay.
 - Pump.fun program/IDL version registry and pinned transaction fixtures are pending.
 - Holder enumeration must fetch beyond RPC `getTokenLargestAccounts`; the exact

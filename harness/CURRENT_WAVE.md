@@ -14,14 +14,19 @@ holder and Dev facts rather than bypassing their completeness gates.
 
 ## Next CA sequence
 
-1. `SOL-CA-ORCHESTRATION-001` is ready: connect pinned creator evidence, holder snapshot
-   completeness and Dev-history completeness to the final CA result.
-2. `SOL-CA-ORCHESTRATION-AUDIT-001`: independent confirmation that the final
-   result cannot bypass those gates.
-3. `SOL-WALLET-CLEANING-003`: retain evidence-backed service-funder suppression
-   and keep wallet quality separate from holder exclusion.
-4. `SOL-WALLET-CLEANING-AUDIT-003`: independent confirmation of that separation.
-5. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
+1. `SOL-CA-ORCHESTRATION-001` — DONE (run `20260726_SOL_CA_ORCHESTRATION_001` GREEN).
+2. `SOL-CA-ORCHESTRATION-AUDIT-001` — DONE with **FAIL** (run
+   `20260726_SOL_CA_ORCH_AUDIT_001`); report at
+   `docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md`.
+3. `SOL-CA-ORCHESTRATION-REPAIR-001`: close P1 ownerBalances serialization and
+   P2 `devCompleteness` matrix; surface FIND-4 exclusion-input warnings.
+4. `SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001`: independent re-audit (for fable /
+   independent auditor; not the implementer).
+5. `SOL-WALLET-CLEANING-003`: retain evidence-backed service-funder suppression
+   and keep wallet quality separate from holder exclusion (blocked until repair
+   audit is accepted).
+6. `SOL-WALLET-CLEANING-AUDIT-003`: independent confirmation of that separation.
+7. `SOL-E2E-001`: fixture plus Owner-authorized live CA acceptance only after
    the above audits and credential containment are complete.
 
 ## Harness automation sequence

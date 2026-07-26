@@ -1,52 +1,246 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-25T22:00:00.000Z",
+  "updated_at_utc": "2026-07-26T11:40:00.000Z",
   "tasks": [
-    { "task_id": "HARNESS-001", "spec": "harness/tasks/HARNESS-001.json", "status": "DONE" },
-    { "task_id": "SOL-INGEST-001", "spec": "harness/tasks/SOL-INGEST-001.json", "status": "DONE" },
-    { "task_id": "SOL-INGEST-AUDIT-001", "spec": "harness/tasks/SOL-INGEST-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-001", "spec": "harness/tasks/SOL-PUMP-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-AUDIT-001", "spec": "harness/tasks/SOL-PUMP-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-REPAIR-001", "spec": "harness/tasks/SOL-PUMP-REPAIR-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-REPAIR-AUDIT-001", "spec": "harness/tasks/SOL-PUMP-REPAIR-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-RETRIEVAL-REPAIR-001", "spec": "harness/tasks/SOL-PUMP-RETRIEVAL-REPAIR-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-RETRIEVAL-AUDIT-001", "spec": "harness/tasks/SOL-PUMP-RETRIEVAL-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-PUMP-PROVENANCE-001", "spec": "harness/tasks/SOL-PUMP-PROVENANCE-001.json", "status": "DONE" },
-    { "task_id": "SOL-HOLDER-001", "spec": "harness/tasks/SOL-HOLDER-001.json", "status": "DONE" },
-    { "task_id": "SOL-DEV-001", "spec": "harness/tasks/SOL-DEV-001.json", "status": "DONE" },
-    { "task_id": "SOL-MARKET-DATA-DESIGN-001", "spec": "harness/tasks/SOL-MARKET-DATA-DESIGN-001.json", "status": "DONE" },
-    { "task_id": "SOL-HOLDER-AUDIT-001", "spec": "harness/tasks/SOL-HOLDER-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-DEV-AUDIT-001", "spec": "harness/tasks/SOL-DEV-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-MARKET-DATA-DESIGN-AUDIT-001", "spec": "harness/tasks/SOL-MARKET-DATA-DESIGN-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-001", "spec": "harness/tasks/SOL-HOLDER-SNAPSHOT-REPAIR-001.json", "status": "DONE" },
-    { "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001", "spec": "harness/tasks/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "SOL-DEV-REPAIR-001", "spec": "harness/tasks/SOL-DEV-REPAIR-001.json", "status": "DONE" },
-    { "task_id": "SOL-DEV-REPAIR-AUDIT-001", "spec": "harness/tasks/SOL-DEV-REPAIR-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-DESIGN-001", "spec": "harness/tasks/MACRO-DAILY-DESIGN-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DUNE-RESEARCH-001", "spec": "harness/tasks/MACRO-DUNE-RESEARCH-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-DESIGN-AUDIT-001", "spec": "harness/tasks/MACRO-DAILY-DESIGN-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-DESIGN-REPAIR-001", "spec": "harness/tasks/MACRO-DAILY-DESIGN-REPAIR-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-OFFLINE-001", "spec": "harness/tasks/MACRO-DAILY-OFFLINE-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-OFFLINE-AUDIT-001", "spec": "harness/tasks/MACRO-DAILY-OFFLINE-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DUNE-QUERY-PROVENANCE-001", "spec": "harness/tasks/MACRO-DUNE-QUERY-PROVENANCE-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-BRIEF-RENDERER-001", "spec": "harness/tasks/MACRO-DAILY-BRIEF-RENDERER-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-BRIEF-RENDERER-AUDIT-001", "spec": "harness/tasks/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-LIVE-PREFLIGHT-001", "spec": "harness/tasks/MACRO-DAILY-LIVE-PREFLIGHT-001.json", "status": "PARK" },
-    { "task_id": "MACRO-DAILY-POSTGRES-BOOTSTRAP-001", "spec": "harness/tasks/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-DUNE-SMOKE-001", "spec": "harness/tasks/MACRO-DAILY-DUNE-SMOKE-001.json", "status": "DONE" },
-    { "task_id": "MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001", "spec": "harness/tasks/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.json", "status": "DONE" },
-    { "task_id": "SOL-E2E-001", "spec": "harness/tasks/SOL-E2E-001.json", "status": "PARK" },
-    { "task_id": "BSC-STAGE-001", "spec": "harness/tasks/BSC-STAGE-001.json", "status": "BLOCKED_STAGE" },
-    { "task_id": "ROBIN-STAGE-001", "spec": "harness/tasks/ROBIN-STAGE-001.json", "status": "BLOCKED_STAGE" },
-    { "task_id": "HARNESS-CA-WAVE-002", "spec": "harness/tasks/HARNESS-CA-WAVE-002.json", "status": "DONE" },
-    { "task_id": "SOL-CA-ORCHESTRATION-001", "spec": "harness/tasks/SOL-CA-ORCHESTRATION-001.json", "status": "DONE" },
-    { "task_id": "SOL-CA-ORCHESTRATION-AUDIT-001", "spec": "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json", "status": "READY" },
-    { "task_id": "SOL-WALLET-CLEANING-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-003.json", "status": "BLOCKED_DEPENDENCY" },
-    { "task_id": "SOL-WALLET-CLEANING-AUDIT-003", "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json", "status": "BLOCKED_DEPENDENCY" },
-    { "task_id": "SEC-HARNESS-CONTENT-SCAN-001", "spec": "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json", "status": "PARK" },
-    { "task_id": "SOL-E2E-GAP-RESEARCH-002", "spec": "harness/tasks/SOL-E2E-GAP-RESEARCH-002.json", "status": "READY" },
-    { "task_id": "HARNESS-AO-WAVE-003", "spec": "harness/tasks/HARNESS-AO-WAVE-003.json", "status": "DONE" },
-    { "task_id": "HARNESS-AO-AUTOMATION-001", "spec": "harness/tasks/HARNESS-AO-AUTOMATION-001.json", "status": "READY" },
-    { "task_id": "HARNESS-AO-AUTOMATION-AUDIT-001", "spec": "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json", "status": "BLOCKED_DEPENDENCY" }
+    {
+      "task_id": "HARNESS-001",
+      "spec": "harness/tasks/HARNESS-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-INGEST-001",
+      "spec": "harness/tasks/SOL-INGEST-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-INGEST-AUDIT-001",
+      "spec": "harness/tasks/SOL-INGEST-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-001",
+      "spec": "harness/tasks/SOL-PUMP-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-AUDIT-001",
+      "spec": "harness/tasks/SOL-PUMP-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-REPAIR-001",
+      "spec": "harness/tasks/SOL-PUMP-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-PUMP-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-RETRIEVAL-REPAIR-001",
+      "spec": "harness/tasks/SOL-PUMP-RETRIEVAL-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-RETRIEVAL-AUDIT-001",
+      "spec": "harness/tasks/SOL-PUMP-RETRIEVAL-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-PROVENANCE-001",
+      "spec": "harness/tasks/SOL-PUMP-PROVENANCE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOLDER-001",
+      "spec": "harness/tasks/SOL-HOLDER-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DEV-001",
+      "spec": "harness/tasks/SOL-DEV-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-MARKET-DATA-DESIGN-001",
+      "spec": "harness/tasks/SOL-MARKET-DATA-DESIGN-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOLDER-AUDIT-001",
+      "spec": "harness/tasks/SOL-HOLDER-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DEV-AUDIT-001",
+      "spec": "harness/tasks/SOL-DEV-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-MARKET-DATA-DESIGN-AUDIT-001",
+      "spec": "harness/tasks/SOL-MARKET-DATA-DESIGN-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-001",
+      "spec": "harness/tasks/SOL-HOLDER-SNAPSHOT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-HOLDER-SNAPSHOT-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DEV-REPAIR-001",
+      "spec": "harness/tasks/SOL-DEV-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DEV-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-DEV-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-DESIGN-001",
+      "spec": "harness/tasks/MACRO-DAILY-DESIGN-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DUNE-RESEARCH-001",
+      "spec": "harness/tasks/MACRO-DUNE-RESEARCH-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-DESIGN-AUDIT-001",
+      "spec": "harness/tasks/MACRO-DAILY-DESIGN-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-DESIGN-REPAIR-001",
+      "spec": "harness/tasks/MACRO-DAILY-DESIGN-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-OFFLINE-001",
+      "spec": "harness/tasks/MACRO-DAILY-OFFLINE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-OFFLINE-AUDIT-001",
+      "spec": "harness/tasks/MACRO-DAILY-OFFLINE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DUNE-QUERY-PROVENANCE-001",
+      "spec": "harness/tasks/MACRO-DUNE-QUERY-PROVENANCE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-BRIEF-RENDERER-001",
+      "spec": "harness/tasks/MACRO-DAILY-BRIEF-RENDERER-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-BRIEF-RENDERER-AUDIT-001",
+      "spec": "harness/tasks/MACRO-DAILY-BRIEF-RENDERER-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-LIVE-PREFLIGHT-001",
+      "spec": "harness/tasks/MACRO-DAILY-LIVE-PREFLIGHT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "MACRO-DAILY-POSTGRES-BOOTSTRAP-001",
+      "spec": "harness/tasks/MACRO-DAILY-POSTGRES-BOOTSTRAP-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-DUNE-SMOKE-001",
+      "spec": "harness/tasks/MACRO-DAILY-DUNE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001",
+      "spec": "harness/tasks/MACRO-DAILY-DUNE-SAVED-QUERY-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-E2E-001",
+      "spec": "harness/tasks/SOL-E2E-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "BSC-STAGE-001",
+      "spec": "harness/tasks/BSC-STAGE-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "ROBIN-STAGE-001",
+      "spec": "harness/tasks/ROBIN-STAGE-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "HARNESS-CA-WAVE-002",
+      "spec": "harness/tasks/HARNESS-CA-WAVE-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CA-ORCHESTRATION-001",
+      "spec": "harness/tasks/SOL-CA-ORCHESTRATION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CA-ORCHESTRATION-AUDIT-001",
+      "spec": "harness/tasks/SOL-CA-ORCHESTRATION-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CA-ORCHESTRATION-REPAIR-001",
+      "spec": "harness/tasks/SOL-CA-ORCHESTRATION-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SOL-WALLET-CLEANING-003",
+      "spec": "harness/tasks/SOL-WALLET-CLEANING-003.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SOL-WALLET-CLEANING-AUDIT-003",
+      "spec": "harness/tasks/SOL-WALLET-CLEANING-AUDIT-003.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SEC-HARNESS-CONTENT-SCAN-001",
+      "spec": "harness/tasks/SEC-HARNESS-CONTENT-SCAN-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "SOL-E2E-GAP-RESEARCH-002",
+      "spec": "harness/tasks/SOL-E2E-GAP-RESEARCH-002.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-AO-WAVE-003",
+      "spec": "harness/tasks/HARNESS-AO-WAVE-003.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-AO-AUTOMATION-001",
+      "spec": "harness/tasks/HARNESS-AO-AUTOMATION-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-AO-AUTOMATION-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-AO-AUTOMATION-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    }
   ]
 }

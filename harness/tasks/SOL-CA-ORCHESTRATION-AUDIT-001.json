@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that the final CA result uses only pinned creator evidence, complete holder snapshots and complete-from-creation Dev history, preserving evidence and fail-closed behavior.",
   "dependencies": ["SOL-CA-ORCHESTRATION-001"],
   "inputs": [

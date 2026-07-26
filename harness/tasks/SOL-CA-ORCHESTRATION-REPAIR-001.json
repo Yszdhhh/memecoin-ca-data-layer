@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-ORCHESTRATION-REPAIR-001",
+  "title": "Repair Solana CA orchestration evidence integrity after audit FAIL",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Close SOL-CA-ORCHESTRATION-AUDIT-001 blocking and P2 findings: make holder-snapshot ownerBalances serialization-safe through Redis and Postgres paths, align the devCompleteness matrix so null dev never reports complete and missing creator reports unavailable, and surface explicit warnings when exclusion inputs are known to be narrower than the audited snapshot.",
+  "dependencies": [
+    "SOL-CA-ORCHESTRATION-001",
+    "SOL-CA-ORCHESTRATION-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md",
+    "src/application/analysis-service.ts",
+    "src/application/ports.ts",
+    "src/domain/types.ts",
+    "src/infrastructure/cache/redis-analysis-cache.ts",
+    "src/infrastructure/postgres/postgres-analysis-repository.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts"
+  ],
+  "write_set": [
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "test/application/solana/**"
+  ],
+  "forbidden_actions": [
+    "Do not call RPC, Helius, Dune or any external provider; tests must use fixtures or in-memory stubs only.",
+    "Do not modify the Pump decoder, holder snapshot service, Dev history service, their fixtures or their rule semantics.",
+    "Do not relax fail-closed gates for partial snapshots or incomplete-from-creation Dev history.",
+    "Do not treat a token transfer as a sale, merge related-wallet activity into direct Dev activity, or use wallet quality as a holder-exclusion rule.",
+    "Do not activate BSC, Robinhood or a live data source.",
+    "Do not modify task ledger entries for unrelated tasks, or rewrite the original FAIL audit report."
+  ],
+  "deliverables": [
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts",
+    "test/application/solana/analysis-persistence-roundtrip.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

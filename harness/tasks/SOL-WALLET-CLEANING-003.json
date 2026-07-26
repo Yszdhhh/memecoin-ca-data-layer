@@ -7,7 +7,7 @@
   "chain": "solana",
   "status": "BLOCKED_DEPENDENCY",
   "objective": "Separate holder exclusion from wallet-quality labelling, suppress known service funders from same-source cluster inference with retained evidence, and expose the resulting wallet and cluster evidence in the CA result.",
-  "dependencies": ["SOL-CA-ORCHESTRATION-AUDIT-001"],
+  "dependencies": ["SOL-CA-ORCHESTRATION-AUDIT-001", "SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001"],
   "inputs": [
     "PROJECT_CONSTITUTION.md",
     "KNOWN_LIMITATIONS.md",

@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001",
+  "title": "Independent audit of Solana CA orchestration evidence-integrity repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify that SOL-CA-ORCHESTRATION-REPAIR-001 closes every blocking and required P2 finding in SOL-CA-ORCHESTRATION-AUDIT-001 without weakening fail-closed holder, creator or Dev gates, and without silent evidence corruption on Redis/Postgres round-trips.",
+  "dependencies": [
+    "SOL-CA-ORCHESTRATION-AUDIT-001",
+    "SOL-CA-ORCHESTRATION-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "harness/tasks/SOL-CA-ORCHESTRATION-REPAIR-001.json",
+    "docs/audits/SOL-CA-ORCHESTRATION-AUDIT-001.md",
+    "src/application/analysis-service.ts",
+    "src/domain/types.ts",
+    "src/infrastructure/cache/redis-analysis-cache.ts",
+    "src/infrastructure/postgres/postgres-analysis-repository.ts",
+    "test/application/solana/ca-analysis-orchestration.test.ts",
+    "test/application/solana/analysis-persistence-roundtrip.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, task ledger, task specifications or the original FAIL audit report.",
+    "Do not use network APIs, credentials, live providers or mutable data.",
+    "Do not accept a repair that leaves ownerBalances empty after Redis or Postgres round-trip while holderCompleteness remains complete.",
+    "Do not accept devCompleteness complete when dev is null, or partial for missing creator when unavailable is the honest value."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-CA-ORCHESTRATION-REPAIR-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
