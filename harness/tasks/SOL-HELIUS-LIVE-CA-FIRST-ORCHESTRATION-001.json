@@ -1,0 +1,51 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001",
+  "title": "Expose a manual Solana Helius CA-first read entrypoint",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application-hot-path",
+  "status": "READY",
+  "objective": "Build one manually invoked, bounded Solana CA-first read entrypoint that composes the approved LiveHeliusDataSource into a safe structured first-look result. It must report only mint availability/decimals, metadata availability, holder-token-account count, completeness, source slots, and warnings. It must be usable for an owner-supplied CA, require runtime-only HELIUS_API_KEY, use Helius only, and never persist, enqueue deep analysis, start automation, or invoke AnalysisService repositories/caches.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-READONLY-001",
+    "SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001",
+    "SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001",
+    "SOL-HELIUS-LIVE-SMOKE-E2E-001",
+    "SEC-HARNESS-CONTENT-SCAN-001"
+  ],
+  "inputs": [
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md",
+    "OWNER_DECISIONS_NEEDED.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
+    "harness/ledger/tasks.json",
+    "package.json",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/cli/run-solana-live-ca-first.ts",
+    "test/application/live/solana-live-ca-first.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not print, store, commit or record credentials, bearer values, raw provider payloads, or credential-bearing URLs.",
+    "Do not call providers other than Helius and do not add a fallback.",
+    "Do not activate BSC, Robinhood, scheduler, cron, background loops, automated token discovery, deep-dive queue, or production database/cache writes.",
+    "Do not claim Pump creator, Dev history, address tags, wallet facts, wallet quality, holder concentration, or full deep analysis from this entrypoint."
+  ],
+  "deliverables": [
+    "src/application/live/solana-live-ca-first.ts",
+    "src/cli/run-solana-live-ca-first.ts",
+    "test/application/live/solana-live-ca-first.test.ts",
+    "package.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
