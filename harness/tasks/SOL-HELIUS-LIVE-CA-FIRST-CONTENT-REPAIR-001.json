@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application-hot-path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair the CA-first test fixture so the secret-content scanner accepts the repository while preserving the assertion that arbitrary transport error text is never surfaced in the structured result.",
   "dependencies": [
     "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001"

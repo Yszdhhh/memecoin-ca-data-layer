@@ -88,11 +88,11 @@ test("manual CA-first rejects an invalid CA without calling the live source", as
 test("manual CA-first never returns arbitrary transport error text", async () => {
   const result = await readSolanaLiveCaFirst(ca, source({
     async getMint() {
-      throw new Error("https://example.invalid/?api-key=credential-value");
+      throw new Error("transport failure: private-response-text");
     },
   }));
 
   assert.equal(result.status, "DEGRADED");
   assert.ok(result.warnings.includes("helius_live_read_unavailable"));
-  assert.equal(result.warnings.some((warning) => warning.includes("credential")), false);
+  assert.equal(result.warnings.some((warning) => warning.includes("private-response-text")), false);
 });
