@@ -5,7 +5,7 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Run one manually invoked, bounded, read-only Helius smoke against one public Solana CA chosen by the coordinator. Prove finalized mint, token metadata, and a non-truncated holder account response without retaining raw provider payloads or writing to a production database.",
   "dependencies": [
     "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
