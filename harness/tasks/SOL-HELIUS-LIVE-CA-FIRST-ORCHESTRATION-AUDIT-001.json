@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "application-hot-path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit the bounded manual Solana Helius CA-first entrypoint. Verify that it only returns the declared first-look fields, uses no provider except the approved Helius boundary, fails closed without a runtime credential or on unavailable data, and does not reach AnalysisService, persistence, queues, caches, automation, address-library, or deep-analysis paths.",
   "dependencies": [
     "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001"
