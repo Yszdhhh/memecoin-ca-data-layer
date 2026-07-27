@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001",
+  "title": "Independent audit of manual Solana Helius CA-first entrypoint",
+  "tier": "T1",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "application-hot-path",
+  "status": "READY",
+  "objective": "Independently audit the bounded manual Solana Helius CA-first entrypoint. Verify that it only returns the declared first-look fields, uses no provider except the approved Helius boundary, fails closed without a runtime credential or on unavailable data, and does not reach AnalysisService, persistence, queues, caches, automation, address-library, or deep-analysis paths.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
+    "harness/runs/SOL_HELIUS_LIVE_CA_FIRST_ORCH_001/manifest.json",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/cli/run-solana-live-ca-first.ts",
+    "test/application/live/solana-live-ca-first.test.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius or any other provider, and do not require or inspect a runtime credential.",
+    "Do not change implementation, tests, runtime configuration, scheduler, database, cache, queue, chain activation, or automation behavior.",
+    "Do not print, store, commit, or record credentials, bearer values, raw provider payloads, or credential-bearing URLs."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

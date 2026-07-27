@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T16:20:00.000000Z",
+  "updated_at_utc": "2026-07-27T16:30:00.000000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -481,6 +481,11 @@
       "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
