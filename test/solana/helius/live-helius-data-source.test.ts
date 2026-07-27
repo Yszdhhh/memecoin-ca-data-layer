@@ -24,7 +24,13 @@ test("live Helius source reads finalized mint data without exposing its credenti
     fetchImpl: async (input, init) => {
       assert.ok(input instanceof URL);
       requests.push(init === undefined ? { url: new URL(input) } : { url: new URL(input), init });
-      return json({ jsonrpc: "2.0", result: { context: { slot: 123 }, value: { amount: "42000", decimals: 6 } } });
+      return json({
+        jsonrpc: "2.0",
+        result: {
+          context: { slot: 123 },
+          value: { data: { parsed: { type: "mint", info: { supply: "42000", decimals: 6 } } } },
+        },
+      });
     },
   });
 
@@ -37,7 +43,7 @@ test("live Helius source reads finalized mint data without exposing its credenti
   assert.equal(requests[0]?.init?.method, "POST");
   assert.equal(requests[0]?.init?.cache, "no-store");
   assert.ok(requests[0]?.init?.signal instanceof AbortSignal);
-  assert.match(String(requests[0]?.init?.body), /getTokenSupply/);
+  assert.match(String(requests[0]?.init?.body), /getAccountInfo/);
 });
 
 test("live Helius source fails closed on a paginated holder response", async () => {
@@ -84,7 +90,9 @@ test("live Helius source enforces its fixed request budget", async () => {
     apiKey: unitCredential,
     requestBudget: 1,
     minRequestIntervalMs: 0,
-    fetchImpl: async () => json({ result: { context: { slot: 1 }, value: { amount: "1", decimals: 0 } } }),
+    fetchImpl: async () => json({
+      result: { context: { slot: 1 }, value: { data: { parsed: { type: "mint", info: { supply: "1", decimals: 0 } } } } },
+    }),
   });
 
   await source.getMint("PublicMint");

@@ -5,7 +5,7 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair only the Helius live mint read after the authorized smoke proved the original mint RPC contract invalid. Read finalized SPL mint account data through a supported Helius JSON-RPC request, retain the existing request budget, timeout, fail-closed behavior and credential containment, and add only offline unit coverage for the corrected contract.",
   "dependencies": [
     "SOL-HELIUS-LIVE-READONLY-001",

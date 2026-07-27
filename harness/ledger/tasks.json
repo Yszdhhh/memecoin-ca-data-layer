@@ -465,7 +465,7 @@
     {
       "task_id": "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

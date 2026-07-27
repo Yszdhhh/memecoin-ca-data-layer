@@ -65,14 +65,26 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   }
 
   async getMint(ca: string): Promise<SourceResponse<RpcMint | null>> {
-    const result = await this.rpc("getTokenSupply", [requiredAddress(ca), { commitment: "finalized" }]);
+    const result = await this.rpc("getAccountInfo", [
+      requiredAddress(ca),
+      { encoding: "jsonParsed", commitment: "finalized" },
+    ]);
     const row = record(result);
     const value = row.value;
     if (value === null) return this.response(null, finalizedSlot(row.context));
-    const mint = record(value);
-    const decimals = mint.decimals;
-    const supplyRaw = mint.amount;
-    if (typeof decimals !== "number" || !Number.isInteger(decimals) || typeof supplyRaw !== "string" || !/^\d+$/.test(supplyRaw)) {
+    const account = record(value);
+    const data = record(account.data);
+    const parsed = record(data.parsed);
+    const info = record(parsed.info);
+    const decimals = info.decimals;
+    const supplyRaw = info.supply;
+    if (
+      parsed.type !== "mint"
+      || typeof decimals !== "number"
+      || !Number.isInteger(decimals)
+      || typeof supplyRaw !== "string"
+      || !/^\d+$/.test(supplyRaw)
+    ) {
       throw new SourceDataUnavailableError("helius_mint_malformed");
     }
     return this.response({ decimals, supplyRaw }, finalizedSlot(row.context));
