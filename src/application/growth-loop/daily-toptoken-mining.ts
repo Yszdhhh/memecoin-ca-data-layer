@@ -104,12 +104,18 @@ export interface DailyMiningReport {
   }>;
 }
 
+export interface DailyMiningReportStore {
+  save(report: DailyMiningReport): Promise<void>;
+}
+
 export interface DailyMiningDeps {
   topTokens: TopTokenProvider;
   borrowedLeaderboard: BorrowedLeaderboardProvider;
   judgment: WalletJudgmentEngine;
   firstHand: FirstHandConfirmationProvider;
   library: AddressLibrary;
+  /** Optional until the offline runner is wired; failures must degrade the run visibly. */
+  reportStore?: DailyMiningReportStore;
 }
 
 function countLabel(label: string, counts: DailyMiningReport["newLabels"]): void {
@@ -290,5 +296,13 @@ export async function runDailyTopTokenMining(
   }
 
   report.status = warnings.length > 0 ? "DEGRADED" : "GREEN";
+  if (deps.reportStore) {
+    try {
+      await deps.reportStore.save(report);
+    } catch {
+      warnings.push("mining_report_persistence_failed");
+      report.status = "DEGRADED";
+    }
+  }
   return report;
 }

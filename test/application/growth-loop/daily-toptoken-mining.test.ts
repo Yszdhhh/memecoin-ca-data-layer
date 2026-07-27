@@ -209,3 +209,43 @@ test("invalid borrowed provider contracts are discarded and reported", async () 
   assert.equal(leadReport.walletsPromoted, 0);
   assert.ok(leadReport.warnings.includes(`${tokenA}:invalid_borrowed_leaderboard_contract:1`));
 });
+
+test("configured report store receives the completed structured report", async () => {
+  const library = new InMemoryAddressLibrary();
+  const saved: Array<{ window: string; tokenReports: number; warnings: string[] }> = [];
+  const report = await runDailyTopTokenMining({
+    ...deps(library),
+    reportStore: {
+      async save(candidate) {
+        saved.push({
+          window: candidate.window,
+          tokenReports: candidate.tokenReports.length,
+          warnings: [...candidate.warnings],
+        });
+      },
+    },
+  }, config);
+
+  assert.deepEqual(saved, [{
+    window: "daily",
+    tokenReports: 2,
+    warnings: report.warnings,
+  }]);
+});
+
+test("report persistence failure degrades the run without discarding computed evidence", async () => {
+  const library = new InMemoryAddressLibrary();
+  const report = await runDailyTopTokenMining({
+    ...deps(library),
+    reportStore: {
+      async save() {
+        throw new Error("offline store unavailable");
+      },
+    },
+  }, { ...config, topTokenLimit: 1, firstHandWalletBudget: 1 });
+
+  assert.equal(report.status, "DEGRADED");
+  assert.ok(report.warnings.includes("mining_report_persistence_failed"));
+  assert.equal(report.walletsPromoted, 1);
+  assert.equal((await library.getWallet("solana", "wallet-1"))?.verificationStatus, "verified");
+});
