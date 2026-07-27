@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-ALPHA-SCORE-001",
+  "title": "Implement offline alpha-score-v1 judgment engine",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement alpha-score-v1 as a pure, versioned module over fixture wallet/position inputs: regime-relative robust-z, four factor groups, EWM half-life 14d, live percentile tiers, insufficient≠N, provisional confidence cap for borrowed PnL, anti-gaming penalties (luck/supertoken/cluster/bot), dual rule_version axes. No live data.",
+  "dependencies": [
+    "SOL-HARNESS-SUITES-AUDIT-001",
+    "SOL-OBSERVATION-SCHEMA-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "src/domain/types.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "src/domain/rules/funding-clusters.ts"
+  ],
+  "write_set": [
+    "src/domain/rules/alpha-score.ts",
+    "src/domain/types.ts",
+    "test/alpha-score.test.ts",
+    "test/fixtures/alpha/**"
+  ],
+  "forbidden_actions": [
+    "Do not use network, credentials or live providers.",
+    "Do not treat bare token transfers as PnL (swap/venue evidence only).",
+    "Do not assign tier N when evidence is insufficient (use status insufficient).",
+    "Do not let borrowed-only labels set the tier without excess-return evidence.",
+    "Do not lower the 0.85 cluster exclusion gate or modify funding-clusters rule semantics.",
+    "Do not activate BSC or Robinhood."
+  ],
+  "deliverables": [
+    "src/domain/rules/alpha-score.ts",
+    "test/alpha-score.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

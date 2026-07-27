@@ -1,0 +1,25 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-ALPHA-SCORE-AUDIT-001",
+  "title": "Independent audit of alpha-score-v1",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently verify SOL-ALPHA-SCORE-001: deterministic scoring, insufficient≠N, provisional borrowed cap, anti-gaming penalties, dual rule versions, no live I/O, no gate weakening.",
+  "dependencies": ["SOL-ALPHA-SCORE-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "harness/tasks/SOL-ALPHA-SCORE-001.json",
+    "src/domain/rules/alpha-score.ts",
+    "test/alpha-score.test.ts"
+  ],
+  "write_set": ["docs/audits/SOL-ALPHA-SCORE-AUDIT-001.md"],
+  "forbidden_actions": [
+    "Do not modify source, tests, fixtures, ledger or specs.",
+    "Do not use network or credentials."
+  ],
+  "deliverables": ["docs/audits/SOL-ALPHA-SCORE-AUDIT-001.md"],
+  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
