@@ -11,21 +11,22 @@ it must remain unverified until first-hand evidence confirms it.
 | Workstream | Status | Notes |
 | --- | --- | --- |
 | Wave A: observation schema, four harness suites, Alpha Score, detectors | DONE | Offline deterministic acceptance complete. |
-| Wave B: Helius/Pump fixture adapters and address-library sedimentation | DONE, RE-AUDIT READY | Trust-boundary and malformed-fixture repairs are implemented. No live HTTP. |
-| Wave C: free borrowed layer and CA first-screen hotpath | DONE, RE-AUDIT READY | Deep-dive is now queued into `AnalysisService`; borrowed fields stay unverified. |
-| Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDIT READY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
-| Harness audit-evidence enforcement repair | DONE, AUDIT READY | Auditor completion now requires valid independent passing run evidence. |
+| Wave B: Helius/Pump fixture adapters and address-library sedimentation | DONE, RE-AUDIT REQUIRED | Offline trust boundaries are implemented; a fresh independent evidence run is queued after historical-run repair. No live HTTP. |
+| Wave C: free borrowed layer and CA first-screen hotpath | DONE, RE-AUDIT REQUIRED | Deep-dive is queued into `AnalysisService`; borrowed fields stay unverified; fresh independent evidence is queued with Wave B. |
+| Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDITED GREEN_WITH_ADVISORY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
+| Harness audit-evidence enforcement repair | DONE, AUDITED GREEN | Auditor completion requires valid independent passing run evidence. |
+| Harness historical-run verification repair | DONE, AUDIT READY | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
 | Live Helius / real-CA E2E (`SOL-E2E-001`) | PARK | Requires Owner live-gate approval and contained credentials. |
 | BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
 
 ## Independent audit queue
 
+The completed Wave D and audit-evidence audits retain valid recorded evidence.
 Dispatch these exact task specs to an independent auditor after committing a
 clean baseline:
 
-1. `WAVE-B-C-OFFLINE-REAUDIT-002`
-2. `WAVE-D-OFFLINE-AUDIT-001`
-3. `HARNESS-AUDIT-EVIDENCE-AUDIT-002`
+1. `HARNESS-HISTORICAL-RUN-VERIFY-AUDIT-001`
+2. `WAVE-B-C-OFFLINE-REAUDIT-003`
 
 The auditor must use Harness run manifests and must not reuse the implementer
 identity.
