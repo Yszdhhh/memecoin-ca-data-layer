@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "layer": "cold_path",
   "objective": "Independently audit the offline PostgreSQL address-library adapter, including database trust constraints, verified-record preservation, typed observation persistence, and absence of live database or network execution.",
   "dependencies": [

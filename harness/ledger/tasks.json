@@ -420,7 +420,7 @@
     {
       "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001",
       "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
