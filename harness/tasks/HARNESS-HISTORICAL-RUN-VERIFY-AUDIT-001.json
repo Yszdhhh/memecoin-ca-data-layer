@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "layer": "governance",
   "objective": "Independently verify final run manifests are checked read-only, remain stable after later commits, and fail closed when recorded output evidence is altered.",
   "dependencies": [

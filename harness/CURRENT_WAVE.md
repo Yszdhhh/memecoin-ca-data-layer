@@ -15,7 +15,7 @@ it must remain unverified until first-hand evidence confirms it.
 | Wave C: free borrowed layer and CA first-screen hotpath | DONE, RE-AUDIT REQUIRED | Deep-dive is queued into `AnalysisService`; borrowed fields stay unverified; fresh independent evidence is queued with Wave B. |
 | Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDITED GREEN_WITH_ADVISORY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
 | Harness audit-evidence enforcement repair | DONE, AUDITED GREEN | Auditor completion requires valid independent passing run evidence. |
-| Harness historical-run verification repair | DONE, AUDIT READY | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
+| Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
 | Live Helius / real-CA E2E (`SOL-E2E-001`) | PARK | Requires Owner live-gate approval and contained credentials. |
 | BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
 
