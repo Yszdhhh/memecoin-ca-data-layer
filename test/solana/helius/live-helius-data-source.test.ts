@@ -70,6 +70,7 @@ test("live Helius source maps complete Helius DAS accounts and metadata", async 
         return json({ result: {
           token_accounts: [{ address: "AccountOne", ownership: { owner: "OwnerOne" }, token_info: { balance: "77" } }],
           total: 1,
+          cursor: "complete-page",
           last_indexed_slot: 456,
         } });
       }

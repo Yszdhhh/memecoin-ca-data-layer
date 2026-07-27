@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   HeliusAddressTag,
   HeliusTokenMetadata,
   HeliusTransaction,
@@ -99,12 +99,14 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     const row = record(result);
     const tokenAccounts = row.token_accounts;
     if (!Array.isArray(tokenAccounts)) throw new SourceDataUnavailableError("helius_token_accounts_malformed");
-    if (typeof row.cursor === "string" && row.cursor.length > 0) {
-      throw new SourceDataUnavailableError("helius_token_accounts_truncated");
+    const total = row.total;
+    if (total !== undefined && (typeof total !== "number" || !Number.isInteger(total) || total < 0)) {
+      throw new SourceDataUnavailableError("helius_token_accounts_malformed");
     }
-    if (typeof row.total === "number" && row.total > tokenAccounts.length) {
-      throw new SourceDataUnavailableError("helius_token_accounts_truncated");
-    }
+    const hasMore = typeof total === "number"
+      ? total > tokenAccounts.length
+      : typeof row.cursor === "string" && row.cursor.length > 0;
+    if (hasMore) throw new SourceDataUnavailableError("helius_token_accounts_truncated");
 
     const accounts = tokenAccounts.map((entry) => tokenAccount(entry));
     return this.response(accounts, indexedSlot(row));

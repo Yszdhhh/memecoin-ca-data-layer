@@ -5,7 +5,7 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair only the Helius live holder-page completeness decision after the authorized smoke showed a non-empty cursor alongside a structured total equal to the returned account count. Preserve fail-closed behavior for a missing total plus cursor, or a total exceeding returned accounts; do not add pagination or broaden data collection.",
   "dependencies": [
     "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
