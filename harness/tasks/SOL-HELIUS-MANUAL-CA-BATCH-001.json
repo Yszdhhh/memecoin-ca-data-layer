@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Add one manual command that accepts 1 to 10 distinct Solana CAs supplied by the operator and runs the approved bounded Helius CA-first read for each. It must not discover CAs, schedule itself, retain provider payloads, persist results, or use a provider other than Helius.",
   "dependencies": ["SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001"],
   "inputs": ["src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "OWNER_DECISIONS_NEEDED.md"],

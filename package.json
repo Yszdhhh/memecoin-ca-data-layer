@@ -13,7 +13,8 @@
     "harness:run": "tsx harness/cli.ts run",
     "harness:status": "tsx harness/cli.ts status",
     "macro:daily:core": "tsx src/cli/run-macro-daily-core.ts",
-    "solana:live:ca-first": "tsx src/cli/run-solana-live-ca-first.ts"
+    "solana:live:ca-first": "tsx src/cli/run-solana-live-ca-first.ts",
+    "solana:live:ca-batch": "tsx src/cli/run-solana-live-ca-batch.ts"
   },
   "dependencies": {
     "ioredis": "^5.6.1",
