@@ -1,5 +1,6 @@
 import type { AlphaScoreResult, AlphaTier, Chain } from "../../domain/types.js";
 import type { WalletForensicSignals } from "../../domain/rules/forensic-signals.js";
+import type { ParserInputKind } from "../../domain/observation/observation-record.js";
 
 export type SedimentOrigin = "first_hand" | "borrowed";
 export type SedimentVerification = "unverified" | "verified";
@@ -46,7 +47,10 @@ export interface LibraryObservationRecord {
   verificationStatus: SedimentVerification;
   trustClass: "A" | "B" | "C" | "D" | "E";
   parserVersion: string;
+  parserInputKind: ParserInputKind;
   observationFingerprint: string;
+  confidence: number;
+  completeness: number;
   snapshot: Record<string, unknown>;
   warnings: string[];
   capturedAt: Date;
