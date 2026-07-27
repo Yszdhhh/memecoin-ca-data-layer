@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GROWTH-REPORT-POSTGRES-AUDIT-001",
+  "title": "Independent audit of durable offline Solana address-mining report storage",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Independently audit the offline PostgreSQL store for Solana daily/weekly address-mining reports: structured-only persistence, idempotent run identity, visible degradation on configured store failure, validation before SQL, migration safety, and absence of live database, scheduler, or network execution.",
+  "dependencies": [
+    "SOL-GROWTH-REPORT-POSTGRES-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "db/migrations/010_address_mining_runs.sql",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/infrastructure/postgres/postgres-address-mining-report-store.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts",
+    "test/infrastructure/postgres/postgres-address-mining-report-store.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL_GROWTH_REPORT_POSTGRES_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, or tests.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not activate a scheduler or perform live provider, RPC, database, Redis, or HTTP calls.",
+    "Do not activate BSC or unpark SOL-E2E-001."
+  ],
+  "deliverables": [
+    "docs/audits/SOL_GROWTH_REPORT_POSTGRES_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
