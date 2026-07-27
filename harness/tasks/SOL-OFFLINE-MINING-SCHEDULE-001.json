@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "layer": "cold_path",
   "objective": "Implement a deterministic manual/offline runner that selects canonical daily and Monday weekly address-mining jobs and invokes the existing fixture-compatible growth loop. It must not install a cron job, timer, network client, or live trigger. Repeated invocation for the same UTC schedule slot must produce the same run identity for the durable report store.",
   "dependencies": [
