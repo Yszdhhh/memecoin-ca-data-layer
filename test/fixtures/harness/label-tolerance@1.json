@@ -1,0 +1,8 @@
+{
+  "schema_version": "label-tolerance@1",
+  "detectors": {
+    "cluster_fusion": { "max_fp": 0, "max_fn": 0 },
+    "bot_sniper": { "max_fp": 1, "max_fn": 0 },
+    "independent_smart_money": { "max_fp": 0, "max_fn": 1 }
+  }
+}

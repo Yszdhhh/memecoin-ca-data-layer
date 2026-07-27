@@ -1,0 +1,36 @@
+{
+  "schema_version": "replay-timeline@1",
+  "token_ca": "ReplayMint1111111111111111111111111111111",
+  "parser_version": "obs-parser@1",
+  "rule_version": {
+    "real_holders": "v1",
+    "funding_clusters": "v1"
+  },
+  "observations": [
+    {
+      "kind": "holder_concentration",
+      "owners": [
+        { "owner": "creator", "balance_raw": "400", "excluded": false },
+        { "owner": "alice", "balance_raw": "300", "excluded": false },
+        { "owner": "pool", "balance_raw": "300", "excluded": true, "reason": "liquidity_pool", "rule_version": "v1" }
+      ]
+    },
+    {
+      "kind": "wallet_signal",
+      "smart_money": ["alice"],
+      "clusters": [
+        {
+          "cluster_id": "clu-1",
+          "shared_funder": "funder-x",
+          "members": ["bot-a", "bot-b"]
+        }
+      ]
+    },
+    {
+      "kind": "security",
+      "mint_authority": "revoked",
+      "freeze_authority": "revoked",
+      "lp_burned": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "schema_version": "source-degradation@1",
+  "sources": ["helius_holders", "helius_swaps", "market_enrichment", "borrowed_leaderboard"],
+  "failure_modes": ["timeout", "field_missing", "field_renamed", "malformed", "stale"]
+}

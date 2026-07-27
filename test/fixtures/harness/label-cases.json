@@ -1,0 +1,31 @@
+{
+  "schema_version": "label-cases@1",
+  "attestation": "auditor-seed-fixture-v1",
+  "cases": [
+    {
+      "id": "known-cluster",
+      "features": { "same_funder": true, "sync_buy": true, "service_funder": false, "swaps_24h": 10 },
+      "labels": { "cluster_fusion": true, "bot_sniper": false, "independent_smart_money": false }
+    },
+    {
+      "id": "service-funder-negative",
+      "features": { "same_funder": true, "sync_buy": true, "service_funder": true, "swaps_24h": 5 },
+      "labels": { "cluster_fusion": false, "bot_sniper": false, "independent_smart_money": false }
+    },
+    {
+      "id": "bot-sniper",
+      "features": { "same_funder": false, "sync_buy": false, "service_funder": false, "swaps_24h": 200, "median_interval_s": 2 },
+      "labels": { "cluster_fusion": false, "bot_sniper": true, "independent_smart_money": false }
+    },
+    {
+      "id": "independent-smart",
+      "features": { "same_funder": false, "sync_buy": false, "service_funder": false, "swaps_24h": 12, "historical_wallet": true, "edge_count": 40 },
+      "labels": { "cluster_fusion": false, "bot_sniper": false, "independent_smart_money": true }
+    },
+    {
+      "id": "clean-negative",
+      "features": { "same_funder": false, "sync_buy": false, "service_funder": false, "swaps_24h": 3 },
+      "labels": { "cluster_fusion": false, "bot_sniper": false, "independent_smart_money": false }
+    }
+  ]
+}

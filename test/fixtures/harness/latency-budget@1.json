@@ -1,0 +1,7 @@
+{
+  "schema_version": "latency-budget@1",
+  "p50_ms_max": 900,
+  "p95_ms_max": 2000,
+  "require_card_every_case": true,
+  "require_parallel_hot_path": true
+}

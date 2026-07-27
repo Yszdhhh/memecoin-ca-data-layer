@@ -1,0 +1,23 @@
+{
+  "schema_version": "replay-expected@1",
+  "real_top_n": [
+    { "owner": "creator", "balance_raw": "400" },
+    { "owner": "alice", "balance_raw": "300" }
+  ],
+  "excluded_owners": [
+    { "owner": "pool", "reason": "liquidity_pool", "rule_version": "v1" }
+  ],
+  "smart_money": ["alice"],
+  "clusters": [
+    {
+      "cluster_id": "clu-1",
+      "shared_funder": "funder-x",
+      "members": ["bot-a", "bot-b"]
+    }
+  ],
+  "security": {
+    "mint_authority": "revoked",
+    "freeze_authority": "revoked",
+    "lp_burned": "unknown"
+  }
+}
