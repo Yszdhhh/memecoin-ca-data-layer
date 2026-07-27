@@ -5,7 +5,7 @@
   "tier": "T1",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Implement the four required harness acceptance dimensions from PROJECT_ARCHITECTURE.md section 6 and docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md Part 3.4 as offline, deterministic tsx test suites plus runner CLIs under src/harness-suites, each exiting non-zero on failure and writing a JSON report. Latency uses a virtual clock with fixture-declared per-source latency (hot-path budget under 2s); replay reproduces pinned old-token timelines field-by-field; source-degradation asserts a usable DEGRADED result with warnings and completeness (never crash, never fake precision, never substitute borrowed data for authoritative concentration); label-decision measures detector FP/FN against a versioned tolerance file. No live network.",
   "dependencies": [],
   "inputs": [

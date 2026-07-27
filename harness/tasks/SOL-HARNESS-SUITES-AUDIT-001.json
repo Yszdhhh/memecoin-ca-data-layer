@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently verify SOL-HARNESS-SUITES-001: the four suites are offline and deterministic, fail-closed (non-zero exit on failure), use versioned budget/tolerance files, and actually enforce their guarantees (latency virtual clock and under-2s budget; replay field-by-field reproduction; source-degradation never crashes or fakes precision or substitutes borrowed for authoritative concentration; label-decision FP/FN within tolerance).",
   "dependencies": [
     "SOL-HARNESS-SUITES-001"

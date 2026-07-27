@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T04:20:00.000Z",
+  "updated_at_utc": "2026-07-27T01:40:15.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -295,12 +295,12 @@
     {
       "task_id": "SOL-HARNESS-SUITES-001",
       "spec": "harness/tasks/SOL-HARNESS-SUITES-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-HARNESS-SUITES-AUDIT-001",
       "spec": "harness/tasks/SOL-HARNESS-SUITES-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }
