@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T14:46:58.529742Z",
+  "updated_at_utc": "2026-07-27T14:47:21.429680Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -460,7 +460,7 @@
     {
       "task_id": "SOL-HELIUS-LIVE-SMOKE-E2E-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json",
-      "status": "PARK"
+      "status": "READY"
     },
     {
       "task_id": "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
