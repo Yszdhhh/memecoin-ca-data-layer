@@ -48,3 +48,19 @@ collapse.
 - **Daily growth-loop automation (D-F):** defaulting to **manual/off** — the
   auto-scan of hot tokens (which consumes provider quota) stays a manual trigger
   until Owner enables it. No blocker.
+
+## Decisions from Wave B/C go-ahead — DECIDED (Owner, 2026-07-27)
+
+13. **Wave B/C build mode:** DECIDED — implement **fixture/offline only**. Do
+    **not** enable live Helius network calls or production RPC until a later
+    explicit live flip. Live Helius + real CA E2E stay **PARK**.
+14. **Live acceptance CA selection (item 2 partial):** DECIDED for process —
+    when E2E is unparked, **Codex chooses public sample CAs** for the acceptance
+    manifest (not a secret list; no private bags). Until then `SOL-E2E-001` remains
+    PARK.
+15. **Payload retention (item 3):** DECIDED —
+    - **Raw provider payloads** (after secret scrubbing): retain **7 days** by default.
+    - **Structured Observation records**, evidence indexes, and cleaned **replay
+      fixtures**: **long-term** retention (append-only library / repo fixtures).
+16. **BSC stage (item 6):** DECIDED for now — **do not activate BSC**. Remains
+    `BLOCKED_STAGE` until Solana E2E is GREEN and Owner revisits.

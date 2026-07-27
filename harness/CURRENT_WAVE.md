@@ -42,6 +42,17 @@ holder and Dev facts rather than bypassing their completeness gates.
 3. `HARNESS-AO-AUTOMATION-REPAIR-001` — READY (fix the four P1 gaps);
    `HARNESS-AO-AUTOMATION-REPAIR-AUDIT-001` — BLOCKED_DEPENDENCY.
 
+## Wave B + C offline (2026-07-27 Owner go-ahead)
+
+- **Mode:** fixture/offline only — live Helius + real CA E2E remain PARK.
+- **B1** Fixture Helius data source + degradation wrapper — DONE.
+- **B2** Pump decoder version registry — DONE.
+- **B3** Address library sedimentation (in-memory) — DONE.
+- **C1** Free borrow providers (Dexscreener/Birdeye/GMGN fixtures) — DONE.
+- **C2** CA first-screen hotpath card — DONE.
+- **Batch audit** WAVE_B_C_OFFLINE_AUDIT_001 GREEN_WITH_ADVISORY.
+- Owner: Codex picks public CA samples later; raw payload 7d; structured evidence long-term; BSC blocked.
+
 ## Next wave — Owner-confirmed direction; see harness/DISPATCH_PLAN.md
 
 The project direction (hybrid borrowed + first-hand data, instant CA analysis)

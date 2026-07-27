@@ -1,0 +1,35 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WAVE-B-C-OFFLINE-AUDIT-001",
+  "title": "Batch independent audit of Wave B+C offline deliverables",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently verify Wave B+C offline fixtures: no live network, borrow unverified, sedimentation trust rules, hotpath card contracts.",
+  "dependencies": [
+    "SOL-HELIUS-FIXTURE-ADAPTER-001",
+    "SOL-PUMP-DECODER-VERSION-001",
+    "SOL-ADDRESS-LIBRARY-SEDIMENTATION-001",
+    "SOL-FREE-PROVIDERS-001",
+    "SOL-HOTPATH-CARD-001"
+  ],
+  "inputs": [
+    "OWNER_DECISIONS_NEEDED.md",
+    "docs/audits/WAVE_B_C_OFFLINE_AUDIT_001.md"
+  ],
+  "write_set": [
+    "docs/audits/WAVE_B_C_OFFLINE_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source."
+  ],
+  "deliverables": [
+    "docs/audits/WAVE_B_C_OFFLINE_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

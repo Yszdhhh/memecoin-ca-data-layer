@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T01:55:03.000Z",
+  "updated_at_utc": "2026-07-27T03:12:47.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -320,6 +320,36 @@
     {
       "task_id": "SOL-DETECTORS-AUDIT-001",
       "spec": "harness/tasks/SOL-DETECTORS-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-FIXTURE-ADAPTER-001",
+      "spec": "harness/tasks/SOL-HELIUS-FIXTURE-ADAPTER-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-PUMP-DECODER-VERSION-001",
+      "spec": "harness/tasks/SOL-PUMP-DECODER-VERSION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-ADDRESS-LIBRARY-SEDIMENTATION-001",
+      "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-SEDIMENTATION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-FREE-PROVIDERS-001",
+      "spec": "harness/tasks/SOL-FREE-PROVIDERS-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOTPATH-CARD-001",
+      "spec": "harness/tasks/SOL-HOTPATH-CARD-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "WAVE-B-C-OFFLINE-AUDIT-001",
+      "spec": "harness/tasks/WAVE-B-C-OFFLINE-AUDIT-001.json",
       "status": "DONE"
     }
   ]

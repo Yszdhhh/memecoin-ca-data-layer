@@ -1,0 +1,34 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-ADDRESS-LIBRARY-SEDIMENTATION-001",
+  "title": "Address library sedimentation offline",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Address library sedimentation offline \u2014 fixture/offline only; no live network.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/DISPATCH_PLAN.md"
+  ],
+  "write_set": [
+    "src/application/sedimentation/**",
+    "test/application/sedimentation/**"
+  ],
+  "forbidden_actions": [
+    "Do not call live Helius/RPC or market APIs.",
+    "Do not activate BSC.",
+    "Do not unpark SOL-E2E-001."
+  ],
+  "deliverables": [
+    "src/application/sedimentation/**"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
