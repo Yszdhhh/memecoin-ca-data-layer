@@ -5,9 +5,11 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently verify detectors never weaken 0.85 exclusion, honor service-funder suppression, enforce smart-money vetoes, and remain offline/deterministic.",
-  "dependencies": ["SOL-DETECTORS-001"],
+  "dependencies": [
+    "SOL-DETECTORS-001"
+  ],
   "inputs": [
     "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
     "harness/tasks/SOL-DETECTORS-001.json",
@@ -16,11 +18,20 @@
     "src/domain/rules/independent-smart-money.ts",
     "test/detectors/detectors.test.ts"
   ],
-  "write_set": ["docs/audits/SOL-DETECTORS-AUDIT-001.md"],
+  "write_set": [
+    "docs/audits/SOL-DETECTORS-AUDIT-001.md"
+  ],
   "forbidden_actions": [
     "Do not modify source, tests, ledger or specs.",
     "Do not use network."
   ],
-  "deliverables": ["docs/audits/SOL-DETECTORS-AUDIT-001.md"],
-  "acceptance_commands": ["npm run typecheck", "npm test", "npm run build", "git diff --check"]
+  "deliverables": [
+    "docs/audits/SOL-DETECTORS-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
 }

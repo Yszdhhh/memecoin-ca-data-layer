@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Implement cluster-fusion-v1 (overlay on funding-clusters, never lower 0.85), bot-sniper-v1, and independent-smart-money-v1 with hard cluster/sniper vetoes; export WalletForensicSignals. Offline fixtures only.",
   "dependencies": [
     "SOL-ALPHA-SCORE-AUDIT-001",
