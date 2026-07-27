@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001",
+  "title": "Repair Helius documented token-account record mapping",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Repair only the Helius live token-account mapper so it accepts the documented flat account response shape (address, owner, integer amount) while retaining the existing nested fixture compatibility. Reject malformed, signed, floating, or precision-unsafe amounts fail-closed. Do not change pagination, provider scope, or live collection breadth.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001",
+    "SEC-HARNESS-CONTENT-SCAN-001"
+  ],
+  "inputs": [
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not print, store, commit or record credentials, bearer values, raw provider payloads, or credential-bearing URLs.",
+    "Do not add pagination, provider fallback, or any provider other than Helius.",
+    "Do not activate BSC, Robinhood, scheduler, cron, background loops, automated discovery, or production database writes."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
