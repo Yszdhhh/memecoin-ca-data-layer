@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-HISTORICAL-RUN-VERIFY-001",
+  "title": "Preserve completed Harness run evidence across later commits",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "layer": "governance",
+  "objective": "Make verification of a completed Harness run read-only and stable after unrelated later commits, while preserving strict validation during a running task.",
+  "dependencies": [
+    "HARNESS-AUDIT-EVIDENCE-REPAIR-002"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "harness/cli.ts",
+    "harness/lib/contracts.ts"
+  ],
+  "write_set": [
+    "harness/cli.ts",
+    "test/harness-run-verification.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not weaken audit identity, verdict, or evidence-validity requirements.",
+    "Do not perform live network calls.",
+    "Do not auto-mark any task DONE or GREEN."
+  ],
+  "deliverables": [
+    "harness/cli.ts",
+    "test/harness-run-verification.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
