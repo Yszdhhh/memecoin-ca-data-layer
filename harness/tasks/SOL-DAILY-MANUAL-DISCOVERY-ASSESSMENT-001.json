@@ -6,7 +6,7 @@
   "role": "coordinator",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Produce a bounded task decomposition for manually supplied daily popular-token candidates and subsequent address analysis. Separate safe manual steps from later evidence work, identify dependencies and fail-closed boundaries, and record only genuine Owner decision points. Do not enable, implement, schedule, or run automated discovery.",
   "dependencies": [
     "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001"
