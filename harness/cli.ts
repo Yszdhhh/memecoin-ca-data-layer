@@ -1,4 +1,4 @@
-import { mkdir, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import type {
@@ -42,6 +42,67 @@ const REQUIRED_FILES = [
   LEDGER_PATH,
 ];
 
+const SECRET_CONTENT_RULES = [
+  {
+    id: "INLINE_API_CREDENTIAL",
+    pattern: /\b(?:api[\s_-]?key|access[\s_-]?token|secret)\b\s*(?::|=|\()\s*[`'\"]?([A-Za-z0-9_-]{16,})/i,
+  },
+  {
+    id: "QUERY_API_CREDENTIAL",
+    pattern: /\bapi-key=([A-Za-z0-9_-]{16,})/i,
+  },
+  {
+    id: "ENV_CREDENTIAL_ASSIGNMENT",
+    pattern: /\b[A-Z][A-Z0-9_]*(?:API_KEY|TOKEN|SECRET|PASSWORD)\b\s*=\s*[`'\"]?([^\s`'\"]{12,})/,
+  },
+  {
+    id: "PRIVATE_KEY_BLOCK",
+    pattern: /-----BEGIN(?: [A-Z]+)? PRIVATE KEY-----/,
+  },
+] as const;
+
+function isDocumentedCredentialPlaceholder(value: string): boolean {
+  return /^(?:<.*>|\[.*\]|(?:your|example|replace|change|dummy|test|placeholder)[_-])/i.test(value);
+}
+
+export function secretContentRulesFor(text: string): string[] {
+  return SECRET_CONTENT_RULES.flatMap((rule) => {
+    const flags = rule.pattern.flags.includes("g") ? rule.pattern.flags : `${rule.pattern.flags}g`;
+    const matches = text.matchAll(new RegExp(rule.pattern.source, flags));
+    for (const match of matches) {
+      if (!match[1] || !isDocumentedCredentialPlaceholder(match[1])) return [rule.id];
+    }
+    return [];
+  });
+}
+
+function decodeGitPath(file: string): string {
+  if (!file.startsWith('"') || !file.endsWith('"')) return file;
+  const body = file.slice(1, -1);
+  const bytes: number[] = [];
+  for (let index = 0; index < body.length; index += 1) {
+    if ((body[index] === "\\" || body[index] === "/") && /^[0-7]{3}$/.test(body.slice(index + 1, index + 4))) {
+      bytes.push(Number.parseInt(body.slice(index + 1, index + 4), 8));
+      index += 3;
+      continue;
+    }
+    bytes.push(body.charCodeAt(index));
+  }
+  return new TextDecoder().decode(Uint8Array.from(bytes)).replaceAll("\\", "/");
+}
+
+async function forbiddenTrackedContent(files: string[]): Promise<string[]> {
+  const matches: string[] = [];
+  for (const file of files) {
+    const bytes = await readFile(resolveRepoPath(file));
+    if (bytes.includes(0)) continue;
+    for (const rule of secretContentRulesFor(bytes.toString("utf8"))) {
+      matches.push(`${rule}:${file}`);
+    }
+  }
+  return matches;
+}
+
 async function artifact(relativePath: string): Promise<ArtifactRecord> {
   const present = await exists(relativePath);
   return { path: relativePath, exists: present, sha256: present ? await sha256(relativePath) : null };
@@ -80,11 +141,14 @@ async function doctor(): Promise<number> {
     } catch (error) {
       errors.push(`cannot validate ledger: ${String(error)}`);
     }
-    const tracked = gitTrackedFiles();
+    const tracked = gitTrackedFiles().map(decodeGitPath);
     for (const pattern of config.forbidden_repository_patterns) {
       const matches = tracked.filter((file) =>
         globMatches(pattern, path.basename(file)) || globMatches(pattern, file));
       if (matches.length > 0) errors.push(`forbidden tracked files for ${pattern}: ${matches.join(", ")}`);
+    }
+    for (const match of await forbiddenTrackedContent(tracked)) {
+      errors.push(`forbidden tracked content: ${match}`);
     }
   }
 
@@ -209,12 +273,15 @@ async function verifyRun(runDirArg: string): Promise<number> {
   const config = await readJson<ProjectConfig>(CONFIG_PATH);
   const spec = await readJson<TaskSpec>(manifest.task_spec_path);
   const changedPaths = gitChangedPaths(manifest.git.start_commit)
+    .map(decodeGitPath)
     .filter((item) => !item.startsWith("harness/runs/"));
   const outOfScope = changedPaths.filter((changed) =>
     !spec.write_set.some((pattern) => globMatches(pattern, changed)));
-  const secretMatches = gitTrackedFiles().filter((file) =>
+  const tracked = gitTrackedFiles().map(decodeGitPath);
+  const secretFileMatches = tracked.filter((file) =>
     config.forbidden_repository_patterns.some((pattern) =>
       globMatches(pattern, path.basename(file)) || globMatches(pattern, file)));
+  const secretContentMatches = await forbiddenTrackedContent(tracked);
 
   const acceptance: RunManifest["acceptance"] = [];
   for (let index = 0; index < manifest.acceptance.length; index += 1) {
@@ -247,10 +314,11 @@ async function verifyRun(runDirArg: string): Promise<number> {
   manifest.integrity.task_spec_valid = validateTask(spec, config).length === 0;
   manifest.integrity.active_stage_allowed = spec.chain === null || config.active_chains.includes(spec.chain);
   manifest.integrity.write_scope_valid = outOfScope.length === 0;
-  manifest.integrity.secrets_absent = secretMatches.length === 0;
+  manifest.integrity.secrets_absent = secretFileMatches.length === 0 && secretContentMatches.length === 0;
   manifest.unresolved_items = [
     ...outOfScope.map((item) => `OUT_OF_SCOPE:${item}`),
-    ...secretMatches.map((item) => `FORBIDDEN_TRACKED_FILE:${item}`),
+    ...secretFileMatches.map((item) => `FORBIDDEN_TRACKED_FILE:${item}`),
+    ...secretContentMatches.map((item) => `FORBIDDEN_TRACKED_CONTENT:${item}`),
     ...manifest.outputs.filter((item) => !item.exists).map((item) => `MISSING_DELIVERABLE:${item.path}`),
   ];
   await writeJson(manifestPath, manifest);
@@ -456,9 +524,12 @@ async function main(): Promise<number> {
   return 2;
 }
 
-main()
-  .then((code) => { process.exitCode = code; })
-  .catch((error: unknown) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
-  });
+const invokedAsCli = process.argv[1]?.replaceAll("\\", "/").endsWith("/harness/cli.ts") ?? false;
+if (invokedAsCli) {
+  main()
+    .then((code) => { process.exitCode = code; })
+    .catch((error: unknown) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exitCode = 1;
+    });
+}

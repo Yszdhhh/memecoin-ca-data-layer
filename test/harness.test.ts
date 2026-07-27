@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { FinishedRunEvidence, ProjectConfig, TaskLedger, TaskSpec } from "../harness/lib/contracts.js";
 import { globMatches } from "../harness/lib/files.js";
+import { secretContentRulesFor } from "../harness/cli.js";
 import { applyReadinessUpdates, deriveLifecyclePlan, validateTask } from "../harness/lib/validation.js";
 
 const config: ProjectConfig = {
@@ -278,4 +279,13 @@ test("apply-readiness flips BLOCKED_DEPENDENCY to READY when deps are DONE", asy
   assert.ok(result.applied.includes("SOL-NEXT-002:BLOCKED_DEPENDENCY->READY"));
   assert.ok(written.includes("SOL-NEXT-002:READY"));
   assert.ok(written.includes("ledger:READY"));
+});
+
+test("content secret scan returns only rule identifiers", () => {
+  const syntheticCredential = ["sample", "credential", "0123456789"].join("-");
+  const rules = secretContentRulesFor(`API Key (\`${syntheticCredential}\`)`);
+  assert.deepEqual(rules, ["INLINE_API_CREDENTIAL"]);
+  assert.equal(rules.some((rule) => rule.includes(syntheticCredential)), false);
+  assert.deepEqual(secretContentRulesFor("DUNE_API_KEY"), []);
+  assert.deepEqual(secretContentRulesFor("DUNE_API_KEY=YOUR_DUNE_API_KEY"), []);
 });

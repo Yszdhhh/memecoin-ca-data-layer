@@ -6,7 +6,7 @@
 
 我已经为您在当前 Windows 系统中完成了以下配置：
 - **Dune CLI (命令行工具)**：已下载最新版，并将其添加至系统的环境变量路径 (`C:\Users\10639\bin`)，您可以在任意命令行终端（PowerShell / CMD）中直接运行 `dune` 命令。
-- **API 密钥配置**：为您指定的 API Key (`Rlns2QoUn2y6vovEtkjBQ7Vtpzp0nw3C`) 已通过全局环境变量 `DUNE_API_KEY` 进行了配置。Dune CLI 运行时会自动识别该密钥，无需再手动输入。
+- **API 密钥配置**：为您指定的 API Key (`[REDACTED]`) 已通过全局环境变量 `DUNE_API_KEY` 进行了配置。Dune CLI 运行时会自动识别该密钥，无需再手动输入。
 
 ## 2. 如何使用 Dune CLI
 
