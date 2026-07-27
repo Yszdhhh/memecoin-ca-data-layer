@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GROWTH-REPORT-POSTGRES-001",
+  "title": "Durable PostgreSQL storage for offline Solana address-mining reports",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Add an offline-only PostgreSQL report store for completed daily/weekly Solana address-mining runs. Preserve deterministic fixture behavior, capture run metrics and evidence summaries, and fail closed/degrade visibly when configured persistence fails. Do not connect to or deploy PostgreSQL, Redis, schedulers, or live providers.",
+  "dependencies": [
+    "SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001",
+    "WAVE-D-OFFLINE-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/DISPATCH_PLAN.md",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/infrastructure/postgres/postgres-address-library.ts"
+  ],
+  "write_set": [
+    "db/migrations/010_address_mining_runs.sql",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/infrastructure/postgres/postgres-address-mining-report-store.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts",
+    "test/infrastructure/postgres/postgres-address-mining-report-store.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not call live Helius, RPC, market-provider, database, Redis, scheduler, or HTTP APIs.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not add dependencies or modify existing migrations.",
+    "Do not activate a scheduled trigger, unpark SOL-E2E-001, or activate BSC.",
+    "Do not persist raw provider payloads, credentials, or secrets."
+  ],
+  "deliverables": [
+    "db/migrations/010_address_mining_runs.sql",
+    "src/infrastructure/postgres/postgres-address-mining-report-store.ts",
+    "test/infrastructure/postgres/postgres-address-mining-report-store.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
