@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T07:10:00.000Z",
+  "updated_at_utc": "2026-07-27T07:35:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -400,6 +400,16 @@
     {
       "task_id": "HARNESS-HISTORICAL-RUN-VERIFY-001",
       "spec": "harness/tasks/HARNESS-HISTORICAL-RUN-VERIFY-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-HISTORICAL-RUN-VERIFY-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-HISTORICAL-RUN-VERIFY-AUDIT-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "WAVE-B-C-OFFLINE-REAUDIT-003",
+      "spec": "harness/tasks/WAVE-B-C-OFFLINE-REAUDIT-003.json",
       "status": "READY"
     }
   ]

@@ -174,10 +174,38 @@ async function startRun(taskPath: string, requestedRunId?: string): Promise<numb
   return 0;
 }
 
+async function verifyFinishedRun(manifest: RunManifest): Promise<number> {
+  const acceptancePassed = manifest.acceptance.length > 0 && manifest.acceptance.every((item) =>
+    item.status === "PASSED" && item.exit_code === 0 && item.log_path !== null);
+  const logsPresent = await Promise.all(manifest.acceptance.map((item) =>
+    item.log_path === null ? Promise.resolve(false) : exists(item.log_path)));
+  const outputsMatch = await Promise.all(manifest.outputs.map(async (item) =>
+    item.exists && item.sha256 !== null && await exists(item.path) && await sha256(item.path) === item.sha256));
+  const integrityPassed = Object.values(manifest.integrity).every((value) => value === true);
+  const passed = acceptancePassed
+    && logsPresent.every(Boolean)
+    && outputsMatch.every(Boolean)
+    && integrityPassed
+    && manifest.unresolved_items.length === 0;
+  console.log(JSON.stringify({
+    status: passed ? "GREEN" : "FAIL",
+    run_id: manifest.run_id,
+    historical: true,
+    out_of_scope: manifest.unresolved_items
+      .filter((item) => item.startsWith("OUT_OF_SCOPE:"))
+      .map((item) => item.slice("OUT_OF_SCOPE:".length)),
+    unresolved_items: manifest.unresolved_items,
+    acceptance: manifest.acceptance,
+  }, null, 2));
+  return passed ? 0 : 1;
+}
+
 async function verifyRun(runDirArg: string): Promise<number> {
   const runDir = normalizeRunDir(runDirArg);
   const manifestPath = `${runDir}/manifest.json`;
   const manifest = await readJson<RunManifest>(manifestPath);
+  if (manifest.status !== "RUNNING") return verifyFinishedRun(manifest);
+
   const config = await readJson<ProjectConfig>(CONFIG_PATH);
   const spec = await readJson<TaskSpec>(manifest.task_spec_path);
   const changedPaths = gitChangedPaths(manifest.git.start_commit)

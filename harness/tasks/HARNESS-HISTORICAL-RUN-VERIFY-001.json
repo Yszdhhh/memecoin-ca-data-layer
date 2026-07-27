@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "layer": "governance",
   "objective": "Make verification of a completed Harness run read-only and stable after unrelated later commits, while preserving strict validation during a running task.",
   "dependencies": [

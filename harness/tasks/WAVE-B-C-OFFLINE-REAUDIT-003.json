@@ -1,0 +1,39 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WAVE-B-C-OFFLINE-REAUDIT-003",
+  "title": "Independent re-audit of Wave B/C after evidence preservation repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "hot_path",
+  "objective": "Independently re-verify the existing Wave B/C offline trust boundaries and record fresh durable audit evidence without live provider calls.",
+  "dependencies": [
+    "SOL-ADDRESS-LIBRARY-TRUST-REPAIR-001",
+    "SOL-HOTPATH-ENQUEUE-CONTRACT-REPAIR-001",
+    "SOL-HOTPATH-ANALYSIS-QUEUE-001",
+    "HARNESS-HISTORICAL-RUN-VERIFY-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md"
+  ],
+  "write_set": [
+    "docs/audits/WAVE_B_C_OFFLINE_REAUDIT_003.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source or tests.",
+    "Do not perform live network calls."
+  ],
+  "deliverables": [
+    "docs/audits/WAVE_B_C_OFFLINE_REAUDIT_003.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
