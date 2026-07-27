@@ -147,7 +147,7 @@ export function deriveLifecyclePlan(
 
   const audit_evidence_gaps: string[] = [];
   for (const [taskId, spec] of specs) {
-    if (spec.role !== "auditor" || statusOf(taskId) === "DONE") continue;
+    if (spec.role !== "auditor") continue;
     for (const dep of spec.dependencies) {
       const depSpec = specs.get(dep);
       if (!depSpec || depSpec.role !== "implementer") continue;

@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WAVE-D-OFFLINE-AUDIT-001",
+  "title": "Independent audit of Wave D offline growth loop",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Independently verify deterministic replay, borrowed-to-confirmed promotion gates, quota guard, partial-provider degradation, and evidence provenance for Wave D.",
+  "dependencies": [
+    "SOL-LEADERBOARD-001",
+    "SOL-DAILY-TOPTOKEN-MINING-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md"
+  ],
+  "write_set": [
+    "docs/audits/WAVE_D_OFFLINE_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source or tests.",
+    "Do not perform live network calls."
+  ],
+  "deliverables": [
+    "docs/audits/WAVE_D_OFFLINE_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

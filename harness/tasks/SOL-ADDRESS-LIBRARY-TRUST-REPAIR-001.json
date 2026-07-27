@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md"
+  ],
+  "forbidden_actions": [
+    "Do not perform live network calls.",
+    "Do not activate BSC."
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "task_id": "SOL-ADDRESS-LIBRARY-TRUST-REPAIR-001",
+  "title": "Repair address-library trust promotion invariants",
+  "layer": "cold_path",
+  "objective": "Fail closed on borrowed+verified wallet/observation writes and prevent unverified refreshes from overwriting verified conclusions.",
+  "dependencies": [
+    "SOL-ADDRESS-LIBRARY-SEDIMENTATION-001"
+  ],
+  "write_set": [
+    "src/application/sedimentation/**",
+    "test/application/sedimentation/**"
+  ],
+  "deliverables": [
+    "src/application/sedimentation/address-library.ts",
+    "test/application/sedimentation/address-library.test.ts"
+  ]
+}

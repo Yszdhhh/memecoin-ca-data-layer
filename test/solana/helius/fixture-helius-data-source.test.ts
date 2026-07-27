@@ -41,3 +41,11 @@ test("degrading helius source fails closed without inventing mint data", async (
     (error: unknown) => error instanceof SourceDataUnavailableError || error instanceof Error,
   );
 });
+
+
+test("fixture helius source rejects malformed packs at the boundary", () => {
+  assert.throws(
+    () => FixtureHeliusDataSource.fromJson({ mint: "x", tokenAccounts: [] }),
+    /helius_fixture_malformed/,
+  );
+});

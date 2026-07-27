@@ -1,0 +1,36 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-AUDIT-EVIDENCE-REPAIR-002",
+  "title": "Repair DONE-auditor evidence validation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "DONE",
+  "layer": "governance",
+  "objective": "Ensure an auditor task marked DONE cannot hide a missing valid independent run manifest.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "harness/lib/contracts.ts"
+  ],
+  "write_set": [
+    "harness/lib/validation.ts",
+    "test/harness.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not auto-mark any task DONE or GREEN.",
+    "Do not weaken independent-auditor requirements."
+  ],
+  "deliverables": [
+    "harness/lib/validation.ts",
+    "test/harness.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

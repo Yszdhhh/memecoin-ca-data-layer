@@ -45,7 +45,25 @@ export class FixtureHeliusDataSource implements SolanaHeliusDataSource {
   constructor(private readonly pack: FixtureHeliusPack) {}
 
   static fromJson(json: unknown): FixtureHeliusDataSource {
-    return new FixtureHeliusDataSource(json as FixtureHeliusPack);
+    if (!json || typeof json !== "object") {
+      throw new SourceDataUnavailableError("helius_fixture_malformed");
+    }
+    const row = json as Partial<FixtureHeliusPack>;
+    if (
+      typeof row.mint !== "string"
+      || row.mint.length === 0
+      || !row.rpcMint
+      || typeof row.rpcMint !== "object"
+      || !row.metadata
+      || typeof row.metadata !== "object"
+      || !Array.isArray(row.tokenAccounts)
+      || !Array.isArray(row.transactions)
+      || !Array.isArray(row.tags)
+      || !Array.isArray(row.walletFacts)
+    ) {
+      throw new SourceDataUnavailableError("helius_fixture_malformed");
+    }
+    return new FixtureHeliusDataSource(row as FixtureHeliusPack);
   }
 
   async getMint(ca: string): Promise<SourceResponse<RpcMint | null>> {

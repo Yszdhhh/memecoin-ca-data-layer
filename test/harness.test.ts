@@ -146,6 +146,14 @@ const run = (overrides: Partial<FinishedRunEvidence> = {}): FinishedRunEvidence 
   ...overrides,
 });
 
+test("a DONE auditor task without a valid run still leaves an audit-evidence gap", () => {
+  const { specs, ledger } = auditEvidenceScenario();
+  specs.get("SOL-IMPL-AUDIT-001")!.status = "DONE";
+  ledger.tasks.find((entry) => entry.task_id === "SOL-IMPL-AUDIT-001")!.status = "DONE";
+  const plan = deriveLifecyclePlan(specs, ledger, []);
+  assert.ok(plan.audit_evidence_gaps.some((gap) => gap.includes("SOL-IMPL-001")));
+});
+
 test("a valid independent passing auditor run closes the audit-evidence gap", () => {
   const { specs, ledger } = auditEvidenceScenario();
   const plan = deriveLifecyclePlan(specs, ledger, [run()]);

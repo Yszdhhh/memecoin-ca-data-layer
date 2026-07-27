@@ -21,6 +21,8 @@ test("first-screen card marks all borrow fields unverified and enqueues deep div
   await library.upsertWallet({
     chain: "solana",
     address: "smart-1",
+    origin: "first_hand",
+    verificationStatus: "verified",
     labels: ["independent_smart_money", "alpha_SSR"],
     alphaScoreTier: "SSR",
     dataCompleteness: 0.8,
@@ -45,6 +47,7 @@ test("first-screen card marks all borrow fields unverified and enqueues deep div
       [ca]: { top10Pct: 40, holderCount: 900 },
     })],
     library,
+    deepDiveQueue: { enqueue: async () => undefined },
     candidateWallets: ["smart-1"],
   });
 
@@ -69,6 +72,7 @@ test("first-screen degrades when borrow market fails and never fabricates liquid
       [ca]: { top10Pct: 30, holderCount: 100 },
     })],
     library,
+    deepDiveQueue: { enqueue: async () => undefined },
   });
   assert.equal(card.status, "DEGRADED");
   assert.equal(card.market.liquidityUsd, null);
@@ -98,10 +102,68 @@ test("virtual clock advances for latency bookkeeping", async () => {
     securityProviders: [],
     holderProviders: [],
     library,
+    deepDiveQueue: { enqueue: async () => undefined },
     sourceLatencyMs: { market: 500, security: 100, holders: 100, library: 50 },
     clock,
   });
-  // Sequential awaits in implementation accumulate; parallel helper documents budget intent.
-  assert.ok(card.elapsedVirtualMs !== undefined);
+  assert.equal(card.elapsedVirtualMs, 500);
   assert.equal(parallelHotpathElapsedMs([500, 100, 100, 50]), 500);
+});
+
+
+test("first-screen reports failed deep-dive enqueue instead of claiming success", async () => {
+  const library = new InMemoryAddressLibrary();
+  const card = await buildCaFirstScreenCard(ca, {
+    marketProviders: [],
+    securityProviders: [],
+    holderProviders: [],
+    library,
+    deepDiveQueue: { enqueue: async () => { throw new Error("queue down"); } },
+  });
+  assert.equal(card.deepDiveEnqueued, false);
+  assert.equal(card.status, "DEGRADED");
+  assert.ok(card.warnings.includes("deep_dive_enqueue_failed"));
+});
+
+test("first-screen rejects a provider that attempts to elevate borrowed security", async () => {
+  const library = new InMemoryAddressLibrary();
+  const card = await buildCaFirstScreenCard(ca, {
+    marketProviders: [],
+    securityProviders: [{
+      name: "gmgn",
+      async getSecurityHint(tokenCa: string) {
+        return {
+          source: "gmgn" as const,
+          tokenCa,
+          isHoneypot: false,
+          buyTaxBps: 0,
+          sellTaxBps: 0,
+          origin: "borrowed" as const,
+          verificationStatus: "verified" as const,
+          warnings: [],
+        };
+      },
+    }],
+    holderProviders: [],
+    library,
+    deepDiveQueue: { enqueue: async () => undefined },
+  });
+  assert.equal(card.security.source, null);
+  assert.ok(card.warnings.includes("gmgn_invalid_security_contract"));
+});
+
+test("first-screen degrades when the virtual hotpath budget is not under two seconds", async () => {
+  const library = new InMemoryAddressLibrary();
+  const card = await buildCaFirstScreenCard(ca, {
+    marketProviders: [],
+    securityProviders: [],
+    holderProviders: [],
+    library,
+    deepDiveQueue: { enqueue: async () => undefined },
+    sourceLatencyMs: { market: 2_000 },
+    clock: new VirtualClock(),
+  });
+  assert.equal(card.elapsedVirtualMs, 2_000);
+  assert.equal(card.status, "DEGRADED");
+  assert.ok(card.warnings.includes("hotpath_latency_budget_exceeded"));
 });

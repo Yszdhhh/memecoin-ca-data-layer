@@ -7,6 +7,8 @@ export type SedimentVerification = "unverified" | "verified";
 export interface WalletLibraryRecord {
   chain: Chain;
   address: string;
+  origin: SedimentOrigin;
+  verificationStatus: SedimentVerification;
   fundingSource?: string;
   fundingSourceConfidence?: number;
   alphaScore?: number | null;
@@ -100,7 +102,15 @@ export class InMemoryAddressLibrary implements AddressLibrary {
     if (record.chain !== "solana") {
       throw new Error("address library offline stage is solana-only");
     }
-    this.wallets.set(this.walletKey(record.chain, record.address), {
+    if (record.origin === "borrowed" && record.verificationStatus === "verified") {
+      throw new Error("borrowed wallet conclusion cannot be verified without first-hand origin");
+    }
+    const key = this.walletKey(record.chain, record.address);
+    const existing = this.wallets.get(key);
+    if (existing?.verificationStatus === "verified" && record.verificationStatus === "unverified") {
+      return;
+    }
+    this.wallets.set(key, {
       ...record,
       labels: [...record.labels],
       updatedAt: new Date(record.updatedAt),
@@ -121,7 +131,7 @@ export class InMemoryAddressLibrary implements AddressLibrary {
   async appendObservation(record: LibraryObservationRecord): Promise<{ accepted: boolean; reason?: string }> {
     const key = `${record.source}:${record.observationFingerprint}`;
     if (this.observations.has(key)) return { accepted: false, reason: "duplicate_fingerprint" };
-    if (record.origin === "borrowed" && record.verificationStatus === "verified" && !record.snapshot) {
+    if (record.origin === "borrowed" && record.verificationStatus === "verified") {
       return { accepted: false, reason: "invalid_verified_borrowed" };
     }
     this.observations.set(key, {
@@ -188,6 +198,8 @@ export async function sedimentAnalysis(
     await library.upsertWallet({
       chain: input.chain,
       address: wallet.address,
+      origin: wallet.origin,
+      verificationStatus: wallet.verificationStatus,
       ...(wallet.fundingSource ? { fundingSource: wallet.fundingSource } : {}),
       ...(wallet.fundingSourceConfidence !== undefined
         ? { fundingSourceConfidence: wallet.fundingSourceConfidence }

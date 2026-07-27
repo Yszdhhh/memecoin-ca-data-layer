@@ -1,0 +1,34 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-AUDIT-EVIDENCE-AUDIT-002",
+  "title": "Independent audit of harness audit-evidence repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": null,
+  "status": "READY",
+  "layer": "governance",
+  "objective": "Independently verify DONE auditor tasks still require a valid passing independent run manifest.",
+  "dependencies": [
+    "HARNESS-AUDIT-EVIDENCE-REPAIR-002"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_OPERATING_PLAYBOOK.md"
+  ],
+  "write_set": [
+    "docs/audits/HARNESS_AUDIT_EVIDENCE_AUDIT_002.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify harness source or tests."
+  ],
+  "deliverables": [
+    "docs/audits/HARNESS_AUDIT_EVIDENCE_AUDIT_002.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

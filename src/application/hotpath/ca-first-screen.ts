@@ -1,4 +1,4 @@
-import type { AddressLibrary, WalletLibraryRecord } from "../sedimentation/address-library.js";
+﻿import type { AddressLibrary, WalletLibraryRecord } from "../sedimentation/address-library.js";
 import {
   collectBorrowedMarket,
   type BorrowedHolderHint,
@@ -11,6 +11,7 @@ import {
 import type { VirtualClock } from "../../harness-suites/shared.js";
 
 export const HOTPATH_CARD_VERSION = "ca-first-screen-v1";
+export const HOTPATH_P95_BUDGET_MS = 2_000;
 
 export interface FirstScreenCard {
   tokenCa: string;
@@ -42,6 +43,7 @@ export interface FirstScreenCard {
     address: string;
     labels: string[];
     alphaScoreTier?: string | null;
+    verificationStatus: "unverified" | "verified";
   }>;
   deepDiveEnqueued: boolean;
   warnings: string[];
@@ -50,113 +52,150 @@ export interface FirstScreenCard {
   elapsedVirtualMs?: number;
 }
 
+export interface DeepDiveQueue {
+  enqueue(tokenCa: string): Promise<void>;
+}
+
 export interface HotpathDeps {
   marketProviders: FreeMarketProvider[];
   securityProviders: FreeSecurityProvider[];
   holderProviders: FreeHolderProvider[];
   library: AddressLibrary;
+  deepDiveQueue: DeepDiveQueue;
   /** Simulated per-source latency for offline latency harness (ms). */
-  sourceLatencyMs?: Partial<Record<"market" | "security" | "holders" | "library", number>>;
+  sourceLatencyMs?: Partial<Record<"market" | "security" | "holders" | "library" | "enqueue", number>>;
   clock?: VirtualClock;
   /** Optional known wallet addresses to cross-ref (e.g. from fixture top holders). */
   candidateWallets?: string[];
 }
 
-async function withVirtualLatency<T>(
-  clock: VirtualClock | undefined,
-  ms: number,
-  run: () => Promise<T>,
-): Promise<T> {
-  const result = await run();
-  clock?.advance(ms);
-  return result;
+interface SourceResult<T> {
+  value: T | null;
+  warnings: string[];
+  available: boolean;
+}
+
+async function collectSecurity(
+  providers: FreeSecurityProvider[],
+  tokenCa: string,
+): Promise<SourceResult<BorrowedSecurityHint>> {
+  const warnings: string[] = [];
+  for (const provider of providers) {
+    try {
+      const hint = await provider.getSecurityHint(tokenCa);
+      if (!hint) {
+        warnings.push(`${provider.name}_empty`);
+        continue;
+      }
+      if (hint.origin !== "borrowed" || hint.verificationStatus !== "unverified") {
+        warnings.push(`${provider.name}_invalid_security_contract`);
+        continue;
+      }
+      return { value: hint, warnings, available: true };
+    } catch {
+      warnings.push(`${provider.name}_security_unavailable`);
+    }
+  }
+  return { value: null, warnings: [...warnings, "borrowed_security_unavailable"], available: false };
+}
+
+async function collectHolders(
+  providers: FreeHolderProvider[],
+  tokenCa: string,
+): Promise<SourceResult<BorrowedHolderHint>> {
+  const warnings: string[] = [];
+  for (const provider of providers) {
+    try {
+      const hint = await provider.getHolderHint(tokenCa);
+      if (!hint) {
+        warnings.push(`${provider.name}_empty`);
+        continue;
+      }
+      if (
+        hint.origin !== "borrowed"
+        || hint.verificationStatus !== "unverified"
+        || !hint.isBorrowedConcentration
+        || hint.ownerAggregated !== false
+      ) {
+        warnings.push(`${provider.name}_invalid_holder_contract`);
+        continue;
+      }
+      return { value: hint, warnings, available: true };
+    } catch {
+      warnings.push(`${provider.name}_holders_unavailable`);
+    }
+  }
+  return { value: null, warnings: [...warnings, "borrowed_holders_unavailable"], available: false };
 }
 
 /**
  * Second-scale first-screen card: free borrow fan-out + address-library hit.
- * Enqueues async first-hand deep-dive (flag only offline). Never treats borrowed
- * concentration as authoritative. Live network is Owner-gated elsewhere.
+ * The deep-dive enqueue is explicit and fail-closed. Borrowed concentration is
+ * never treated as authoritative. Live network remains Owner-gated elsewhere.
  */
 export async function buildCaFirstScreenCard(
   tokenCa: string,
   deps: HotpathDeps,
 ): Promise<FirstScreenCard> {
-  const warnings: string[] = [];
   const lat = deps.sourceLatencyMs ?? {};
   const clock = deps.clock;
   const start = clock?.now() ?? 0;
 
-  // Parallel fan-out: advance clock by max latency when virtual clock provided.
-  const marketP = withVirtualLatency(clock, lat.market ?? 0, async () => {
-    try {
-      return await collectBorrowedMarket(deps.marketProviders, tokenCa);
-    } catch {
-      return { quote: null as BorrowedMarketQuote | null, warnings: ["market_fanout_failed"] };
-    }
-  });
-  const securityP = withVirtualLatency(clock, lat.security ?? 0, async () => {
-    for (const provider of deps.securityProviders) {
-      try {
-        const hint = await provider.getSecurityHint(tokenCa);
-        if (hint) return { hint, warnings: [] as string[] };
-      } catch {
-        warnings.push(`${provider.name}_security_unavailable`);
-      }
-    }
-    return { hint: null as BorrowedSecurityHint | null, warnings: ["borrowed_security_unavailable"] };
-  });
-  const holdersP = withVirtualLatency(clock, lat.holders ?? 0, async () => {
-    for (const provider of deps.holderProviders) {
-      try {
-        const hint = await provider.getHolderHint(tokenCa);
-        if (hint) {
-          if (!hint.isBorrowedConcentration || hint.ownerAggregated !== false) {
-            return {
-              hint: null as BorrowedHolderHint | null,
-              warnings: [`${provider.name}_invalid_holder_contract`],
-            };
-          }
-          return { hint, warnings: [] as string[] };
-        }
-      } catch {
-        warnings.push(`${provider.name}_holders_unavailable`);
-      }
-    }
-    return { hint: null as BorrowedHolderHint | null, warnings: ["borrowed_holders_unavailable"] };
-  });
-  const libraryP = withVirtualLatency(clock, lat.library ?? 0, async () => {
-    const addrs = deps.candidateWallets ?? [];
-    try {
-      return await deps.library.lookupByAddresses("solana", addrs);
-    } catch {
-      warnings.push("address_library_unavailable");
-      return [] as WalletLibraryRecord[];
-    }
-  });
+  const marketP = collectBorrowedMarket(deps.marketProviders, tokenCa)
+    .then((result) => ({
+      value: result.quote,
+      warnings: result.warnings,
+      available: result.quote !== null,
+    } satisfies SourceResult<BorrowedMarketQuote>))
+    .catch(() => ({ value: null, warnings: ["market_fanout_failed"], available: false }));
+  const securityP = collectSecurity(deps.securityProviders, tokenCa);
+  const holdersP = collectHolders(deps.holderProviders, tokenCa);
+  const libraryP = deps.library.lookupByAddresses("solana", deps.candidateWallets ?? [])
+    .then((value) => ({ value, warnings: [] as string[], available: true }))
+    .catch(() => ({ value: [] as WalletLibraryRecord[], warnings: ["address_library_unavailable"], available: false }));
+  const enqueueP = deps.deepDiveQueue.enqueue(tokenCa)
+    .then(() => ({ enqueued: true, warnings: [] as string[] }))
+    .catch(() => ({ enqueued: false, warnings: ["deep_dive_enqueue_failed"] }));
 
-  // Simulate parallel wall time: if clock was advanced sequentially above, reset
-  // to start+max for reported elapsed. Callers that share one clock across
-  // sequential awaits should pass pre-advanced max via sourceLatencyMs usage in tests.
-  const [marketResult, securityResult, holdersResult, libraryHits] = await Promise.all([
+  const [marketResult, securityResult, holdersResult, libraryResult, enqueueResult] = await Promise.all([
     marketP,
     securityP,
     holdersP,
     libraryP,
+    enqueueP,
   ]);
 
-  warnings.push(...marketResult.warnings, ...securityResult.warnings, ...holdersResult.warnings);
+  const elapsed = parallelHotpathElapsedMs([
+    lat.market ?? 0,
+    lat.security ?? 0,
+    lat.holders ?? 0,
+    lat.library ?? 0,
+    lat.enqueue ?? 0,
+  ]);
+  clock?.advance(elapsed);
 
-  const market = marketResult.quote;
-  const security = securityResult.hint;
-  const holders = holdersResult.hint;
+  const warnings = [
+    ...marketResult.warnings,
+    ...securityResult.warnings,
+    ...holdersResult.warnings,
+    ...libraryResult.warnings,
+    ...enqueueResult.warnings,
+    ...(elapsed >= HOTPATH_P95_BUDGET_MS ? ["hotpath_latency_budget_exceeded"] : []),
+  ];
+  const availableCount = [
+    marketResult.available,
+    securityResult.available,
+    holdersResult.available,
+    libraryResult.available,
+  ].filter(Boolean).length;
+  const completeness = availableCount / 4;
+  const status: FirstScreenCard["status"] = completeness < 1 || warnings.length > 0 || !enqueueResult.enqueued
+    ? "DEGRADED"
+    : "OK";
 
-  let completeness = 1;
-  if (!market) completeness -= 0.25;
-  if (!security) completeness -= 0.25;
-  if (!holders) completeness -= 0.25;
-
-  const status: FirstScreenCard["status"] = completeness < 1 || warnings.length > 0 ? "DEGRADED" : "OK";
-  const elapsedVirtualMs = clock ? clock.now() - start : undefined;
+  const market = marketResult.value;
+  const security = securityResult.value;
+  const holders = holdersResult.value;
 
   return {
     tokenCa,
@@ -184,23 +223,21 @@ export async function buildCaFirstScreenCard(
       source: holders?.source ?? null,
       unverified: true,
     },
-    libraryHits: libraryHits.map((wallet) => ({
+    libraryHits: (libraryResult.value ?? []).map((wallet) => ({
       address: wallet.address,
       labels: [...wallet.labels],
       alphaScoreTier: wallet.alphaScoreTier ?? null,
+      verificationStatus: wallet.verificationStatus,
     })),
-    deepDiveEnqueued: true,
+    deepDiveEnqueued: enqueueResult.enqueued,
     warnings,
-    completeness: Math.max(0, completeness),
+    completeness,
     cardVersion: HOTPATH_CARD_VERSION,
-    ...(elapsedVirtualMs !== undefined ? { elapsedVirtualMs } : {}),
+    ...(clock ? { elapsedVirtualMs: clock.now() - start } : {}),
   };
 }
 
-/**
- * Parallel hot-path timing helper for latency suite style checks:
- * elapsed = max(latencies), not sum.
- */
+/** Parallel fan-out budget: elapsed is max(latencies), not their sum. */
 export function parallelHotpathElapsedMs(latencies: number[]): number {
-  return latencies.reduce((m, x) => Math.max(m, x), 0);
+  return latencies.reduce((max, value) => Math.max(max, value), 0);
 }

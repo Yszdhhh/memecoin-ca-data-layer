@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "DONE",
   "objective": "Implement the daily/weekly growth loop from PROJECT_ARCHITECTURE.md section on the daily loop and blueprint section nine: (1) take a top-traded-token list for a window (daily and weekly are parameters) from the free borrow layer via the versioned parser into observations; (2) for each token pull Top Buyers/Sellers/Early Buyers/profit leaderboard (borrow path for speed); (3) run the detectors and Alpha Score over the addresses; (4) for wallets crossing the promotion bar, run first-hand Helius leaderboard confirmation; (5) sediment confirmed wallet-level conclusions into the address library; (6) emit a run report of tokens scanned, wallets mined, new smart-money/cluster/bot labels, and quota consumed. The whole pipeline is built and accepted OFFLINE on fixtures (a fixed top-token list plus fixture provider responses). The live top-list fetch and scheduled trigger are Owner-gated (decision D-F) and throttled against the Helius free 1M ceiling.",
   "dependencies": [
     "SOL-LEADERBOARD-001",
@@ -39,5 +39,6 @@
     "npm test",
     "npm run build",
     "git diff --check"
-  ]
+  ],
+  "layer": "cold_path"
 }

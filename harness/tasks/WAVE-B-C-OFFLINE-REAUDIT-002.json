@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WAVE-B-C-OFFLINE-REAUDIT-002",
+  "title": "Independent re-audit of Wave B/C trust repairs",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "hot_path",
+  "objective": "Independently verify address-library trust guards, explicit deep-dive enqueue, provider contract rejection, and parallel latency accounting after repair.",
+  "dependencies": [
+    "SOL-ADDRESS-LIBRARY-TRUST-REPAIR-001",
+    "SOL-HOTPATH-ENQUEUE-CONTRACT-REPAIR-001",
+    "SOL-HOTPATH-ANALYSIS-QUEUE-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md"
+  ],
+  "write_set": [
+    "docs/audits/WAVE_B_C_OFFLINE_REAUDIT_002.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source or tests.",
+    "Do not perform live network calls."
+  ],
+  "deliverables": [
+    "docs/audits/WAVE_B_C_OFFLINE_REAUDIT_002.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

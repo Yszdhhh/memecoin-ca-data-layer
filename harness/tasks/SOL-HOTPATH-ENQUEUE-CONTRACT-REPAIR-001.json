@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "DONE",
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md"
+  ],
+  "forbidden_actions": [
+    "Do not perform live network calls.",
+    "Do not activate BSC."
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "task_id": "SOL-HOTPATH-ENQUEUE-CONTRACT-REPAIR-001",
+  "title": "Repair hotpath enqueue and borrowed-provider contracts",
+  "layer": "hot_path",
+  "objective": "Make deep-dive enqueue explicit, reject invalid borrowed security/holder contracts, and verify parallel latency accounting.",
+  "dependencies": [
+    "SOL-HOTPATH-CARD-001",
+    "SOL-FREE-PROVIDERS-001"
+  ],
+  "write_set": [
+    "src/application/hotpath/**",
+    "test/application/hotpath/**"
+  ],
+  "deliverables": [
+    "src/application/hotpath/ca-first-screen.ts",
+    "test/application/hotpath/ca-first-screen.test.ts"
+  ]
+}

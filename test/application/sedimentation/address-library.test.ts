@@ -103,3 +103,61 @@ test("observation append is idempotent on fingerprint", async () => {
   assert.equal((await library.appendObservation(obs)).accepted, true);
   assert.equal((await library.appendObservation({ ...obs, id: "obs-3" })).accepted, false);
 });
+
+
+test("borrowed verified observations and wallet conclusions fail closed", async () => {
+  const library = new InMemoryAddressLibrary();
+  const observation = await library.appendObservation({
+    id: "bad-obs",
+    chain: "solana",
+    subjectKind: "wallet",
+    subjectRef: "w-bad",
+    snapshotKind: "wallet_signal",
+    source: "gmgn",
+    origin: "borrowed",
+    verificationStatus: "verified",
+    trustClass: "C",
+    parserVersion: "fixture@1",
+    observationFingerprint: "bad-fp",
+    snapshot: { labels: ["smart_money"] },
+    warnings: [],
+    capturedAt: new Date("2026-07-27T00:00:00.000Z"),
+  });
+  assert.deepEqual(observation, { accepted: false, reason: "invalid_verified_borrowed" });
+
+  await assert.rejects(() => library.upsertWallet({
+    chain: "solana",
+    address: "w-bad",
+    origin: "borrowed",
+    verificationStatus: "verified",
+    labels: ["independent_smart_money"],
+    dataCompleteness: 0.5,
+    updatedAt: new Date("2026-07-27T00:00:00.000Z"),
+  }));
+});
+
+test("an unverified refresh cannot overwrite a verified wallet conclusion", async () => {
+  const library = new InMemoryAddressLibrary();
+  const at = new Date("2026-07-27T00:00:00.000Z");
+  await library.upsertWallet({
+    chain: "solana",
+    address: "w1",
+    origin: "first_hand",
+    verificationStatus: "verified",
+    labels: ["independent_smart_money"],
+    dataCompleteness: 1,
+    updatedAt: at,
+  });
+  await library.upsertWallet({
+    chain: "solana",
+    address: "w1",
+    origin: "borrowed",
+    verificationStatus: "unverified",
+    labels: ["external_candidate"],
+    dataCompleteness: 0.4,
+    updatedAt: new Date("2026-07-27T01:00:00.000Z"),
+  });
+  const wallet = await library.getWallet("solana", "w1");
+  assert.deepEqual(wallet?.labels, ["independent_smart_money"]);
+  assert.equal(wallet?.verificationStatus, "verified");
+});

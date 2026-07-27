@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T03:12:47.000Z",
+  "updated_at_utc": "2026-07-27T12:30:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -350,6 +350,51 @@
     {
       "task_id": "WAVE-B-C-OFFLINE-AUDIT-001",
       "spec": "harness/tasks/WAVE-B-C-OFFLINE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-ADDRESS-LIBRARY-TRUST-REPAIR-001",
+      "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-TRUST-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HOTPATH-ENQUEUE-CONTRACT-REPAIR-001",
+      "spec": "harness/tasks/SOL-HOTPATH-ENQUEUE-CONTRACT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-AUDIT-EVIDENCE-REPAIR-002",
+      "spec": "harness/tasks/HARNESS-AUDIT-EVIDENCE-REPAIR-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-LEADERBOARD-001",
+      "spec": "harness/tasks/SOL-LEADERBOARD-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DAILY-TOPTOKEN-MINING-001",
+      "spec": "harness/tasks/SOL-DAILY-TOPTOKEN-MINING-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "WAVE-D-OFFLINE-AUDIT-001",
+      "spec": "harness/tasks/WAVE-D-OFFLINE-AUDIT-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "WAVE-B-C-OFFLINE-REAUDIT-002",
+      "spec": "harness/tasks/WAVE-B-C-OFFLINE-REAUDIT-002.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-AUDIT-EVIDENCE-AUDIT-002",
+      "spec": "harness/tasks/HARNESS-AUDIT-EVIDENCE-AUDIT-002.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-HOTPATH-ANALYSIS-QUEUE-001",
+      "spec": "harness/tasks/SOL-HOTPATH-ANALYSIS-QUEUE-001.json",
       "status": "DONE"
     }
   ]

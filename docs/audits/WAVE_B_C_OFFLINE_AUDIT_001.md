@@ -3,8 +3,8 @@
 **Verdict: GREEN_WITH_ADVISORY**
 
 Auditor: `grok-auditor-wave-bc` (distinct from implementer identity used for
-implementation commits).  
-Date: 2026-07-27.  
+implementation commits).
+Date: 2026-07-27.
 Scope: offline/fixture-only Wave B (Helius fixture source, Pump version
 registry, address-library sedimentation) and Wave C (free borrow ports, CA
 first-screen card). **Live Helius / real CA E2E remain PARK** per Owner.
@@ -38,13 +38,13 @@ first-screen card). **Live Helius / real CA E2E remain PARK** per Owner.
 
 ## Advisories (non-blocking)
 
-1. **Live HTTP client not present** — intentional; Owner live flip required.  
+1. **Live HTTP client not present** — intentional; Owner live flip required.
 2. **Postgres sedimentation** is in-memory for offline acceptance; production
-   Postgres/Redis wiring remains Owner item 4.  
+   Postgres/Redis wiring remains Owner item 4.
 3. **Hotpath clock** currently advances per sequential await in
    `buildCaFirstScreenCard`; budget intent is documented via
    `parallelHotpathElapsedMs` (max not sum). Real parallel fan-out with shared
-   virtual clock can tighten later.  
+   virtual clock can tighten later.
 4. **Pump fixture_sha256** verify may recompute if line endings differ; registry
    still resolves forms from pin.
 
