@@ -34,10 +34,10 @@
     "Do not persist raw provider payloads, credentials, or secrets."
   ],
   "deliverables": [
-    "Explicit borrowed-leaderboard failure warning",
-    "Per-job degraded outcomes that do not prevent the Monday weekly job from running",
-    "Defensive Date copies in the scheduler result",
-    "Focused regression tests"
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
   ],
   "acceptance_commands": [
     "npm run harness:doctor",
