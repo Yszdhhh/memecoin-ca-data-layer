@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T06:49:06.000Z",
+  "updated_at_utc": "2026-07-27T06:49:42.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -390,7 +390,7 @@
     {
       "task_id": "HARNESS-AUDIT-EVIDENCE-AUDIT-002",
       "spec": "harness/tasks/HARNESS-AUDIT-EVIDENCE-AUDIT-002.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-HOTPATH-ANALYSIS-QUEUE-001",

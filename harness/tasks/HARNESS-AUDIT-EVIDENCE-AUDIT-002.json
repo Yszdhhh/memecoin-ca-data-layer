@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "layer": "governance",
   "objective": "Independently verify DONE auditor tasks still require a valid passing independent run manifest.",
   "dependencies": [
