@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "layer": "cold_path",
   "objective": "Independently audit the offline PostgreSQL store for Solana daily/weekly address-mining reports: structured-only persistence, idempotent run identity, visible degradation on configured store failure, validation before SQL, migration safety, and absence of live database, scheduler, or network execution.",
   "dependencies": [
