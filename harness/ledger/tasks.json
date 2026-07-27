@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T01:52:52.000Z",
+  "updated_at_utc": "2026-07-27T01:54:12.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -311,6 +311,16 @@
       "task_id": "SOL-ALPHA-SCORE-AUDIT-001",
       "spec": "harness/tasks/SOL-ALPHA-SCORE-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DETECTORS-001",
+      "spec": "harness/tasks/SOL-DETECTORS-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-DETECTORS-AUDIT-001",
+      "spec": "harness/tasks/SOL-DETECTORS-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DETECTORS-001",
+  "title": "Implement offline forensic detectors (cluster-fusion, bot-sniper, independent-smart-money)",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement cluster-fusion-v1 (overlay on funding-clusters, never lower 0.85), bot-sniper-v1, and independent-smart-money-v1 with hard cluster/sniper vetoes; export WalletForensicSignals. Offline fixtures only.",
+  "dependencies": [
+    "SOL-ALPHA-SCORE-AUDIT-001",
+    "SOL-WALLET-CLEANING-FUNDER-TAGS-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md",
+    "src/domain/rules/funding-clusters.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "src/domain/rules/alpha-score.ts"
+  ],
+  "write_set": [
+    "src/domain/rules/cluster-fusion.ts",
+    "src/domain/rules/bot-sniper.ts",
+    "src/domain/rules/independent-smart-money.ts",
+    "src/domain/rules/forensic-signals.ts",
+    "test/detectors/**"
+  ],
+  "forbidden_actions": [
+    "Do not lower the 0.85 holder-exclusion cluster threshold or bypass service-funder suppression.",
+    "Do not use bot/sniper labels to exclude holders.",
+    "Do not certify smart money when cluster C≥0.85 or sniper S≥0.75.",
+    "Do not use network or credentials.",
+    "Do not activate BSC or Robinhood."
+  ],
+  "deliverables": [
+    "src/domain/rules/cluster-fusion.ts",
+    "src/domain/rules/bot-sniper.ts",
+    "src/domain/rules/independent-smart-money.ts",
+    "test/detectors/detectors.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
