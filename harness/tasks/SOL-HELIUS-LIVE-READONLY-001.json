@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-READONLY-001",
+  "title": "Solana Helius live read-only source",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Add the smallest production Helius implementation needed for one Solana-only live smoke analysis. It reads its credential only at runtime, fails closed when unavailable, applies a fixed request budget, rate limit and timeout, preserves fixture operation, and never writes to a production database.",
+  "dependencies": ["SEC-HARNESS-CONTENT-SCAN-001", "SOL-CA-ORCHESTRATION-AUDIT-001", "SOL-WALLET-CLEANING-AUDIT-003"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "src/infrastructure/solana/helius/fixture-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-READONLY-001.json",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/solana/helius/**",
+    "test/solana/helius/**"
+  ],
+  "forbidden_actions": [
+    "Do not print, store, commit or record credentials, bearer values, raw provider payloads, or credential-bearing URLs.",
+    "Do not fall back to a public RPC endpoint when the runtime credential is absent or invalid.",
+    "Do not activate BSC, Robinhood, scheduler, cron, background loops, or automated token discovery.",
+    "Do not write to a production database.",
+    "Do not call any provider except Helius from the live data source."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
