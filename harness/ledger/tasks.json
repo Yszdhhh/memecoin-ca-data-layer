@@ -455,7 +455,7 @@
     {
       "task_id": "SOL-HELIUS-LIVE-READONLY-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-READONLY-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
