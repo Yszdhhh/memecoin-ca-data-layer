@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OFFLINE-MINING-ADVISORY-REPAIR-001",
+  "title": "Close offline mining scheduler robustness advisories",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Close the accepted offline scheduler audit's non-blocking robustness findings: preserve borrowed-leaderboard failure evidence, continue a Monday weekly job after an isolated daily job failure with an explicit degraded result, and return defensive Date copies. Keep all behavior fixture/offline and manual-only.",
+  "dependencies": [
+    "SOL-OFFLINE-MINING-SCHEDULE-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "docs/audits/SOL_OFFLINE_MINING_SCHEDULE_AUDIT_001.md",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/application/growth-loop/offline-mining-schedule.ts"
+  ],
+  "write_set": [
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not add dependencies.",
+    "Do not call live Helius, RPC, market-provider, database, Redis, scheduler, or HTTP APIs.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not install or activate cron, timers, background workers, or scheduled triggers.",
+    "Do not unpark SOL-E2E-001 or activate BSC.",
+    "Do not persist raw provider payloads, credentials, or secrets."
+  ],
+  "deliverables": [
+    "Explicit borrowed-leaderboard failure warning",
+    "Per-job degraded outcomes that do not prevent the Monday weekly job from running",
+    "Defensive Date copies in the scheduler result",
+    "Focused regression tests"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
