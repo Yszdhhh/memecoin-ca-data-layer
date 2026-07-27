@@ -447,5 +447,10 @@
       "task_id": "SOL-OFFLINE-MINING-ADVISORY-REPAIR-001",
       "spec": "harness/tasks/SOL-OFFLINE-MINING-ADVISORY-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-OFFLINE-MINING-ADVISORY-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-OFFLINE-MINING-ADVISORY-REPAIR-AUDIT-001.json",
+      "status": "READY"
     }  ]
 }

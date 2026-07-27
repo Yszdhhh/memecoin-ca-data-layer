@@ -1,0 +1,45 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OFFLINE-MINING-ADVISORY-REPAIR-AUDIT-001",
+  "title": "Independent audit of offline mining robustness repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Independently audit the offline mining robustness repair: borrowed-leaderboard failure is visible in report warnings; an isolated daily job failure produces a degraded result while the Monday weekly job still runs; returned scheduler dates are defensive copies. Confirm fixture/offline/manual-only constraints remain intact.",
+  "dependencies": [
+    "SOL-OFFLINE-MINING-ADVISORY-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "docs/audits/SOL_OFFLINE_MINING_SCHEDULE_AUDIT_001.md",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/daily-toptoken-mining.test.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL_OFFLINE_MINING_ADVISORY_REPAIR_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, tests, task specs, or ledger state.",
+    "Do not add dependencies.",
+    "Do not call live Helius, RPC, market-provider, database, Redis, scheduler, or HTTP APIs.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not install or activate cron, timers, background workers, or scheduled triggers.",
+    "Do not unpark SOL-E2E-001 or activate BSC."
+  ],
+  "deliverables": [
+    "docs/audits/SOL_OFFLINE_MINING_ADVISORY_REPAIR_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

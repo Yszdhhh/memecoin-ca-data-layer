@@ -18,7 +18,7 @@ it must remain unverified until first-hand evidence confirms it.
 | Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
 | Durable PostgreSQL address-library adapter | DONE, AUDITED GREEN | Offline-only adapter and database trust constraints independently accepted; no database has been connected or deployed. |
 | Durable PostgreSQL growth-loop report storage | DONE, AUDITED GREEN | Offline-only run summaries independently accepted; no database, Redis, scheduler, or live provider has been connected. |
-| Manual/offline daily and weekly mining runner | DONE, AUDITED GREEN | UTC daily plus Monday weekly job selection is independently accepted; no cron, timer, background worker, or live trigger is active. |
+| Manual/offline daily and weekly mining runner | DONE, REPAIR AUDIT PENDING | Base scheduler is independently accepted; a robustness follow-up has completed locally and awaits independent audit. No cron, timer, background worker, or live trigger is active. |
 | Live Helius / real-CA E2E (`SOL-E2E-001`) | PARK | Requires Owner live-gate approval and contained credentials. |
 | BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
 
