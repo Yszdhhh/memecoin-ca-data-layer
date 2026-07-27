@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001",
+  "title": "Assess manual daily Solana candidate discovery and address-analysis task boundaries",
+  "tier": "T1",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Produce a bounded task decomposition for manually supplied daily popular-token candidates and subsequent address analysis. Separate safe manual steps from later evidence work, identify dependencies and fail-closed boundaries, and record only genuine Owner decision points. Do not enable, implement, schedule, or run automated discovery.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/tasks/SOL-DAILY-TOPTOKEN-MINING-001.json",
+    "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
+    "docs/audits/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/designs/SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not implement or enable cron, scheduler, background loops, automatic token discovery, automatic daily runs, database writes, cache writes, provider changes, or non-Solana chains.",
+    "Do not call Helius or any other provider and do not require or inspect a runtime credential.",
+    "Do not print, store, commit, or record credentials, bearer values, raw provider payloads, or credential-bearing URLs."
+  ],
+  "deliverables": [
+    "docs/designs/SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "git diff --check"
+  ]
+}
