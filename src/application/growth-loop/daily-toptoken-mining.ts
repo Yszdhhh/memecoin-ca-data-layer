@@ -198,7 +198,7 @@ export async function runDailyTopTokenMining(
         .sort((a, b) => a.rank - b.rank || a.walletAddress.localeCompare(b.walletAddress))
         .slice(0, config.maxBorrowedLeadsPerToken);
     } catch {
-      tokenWarnings.push("borrowed_leaderboard_unavailable");
+      tokenWarnings.push("borrowed_leaderboard_failed", "borrowed_leaderboard_unavailable");
     }
     report.walletsMined += leads.length;
 

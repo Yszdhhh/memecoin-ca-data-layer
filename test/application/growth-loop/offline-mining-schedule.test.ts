@@ -65,12 +65,91 @@ test("offline schedule is manually invoked and runs daily then weekly without a 
 
   assert.equal(result.scheduleRuleVersion, OFFLINE_MINING_SCHEDULE_RULE_VERSION);
   assert.equal(result.mode, "manual_offline");
+  assert.equal(result.status, "GREEN");
   assert.equal(result.triggeredAt.getTime(), triggeredAt.getTime());
+  assert.notStrictEqual(result.triggeredAt, triggeredAt);
   assert.deepEqual(calls, ["daily", "weekly"]);
   assert.deepEqual(result.reports.map((report) => [report.window, report.runAt.toISOString(), report.status]), [
     ["daily", "2026-07-27T00:00:00.000Z", "GREEN"],
     ["weekly", "2026-07-27T00:00:00.000Z", "GREEN"],
   ]);
+  assert.ok(result.jobs[0]);
+  assert.ok(result.reports[0]);
+  result.triggeredAt.setTime(0);
+  result.jobs[0].runAt.setTime(0);
+  assert.equal(triggeredAt.toISOString(), "2026-07-27T20:13:00.000Z");
+  assert.equal(result.reports[0].runAt.toISOString(), "2026-07-27T00:00:00.000Z");
+});
+
+test("offline schedule degrades an isolated daily failure and still runs the Monday weekly job", async () => {
+  const calls: string[] = [];
+  const library = new InMemoryAddressLibrary();
+  library.upsertWallet = async () => {
+    throw new Error("fixture write failed");
+  };
+  const result = await runOfflineMiningSchedule({
+    topTokens: {
+      async getTopTokens(window) {
+        calls.push(window);
+        return window === "daily" ? [{
+          tokenId: "token-a",
+          tokenCa: "MintAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          rank: 1,
+          source: "fixture" as const,
+          origin: "borrowed" as const,
+          verificationStatus: "unverified" as const,
+          observedAt: new Date("2026-07-27T00:00:00.000Z"),
+        }] : [];
+      },
+    },
+    borrowedLeaderboard: {
+      name: "gmgn",
+      async getTokenLeaderboard(tokenCa) {
+        return [{
+          tokenCa,
+          walletAddress: "wallet-1",
+          realizedPnlUsd: 500,
+          roiPct: 100,
+          rank: 1,
+          source: "gmgn" as const,
+          origin: "borrowed" as const,
+          verificationStatus: "unverified" as const,
+          observedAt: new Date("2026-07-27T00:00:00.000Z"),
+          warnings: [],
+        }];
+      },
+    },
+    judgment: {
+      async evaluate(_token, lead) {
+        return {
+          walletAddress: lead.walletAddress,
+          promotionEligible: true,
+          confidence: 1,
+          labels: [],
+          alphaScore: null,
+          alphaStatus: "insufficient" as const,
+          ruleVersions: { alpha: "fixture", cluster: "fixture", sniper: "fixture", independentSmartMoney: "fixture" },
+          evidence: {},
+          warnings: [],
+        };
+      },
+    },
+    firstHand: {
+      async getWalletSwaps(tokenCa, wallets) {
+        return wallets.flatMap((wallet) => [
+          { tokenCa, walletAddress: wallet, side: "buy" as const, tokenAmountRaw: 100n, quoteAmountMicroUsd: 100_000_000n, signature: "buy", eventIndex: 0, blockTime: new Date("2026-07-27T00:00:00.000Z") },
+          { tokenCa, walletAddress: wallet, side: "sell" as const, tokenAmountRaw: 100n, quoteAmountMicroUsd: 250_000_000n, signature: "sell", eventIndex: 0, blockTime: new Date("2026-07-27T00:01:00.000Z") },
+        ]);
+      },
+    },
+    library,
+  }, { ...baseConfig, triggeredAt: new Date("2026-07-27T20:13:00.000Z") });
+
+  assert.deepEqual(calls, ["daily", "weekly"]);
+  assert.equal(result.status, "DEGRADED");
+  assert.deepEqual(result.failedJobs.map((job) => job.window), ["daily"]);
+  assert.deepEqual(result.warnings, ["daily_mining_failed"]);
+  assert.deepEqual(result.reports.map((report) => report.window), ["weekly"]);
 });
 
 test("offline schedule rejects invalid manual trigger times", () => {

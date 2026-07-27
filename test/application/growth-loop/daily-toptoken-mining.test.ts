@@ -147,6 +147,7 @@ test("provider degradation yields a partial report and never fabricates promotio
   assert.equal(report.walletsMined, 0);
   assert.equal(report.walletsPromoted, 0);
   assert.equal(report.quota.consumed, 0);
+  assert.ok(report.warnings.includes(`${tokenA}:borrowed_leaderboard_failed`));
 });
 
 test("a failed first-hand provider keeps borrowed candidates out of the verified library", async () => {

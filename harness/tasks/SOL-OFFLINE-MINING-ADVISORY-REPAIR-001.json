@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "layer": "cold_path",
   "objective": "Close the accepted offline scheduler audit's non-blocking robustness findings: preserve borrowed-leaderboard failure evidence, continue a Monday weekly job after an isolated daily job failure with an explicit degraded result, and return defensive Date copies. Keep all behavior fixture/offline and manual-only.",
   "dependencies": [

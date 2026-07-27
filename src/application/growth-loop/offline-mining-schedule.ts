@@ -21,8 +21,11 @@ export interface OfflineMiningJob {
 export interface OfflineMiningScheduleResult {
   scheduleRuleVersion: string;
   mode: "manual_offline";
+  status: "GREEN" | "DEGRADED";
   triggeredAt: Date;
   jobs: OfflineMiningJob[];
+  failedJobs: OfflineMiningJob[];
+  warnings: string[];
   reports: DailyMiningReport[];
 }
 
@@ -51,18 +54,28 @@ export async function runOfflineMiningSchedule(
 ): Promise<OfflineMiningScheduleResult> {
   const jobs = planOfflineMiningJobs(config.triggeredAt);
   const reports: DailyMiningReport[] = [];
+  const failedJobs: OfflineMiningJob[] = [];
+  const warnings: string[] = [];
   for (const job of jobs) {
-    reports.push(await runDailyTopTokenMining(deps, {
-      ...config,
-      window: job.window,
-      runAt: job.runAt,
-    }));
+    try {
+      reports.push(await runDailyTopTokenMining(deps, {
+        ...config,
+        window: job.window,
+        runAt: job.runAt,
+      }));
+    } catch {
+      failedJobs.push({ ...job, runAt: new Date(job.runAt) });
+      warnings.push(`${job.window}_mining_failed`);
+    }
   }
   return {
     scheduleRuleVersion: OFFLINE_MINING_SCHEDULE_RULE_VERSION,
     mode: "manual_offline",
+    status: failedJobs.length === 0 ? "GREEN" : "DEGRADED",
     triggeredAt: new Date(config.triggeredAt),
     jobs: jobs.map((job) => ({ ...job, runAt: new Date(job.runAt) })),
+    failedJobs,
+    warnings,
     reports,
   };
 }
