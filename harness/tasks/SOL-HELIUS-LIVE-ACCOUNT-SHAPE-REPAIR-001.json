@@ -5,7 +5,7 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair only the Helius live token-account mapper so it accepts the documented flat account response shape (address, owner, integer amount) while retaining the existing nested fixture compatibility. Reject malformed, signed, floating, or precision-unsafe amounts fail-closed. Do not change pagination, provider scope, or live collection breadth.",
   "dependencies": [
     "SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001",

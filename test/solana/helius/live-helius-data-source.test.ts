@@ -86,6 +86,34 @@ test("live Helius source maps complete Helius DAS accounts and metadata", async 
   assert.equal(metadata.watermark.finalizedSlot, 457n);
 });
 
+test("live Helius source maps the documented flat token-account shape without precision loss", async () => {
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json({ result: {
+      token_accounts: [{ address: "AccountTwo", owner: "OwnerTwo", amount: 88 }],
+      total: 1,
+      last_indexed_slot: 458,
+    } }),
+  });
+
+  const accounts = await source.getTokenAccounts("PublicMint");
+  assert.deepEqual(accounts.data, [{ tokenAccount: "AccountTwo", owner: "OwnerTwo", amountRaw: "88" }]);
+
+  const unsafeAmountSource = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json({ result: {
+      token_accounts: [{ address: "AccountThree", owner: "OwnerThree", amount: Number.MAX_SAFE_INTEGER + 1 }],
+      total: 1,
+    } }),
+  });
+  await assert.rejects(
+    () => unsafeAmountSource.getTokenAccounts("PublicMint"),
+    (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_token_account_malformed",
+  );
+});
+
 test("live Helius source enforces its fixed request budget", async () => {
   const source = new LiveHeliusDataSource({
     apiKey: unitCredential,

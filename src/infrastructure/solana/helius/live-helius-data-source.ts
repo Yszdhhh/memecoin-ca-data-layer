@@ -284,12 +284,18 @@ function tokenAccount(value: unknown): RpcTokenAccount {
   const ownership = optionalRecord(row.ownership);
   const tokenInfo = optionalRecord(row.token_info);
   const tokenAccount = optionalString(row.address);
-  const owner = optionalString(ownership?.owner);
-  const amountRaw = optionalString(tokenInfo?.balance);
-  if (!tokenAccount || !owner || !amountRaw || !/^\d+$/.test(amountRaw)) {
+  const owner = optionalString(row.owner) ?? optionalString(ownership?.owner);
+  const amountRaw = rawIntegerString(row.amount) ?? rawIntegerString(tokenInfo?.balance);
+  if (!tokenAccount || !owner || !amountRaw) {
     throw new SourceDataUnavailableError("helius_token_account_malformed");
   }
   return { tokenAccount, owner, amountRaw };
+}
+
+function rawIntegerString(value: unknown): string | undefined {
+  if (typeof value === "string" && /^\d+$/.test(value)) return value;
+  if (typeof value === "number" && Number.isSafeInteger(value) && value >= 0) return String(value);
+  return undefined;
 }
 
 function transactionFromEnhanced(value: unknown): HeliusTransaction {
