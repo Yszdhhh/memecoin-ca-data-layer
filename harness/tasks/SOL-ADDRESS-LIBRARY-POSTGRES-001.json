@@ -1,0 +1,50 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-001",
+  "title": "Durable Solana address-library PostgreSQL adapter",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Implement the offline-only PostgreSQL persistence adapter for the Solana address library, including database-enforced trust boundaries and typed observation persistence. Do not connect to or deploy a database.",
+  "dependencies": [
+    "WAVE-B-C-OFFLINE-REAUDIT-003",
+    "WAVE-D-OFFLINE-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "src/application/sedimentation/address-library.ts",
+    "db/migrations/008_address_library_and_observations.sql",
+    "src/infrastructure/postgres/postgres-analysis-repository.ts"
+  ],
+  "write_set": [
+    "db/migrations/009_address_library_trust.sql",
+    "src/application/sedimentation/address-library.ts",
+    "src/application/leaderboard/token-profit-leaderboard.ts",
+    "src/infrastructure/postgres/postgres-address-library.ts",
+    "test/application/sedimentation/address-library.test.ts",
+    "test/infrastructure/postgres/postgres-address-library.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not call live Helius, RPC, market-provider, or HTTP APIs.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not add dependencies.",
+    "Do not modify existing migrations or activate BSC.",
+    "Do not unpark SOL-E2E-001."
+  ],
+  "deliverables": [
+    "db/migrations/009_address_library_trust.sql",
+    "src/infrastructure/postgres/postgres-address-library.ts",
+    "test/infrastructure/postgres/postgres-address-library.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

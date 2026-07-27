@@ -411,6 +411,11 @@
       "task_id": "WAVE-B-C-OFFLINE-REAUDIT-003",
       "spec": "harness/tasks/WAVE-B-C-OFFLINE-REAUDIT-003.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-001",
+      "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-POSTGRES-001.json",
+      "status": "READY"
     }
   ]
 }
