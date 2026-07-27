@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T09:30:00.000Z",
+  "updated_at_utc": "2026-07-27T10:27:52.462Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -451,6 +451,6 @@
     {
       "task_id": "SOL-OFFLINE-MINING-ADVISORY-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-OFFLINE-MINING-ADVISORY-REPAIR-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }  ]
 }

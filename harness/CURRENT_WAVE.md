@@ -18,7 +18,7 @@ it must remain unverified until first-hand evidence confirms it.
 | Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
 | Durable PostgreSQL address-library adapter | DONE, AUDITED GREEN | Offline-only adapter and database trust constraints independently accepted; no database has been connected or deployed. |
 | Durable PostgreSQL growth-loop report storage | DONE, AUDITED GREEN | Offline-only run summaries independently accepted; no database, Redis, scheduler, or live provider has been connected. |
-| Manual/offline daily and weekly mining runner | DONE, REPAIR AUDIT PENDING | Base scheduler is independently accepted; a robustness follow-up has completed locally and awaits independent audit. No cron, timer, background worker, or live trigger is active. |
+| Manual/offline daily and weekly mining runner | DONE, AUDITED GREEN | Base scheduler and the robustness follow-up are independently accepted. No cron, timer, background worker, or live trigger is active. |
 | Live Helius / real-CA E2E (`SOL-E2E-001`) | PARK | Requires Owner live-gate approval and contained credentials. |
 | BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
 
@@ -37,16 +37,14 @@ independent audit records.
   retained long term.
 - BSC stays inactive.
 
-## Next execution order after independent audit
+## Next execution gate
 
-1. Close any findings from the three audits above.
-2. Add durable Postgres/Redis-backed address-library and growth-loop storage.
-3. Add an offline scheduler/runner around the daily and weekly mining jobs.
-4. Only after explicit Owner approval, open a rate-limited read-only Helius
-   smoke gate and prepare `SOL-E2E-001` public-CA acceptance.
-5. Keep BSC and other chains blocked until Solana E2E is GREEN.
+The planned offline implementation is complete and no task is currently runnable.
+Only after explicit Owner approval, open a rate-limited read-only Helius smoke
+gate and prepare `SOL-E2E-001` with public CA samples. Keep BSC and other
+chains blocked until Solana E2E is GREEN.
 
 ## Current blockers
 
-There is no Owner blocker for continued offline work. Live credentials, live CA
-execution, and BSC activation remain intentionally parked.
+Offline scope has no remaining queued work. Live Helius use, real-CA execution,
+and BSC activation remain intentionally parked pending the Owner live gate.
