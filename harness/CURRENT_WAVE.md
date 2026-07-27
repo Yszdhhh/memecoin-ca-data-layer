@@ -11,8 +11,8 @@ it must remain unverified until first-hand evidence confirms it.
 | Workstream | Status | Notes |
 | --- | --- | --- |
 | Wave A: observation schema, four harness suites, Alpha Score, detectors | DONE | Offline deterministic acceptance complete. |
-| Wave B: Helius/Pump fixture adapters and address-library sedimentation | DONE, RE-AUDIT REQUIRED | Offline trust boundaries are implemented; a fresh independent evidence run is queued after historical-run repair. No live HTTP. |
-| Wave C: free borrowed layer and CA first-screen hotpath | DONE, RE-AUDIT REQUIRED | Deep-dive is queued into `AnalysisService`; borrowed fields stay unverified; fresh independent evidence is queued with Wave B. |
+| Wave B: Helius/Pump fixture adapters and address-library sedimentation | DONE, AUDITED GREEN_WITH_ADVISORY | Offline trust boundaries and fixture behavior passed independent re-audit. No live HTTP. |
+| Wave C: free borrowed layer and CA first-screen hotpath | DONE, AUDITED GREEN_WITH_ADVISORY | Deep-dive is queued into `AnalysisService`; borrowed fields remain unverified. |
 | Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDITED GREEN_WITH_ADVISORY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
 | Harness audit-evidence enforcement repair | DONE, AUDITED GREEN | Auditor completion requires valid independent passing run evidence. |
 | Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
@@ -21,15 +21,9 @@ it must remain unverified until first-hand evidence confirms it.
 
 ## Independent audit queue
 
-The completed Wave D and audit-evidence audits retain valid recorded evidence.
-Dispatch these exact task specs to an independent auditor after committing a
-clean baseline:
-
-1. `HARNESS-HISTORICAL-RUN-VERIFY-AUDIT-001`
-2. `WAVE-B-C-OFFLINE-REAUDIT-003`
-
-The auditor must use Harness run manifests and must not reuse the implementer
-identity.
+No current-wave independent audit is pending. Wave B/C, Wave D, and the
+Harness evidence repairs have valid independent audit records. New T2 work must
+still receive an independent auditor run before its downstream task opens.
 
 ## Owner decisions already applied
 
