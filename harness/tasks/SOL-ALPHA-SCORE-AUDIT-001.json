@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify SOL-ALPHA-SCORE-001: deterministic scoring, insufficient≠N, provisional borrowed cap, anti-gaming penalties, dual rule versions, no live I/O, no gate weakening.",
   "dependencies": [
     "SOL-ALPHA-SCORE-001"
