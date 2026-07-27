@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T12:30:00.000Z",
+  "updated_at_utc": "2026-07-27T06:48:06.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -385,7 +385,7 @@
     {
       "task_id": "WAVE-B-C-OFFLINE-REAUDIT-002",
       "spec": "harness/tasks/WAVE-B-C-OFFLINE-REAUDIT-002.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-AUDIT-EVIDENCE-AUDIT-002",
