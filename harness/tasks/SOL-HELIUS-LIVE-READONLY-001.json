@@ -5,9 +5,13 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "PARK",
+  "status": "READY",
   "objective": "Add the smallest production Helius implementation needed for one Solana-only live smoke analysis. It reads its credential only at runtime, fails closed when unavailable, applies a fixed request budget, rate limit and timeout, preserves fixture operation, and never writes to a production database.",
-  "dependencies": ["SEC-HARNESS-CONTENT-SCAN-001", "SOL-CA-ORCHESTRATION-AUDIT-001", "SOL-WALLET-CLEANING-AUDIT-003"],
+  "dependencies": [
+    "SEC-HARNESS-CONTENT-SCAN-001",
+    "SOL-CA-ORCHESTRATION-AUDIT-001",
+    "SOL-WALLET-CLEANING-AUDIT-003"
+  ],
   "inputs": [
     "PROJECT_CONSTITUTION.md",
     "PROJECT_ARCHITECTURE.md",
