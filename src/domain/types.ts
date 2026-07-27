@@ -223,6 +223,55 @@ export interface WalletQuality {
   reasons: string[];
 }
 
+/** Closed swap-derived position for alpha-score-v1 (transfers never count as PnL). */
+export interface AlphaPosition {
+  tokenId: string;
+  /** Realized ROI fraction, e.g. 0.5 = +50%. Must come from swap/venue evidence only. */
+  roi: number;
+  /** Market baseline ROI for the same window/token class (excess = roi - baselineRoi). */
+  baselineRoi: number;
+  closedAt: Date;
+  /** Profit share of wallet total profit in [0,1] for HHI; optional if engine recomputes. */
+  profitShare?: number;
+  pnlSource: "first_hand_swap" | "borrowed_unverified";
+  /** Realizable liquidity haircut applied (0–1 remaining after cap). */
+  liquidityHaircut?: number;
+}
+
+export type AlphaScoreStatus = "scored" | "provisional" | "insufficient";
+export type AlphaTier = "UR" | "SSR" | "SR" | "R" | "N";
+export type MarketRegime = "bull" | "neutral" | "bear";
+
+export interface AlphaPenalty {
+  code: string;
+  factor: number;
+  reason: string;
+  confidence: number;
+  ruleVersion: string;
+  evidence: Record<string, unknown>;
+}
+
+export interface AlphaScoreResult {
+  address: string;
+  alphaScore: number | null;
+  tier: AlphaTier | null;
+  status: AlphaScoreStatus;
+  confidence: number;
+  completeness: number;
+  coreAlpha: number | null;
+  regime: MarketRegime;
+  contributions: Record<string, number>;
+  penalties: AlphaPenalty[];
+  whyNotHigher: string;
+  provenance: {
+    alphaScoreRuleVersion: string;
+    marketBaselineVersion: string;
+    inputsHash: string;
+    bandCutpoints: Record<AlphaTier, number>;
+  };
+  warnings: string[];
+}
+
 export interface LargeOrder extends NormalizedTrade {
   walletQuality: WalletQuality;
 }

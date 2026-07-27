@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Implement alpha-score-v1 as a pure, versioned module over fixture wallet/position inputs: regime-relative robust-z, four factor groups, EWM half-life 14d, live percentile tiers, insufficient≠N, provisional confidence cap for borrowed PnL, anti-gaming penalties (luck/supertoken/cluster/bot), dual rule_version axes. No live data.",
   "dependencies": [
     "SOL-HARNESS-SUITES-AUDIT-001",
