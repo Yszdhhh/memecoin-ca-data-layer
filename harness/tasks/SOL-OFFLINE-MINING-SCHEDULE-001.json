@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OFFLINE-MINING-SCHEDULE-001",
+  "title": "Manual/offline daily and weekly Solana address-mining runner",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Implement a deterministic manual/offline runner that selects canonical daily and Monday weekly address-mining jobs and invokes the existing fixture-compatible growth loop. It must not install a cron job, timer, network client, or live trigger. Repeated invocation for the same UTC schedule slot must produce the same run identity for the durable report store.",
+  "dependencies": [
+    "SOL-GROWTH-REPORT-POSTGRES-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/DISPATCH_PLAN.md",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/infrastructure/postgres/postgres-address-mining-report-store.ts"
+  ],
+  "write_set": [
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not install or activate cron, timers, background workers, or scheduled triggers.",
+    "Do not call live Helius, RPC, market-provider, database, Redis, or HTTP APIs.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not add dependencies, unpark SOL-E2E-001, or activate BSC.",
+    "Do not persist raw payloads, credentials, or secrets."
+  ],
+  "deliverables": [
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

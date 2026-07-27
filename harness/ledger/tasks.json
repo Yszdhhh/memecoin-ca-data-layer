@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T08:53:00.000Z",
+  "updated_at_utc": "2026-07-27T08:58:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -431,6 +431,11 @@
       "task_id": "SOL-GROWTH-REPORT-POSTGRES-AUDIT-001",
       "spec": "harness/tasks/SOL-GROWTH-REPORT-POSTGRES-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-OFFLINE-MINING-SCHEDULE-001",
+      "spec": "harness/tasks/SOL-OFFLINE-MINING-SCHEDULE-001.json",
+      "status": "READY"
     }
   ]
 }
