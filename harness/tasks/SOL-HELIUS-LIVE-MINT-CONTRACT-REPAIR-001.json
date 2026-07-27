@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
+  "title": "Repair Helius live mint read contract",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Repair only the Helius live mint read after the authorized smoke proved the original mint RPC contract invalid. Read finalized SPL mint account data through a supported Helius JSON-RPC request, retain the existing request budget, timeout, fail-closed behavior and credential containment, and add only offline unit coverage for the corrected contract.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-READONLY-001",
+    "SEC-HARNESS-CONTENT-SCAN-001"
+  ],
+  "inputs": [
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not print, store, commit or record credentials, bearer values, raw provider payloads, or credential-bearing URLs.",
+    "Do not broaden the provider set beyond Helius or add fallback RPC endpoints.",
+    "Do not activate BSC, Robinhood, scheduler, cron, background loops, automated discovery, or production database writes."
+  ],
+  "deliverables": [
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
