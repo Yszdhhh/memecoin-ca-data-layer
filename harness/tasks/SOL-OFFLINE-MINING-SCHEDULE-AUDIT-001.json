@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-OFFLINE-MINING-SCHEDULE-AUDIT-001",
+  "title": "Independent audit of manual offline Solana address-mining schedule",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Independently audit the manual/offline daily and weekly Solana address-mining scheduler: canonical UTC slots, Monday-only weekly selection, deterministic repeated run identity, sequential invocation, and absence of cron, timers, background workers, database connections, and live network activity.",
+  "dependencies": [
+    "SOL-OFFLINE-MINING-SCHEDULE-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "src/application/growth-loop/daily-toptoken-mining.ts",
+    "src/application/growth-loop/offline-mining-schedule.ts",
+    "test/application/growth-loop/offline-mining-schedule.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL_OFFLINE_MINING_SCHEDULE_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, or tests.",
+    "Do not install or activate cron, timers, background workers, or scheduled triggers.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not call live Helius, RPC, market-provider, database, Redis, or HTTP APIs.",
+    "Do not activate BSC or unpark SOL-E2E-001."
+  ],
+  "deliverables": [
+    "docs/audits/SOL_OFFLINE_MINING_SCHEDULE_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
