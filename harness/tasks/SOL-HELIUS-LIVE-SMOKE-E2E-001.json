@@ -5,19 +5,21 @@
   "tier": "T3",
   "role": "coordinator",
   "chain": "solana",
-  "status": "PARK",
+  "status": "READY",
   "objective": "Run one manually invoked, bounded, read-only Helius smoke against one public Solana CA chosen by the coordinator. Prove finalized mint, token metadata, and a non-truncated holder account response without retaining raw provider payloads or writing to a production database.",
   "dependencies": [
     "SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001",
     "SEC-HARNESS-CONTENT-SCAN-001",
-    "SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001"
+    "SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001",
+    "SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001"
   ],
   "inputs": [
     "OWNER_DECISIONS_NEEDED.md",
     "src/infrastructure/solana/helius/live-helius-data-source.ts",
     "src/infrastructure/solana/helius/helius-solana-adapter.ts",
     "harness/runs/20260727143845_SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001/manifest.json",
-    "harness/runs/20260727144414_SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001/manifest.json"
+    "harness/runs/20260727144414_SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001/manifest.json",
+    "harness/runs/20260727144928_SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001/manifest.json"
   ],
   "write_set": [
     "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json",
