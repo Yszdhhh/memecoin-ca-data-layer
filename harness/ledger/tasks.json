@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T01:54:42.000Z",
+  "updated_at_utc": "2026-07-27T01:55:03.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -320,7 +320,7 @@
     {
       "task_id": "SOL-DETECTORS-AUDIT-001",
       "spec": "harness/tasks/SOL-DETECTORS-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify detectors never weaken 0.85 exclusion, honor service-funder suppression, enforce smart-money vetoes, and remain offline/deterministic.",
   "dependencies": [
     "SOL-DETECTORS-001"
