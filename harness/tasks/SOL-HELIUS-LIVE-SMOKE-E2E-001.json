@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-SMOKE-E2E-001",
+  "title": "Solana public CA Helius live smoke acceptance",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Run one manually invoked, bounded, read-only Helius smoke against one public Solana CA chosen by the coordinator. Prove finalized mint, token metadata, and a non-truncated holder account response without retaining raw provider payloads or writing to a production database.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-READONLY-001",
+    "SEC-HARNESS-CONTENT-SCAN-001"
+  ],
+  "inputs": [
+    "OWNER_DECISIONS_NEEDED.md",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json",
+    "harness/ledger/tasks.json",
+    "test/integration/solana/helius-live-smoke.e2e.test.ts",
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not print, store, commit or record credentials, bearer values, raw provider payloads, or credential-bearing URLs.",
+    "Do not call a provider other than Helius.",
+    "Do not activate BSC, Robinhood, scheduler, cron, background loops, automated token discovery, or production database writes.",
+    "Do not claim deep Pump creator, Dev-history, wallet-tag, or wallet-fact coverage from this bounded smoke."
+  ],
+  "deliverables": [
+    "test/integration/solana/helius-live-smoke.e2e.test.ts",
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
