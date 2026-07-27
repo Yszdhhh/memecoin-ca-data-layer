@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001",
+  "title": "Independent audit of durable Solana address-library PostgreSQL adapter",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "READY",
+  "layer": "cold_path",
+  "objective": "Independently audit the offline PostgreSQL address-library adapter, including database trust constraints, verified-record preservation, typed observation persistence, and absence of live database or network execution.",
+  "dependencies": [
+    "SOL-ADDRESS-LIBRARY-POSTGRES-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "db/migrations/008_address_library_and_observations.sql",
+    "db/migrations/009_address_library_trust.sql",
+    "src/application/sedimentation/address-library.ts",
+    "src/application/leaderboard/token-profit-leaderboard.ts",
+    "src/infrastructure/postgres/postgres-address-library.ts",
+    "test/infrastructure/postgres/postgres-address-library.test.ts"
+  ],
+  "write_set": [
+    "docs/audits/SOL_ADDRESS_LIBRARY_POSTGRES_AUDIT_001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify source, migrations, or tests.",
+    "Do not connect to or deploy PostgreSQL or Redis.",
+    "Do not call live Helius, RPC, market-provider, or HTTP APIs.",
+    "Do not activate BSC or unpark SOL-E2E-001."
+  ],
+  "deliverables": [
+    "docs/audits/SOL_ADDRESS_LIBRARY_POSTGRES_AUDIT_001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

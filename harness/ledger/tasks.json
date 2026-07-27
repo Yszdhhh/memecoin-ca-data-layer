@@ -415,6 +415,11 @@
     {
       "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-001",
       "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-POSTGRES-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001",
+      "spec": "harness/tasks/SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001.json",
       "status": "READY"
     }
   ]

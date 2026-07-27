@@ -16,14 +16,15 @@ it must remain unverified until first-hand evidence confirms it.
 | Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDITED GREEN_WITH_ADVISORY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
 | Harness audit-evidence enforcement repair | DONE, AUDITED GREEN | Auditor completion requires valid independent passing run evidence. |
 | Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
+| Durable PostgreSQL address-library adapter | DONE, PENDING INDEPENDENT AUDIT | Offline-only adapter and database trust constraints are implemented; no database has been connected or deployed. |
 | Live Helius / real-CA E2E (`SOL-E2E-001`) | PARK | Requires Owner live-gate approval and contained credentials. |
 | BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
 
 ## Independent audit queue
 
-No current-wave independent audit is pending. Wave B/C, Wave D, and the
-Harness evidence repairs have valid independent audit records. New T2 work must
-still receive an independent auditor run before its downstream task opens.
+Pending: `SOL-ADDRESS-LIBRARY-POSTGRES-AUDIT-001`. Wave B/C, Wave D, and the
+Harness evidence repairs have valid independent audit records. Do not open
+downstream durable-storage work until this independent auditor run is complete.
 
 ## Owner decisions already applied
 
