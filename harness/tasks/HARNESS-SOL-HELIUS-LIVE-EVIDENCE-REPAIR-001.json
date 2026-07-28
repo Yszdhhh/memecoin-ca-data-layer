@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Replace ignored local run-manifest inputs in the DONE Helius smoke task with committed, scrubbed and reproducible upstream evidence. Add a Harness ledger gate that rejects DONE tasks whose repository-file inputs are missing, and on a clean tree also rejects inputs that are not Git-tracked.",
   "dependencies": ["PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001", "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001"],
   "inputs": ["harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md", "harness/lib/validation.ts", "harness/cli.ts", "test/harness.test.ts", ".gitignore"],

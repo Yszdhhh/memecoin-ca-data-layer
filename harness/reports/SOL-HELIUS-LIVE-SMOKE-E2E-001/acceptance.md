@@ -29,3 +29,9 @@ wallet-tag claim, or wallet-fact claim was retained or activated.
 The test is skipped by default. It runs only when the explicit manual
 `RUN_HELIUS_LIVE_E2E=1` gate is set and a runtime-only Helius credential is
 available.
+
+Harness run directories and their command logs are intentionally local and
+Git-ignored. They are not claimed as public repository evidence. The committed,
+scrubbed upstream repair chain, task specifications, code commits, and replay
+commands are listed in
+`harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/upstream-evidence.md`.

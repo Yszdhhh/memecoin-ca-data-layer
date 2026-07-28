@@ -8,6 +8,7 @@ import type {
   Verdict,
 } from "./contracts.js";
 import { exists, readJson } from "./files.js";
+import { gitDirty, gitTrackedFiles } from "./git.js";
 
 const TASK_ID = /^[A-Z][A-Z0-9-]{2,63}$/;
 const TIERS = new Set(["T1", "T2", "T3"]);
@@ -54,10 +55,35 @@ export function validateTask(spec: TaskSpec, config: ProjectConfig): string[] {
   return errors;
 }
 
+function repositoryFileInput(value: string): boolean {
+  if (value.includes("*") || /\s/.test(value)) return false;
+  return /^(?:[A-Za-z0-9_.-]+\/)+[^/]+$/.test(value)
+    || /^[A-Za-z0-9_.-]+\.[A-Za-z0-9]+$/.test(value);
+}
+
+export async function validateDeclaredInputArtifacts(
+  spec: TaskSpec,
+  artifactExists: (relativePath: string) => Promise<boolean> = exists,
+  trackedPaths?: ReadonlySet<string>,
+): Promise<string[]> {
+  if (spec.status !== "DONE") return [];
+
+  const errors: string[] = [];
+  for (const input of spec.inputs.filter(repositoryFileInput)) {
+    if (!(await artifactExists(input))) {
+      errors.push(`declared input does not exist: ${input}`);
+    } else if (trackedPaths && !trackedPaths.has(input)) {
+      errors.push(`declared input is not Git-tracked: ${input}`);
+    }
+  }
+  return errors;
+}
+
 export async function validateLedger(ledger: TaskLedger, config: ProjectConfig): Promise<string[]> {
   const errors: string[] = [];
   const ids = new Set<string>();
   const specs = new Map<string, TaskSpec>();
+  const trackedPaths = gitDirty() ? undefined : new Set(gitTrackedFiles());
 
   for (const entry of ledger.tasks) {
     if (ids.has(entry.task_id)) errors.push(`duplicate ledger task: ${entry.task_id}`);
@@ -69,6 +95,9 @@ export async function validateLedger(ledger: TaskLedger, config: ProjectConfig):
     const spec = await readJson<TaskSpec>(entry.spec);
     specs.set(entry.task_id, spec);
     for (const error of validateTask(spec, config)) errors.push(`${entry.task_id}: ${error}`);
+    for (const error of await validateDeclaredInputArtifacts(spec, exists, trackedPaths)) {
+      errors.push(`${entry.task_id}: ${error}`);
+    }
     if (spec.task_id !== entry.task_id) errors.push(`${entry.task_id}: spec task_id mismatch`);
     if (spec.status !== entry.status) errors.push(`${entry.task_id}: ledger/spec status mismatch`);
   }
