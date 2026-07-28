@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Manually run the existing bounded read-only Helius CA-first batch exactly once for these seven public Solana token CAs observed by the Owner-directed manual review of Chain.fm channels 1305397292697653436, 1307532946063757359 and 1307775393968689167 on 2026-07-28: H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump, 5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2, 4N4DnNo3qpPks9aQCkcWkzoir8tnvT6diS4TnnZibonk, 3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw, 9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump, Ge87EtsjwRQbHaqQmKRno69RFTwh9bfSsm99XNxTpump and Grass7B4RdKfBCjTKgSqnXkqjwiGvQyFbuSCUJr3XXjs. Treat all Chain.fm labels and displayed market-cap figures as borrowed and unverified. Validate every CA before source construction, use only the allowlisted Helius endpoint mode, cap each CA at three requests and the batch at twenty-one requests, and record only a sanitized normalized CA-first summary. The visible sample from channel 1307532946063757359 contained no candidate represented as above USD 1 million and is not padded with ineligible addresses.",
   "dependencies": [
     "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001"
