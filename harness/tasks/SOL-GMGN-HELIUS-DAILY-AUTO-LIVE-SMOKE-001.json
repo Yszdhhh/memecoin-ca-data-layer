@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "PARK",
   "objective": "Execute exactly one operator-authorized live daily workflow using the already configured current-user DPAPI credentials: one fixed pinned gmgn-cli Solana discovery invocation for tokens created no more than 24 hours ago with provider-reported market cap strictly above USD 1,000,000, select the market-cap-descending top 5 to 10 without padding, strictly validate all CAs before any Helius source construction, then run the existing bounded read-only Helius analysis. Record only a sanitized acceptance summary and the sanitized report path; do not persist raw provider payloads, arbitrary errors, credentials or credential-bearing URLs.",
   "dependencies": [
     "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001"

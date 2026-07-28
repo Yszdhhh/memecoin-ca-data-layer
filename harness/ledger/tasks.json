@@ -590,7 +590,7 @@
     {
       "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001",
       "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
-      "status": "READY"
+      "status": "PARK"
     }
   ]
 }
