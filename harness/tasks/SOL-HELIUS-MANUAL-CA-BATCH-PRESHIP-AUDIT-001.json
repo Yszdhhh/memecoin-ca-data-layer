@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that the manual Solana CA batch remains limited to 1 to 10 operator-supplied CAs, validates all CAs before constructing Helius sources, exposes only sanitized bounded first-look results, and does not introduce discovery, automation, persistence, provider fallback, or non-Solana behavior.",
   "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001"],
   "inputs": ["harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-001.json", "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json", "harness/runs/SOL_HELIUS_MANUAL_CA_BATCH_PRESHIP_REPAIR_001/manifest.json", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts", "package.json"],
