@@ -7,6 +7,7 @@ import {
   SOLANA_LIVE_CA_FIRST_VERSION,
   type SolanaLiveCaFirstSource,
 } from "../../../src/application/live/solana-live-ca-first.js";
+import { safeSolanaLiveWarning } from "../../../src/application/live/solana-live-warning.js";
 
 const ca = "DMYA7GexqPCeZeFxjDRjAgPbut24K3DhUAXcMH48JHoX";
 const observedAt = new Date("2026-07-27T00:00:00.000Z");
@@ -114,4 +115,21 @@ test("manual CA-first never returns arbitrary transport error text", async () =>
   assert.equal(result.status, "DEGRADED");
   assert.ok(result.warnings.includes("helius_live_read_unavailable"));
   assert.equal(result.warnings.some((warning) => warning.includes("private-response-text")), false);
+});
+
+test("live warning output uses an exact allowlist", async () => {
+  const result = await readSolanaLiveCaFirst(ca, source({
+    async getMint() {
+      throw new Error("helius_private_response_text");
+    },
+  }));
+
+  assert.ok(result.warnings.includes("helius_live_read_unavailable"));
+  assert.equal(result.warnings.includes("helius_private_response_text"), false);
+  assert.equal(
+    safeSolanaLiveWarning(new Error("helius_runtime_credential_unavailable")),
+    "helius_runtime_credential_unavailable",
+  );
+  assert.equal(safeSolanaLiveWarning(new Error("helius_http_429")), "helius_http_error");
+  assert.equal(safeSolanaLiveWarning(new Error("unknown internal detail")), "helius_live_read_unavailable");
 });

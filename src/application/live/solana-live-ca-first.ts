@@ -5,6 +5,7 @@ import type {
   SourceResponse,
 } from "../../infrastructure/solana/helius/helius-solana-adapter.js";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
+import { safeSolanaLiveWarning } from "./solana-live-warning.js";
 
 export { isSolanaAddress } from "../../domain/solana-address.js";
 
@@ -121,17 +122,12 @@ async function safelyRead<T>(read: () => Promise<SourceResponse<T>>): Promise<Re
   try {
     return { ok: true, response: await read() };
   } catch (error) {
-    return { ok: false, warning: safeHeliusWarning(error) };
+    return { ok: false, warning: safeSolanaLiveWarning(error) };
   }
 }
 
 function slot(response: SourceResponse<unknown>): string | null {
   return response.watermark.finalizedSlot?.toString() ?? null;
-}
-
-function safeHeliusWarning(error: unknown): string {
-  if (error instanceof Error && /^helius_[a-z0-9_]+$/.test(error.message)) return error.message;
-  return "helius_live_read_unavailable";
 }
 
 function rejectedResult(tokenCa: string, warning: string): SolanaLiveCaFirstResult {

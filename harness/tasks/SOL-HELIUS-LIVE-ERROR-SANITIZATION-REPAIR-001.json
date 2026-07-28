@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Replace permissive Helius-prefixed error passthrough with one shared exact allowlist for CA-first reads and both CLIs. Preserve known safe operational codes, normalize HTTP status errors, and map every unknown or arbitrary error to one fixed unavailable code.",
   "dependencies": ["SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001", "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001"],
   "inputs": ["src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "src/cli/run-solana-live-ca-batch.ts", "src/infrastructure/solana/helius/live-helius-data-source.ts", "test/application/live/solana-live-ca-first.test.ts"],
