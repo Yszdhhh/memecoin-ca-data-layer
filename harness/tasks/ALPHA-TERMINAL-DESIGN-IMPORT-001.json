@@ -6,7 +6,7 @@
   "role": "coordinator",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Add the Owner-provided Alpha Terminal research document to the review branch as an explicitly unaccepted design draft. This task does not authorize implementing its future providers, automation, storage, UI, alerts, or additional chains.",
   "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-001"],
   "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_ARCHITECTURE.md", "OWNER_DECISIONS_NEEDED.md"],
