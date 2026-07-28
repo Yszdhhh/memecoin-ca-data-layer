@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001",
+  "title": "Repair published Helius smoke evidence references",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Replace ignored local run-manifest inputs in the DONE Helius smoke task with committed, scrubbed and reproducible upstream evidence. Add a Harness ledger gate that rejects DONE tasks whose repository-file inputs are missing, and on a clean tree also rejects inputs that are not Git-tracked.",
+  "dependencies": ["PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001", "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001"],
+  "inputs": ["harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md", "harness/lib/validation.ts", "harness/cli.ts", "test/harness.test.ts", ".gitignore"],
+  "write_set": ["harness/tasks/HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001.json", "harness/ledger/tasks.json", "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/upstream-evidence.md", "harness/lib/validation.ts", "test/harness.test.ts"],
+  "forbidden_actions": ["Do not commit ignored Harness run directories, acceptance logs, credentials, raw provider payloads, credential-bearing URLs or reconstructed secret-bearing artifacts.", "Do not change Helius runtime behavior, providers, chain activation, automation, persistence or production infrastructure.", "Do not fabricate missing historical manifests or claim ignored local logs are public evidence."],
+  "deliverables": ["harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/upstream-evidence.md", "harness/lib/validation.ts", "test/harness.test.ts"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
