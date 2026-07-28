@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+  "title": "Classify one signed GMGN holdings failure with safe codes only",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "After the local-only diagnostic confirmed both required GMGN variable names are present, issue exactly one new signed, read-only GMGN portfolio-holdings request for the frozen Owner-supplied Solana wallet below. Validate the wallet as strict Base58 and exactly 32 bytes before construction. Capture child stdout/stderr in process memory only; map a failed response to one allowlisted diagnostic code based on generic credential/signature, rate-limit, network/transport or parse indicators without storing, printing or quoting any provider text. On success, retain only the same first-page bounded counts and allowlisted numeric history-profit aggregates as the prior pilot. This task cannot reuse or retry the prior task invocation and cannot claim complete historical profitability.",
+  "dependencies": [
+    "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "package.json",
+    "package-lock.json",
+    "harness/reports/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call a chain other than Solana or a provider other than GMGN.",
+    "Do not run more than one GMGN CLI invocation; do not paginate, retry, discover, call Helius or invoke any other GMGN command.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw GMGN payloads, arbitrary provider text, full exception text, token mints, token names, transaction signatures, counterparties or per-trade records.",
+    "Do not claim complete all-time wallet PnL, a chain-confirmed realized profit, win rate, wallet quality, wallet classification, common ownership, clustering, address-library admission or Alpha N/R/SR/SSR/UR tier.",
+    "Do not write a database, cache, queue, address library, scheduler, production system, transaction, signing, swap, order or trade.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "frozen_wallet": "5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT",
+  "gmgn_request": {
+    "command": "portfolio holdings",
+    "chain": "sol",
+    "limit": 50,
+    "order_by": "total_profit",
+    "direction": "desc",
+    "interval": "24h",
+    "hide_abnormal": true,
+    "hide_airdrop": true,
+    "hide_closed": false,
+    "pagination": "forbidden"
+  }
+}

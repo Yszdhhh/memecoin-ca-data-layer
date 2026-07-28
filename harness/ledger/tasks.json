@@ -696,6 +696,16 @@
       "task_id": "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001",
       "spec": "harness/tasks/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001",
+      "spec": "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
