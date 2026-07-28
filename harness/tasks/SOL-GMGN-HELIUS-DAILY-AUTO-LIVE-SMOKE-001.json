@@ -1,0 +1,48 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001",
+  "title": "Run one bounded live GMGN discovery and Helius analysis smoke",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Execute exactly one operator-authorized live daily workflow using the already configured current-user DPAPI credentials: one fixed pinned gmgn-cli Solana discovery invocation for tokens created no more than 24 hours ago with provider-reported market cap strictly above USD 1,000,000, select the market-cap-descending top 5 to 10 without padding, strictly validate all CAs before any Helius source construction, then run the existing bounded read-only Helius analysis. Record only a sanitized acceptance summary and the sanitized report path; do not persist raw provider payloads, arbitrary errors, credentials or credential-bearing URLs.",
+  "dependencies": [
+    "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "src/cli/run-solana-daily-new-token-analysis.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not run more than one live daily discovery/analysis invocation.",
+    "Do not call a chain other than Solana, a discovery provider other than GMGN, or a chain-data provider other than Helius.",
+    "Do not run any trading, signing, swap, order, cooking, recommendation or transaction command.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw GMGN or Helius payloads, arbitrary provider text or full exception text.",
+    "Do not write a database, cache, queue, address library or production system and do not register or modify a scheduled task.",
+    "Do not pad a result below five candidates or guess, substitute, recommend or automatically discover outside the fixed bounded query.",
+    "Do not describe GMGN holder, concentration, creator, Dev or risk fields as independently verified Helius facts.",
+    "Do not write outside the exact tracked write set except for the feature's sanitized local report under the current user's LOCALAPPDATA report directory."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

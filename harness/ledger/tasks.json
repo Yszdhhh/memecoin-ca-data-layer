@@ -586,6 +586,11 @@
       "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
+      "status": "READY"
     }
   ]
 }
