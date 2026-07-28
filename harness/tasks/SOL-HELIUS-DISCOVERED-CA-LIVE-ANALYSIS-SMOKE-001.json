@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001",
+  "title": "Run bounded Helius analysis for two GMGN-discovered CAs",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Manually run the existing bounded read-only Helius CA-first batch exactly once for the two public Solana CAs returned by SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001: 9ufyZ2pyL9Apa7fB7JdHnSujhYTQ4Y19qNdBEgJUpump and EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump. Use only the allowlisted Helius Gatekeeper beta endpoint mode, validate both addresses before source construction, cap each CA at three Helius requests and the run at six, and record only a sanitized CA-first summary. This is a two-CA diagnostic smoke and must not be represented as the daily 5-to-10-candidate production batch.",
+  "dependencies": [
+    "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/reports/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001/acceptance.md",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN or any provider other than Helius during this task.",
+    "Do not run more than one Helius batch and do not add, discover, guess or substitute another CA.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw Helius payloads, arbitrary provider text or full exception text.",
+    "Do not write a database, cache, queue, address library, schedule or production system.",
+    "Do not run trading, signing, swap, order or transaction commands.",
+    "Do not claim holder concentration, owner clustering, creator history, Dev behavior analysis or wallet classification from this bounded CA-first result.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -591,6 +591,11 @@
       "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001",
       "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
       "status": "PARK"
+    },
+    {
+      "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001",
+      "spec": "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001.json",
+      "status": "READY"
     }
   ]
 }
