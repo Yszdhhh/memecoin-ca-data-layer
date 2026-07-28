@@ -536,6 +536,11 @@
       "task_id": "HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001",
       "spec": "harness/tasks/HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001.json",
+      "status": "READY"
     }
   ]
 }
