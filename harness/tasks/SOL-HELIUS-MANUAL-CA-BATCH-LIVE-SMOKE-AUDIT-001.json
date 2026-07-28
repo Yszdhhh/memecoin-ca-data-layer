@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that the ten-CA live smoke used exactly the addresses frozen in SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001; all passed strict 32-byte Base58 validation before Helius source creation; execution stayed Solana-only, Helius-only, read-only, manually triggered, bounded to at most three requests per CA and fail-closed; the committed report contains only scrubbed per-CA evidence; and the PARK verdict accurately states that no complete Helius result was obtained because only the allowlisted helius_transport_unavailable warning remained.",
   "dependencies": [
     "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
