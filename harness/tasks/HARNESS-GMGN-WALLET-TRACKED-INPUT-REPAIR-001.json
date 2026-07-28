@@ -1,0 +1,48 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001",
+  "title": "Repair non-tracked GMGN task inputs without changing bounded live evidence",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Repair only the Harness input-evidence declarations that make the tracked repository fail `harness:doctor`: replace the prior GMGN smoke task's ignored `node_modules/gmgn-cli` input and the schema-adapter repair task's three ignored node_modules file inputs with the tracked package manifest and lockfile that pin `gmgn-cli@1.5.4`; replace the schema-adapter audit task's ignored run-manifest input with its already tracked sanitized implementation report. Do not call GMGN, Helius or any provider; do not change frozen wallets, source/parser code, tests, accepted live aggregate values, request budgets, report conclusions, audit conclusions, task roles, dependencies, forbidden actions or completion statuses. Create a sanitized repair report and rerun local Harness acceptance only.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",
+    "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001.json",
+    "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any other network provider.",
+    "Do not alter frozen wallets, user labels, source/parser code, tests, package manifests, accepted live aggregate values, request budgets, reports' substantive result rows, audit conclusions, task roles, dependencies, forbidden actions or completion statuses.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text, transaction signatures, counterparties, token mints or per-trade records.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
