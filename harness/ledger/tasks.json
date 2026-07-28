@@ -546,6 +546,11 @@
       "task_id": "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
