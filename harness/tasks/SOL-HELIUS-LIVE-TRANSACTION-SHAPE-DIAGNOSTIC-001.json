@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001",
+  "title": "Diagnose one bounded Helius enhanced-address transaction read without retaining provider content",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Manually execute exactly one Helius-only enhanced-address transaction-history request for the single frozen Owner-supplied public Solana wallet 5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT (user_label: 高胜率, user-provided and unverified). Strictly Base58-decode and validate the input as exactly 32 bytes before creating any data source or issuing any request. Use the existing live Helius source with a request budget of one, no pagination and no retry. Reduce the outcome in memory to only a stable, source-owned diagnostic category: success with returned transaction count and bounded-page completeness, or a sanitized Helius error category. Do not read, store, print or infer any response body field, payload shape, signature, counterparty, mint, credential, credential-bearing URL, provider text or exception text. This diagnostic may distinguish only safe code categories defined by this application (including generic HTTP, timeout, transport, response-malformed, transactions-malformed, transaction-malformed, token-transfer-malformed and native-transfer-malformed categories) and must not establish PnL, profit, win rate, wallet classification, CA linkage, complete history or any user-label claim.",
+  "dependencies": [
+    "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not add, discover, infer, guess, substitute, classify or cluster wallet addresses; the one input is frozen in this task spec.",
+    "Do not treat the user label as an on-chain-verified fact, proof of profitability, proof of common ownership or a wallet category.",
+    "Do not call GMGN, Dune, Chain.fm, BSC, Robinhood or any provider other than Helius.",
+    "Do not paginate, repeat the request, retry, add a fallback provider, or exceed one Helius enhanced-address request total.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, payload shape fields, transaction signatures, counterparties, token mints, arbitrary provider text or full exception text.",
+    "Do not calculate or claim PnL, realized profit, win rate, wallet quality, wallet classification, address clustering, CA linkage, holder concentration, creator/Dev history, token recommendations or complete history.",
+    "Do not write a database, cache, queue, address library, scheduler, production system, trade, transaction, signature, order or swap.",
+    "Do not modify application source or tests; this task is a diagnostic only.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
