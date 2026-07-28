@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair only the Harness input-evidence declarations that make the tracked repository fail `harness:doctor`: replace the prior GMGN smoke task's ignored `node_modules/gmgn-cli` input and the schema-adapter repair task's three ignored node_modules file inputs with the tracked package manifest and lockfile that pin `gmgn-cli@1.5.4`; replace the schema-adapter audit task's ignored run-manifest input with its already tracked sanitized implementation report. Do not call GMGN, Helius or any provider; do not change frozen wallets, source/parser code, tests, accepted live aggregate values, request budgets, report conclusions, audit conclusions, task roles, dependencies, forbidden actions or completion statuses. Create a sanitized repair report and rerun local Harness acceptance only.",
   "dependencies": [
     "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",

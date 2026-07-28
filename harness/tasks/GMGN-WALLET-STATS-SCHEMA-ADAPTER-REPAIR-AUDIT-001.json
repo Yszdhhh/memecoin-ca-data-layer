@@ -14,7 +14,6 @@
   "inputs": [
     "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
     "harness/reports/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001/acceptance.md",
-    "harness/runs/20260728152000_GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001/manifest.json",
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
     "test/gmgn-wallet-stats-parser.test.ts",
     "harness/gmgn-wallet-stats-live-smoke.ts"

@@ -14,11 +14,10 @@
   ],
   "inputs": [
     "src/domain/solana-address.ts",
-    "node_modules/gmgn-cli/dist/commands/portfolio.js",
-    "node_modules/gmgn-cli/dist/client/OpenApiClient.js",
-    "node_modules/gmgn-cli/dist/output.js",
     "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001/acceptance.md",
-    "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001/acceptance.md"
+    "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001/acceptance.md",
+    "package.json",
+    "package-lock.json"
   ],
   "write_set": [
     "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
