@@ -5,6 +5,26 @@
 >
 > **v2 更新（2026-07-26 晚）**：融合了 Owner 两份 docx 文档。新增四层架构、Alpha Score 动态评分体系、UR/SSR 等级、地址多维画像、标签冲突优先级、四类 harness 测试、parser 契约。这些已固化为 **`PROJECT_ARCHITECTURE.md`（binding）**，接进必读链以防后续 agent 漂移。方法级执行细节见 `docs/METHODS_ALPHA_SCORE_AND_DETECTORS.md`。
 
+> **v3 执行边界纠偏（2026-07-28）**：本提案中的多 provider、
+> 自动热门币扫描、缓存/队列、数据库部署和 Alpha Terminal 实时事件流
+> 均不构成当前授权。当前唯一 live 路径是手动触发、Solana-only、
+> Helius-only、只读、限额、fail-closed 的 CA-first 首查。
+
+## 当前执行车道（覆盖本文后续历史建议）
+
+| 分类 | 当前解释 |
+|------|----------|
+| 已可执行 | 人工输入 1 个或 1–10 个不同 Solana CA；每个 CA 只做 mint、metadata、token-account 三项受限 Helius 读取；返回安全摘要；不持久化。 |
+| 可保留研究 | Alpha Terminal 的三栏交互、Observation-only 原则、事件证据信封、Channel/Feed 信息架构、Research Inspector 复用方向。仅限文档、schema、mock 或 fixture 研究。 |
+| 需 Owner 单独授权 | 自动发现每日热门币、自动日更、任何新增 provider、真实 PostgreSQL/Redis、后台队列、WS/SSE、告警、Telegram/social、BSC 或 Robinhood。 |
+| 当前禁止实施 | cron、后台循环、自动抓币、生产数据库/缓存/队列写入、provider fallback、多链生产化、把外部标签当链上事实、把受限首查包装成完整 Pump/Dev/creator/地址库分析。 |
+
+Owner 已选择每日关注量为 5–10 个币，但当前含义是**人工精选后手动
+触发**，不是授权系统自动发现、自动调度或自动沉淀。
+
+本文 §3b、§4d、Phase 2/4 以及所有实时 Feed 基础设施描述保留为历史
+研究背景；若与上表或 binding 文件冲突，以上表和 binding 文件为准。
+
 ## 0. Owner 新方向解读（请确认理解是否准确）
 
 核心目标从"孤立本地数据层"转为 **"混合数据 + 秒级 CA 分析的实战辅助工具"**。三条硬需求：

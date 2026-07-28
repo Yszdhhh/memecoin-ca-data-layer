@@ -63,3 +63,20 @@ collapse.
 16. **BSC stage (item 6):** DECIDED for now 鈥?**do not activate BSC**. Remains
     `BLOCKED_STAGE` until Solana E2E is GREEN and Owner revisits.
 17. **Credential-containment and limited Live E2E authorization (Owner, 2026-07-27):** The Owner authorizes the secret-containment scan and a Solana-only, read-only, quota-limited Helius Live implementation/E2E after the scan is GREEN. Credentials must remain outside the repository and Harness artifacts; the runtime must fail closed when `HELIUS_API_KEY` is absent. BSC, automation, and production database writes remain disabled.
+
+## Current live-lane decisions — DECIDED (Owner, 2026-07-28)
+
+18. **Provider boundary:** the current runtime is **Helius-only**. Do not add a
+    provider or fallback without a new Owner decision.
+19. **Daily selection volume:** focus on **5–10 manually selected tokens**.
+    Selection and execution stay manual. This does not enable cron, background
+    loops, automatic discovery, automatic daily updates or automatic
+    address-library sedimentation.
+20. **Alpha Terminal research:** retain the product, interaction and schema
+    research, but do not treat it as implementation authority. Automatic Feed,
+    Redis/WS/alerts, real persistence, social ingestion and multichain work
+    remain separately Owner-gated.
+
+These later decisions override older blueprint passages that discuss a
+multi-provider hot path or an automatic growth loop as if they were current
+implementation scope.

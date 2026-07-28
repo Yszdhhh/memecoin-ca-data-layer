@@ -6,7 +6,7 @@
   "role": "coordinator",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Align the project blueprint, current wave, limitations, Owner decisions, and Alpha Terminal research draft with the verified manual Solana Helius CA-first scope. Separate current executable work, retained research, Owner-gated work, and currently forbidden automation or infrastructure.",
   "dependencies": ["SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001", "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001", "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001"],
   "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_ARCHITECTURE.md", "OWNER_DECISIONS_NEEDED.md", "KNOWN_LIMITATIONS.md", "harness/CURRENT_WAVE.md", "docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],

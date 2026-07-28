@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T09:40:00.000000Z",
+  "updated_at_utc": "2026-07-28T10:00:00.000000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -525,7 +525,7 @@
     {
       "task_id": "PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001",
       "spec": "harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
