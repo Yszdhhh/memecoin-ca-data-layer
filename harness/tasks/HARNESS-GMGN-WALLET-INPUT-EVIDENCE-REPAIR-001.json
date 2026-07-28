@@ -6,7 +6,7 @@
     "role":  "implementer",
     "chain":  "solana",
     "layer":  "input",
-    "status":  "READY",
+    "status":  "DONE",
     "objective":  "Repair only the tracked-input evidence declaration that parked SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001: replace its nonexistent harness/reports Helius recency-audit input with the existing tracked docs/audits/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001.md document, update the existing sanitized acceptance report to reflect repaired local acceptance, and update task/ledger statuses. Do not call GMGN, Helius or any network provider; do not alter any live result, source code, wallet input, metric, warning code or request bound. Re-run local Harness acceptance checks only.",
     "dependencies":  [
                          "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001"

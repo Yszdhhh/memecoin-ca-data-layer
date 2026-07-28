@@ -6,7 +6,7 @@
     "role":  "implementer",
     "chain":  "solana",
     "layer":  "input",
-    "status":  "PARK",
+    "status":  "DONE",
     "objective":  "Under the Owner-authorized GMGN credential, perform one manual, read-only GMGN portfolio-statistics screen for exactly the eleven frozen public Solana wallets listed below. Strictly Base58-decode and validate every wallet as exactly 32 bytes before constructing the command or issuing any provider call. Invoke the installed gmgn-cli portfolio stats command exactly once for period 7d and exactly once for period 30d, with all eleven wallets supplied to each invocation, no pagination, retry, fallback, discovery or other GMGN command. Capture all command output only in memory; retain and commit only a sanitized report containing the wallet, unverified user label, period, status, allowed numeric aggregate fields that are successfully parsed from the documented response shape, and stable safe warning codes. If the provider response cannot be parsed, record only a safe shape/unavailable code. Cross-reference the already committed bounded Helius activity evidence only as an independent first-hand-activity coverage limitation; do not issue a Helius call in this task. GMGN-derived statistics are borrowed and unverified inputs: do not calculate, assign or claim Alpha N/R/SR/SSR/UR tiers, realized PnL, win rate, wallet quality, clustering, address-library admission or chain-verified profitability.",
     "dependencies":  [
                          "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001"
@@ -15,7 +15,7 @@
                    "src/domain/solana-address.ts",
                    "node_modules/gmgn-cli",
                    "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001/acceptance.md",
-                   "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001/acceptance.md"
+                   "docs/audits/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001.md"
                ],
     "write_set":  [
                       "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",

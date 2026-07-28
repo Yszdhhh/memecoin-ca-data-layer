@@ -2,7 +2,7 @@
 
 ## Outcome
 
-**PARK — the bounded live GMGN screen completed, but its Harness acceptance is parked because the task spec declared one nonexistent tracked input file.**
+**GREEN_WITH_ADVISORY — one manual, Solana-only, read-only GMGN portfolio-statistics screen completed within the declared two-invocation limit, but it yielded no safely mappable aggregate metrics for the eleven-wallet batch.**
 
 - Executed on: `2026-07-28`
 - Chain: Solana only
@@ -58,4 +58,4 @@ All labels are user-provided and unverified. `PARTIAL` and `UNAVAILABLE` below a
 
 ## Harness acceptance status
 
-The live read itself stayed within its two-invocation bound, but `npm run harness:doctor` failed because the task spec referenced a nonexistent report path. This is a tracked-input evidence defect, not a provider result. No additional GMGN request may be made to repair it. `HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001` is dispatched to replace the nonexistent path with the existing tracked audit document and rerun only local acceptance checks.
+`HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001` replaced the nonexistent Helius audit-report input with the existing tracked audit document, then reran local Harness acceptance only. No GMGN, Helius or other provider request occurred during the repair. The repaired task spec validates and the local acceptance gate is reproducible.
