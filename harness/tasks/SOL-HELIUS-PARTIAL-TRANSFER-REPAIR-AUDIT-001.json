@@ -5,7 +5,7 @@
   "tier": "T3",
   "role": "auditor",
   "chain": "solana",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and read-only audit SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001. Confirm that an invalid transaction core (signature, slot or timestamp) still fails closed; that an individual token-transfer or native-transfer event which cannot be safely normalized is omitted rather than fabricated; and that any such omission marks the source response watermark partial. Confirm focused tests cover both the partial-event path and core-transaction rejection. Confirm the tracked eleven-wallet report only exposes frozen wallet addresses, user-provided-unverified labels, bounded aggregate activity dates/counts, partial completeness and slots; contains no raw provider content or credentials; and correctly states that every returned page is capped at 100 and not complete history. Verify the implementation did not add providers, fallbacks, endpoint changes, databases, caches, queues, address libraries, schedules, production writes, PnL, profit, win-rate, classification, CA linkage, clustering or other unsupported claims. This audit is read-only: do not execute any provider request, inspect credential values, rerun the smoke, or modify application source, tests or implementation report. Do not use the ignored Harness run manifest as a DONE-task input artifact; establish the conclusion only from tracked task, ledger, source, tests and report evidence.",
   "dependencies": [
     "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001"

@@ -657,7 +657,7 @@
     {
       "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
