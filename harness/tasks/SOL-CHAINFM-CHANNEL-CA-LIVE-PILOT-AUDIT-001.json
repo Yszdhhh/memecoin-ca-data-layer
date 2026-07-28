@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001",
+  "title": "Audit the Chain.fm channel CA-first live pilot",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Independently and read-only verify that SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001 froze exactly seven public Solana token CAs from the stated Owner-directed manual Chain.fm channel review, used one Helius-only bounded CA-first invocation, preserved strict Base58 and 32-byte validation before source construction, respected the at-most-three-lookups-per-CA and twenty-one-maximum-request boundary, and recorded only sanitized normalized evidence. Confirm that the report correctly marks all Chain.fm labels and displayed market-cap figures as borrowed and unverified, does not treat opaque Chain.fm account identifiers as Solana wallets, accurately reports the all-unavailable Helius transport outcome, and makes no holder concentration, creator/Dev, wallet PnL, win-rate, wallet-classification, scheduling or token-quality claim.",
+  "dependencies": [
+    "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001.json",
+    "harness/reports/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001/acceptance.md",
+    "harness/runs/20260728_SOL_CHAINFM_CHANNEL_CA_LIVE_PILOT_001/manifest.json",
+    "harness/ledger/tasks.json",
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, GMGN, Chain.fm or any network provider during this audit.",
+    "Do not inspect, print, save or record credentials, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text or ignored Harness logs.",
+    "Do not automate, scrape, reverse engineer or bypass Chain.fm access controls.",
+    "Do not modify runtime source, tests, provider behavior, chain scope, automation, persistence, cache, queue, production infrastructure or the implementation acceptance report.",
+    "Do not reinterpret unavailable data or bounded token-account results as holder concentration, clustering, creator/Dev analysis, wallet PnL, wallet classification, token quality or a completed daily batch."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
