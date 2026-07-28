@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T08:20:00.000000Z",
+  "updated_at_utc": "2026-07-28T09:00:00.000000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -501,6 +501,11 @@
       "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "ALPHA-TERMINAL-DESIGN-IMPORT-001",
+      "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json",
+      "status": "READY"
     }
   ]
 }
