@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001",
+  "title": "Rename the daily DPAPI configuration script to satisfy tracked-file policy",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "harness",
+  "status": "READY",
+  "objective": "Repair the repository-level forbidden tracked filename finding introduced by SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001. Rename scripts/set-solana-daily-secrets.ps1 to scripts/configure-solana-daily-credentials.ps1 without changing its DPAPI behavior, update only exact references in the runner, registration script and runbook, and restore harness:doctor GREEN.",
+  "dependencies": [
+    "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001"
+  ],
+  "inputs": [
+    "scripts/set-solana-daily-secrets.ps1",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md",
+    "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "scripts/set-solana-daily-secrets.ps1",
+    "scripts/configure-solana-daily-credentials.ps1",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "forbidden_actions": [
+    "Do not change discovery, Helius analysis, report schema, endpoint behavior, scheduling policy or credential storage behavior.",
+    "Do not display, persist or record plaintext credentials.",
+    "Do not modify files outside the exact write set."
+  ],
+  "deliverables": [
+    "scripts/configure-solana-daily-credentials.ps1",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
