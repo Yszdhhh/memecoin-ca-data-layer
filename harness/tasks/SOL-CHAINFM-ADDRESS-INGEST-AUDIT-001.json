@@ -5,7 +5,7 @@
   "tier": "T2",
   "role": "auditor",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit SOL-CHAINFM-ADDRESS-INGEST-001 for fail-closed behavior, label fidelity, strict address normalization, zero repository leakage of external inputs, and zero network access.",
   "dependencies": ["SOL-CHAINFM-ADDRESS-INGEST-001"],
   "inputs": [

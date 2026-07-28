@@ -15,7 +15,8 @@
     "macro:daily:core": "tsx src/cli/run-macro-daily-core.ts",
     "solana:live:ca-first": "tsx src/cli/run-solana-live-ca-first.ts",
     "solana:live:ca-batch": "tsx src/cli/run-solana-live-ca-batch.ts",
-    "solana:daily:new-token-analysis": "tsx src/cli/run-solana-daily-new-token-analysis.ts"
+    "solana:daily:new-token-analysis": "tsx src/cli/run-solana-daily-new-token-analysis.ts",
+    "solana:chainfm:clean": "tsx src/cli/clean-solana-chainfm-addresses.ts"
   },
   "dependencies": {
     "gmgn-cli": "1.5.4",

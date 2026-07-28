@@ -715,12 +715,12 @@
     {
       "task_id": "SOL-CHAINFM-ADDRESS-INGEST-001",
       "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001",
       "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }
