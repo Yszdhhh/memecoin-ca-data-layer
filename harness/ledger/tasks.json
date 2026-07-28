@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T05:57:42.035Z",
+  "updated_at_utc": "2026-07-28T06:30:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -561,6 +561,11 @@
       "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",
+      "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json",
+      "status": "READY"
     }
   ]
 }
