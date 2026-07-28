@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair the Harness metadata for SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001 by removing its sole untracked local run-manifest path from the completed audit task's inputs. Preserve the audit report, implementation report, task objectives, task statuses, ledger status of the completed audit, runtime source and all live-result evidence unchanged. Record a concise repair report showing that the completed audit's remaining inputs are Git-tracked and that no network or provider action was performed.",
   "dependencies": [
     "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001"

@@ -615,7 +615,7 @@
     {
       "task_id": "HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001",
       "spec": "harness/tasks/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

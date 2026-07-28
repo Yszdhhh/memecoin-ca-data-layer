@@ -14,7 +14,6 @@
   "inputs": [
     "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001.json",
     "harness/reports/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001/acceptance.md",
-    "harness/runs/20260728_SOL_CHAINFM_CHANNEL_CA_LIVE_PILOT_001/manifest.json",
     "harness/ledger/tasks.json",
     "src/domain/solana-address.ts",
     "src/application/live/solana-live-ca-batch.ts",
