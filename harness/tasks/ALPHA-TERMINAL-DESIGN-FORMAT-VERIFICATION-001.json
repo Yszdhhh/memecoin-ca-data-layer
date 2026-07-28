@@ -6,7 +6,7 @@
   "role": "coordinator",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Record a fresh integrity baseline for the Alpha Terminal research draft after its whitespace-only normalization, without accepting the draft as implementation authority or changing runtime behavior.",
   "dependencies": ["ALPHA-TERMINAL-DESIGN-IMPORT-001"],
   "inputs": ["harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
