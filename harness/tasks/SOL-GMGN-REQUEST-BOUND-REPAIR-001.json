@@ -1,0 +1,52 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-001",
+  "title": "Repair truthful GMGN retry request bound",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Repair the failed independent audit finding by making the bounded daily report truthfully account for the pinned gmgn-cli@1.5.4 rate-limit retry path. Keep one fixed GMGN discovery invocation, but declare and test a maximum of two underlying GMGN HTTP attempts, while preserving all existing Solana-only, read-only, sanitization, candidate-count, market-cap, age, Helius request and persistence boundaries.",
+  "dependencies": [
+    "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",
+    "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001"
+  ],
+  "inputs": [
+    "docs/audits/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.md",
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "forbidden_actions": [
+    "Do not change the fixed GMGN discovery command, candidate eligibility rules, provider selection or pinned gmgn-cli version.",
+    "Do not add another provider, chain, discovery query, background loop, database, cache, queue, address library or trading capability.",
+    "Do not call GMGN or Helius and do not inspect or display credential values.",
+    "Do not retain or emit raw provider payloads, arbitrary provider text, full exception text, API keys or credential-bearing URLs.",
+    "Do not change the Helius request budget or reinterpret GMGN claims as independently verified facts.",
+    "Do not write outside the exact repair write set."
+  ],
+  "deliverables": [
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
