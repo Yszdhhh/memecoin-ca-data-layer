@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "PARK",
   "objective": "Manually invoke the existing bounded Helius-only CA batch once for these ten fixed, public, locally validated Solana CAs: H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump, EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump, H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump, Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump, Ge87EtsjwRQbHaqQmKRno69RFTwh9bfSsm99XNxTpump, 9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump, BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump, 4NBTf8PfLH4oLFnwf3knv46FY9i5oXjDxffCetXRpump, Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump, 9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump. The candidates were selected once from a GMGN read-only Solana 1h trending query with market cap above USD 1,000,000, then frozen here as explicit operator input. Record only a scrubbed per-CA summary containing CA, status, completeness, bounded counts, slot, warning code and request-budget result.",
   "dependencies": [
     "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
