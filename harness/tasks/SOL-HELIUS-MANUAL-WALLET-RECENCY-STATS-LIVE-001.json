@@ -1,0 +1,45 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001",
+  "title": "Run one bounded Helius recency and aggregate-statistics read for eleven owner-supplied Solana wallets",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Manually execute exactly one Helius-only enhanced-address transaction-history read for each of these eleven Owner-supplied public Solana wallets: 5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT (user_label: 高胜率, user-provided and unverified); EzbeF2bADKo6GutJyWmgodyGJFeBPhcrXSdZUXPX5WGc (user_label: profit 小号, user-provided and unverified); 4jRX4iW2F5wBnfYMyB7RjS2PU5MjXrST3fB9DoV4BjHa (user_label: Sun小号, user-provided and unverified); A44rJ9RcW1RhDdtNMr3FHm8GhanM9aQ5Kqhc6VqnCmff (user_label: 0xSun 2, user-provided and unverified); 5wQaABAbgA52cBks6zqXmk9nFftZgy18f78im6UxXhNU (user_label: James, user-provided and unverified); HyriMMiB1aTi1y6EwUAHUGw2pgF995fzXhiEZAQWF2ib (user_label: 落魄山, user-provided and unverified); 79CxhdY2TeFHpGNcaHgnHJTWnv7KA3KgMFoeHrJg77ru (user_label: jingtao, user-provided and unverified); 8K5276kWCmRnS1TLTAKxRznM6NehtHkqCVWxcQhzHrwF (user_label: 镭射猫, user-provided and unverified); DXAEnomAr94Mt1EQzEVts2pUBjJ32A48iaUinPRh9qrK (user_label: 镭射猫, user-provided and unverified); A8CQVwoP5dyb3qmrG8YeZvD5jsrqF5UL8aruLjR6qWbH (user_label: sol挑战赛第二, user-provided and unverified); EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt (user_label: DNF小号, user-provided and unverified). Strictly Base58-decode and validate every input as exactly 32 bytes before creating any data source or issuing any request. For each validated wallet, issue at most one existing allowlisted Helius enhanced-address history request with a request budget of one and no pagination, retaining no raw response after reducing it in memory to a sanitized latest returned-page summary. The query lower bound is 2020-01-01T00:00:00.000Z solely to retain the provider's bounded newest returned page (at most 100 records); it is not complete history. The report may include only the frozen wallet address, user-provided-unverified label, status, latest and oldest observed activity date, returned transaction count, token-transfer event count, native-transfer event count, bounded-page completeness, latest observed slot and safe warning code. It must explicitly state that this is not PnL, realized profit, win rate, wallet classification, address clustering, CA linkage, holder concentration, creator/Dev history, token recommendation, or complete transaction history.",
+  "dependencies": [
+    "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not add, discover, infer, guess, substitute, classify or cluster wallet addresses; the eleven inputs are frozen in this task spec.",
+    "Do not treat any user label as an on-chain-verified fact, proof of profitability, proof of common ownership or a wallet category.",
+    "Do not call GMGN, Dune, Chain.fm, BSC, Robinhood or any provider other than Helius.",
+    "Do not paginate, repeat the batch, retry through another provider, or exceed one Helius enhanced-address request per frozen wallet and eleven requests total.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, transaction signatures, counterparties, token mints, arbitrary provider text or full exception text.",
+    "Do not calculate or claim PnL, realized profit, win rate, wallet quality, wallet classification, address clustering, CA linkage, holder concentration, creator/Dev history, token recommendations or complete history.",
+    "Do not write a database, cache, queue, address library, scheduler, production system, trade, transaction, signature, order or swap.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T14:00:00.000Z",
+  "updated_at_utc": "2026-07-28T14:30:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -628,6 +628,12 @@
       "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.json",
       "status": "DONE"
+    }
+,
+    {
+      "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001.json",
+      "status": "READY"
     }
   ]
 }
