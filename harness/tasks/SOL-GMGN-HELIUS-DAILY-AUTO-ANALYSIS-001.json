@@ -36,7 +36,7 @@
     "src/application/live/solana-daily-new-token-analysis.ts",
     "src/cli/run-solana-daily-new-token-analysis.ts",
     "src/infrastructure/solana/helius/live-helius-data-source.ts",
-    "scripts/set-solana-daily-secrets.ps1",
+    "scripts/configure-solana-daily-credentials.ps1",
     "scripts/run-solana-daily-new-token-analysis.ps1",
     "scripts/register-solana-daily-new-token-analysis.ps1",
     "test/application/discovery/gmgn-daily-token-selector.test.ts",
@@ -59,7 +59,7 @@
     "src/application/discovery/gmgn-daily-token-selector.ts",
     "src/application/live/solana-daily-new-token-analysis.ts",
     "src/cli/run-solana-daily-new-token-analysis.ts",
-    "scripts/set-solana-daily-secrets.ps1",
+    "scripts/configure-solana-daily-credentials.ps1",
     "scripts/register-solana-daily-new-token-analysis.ps1",
     "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
   ],

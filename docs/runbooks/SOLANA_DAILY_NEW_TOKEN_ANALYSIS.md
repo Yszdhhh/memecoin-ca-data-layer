@@ -1,4 +1,4 @@
-﻿# Solana daily new-token analysis
+# Solana daily new-token analysis
 
 ## Current capability
 
@@ -21,7 +21,7 @@ The workflow does not write a database, cache, queue, production service, or tra
 Run this once as the same Windows user that will own the scheduled task:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\set-solana-daily-secrets.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\configure-solana-daily-credentials.ps1
 ```
 
 The script securely prompts for `GMGN_API_KEY` and `HELIUS_API_KEY`. It stores Windows DPAPI-encrypted values under `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets` and never prints the plaintext values.

@@ -1,4 +1,4 @@
-﻿param(
+param(
   [ValidateSet('mainnet', 'gatekeeper_beta')]
   [string]$HeliusRpcEndpointMode = 'gatekeeper_beta',
   [string]$SecretDirectory = (Join-Path $env:LOCALAPPDATA 'memecoin-ca-data-layer\secrets')
@@ -15,7 +15,7 @@ function Read-DpapiSecret {
 
   $path = Join-Path $SecretDirectory "$Name.dpapi"
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    throw "$Name is not configured. Run scripts\set-solana-daily-secrets.ps1 as the same Windows user."
+    throw "$Name is not configured. Run scripts\configure-solana-daily-credentials.ps1 as the same Windows user."
   }
 
   $encrypted = [System.IO.File]::ReadAllText($path, [System.Text.Encoding]::UTF8).Trim()

@@ -570,6 +570,7 @@
     {
       "task_id": "SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001",
       "spec": "harness/tasks/SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001.json",
-      "status": "READY"
-    }  ]
+      "status": "DONE"
+    }
+  ]
 }

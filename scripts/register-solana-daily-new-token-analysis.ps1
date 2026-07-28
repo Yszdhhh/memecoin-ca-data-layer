@@ -1,4 +1,4 @@
-﻿param(
+param(
   [ValidatePattern('^([01]\d|2[0-3]):[0-5]\d$')]
   [string]$At = '09:00',
   [string]$TaskName = 'Memecoin CA Daily Solana Analysis',
@@ -14,7 +14,7 @@ if (-not (Test-Path -LiteralPath $runner -PathType Leaf)) {
 }
 foreach ($name in @('GMGN_API_KEY', 'HELIUS_API_KEY')) {
   if (-not (Test-Path -LiteralPath (Join-Path $SecretDirectory "$name.dpapi") -PathType Leaf)) {
-    throw "$name is not configured. Run scripts\set-solana-daily-secrets.ps1 first."
+    throw "$name is not configured. Run scripts\configure-solana-daily-credentials.ps1 first."
   }
 }
 
