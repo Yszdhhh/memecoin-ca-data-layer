@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001 without any provider or credential access. Verify from the committed parser, unit tests, bounded live runner, task spec, Harness manifest and sanitized acceptance report that: all output fields are allowlisted wallet/period aggregate values or stable safe codes; unknown provider keys/values cannot be emitted; every frozen wallet is Base58/32-byte validated before spawn; the runner has exactly two allowed period invocations and no retry, pagination, Helius, fallback or persistence path; mapped observations remain borrowed_unverified; reported period PnL is not labeled as cumulative/all-time or chain-verified profit; and the report contains no raw payload, credential-bearing URL, API key, arbitrary provider text, signature, counterparty, mint or trade record. Re-run the declared local acceptance commands only. Record GREEN_WITH_ADVISORY if the code/report evidence passes while GMGN supplied mapped aggregates for fewer than all eleven frozen wallets; do not call a provider to fill the gap.",
   "dependencies": [
     "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001"
