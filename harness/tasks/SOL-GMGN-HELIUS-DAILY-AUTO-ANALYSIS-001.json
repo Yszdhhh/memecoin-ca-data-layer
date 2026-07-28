@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Implement an operator-enabled daily workflow that queries only the official pinned gmgn-cli for Solana trending candidates created no more than 24 hours ago with current provider-reported market cap strictly above USD 1,000,000, sorts by market cap descending, selects at most 10 strictly validated unique Solana CAs, requires at least 5 candidates without padding or guessing, then invokes the existing bounded read-only Helius CA-first path and writes only a sanitized local daily report. The report may include allowlisted numeric GMGN market/risk/address claims with explicit unverified-provider provenance and Helius mint/metadata/token-account availability, count, completeness, slots and warning codes. Add an allowlisted Helius RPC endpoint mode for mainnet or the same-provider Gatekeeper beta because the current host resolves mainnet.helius-rpc.com to loopback while beta.helius-rpc.com is reachable. Add Windows DPAPI secret injection and an explicit Task Scheduler registration script; registration is opt-in and the one-shot command remains independently runnable.",
   "dependencies": [
     "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",

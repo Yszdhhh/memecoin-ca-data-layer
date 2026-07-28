@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   HeliusAddressTag,
   HeliusTokenMetadata,
   HeliusTransaction,
@@ -12,8 +12,11 @@ import type {
 import { SourceDataUnavailableError } from "./helius-solana-adapter.js";
 import { normalizeSolanaAddress } from "../../../domain/solana-address.js";
 
+export type HeliusRpcEndpointMode = "mainnet" | "gatekeeper_beta";
+
 export interface LiveHeliusDataSourceOptions {
   apiKey?: string;
+  rpcEndpointMode?: HeliusRpcEndpointMode;
   fetchImpl?: typeof fetch;
   now?: () => Date;
   requestBudget?: number;
@@ -21,20 +24,24 @@ export interface LiveHeliusDataSourceOptions {
   timeoutMs?: number;
 }
 
-const RPC_ENDPOINT = "https://mainnet.helius-rpc.com/";
+const RPC_ENDPOINTS: Record<HeliusRpcEndpointMode, string> = {
+  mainnet: "https://mainnet.helius-rpc.com/",
+  gatekeeper_beta: "https://beta.helius-rpc.com/",
+};
 const ENHANCED_API_ENDPOINT = "https://api-mainnet.helius-rpc.com/";
 const DEFAULT_REQUEST_BUDGET = 8;
 const DEFAULT_MIN_REQUEST_INTERVAL_MS = 150;
 const DEFAULT_TIMEOUT_MS = 5_000;
 
 /**
- * Small, read-only Helius boundary for the explicitly owner-gated live smoke.
+ * Small, read-only Helius boundary for bounded owner-approved live reads.
  * It keeps transport credentials in process memory only and never persists raw
  * provider responses. Missing, malformed, throttled, or incomplete critical
  * responses fail closed rather than falling back to another RPC provider.
  */
 export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   private readonly apiKey: string;
+  private readonly rpcEndpoint: string;
   private readonly fetchImpl: typeof fetch;
   private readonly now: () => Date;
   private readonly requestBudget: number;
@@ -48,6 +55,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     const apiKey = options.apiKey?.trim();
     if (!apiKey) throw new SourceDataUnavailableError("helius_runtime_credential_unavailable");
     this.apiKey = apiKey;
+    this.rpcEndpoint = RPC_ENDPOINTS[runtimeRpcEndpointMode(options.rpcEndpointMode)];
     this.fetchImpl = options.fetchImpl ?? fetch;
     this.now = options.now ?? (() => new Date());
     this.requestBudget = positiveInteger(options.requestBudget ?? DEFAULT_REQUEST_BUDGET, "request budget");
@@ -60,9 +68,10 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
 
   static fromRuntime(options: Omit<LiveHeliusDataSourceOptions, "apiKey"> = {}): LiveHeliusDataSource {
     const apiKey = process.env.HELIUS_API_KEY;
+    const rpcEndpointMode = runtimeRpcEndpointMode(process.env.HELIUS_RPC_ENDPOINT_MODE);
     return apiKey === undefined
-      ? new LiveHeliusDataSource(options)
-      : new LiveHeliusDataSource({ ...options, apiKey });
+      ? new LiveHeliusDataSource({ ...options, rpcEndpointMode })
+      : new LiveHeliusDataSource({ ...options, apiKey, rpcEndpointMode });
   }
 
   async getMint(ca: string): Promise<SourceResponse<RpcMint | null>> {
@@ -156,7 +165,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   }
 
   private async rpc(method: string, params: unknown): Promise<unknown> {
-    const url = new URL(RPC_ENDPOINT);
+    const url = new URL(this.rpcEndpoint);
     url.searchParams.set("api-key", this.apiKey);
     const payload = await this.request(url, {
       jsonrpc: "2.0",
@@ -236,6 +245,12 @@ function requiredAddress(value: string): string {
   const address = normalizeSolanaAddress(value);
   if (address === null) throw new SourceDataUnavailableError("helius_address_invalid");
   return address;
+}
+
+function runtimeRpcEndpointMode(value: string | undefined): HeliusRpcEndpointMode {
+  const normalized = value?.trim() || "mainnet";
+  if (normalized === "mainnet" || normalized === "gatekeeper_beta") return normalized;
+  throw new SourceDataUnavailableError("helius_rpc_endpoint_mode_invalid");
 }
 
 function positiveInteger(value: number, context: string): number {

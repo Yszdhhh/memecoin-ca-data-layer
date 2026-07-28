@@ -163,3 +163,43 @@ test("live Helius source rejects unavailable facts instead of fabricating tags o
   await assert.rejects(() => source.getAddressTags(["PublicAddress"]), /helius_address_tags_unavailable/);
   await assert.rejects(() => source.getWalletFacts(["PublicAddress"], new Date()), /helius_wallet_facts_unavailable/);
 });
+
+test("live Helius source supports only the allowlisted gatekeeper beta RPC endpoint", async () => {
+  const requests: URL[] = [];
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    rpcEndpointMode: "gatekeeper_beta",
+    minRequestIntervalMs: 0,
+    fetchImpl: async (input) => {
+      assert.ok(input instanceof URL);
+      requests.push(new URL(input));
+      return json({
+        result: {
+          context: { slot: 123 },
+          value: { data: { parsed: { type: "mint", info: { supply: "1", decimals: 0 } } } },
+        },
+      });
+    },
+  });
+
+  await source.getMint(publicCa);
+  assert.equal(requests[0]?.origin, "https://beta.helius-rpc.com");
+});
+
+test("runtime Helius endpoint mode fails closed instead of accepting an arbitrary URL", () => {
+  const previousKey = process.env.HELIUS_API_KEY;
+  const previousMode = process.env.HELIUS_RPC_ENDPOINT_MODE;
+  try {
+    Reflect.set(process.env, "HELIUS_API_KEY", unitCredential);
+    Reflect.set(process.env, "HELIUS_RPC_ENDPOINT_MODE", "https://attacker.invalid");
+    assert.throws(
+      () => LiveHeliusDataSource.fromRuntime(),
+      (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_rpc_endpoint_mode_invalid",
+    );
+  } finally {
+    if (previousKey === undefined) Reflect.deleteProperty(process.env, "HELIUS_API_KEY");
+    else Reflect.set(process.env, "HELIUS_API_KEY", previousKey);
+    if (previousMode === undefined) Reflect.deleteProperty(process.env, "HELIUS_RPC_ENDPOINT_MODE");
+    else Reflect.set(process.env, "HELIUS_RPC_ENDPOINT_MODE", previousMode);
+  }
+});
