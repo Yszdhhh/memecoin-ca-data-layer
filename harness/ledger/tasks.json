@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T10:40:00.000000Z",
+  "updated_at_utc": "2026-07-28T11:00:00.000000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -540,7 +540,7 @@
     {
       "task_id": "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001",
       "spec": "harness/tasks/HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

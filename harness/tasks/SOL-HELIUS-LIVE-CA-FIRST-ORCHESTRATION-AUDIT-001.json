@@ -13,7 +13,6 @@
   ],
   "inputs": [
     "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
-    "harness/runs/SOL_HELIUS_LIVE_CA_FIRST_ORCH_001/manifest.json",
     "src/application/live/solana-live-ca-first.ts",
     "src/cli/run-solana-live-ca-first.ts",
     "test/application/live/solana-live-ca-first.test.ts",

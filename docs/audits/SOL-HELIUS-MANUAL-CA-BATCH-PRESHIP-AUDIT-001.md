@@ -7,8 +7,8 @@ GREEN
 ## Scope reviewed
 
 The audit covered the manual Solana CA batch, its bounded CA-first reader,
-command-line wiring, focused tests, default test command, and the completed
-repair run. The review was offline and made no provider request.
+command-line wiring, focused tests, default test command, and the committed
+repair task. The review was offline and made no provider request.
 
 ## Evidence and findings
 
@@ -28,9 +28,9 @@ repair run. The review was offline and made no provider request.
   path in the batch.
 - The default test command now quotes its recursive pattern and executes the
   complete test suite rather than only shallow test files.
-- Repair run `SOL_HELIUS_MANUAL_CA_BATCH_PRESHIP_REPAIR_001` is GREEN under
-  agent `codex-preship-implementer`. All five acceptance commands passed,
-  write scope was valid, and the secret-content check passed.
+- The committed repair task, source, CLI and focused tests form the public
+  review surface. Local Harness run directories are intentionally Git-ignored
+  and are not claimed as public evidence.
 - This audit runs under the distinct agent identity
   `codex-preship-auditor`.
 

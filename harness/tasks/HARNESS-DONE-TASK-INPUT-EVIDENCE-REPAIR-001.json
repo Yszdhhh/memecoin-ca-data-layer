@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Remove the remaining Git-ignored local run-manifest inputs from completed CA-first audit tasks and correct their reports so every declared repository input is committed and independently reviewable.",
   "dependencies": ["HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001"],
   "inputs": ["harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.json", "docs/audits/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.md", "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json", "docs/audits/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.md"],

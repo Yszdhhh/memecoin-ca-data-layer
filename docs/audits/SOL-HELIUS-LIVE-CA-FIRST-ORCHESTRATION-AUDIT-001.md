@@ -7,8 +7,8 @@ GREEN
 ## Scope reviewed
 
 The review covered the manual Solana CA-first entrypoint, its command-line
-wrapper, its focused tests, and the completed implementation run manifest. No
-live provider request was made during this audit.
+wrapper, its focused tests, and the committed implementation task. No live
+provider request was made during this audit.
 
 ## Evidence and findings
 
@@ -27,9 +27,9 @@ live provider request was made during this audit.
   entrypoint or wrapper.
 - The focused test suite passed: successful bounded result, safe degradation,
   invalid-address rejection before a source call, and transport-text redaction.
-- The implementation run `SOL_HELIUS_LIVE_CA_FIRST_ORCH_001` is GREEN with all
-  declared acceptance commands passed, its write scope valid, and its
-  secret-content integrity gate passing.
+- The committed implementation task, source, CLI and focused tests form the
+  public review surface. Local Harness run directories are intentionally
+  Git-ignored and are not claimed as public evidence.
 
 ## Boundary statement
 
