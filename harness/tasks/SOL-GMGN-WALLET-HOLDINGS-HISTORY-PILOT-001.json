@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "After confirming only the presence of GMGN_API_KEY and GMGN_PRIVATE_KEY, manually run exactly one signed, read-only GMGN `portfolio holdings` request for the one frozen Owner-supplied public Solana wallet below. Strictly Base58-decode and validate the wallet as exactly 32 bytes before spawning the CLI. Use the installed gmgn-cli with Solana, limit 50, total-profit descending, hide-abnormal true, hide-airdrop true and hide-closed false so the pilot can establish only whether the first returned page exposes documented historical-profit and activity fields. Capture stdout/stderr only in process memory; commit only a sanitized report containing safe request-bound evidence, response-shape availability, first-page bounded counts and allowlisted numeric aggregates if safely parsed. This is a borrowed/unverified provider observation, not a full wallet-history, a chain-confirmed PnL result, a quality judgment or an Alpha tier.",
   "dependencies": [
     "HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001"
