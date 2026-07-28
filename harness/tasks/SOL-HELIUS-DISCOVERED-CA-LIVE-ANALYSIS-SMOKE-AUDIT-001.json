@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001 used exactly the two public Solana CAs frozen in its task spec, executed the existing bounded Helius-only read-only CA-first batch once, preserved strict address validation and request bounds, recorded only sanitized normalized evidence, and truthfully reported DEGRADED partial availability without claiming holder concentration, creator or Dev analysis, wallet classification, daily 5-to-10 batch completion or scheduling readiness.",
   "dependencies": [
     "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001"

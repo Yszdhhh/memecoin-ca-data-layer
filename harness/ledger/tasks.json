@@ -600,7 +600,7 @@
     {
       "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
