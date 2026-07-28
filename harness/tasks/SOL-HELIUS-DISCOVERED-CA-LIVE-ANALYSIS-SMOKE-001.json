@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Manually run the existing bounded read-only Helius CA-first batch exactly once for the two public Solana CAs returned by SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001: 9ufyZ2pyL9Apa7fB7JdHnSujhYTQ4Y19qNdBEgJUpump and EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump. Use only the allowlisted Helius Gatekeeper beta endpoint mode, validate both addresses before source construction, cap each CA at three Helius requests and the run at six, and record only a sanitized CA-first summary. This is a two-CA diagnostic smoke and must not be represented as the daily 5-to-10-candidate production batch.",
   "dependencies": [
     "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001"
