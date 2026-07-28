@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  isSolanaAddress,
   readSolanaLiveCaFirst,
+  readSolanaLiveCaFirstWithFactory,
   SOLANA_LIVE_CA_FIRST_VERSION,
   type SolanaLiveCaFirstSource,
 } from "../../../src/application/live/solana-live-ca-first.js";
@@ -83,6 +85,23 @@ test("manual CA-first rejects an invalid CA without calling the live source", as
   assert.deepEqual(result.completeness, { state: "unavailable", availableFields: 0, requiredFields: 3 });
   assert.deepEqual(result.warnings, ["solana_ca_invalid"]);
   assert.equal(calls, 0);
+});
+
+test("manual CA-first validates a 32-byte Base58 address before source construction", async () => {
+  let created = 0;
+  const result = await readSolanaLiveCaFirstWithFactory("not-a-solana-ca", () => {
+    created += 1;
+    return source();
+  });
+
+  assert.equal(result.status, "REJECTED");
+  assert.deepEqual(result.warnings, ["solana_ca_invalid"]);
+  assert.equal(created, 0);
+  assert.equal(isSolanaAddress(ca), true);
+  assert.equal(isSolanaAddress(` ${ca} `), true);
+  assert.equal(isSolanaAddress("1".repeat(31)), false);
+  assert.equal(isSolanaAddress("1".repeat(33)), false);
+  assert.equal(isSolanaAddress(`${ca}0`), false);
 });
 
 test("manual CA-first never returns arbitrary transport error text", async () => {

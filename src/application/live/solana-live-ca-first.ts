@@ -4,6 +4,9 @@ import type {
   RpcTokenAccount,
   SourceResponse,
 } from "../../infrastructure/solana/helius/helius-solana-adapter.js";
+import { normalizeSolanaAddress } from "../../domain/solana-address.js";
+
+export { isSolanaAddress } from "../../domain/solana-address.js";
 
 export const SOLANA_LIVE_CA_FIRST_VERSION = "solana-live-ca-first-v1";
 
@@ -48,9 +51,25 @@ export async function readSolanaLiveCaFirst(
   tokenCa: string,
   source: SolanaLiveCaFirstSource,
 ): Promise<SolanaLiveCaFirstResult> {
-  const ca = tokenCa.trim();
-  if (!isSolanaAddress(ca)) return rejectedResult(ca, "solana_ca_invalid");
+  const ca = normalizeSolanaAddress(tokenCa);
+  if (ca === null) return rejectedResult(tokenCa.trim(), "solana_ca_invalid");
+  return readValidatedSolanaLiveCaFirst(ca, source);
+}
 
+/** Validates before constructing the runtime source, keeping invalid input away from credentials. */
+export async function readSolanaLiveCaFirstWithFactory(
+  tokenCa: string,
+  sourceFactory: () => SolanaLiveCaFirstSource,
+): Promise<SolanaLiveCaFirstResult> {
+  const ca = normalizeSolanaAddress(tokenCa);
+  if (ca === null) return rejectedResult(tokenCa.trim(), "solana_ca_invalid");
+  return readValidatedSolanaLiveCaFirst(ca, sourceFactory());
+}
+
+async function readValidatedSolanaLiveCaFirst(
+  ca: string,
+  source: SolanaLiveCaFirstSource,
+): Promise<SolanaLiveCaFirstResult> {
   const [mint, metadata, accounts] = await Promise.all([
     safelyRead(() => source.getMint(ca)),
     safelyRead(() => source.getTokenMetadata(ca)),
@@ -132,8 +151,4 @@ function rejectedResult(tokenCa: string, warning: string): SolanaLiveCaFirstResu
     },
     warnings: [warning],
   };
-}
-
-export function isSolanaAddress(value: string): boolean {
-  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
 }

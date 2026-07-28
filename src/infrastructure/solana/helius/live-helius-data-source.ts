@@ -10,6 +10,7 @@ import type {
   SourceWatermark,
 } from "./helius-solana-adapter.js";
 import { SourceDataUnavailableError } from "./helius-solana-adapter.js";
+import { normalizeSolanaAddress } from "../../../domain/solana-address.js";
 
 export interface LiveHeliusDataSourceOptions {
   apiKey?: string;
@@ -232,10 +233,9 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
 }
 
 function requiredAddress(value: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new SourceDataUnavailableError("helius_address_invalid");
-  }
-  return value.trim();
+  const address = normalizeSolanaAddress(value);
+  if (address === null) throw new SourceDataUnavailableError("helius_address_invalid");
+  return address;
 }
 
 function positiveInteger(value: number, context: string): number {

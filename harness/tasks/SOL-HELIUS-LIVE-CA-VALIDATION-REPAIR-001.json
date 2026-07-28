@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Enforce local, strict 32-byte Base58 Solana address validation before any Live Helius source creation, credential-bearing URL construction, request reservation, or fetch. Apply the same validator to single and manual 1-to-10 CA-first paths and prove invalid inputs make zero source/fetch calls.",
   "dependencies": ["PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001", "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001"],
   "inputs": ["src/infrastructure/solana/helius/live-helius-data-source.ts", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-first.ts", "test/solana/helius/live-helius-data-source.test.ts", "test/application/live/solana-live-ca-first.test.ts", "test/application/live/solana-live-ca-batch.test.ts"],

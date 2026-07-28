@@ -1,12 +1,12 @@
-import { readSolanaLiveCaFirst } from "../application/live/solana-live-ca-first.js";
+import { readSolanaLiveCaFirstWithFactory } from "../application/live/solana-live-ca-first.js";
 import { LiveHeliusDataSource } from "../infrastructure/solana/helius/live-helius-data-source.js";
 
 async function main(): Promise<number> {
   const tokenCa = process.argv[2] ?? "";
   try {
-    const result = await readSolanaLiveCaFirst(
+    const result = await readSolanaLiveCaFirstWithFactory(
       tokenCa,
-      LiveHeliusDataSource.fromRuntime({
+      () => LiveHeliusDataSource.fromRuntime({
         requestBudget: 3,
         minRequestIntervalMs: 150,
         timeoutMs: 8_000,
