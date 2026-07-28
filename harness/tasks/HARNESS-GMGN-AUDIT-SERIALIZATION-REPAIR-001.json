@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001",
+  "title": "Serialize pending GMGN audit tasks to repair Harness write-set overlap",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Repair only the Harness scheduling collision reported by `harness:doctor`: the two pending GMGN audit tasks both declare the required ledger write path. Preserve each audit objective, forbidden action list, write set and report path. Serialize them by making the later signed-holdings response-diagnostic audit explicitly depend on the earlier holdings-history pilot audit and setting it to BLOCKED_DEPENDENCY until that earlier audit completes. Update the ledger to match and write a sanitized repair report. Do not call any provider or change any accepted live result, code, test, credential or audit conclusion.",
+  "dependencies": [
+    "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+    "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001.json",
+    "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001.json",
+    "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any other network provider.",
+    "Do not modify application, domain, infrastructure, test or configuration code.",
+    "Do not alter either audit objective, forbidden action list, write set, deliverable path or report conclusion.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw provider payloads, arbitrary provider text or full exception text.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001.json",
+    "npm run harness:doctor",
+    "git diff --check"
+  ]
+}
