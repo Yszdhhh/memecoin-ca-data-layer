@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001",
+  "title": "Whitelist public live Helius warning codes",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Replace permissive Helius-prefixed error passthrough with one shared exact allowlist for CA-first reads and both CLIs. Preserve known safe operational codes, normalize HTTP status errors, and map every unknown or arbitrary error to one fixed unavailable code.",
+  "dependencies": ["SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001", "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001"],
+  "inputs": ["src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "src/cli/run-solana-live-ca-batch.ts", "src/infrastructure/solana/helius/live-helius-data-source.ts", "test/application/live/solana-live-ca-first.test.ts"],
+  "write_set": ["harness/tasks/SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001.json", "harness/ledger/tasks.json", "src/application/live/solana-live-warning.ts", "src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-first.test.ts"],
+  "forbidden_actions": ["Do not call Helius or any network provider in tests.", "Do not expose arbitrary error text, credentials, raw payloads or credential-bearing URLs.", "Do not add providers, fallback, discovery, automation, persistence, cache, queue, address-library writes, BSC or Robinhood behavior."],
+  "deliverables": ["src/application/live/solana-live-warning.ts", "src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-first.test.ts"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
