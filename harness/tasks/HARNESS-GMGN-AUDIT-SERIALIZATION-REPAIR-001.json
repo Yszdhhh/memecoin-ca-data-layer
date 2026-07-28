@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair only the Harness scheduling collision reported by `harness:doctor`: the two pending GMGN audit tasks both declare the required ledger write path. Preserve each audit objective, forbidden action list, write set and report path. Serialize them by making the later signed-holdings response-diagnostic audit explicitly depend on the earlier holdings-history pilot audit and setting it to BLOCKED_DEPENDENCY until that earlier audit completes. Update the ledger to match and write a sanitized repair report. Do not call any provider or change any accepted live result, code, test, credential or audit conclusion.",
   "dependencies": [
     "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",

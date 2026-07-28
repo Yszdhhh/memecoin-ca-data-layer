@@ -705,12 +705,12 @@
     {
       "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001",
       "spec": "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
-      "status": "READY"
+      "status": "BLOCKED_DEPENDENCY"
     },
     {
       "task_id": "HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001",
       "spec": "harness/tasks/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

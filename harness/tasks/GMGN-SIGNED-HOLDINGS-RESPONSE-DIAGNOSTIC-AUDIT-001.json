@@ -6,10 +6,11 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "BLOCKED_DEPENDENCY",
   "objective": "Independently audit GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001, its sanitized report, task/ledger state and git state. Confirm strict validation preceded exactly one Solana-only GMGN holdings invocation, only allowlisted safe diagnostic codes were retained, no raw provider/credential/error text escaped, and no unsupported wallet-history or quality claim was made. Use a HARNESS_AGENT_ID different from the implementer; do not call a provider; record a verdict.",
   "dependencies": [
-    "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001"
+    "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+    "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001"
   ],
   "inputs": [
     "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
