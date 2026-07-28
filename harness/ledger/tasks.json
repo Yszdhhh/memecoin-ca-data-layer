@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T15:45:00.000Z",
+  "updated_at_utc": "2026-07-28T16:00:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -646,6 +646,12 @@
       "task_id": "SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001.json",
       "status": "DONE"
+    }
+,
+    {
+      "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001.json",
+      "status": "READY"
     }
   ]
 }

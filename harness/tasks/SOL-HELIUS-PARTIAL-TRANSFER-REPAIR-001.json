@@ -1,0 +1,50 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001",
+  "title": "Preserve bounded Helius transaction activity when one transfer event cannot be safely normalized",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Repair the strict Helius enhanced-transaction parsing failure isolated by SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001. Preserve fail-closed validation for each transaction's signature, slot and timestamp, but when an individual token-transfer or native-transfer entry cannot be safely normalized into the existing typed event shape, omit only that individual event and mark the enclosing source response watermark partial rather than discarding the whole bounded transaction page. Do not infer missing account, mint or amount fields; do not relax core transaction validation; do not change provider, endpoint allowlist, pagination, request limits, credential handling or error sanitization. Add focused unit tests for the partial-transfer behavior. Then manually execute exactly one Helius-only enhanced-address request for each of these eleven frozen Owner-supplied public Solana wallets: 5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT (user_label: 高胜率, user-provided and unverified); EzbeF2bADKo6GutJyWmgodyGJFeBPhcrXSdZUXPX5WGc (user_label: profit 小号, user-provided and unverified); 4jRX4iW2F5wBnfYMyB7RjS2PU5MjXrST3fB9DoV4BjHa (user_label: Sun小号, user-provided and unverified); A44rJ9RcW1RhDdtNMr3FHm8GhanM9aQ5Kqhc6VqnCmff (user_label: 0xSun 2, user-provided and unverified); 5wQaABAbgA52cBks6zqXmk9nFftZgy18f78im6UxXhNU (user_label: James, user-provided and unverified); HyriMMiB1aTi1y6EwUAHUGw2pgF995fzXhiEZAQWF2ib (user_label: 落魄山, user-provided and unverified); 79CxhdY2TeFHpGNcaHgnHJTWnv7KA3KgMFoeHrJg77ru (user_label: jingtao, user-provided and unverified); 8K5276kWCmRnS1TLTAKxRznM6NehtHkqCVWxcQhzHrwF (user_label: 镭射猫, user-provided and unverified); DXAEnomAr94Mt1EQzEVts2pUBjJ32A48iaUinPRh9qrK (user_label: 镭射猫, user-provided and unverified); A8CQVwoP5dyb3qmrG8YeZvD5jsrqF5UL8aruLjR6qWbH (user_label: sol挑战赛第二, user-provided and unverified); EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt (user_label: DNF小号, user-provided and unverified). Strictly validate all eleven as Base58/32-byte values before constructing any source or issuing any request. Use one request budget per wallet, eleven requests maximum, no pagination, retry or fallback. Retain raw responses only in memory long enough to derive a sanitized latest-returned-page report containing the wallet, user-provided-unverified label, status, latest/oldest observed activity date, returned transaction count, safely normalized token/native transfer event counts, bounded-page completeness, latest observed slot and safe warning codes. Counts are not complete history and a partial watermark must be reported rather than concealed.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "test/solana/helius/live-helius-data-source.test.ts",
+    "harness/reports/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/solana/helius/live-helius-data-source.test.ts",
+    "harness/reports/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not add, discover, infer, guess, substitute, classify or cluster wallet addresses; the eleven inputs are frozen in this task spec.",
+    "Do not treat any user label as an on-chain-verified fact, proof of profitability, proof of common ownership or a wallet category.",
+    "Do not call GMGN, Dune, Chain.fm, BSC, Robinhood or any provider other than Helius.",
+    "Do not change the existing Helius endpoint allowlist, add a provider, add a fallback, paginate, retry, or exceed one Helius enhanced-address request per frozen wallet and eleven requests total.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, transaction signatures, counterparties, token mints, arbitrary provider text or full exception text.",
+    "Do not relax validation for transaction signature, slot, timestamp, token account, user account, mint or amount; malformed transfer entries may only be omitted with response completeness marked partial.",
+    "Do not calculate or claim PnL, realized profit, win rate, wallet quality, wallet classification, address clustering, CA linkage, holder concentration, creator/Dev history, token recommendations or complete history.",
+    "Do not write a database, cache, queue, address library, scheduler, production system, trade, transaction, signature, order or swap.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
