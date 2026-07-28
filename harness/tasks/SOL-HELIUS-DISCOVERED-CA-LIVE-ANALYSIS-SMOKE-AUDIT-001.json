@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001",
+  "title": "Audit the two-CA discovered Helius live diagnostic",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Independently verify that SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001 used exactly the two public Solana CAs frozen in its task spec, executed the existing bounded Helius-only read-only CA-first batch once, preserved strict address validation and request bounds, recorded only sanitized normalized evidence, and truthfully reported DEGRADED partial availability without claiming holder concentration, creator or Dev analysis, wallet classification, daily 5-to-10 batch completion or scheduling readiness.",
+  "dependencies": [
+    "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001.json",
+    "harness/reports/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001/acceptance.md",
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, GMGN or any network provider during this audit.",
+    "Do not inspect, print, save or record credentials, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text or ignored Harness logs.",
+    "Do not modify runtime source, tests, provider behavior, chain scope, automation, persistence, cache, queue, production infrastructure or the live-smoke acceptance report.",
+    "Do not reinterpret the bounded token-account count as a holder count, holder concentration, clustering, creator or Dev analysis, wallet classification or complete daily batch."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
