@@ -30,7 +30,7 @@ export interface SolanaDailyNewTokenAnalysisReport {
   selectedCount: number;
   analyzedCount: number;
   requestBounds: {
-    gmgnRequestsMax: 1;
+    gmgnRequestsMax: 2;
     heliusRequestsPerCaMax: 3;
     heliusRequestsBatchMax: 30;
   };
@@ -97,7 +97,7 @@ export async function runSolanaDailyNewTokenAnalysis(
       criteria: selection.criteria,
       selectedCount: selection.candidates.length,
       analyzedCount: batch.results.length,
-      requestBounds: { gmgnRequestsMax: 1, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 },
+      requestBounds: { gmgnRequestsMax: 2, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 },
       candidates,
       warnings: [...selection.warnings, ...batch.warnings],
       limitations: [...LIMITATIONS],
@@ -121,7 +121,7 @@ function rejectedReport(
     criteria: { ...CRITERIA },
     selectedCount: candidates.length,
     analyzedCount: 0,
-    requestBounds: { gmgnRequestsMax: 1, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 },
+    requestBounds: { gmgnRequestsMax: 2, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 },
     candidates: candidates.map((candidate) => analysis(candidate, null)),
     warnings,
     limitations: [...LIMITATIONS],

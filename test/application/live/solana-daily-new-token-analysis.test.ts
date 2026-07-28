@@ -72,7 +72,7 @@ test("daily analysis validates the complete selection before bounded Helius read
   assert.equal(report.selectedCount, 5);
   assert.equal(report.analyzedCount, 5);
   assert.equal(factories, 5);
-  assert.deepEqual(report.requestBounds, { gmgnRequestsMax: 1, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 });
+  assert.deepEqual(report.requestBounds, { gmgnRequestsMax: 2, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 });
   assert.equal(report.candidates.every((item) => item.helius?.completeness.state === "complete"), true);
   assert.equal(report.candidates.every((item) => item.market.trust === "unverified_provider_claim"), true);
 });
@@ -92,6 +92,7 @@ test("daily analysis does not construct a Helius source when fewer than five can
   assert.equal(report.selectedCount, 4);
   assert.equal(report.analyzedCount, 0);
   assert.equal(factories, 0);
+  assert.deepEqual(report.requestBounds, { gmgnRequestsMax: 2, heliusRequestsPerCaMax: 3, heliusRequestsBatchMax: 30 });
   assert.deepEqual(report.warnings, ["gmgn_candidate_count_below_5"]);
 });
 

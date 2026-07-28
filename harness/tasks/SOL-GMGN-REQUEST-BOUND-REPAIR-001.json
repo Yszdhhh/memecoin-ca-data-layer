@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair the failed independent audit finding by making the bounded daily report truthfully account for the pinned gmgn-cli@1.5.4 rate-limit retry path. Keep one fixed GMGN discovery invocation, but declare and test a maximum of two underlying GMGN HTTP attempts, while preserving all existing Solana-only, read-only, sanitization, candidate-count, market-cap, age, Helius request and persistence boundaries.",
   "dependencies": [
     "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",

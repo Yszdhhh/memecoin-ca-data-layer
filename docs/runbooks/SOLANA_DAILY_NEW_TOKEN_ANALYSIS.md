@@ -16,6 +16,8 @@ GMGN market, holder, creator, top-10, insider, bundler, sniper, and dev-team fie
 
 The workflow does not write a database, cache, queue, production service, or trading system. It has no background loop and no provider fallback. Windows Task Scheduler is the only recurring trigger.
 
+Each bounded run starts one fixed GMGN discovery invocation. Because the pinned `gmgn-cli@1.5.4` may retry a qualifying rate-limited GET once, the truthful GMGN HTTP-attempt maximum is 2. Helius remains bounded to 3 requests per CA and 30 requests for the batch.
+
 ## Secure credential injection
 
 Run this once as the same Windows user that will own the scheduled task:
