@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001",
+  "title": "Remove untracked run-manifest input from completed Chain.fm audit",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "READY",
+  "objective": "Repair the Harness metadata for SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001 by removing its sole untracked local run-manifest path from the completed audit task's inputs. Preserve the audit report, implementation report, task objectives, task statuses, ledger status of the completed audit, runtime source and all live-result evidence unchanged. Record a concise repair report showing that the completed audit's remaining inputs are Git-tracked and that no network or provider action was performed.",
+  "dependencies": [
+    "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.md"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001.json",
+    "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, GMGN, Chain.fm or any network provider.",
+    "Do not modify runtime source, tests, live reports, audit report content, provider behavior, chain scope, automation, persistence, cache, queue or production infrastructure.",
+    "Do not change the completed Chain.fm implementation or audit task status, or their ledger statuses.",
+    "Do not print, persist, commit or quote credentials, credential-bearing URLs, raw payloads, arbitrary provider text or full exception text.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
