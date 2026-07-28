@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "application",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit the narrow GMGN request-bound repair and confirm the daily workflow now truthfully declares the pinned gmgn-cli@1.5.4 maximum of two underlying HTTP attempts, including its single qualifying rate-limit retry, without weakening any existing Solana-only, read-only, candidate eligibility, CA validation, Helius request, sanitization, credential, scheduling or persistence boundary.",
   "dependencies": [
     "SOL-GMGN-REQUEST-BOUND-REPAIR-001"

@@ -585,7 +585,7 @@
     {
       "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
