@@ -658,6 +658,16 @@
       "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }

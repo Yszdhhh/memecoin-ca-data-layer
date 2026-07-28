@@ -1,0 +1,58 @@
+{
+    "schema_version":  "task-v1",
+    "task_id":  "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001",
+    "title":  "Run one bounded GMGN wallet trading-statistics screen for eleven Owner-supplied Solana wallets",
+    "tier":  "T3",
+    "role":  "implementer",
+    "chain":  "solana",
+    "layer":  "input",
+    "status":  "READY",
+    "objective":  "Under the Owner-authorized GMGN credential, perform one manual, read-only GMGN portfolio-statistics screen for exactly the eleven frozen public Solana wallets listed below. Strictly Base58-decode and validate every wallet as exactly 32 bytes before constructing the command or issuing any provider call. Invoke the installed gmgn-cli portfolio stats command exactly once for period 7d and exactly once for period 30d, with all eleven wallets supplied to each invocation, no pagination, retry, fallback, discovery or other GMGN command. Capture all command output only in memory; retain and commit only a sanitized report containing the wallet, unverified user label, period, status, allowed numeric aggregate fields that are successfully parsed from the documented response shape, and stable safe warning codes. If the provider response cannot be parsed, record only a safe shape/unavailable code. Cross-reference the already committed bounded Helius activity evidence only as an independent first-hand-activity coverage limitation; do not issue a Helius call in this task. GMGN-derived statistics are borrowed and unverified inputs: do not calculate, assign or claim Alpha N/R/SR/SSR/UR tiers, realized PnL, win rate, wallet quality, clustering, address-library admission or chain-verified profitability.",
+    "dependencies":  [
+                         "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001"
+                     ],
+    "inputs":  [
+                   "src/domain/solana-address.ts",
+                   "node_modules/gmgn-cli",
+                   "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001/acceptance.md",
+                   "harness/reports/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001/acceptance.md"
+               ],
+    "write_set":  [
+                      "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+                      "harness/ledger/tasks.json",
+                      "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001/acceptance.md"
+                  ],
+    "forbidden_actions":  [
+                              "Do not add a chain other than Solana or call any provider other than GMGN; do not make a Helius request in this task.",
+                              "Do not run more than two GMGN CLI invocations: one fixed 7d stats invocation and one fixed 30d stats invocation, both with the same eleven frozen wallets.",
+                              "Do not discover, add, infer, guess, substitute, classify or cluster wallet addresses; the eleven inputs are frozen in this task spec.",
+                              "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw GMGN payloads, arbitrary provider text, full exception text, transaction signatures, counterparties, token mints or per-trade records.",
+                              "Do not calculate or claim realized PnL, win rate, wallet quality, wallet classification, common ownership, address clustering, holder concentration, creator or Dev history, token recommendations, complete history or Alpha N/R/SR/SSR/UR tiers.",
+                              "Do not write a database, cache, queue, address library, scheduler, production system, transaction, signing, swap, order or trade.",
+                              "Do not write outside the exact tracked write set."
+                          ],
+    "deliverables":  [
+                         "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001/acceptance.md"
+                     ],
+    "acceptance_commands":  [
+                                "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+                                "npm run harness:doctor",
+                                "npm run typecheck",
+                                "npm test",
+                                "npm run build",
+                                "git diff --check"
+                            ],
+    "frozen_wallets":  [
+                           "5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT",
+                           "EzbeF2bADKo6GutJyWmgodyGJFeBPhcrXSdZUXPX5WGc",
+                           "4jRX4iW2F5wBnfYMyB7RjS2PU5MjXrST3fB9DoV4BjHa",
+                           "A44rJ9RcW1RhDdtNMr3FHm8GhanM9aQ5Kqhc6VqnCmff",
+                           "5wQaABAbgA52cBks6zqXmk9nFftZgy18f78im6UxXhNU",
+                           "HyriMMiB1aTi1y6EwUAHUGw2pgF995fzXhiEZAQWF2ib",
+                           "79CxhdY2TeFHpGNcaHgnHJTWnv7KA3KgMFoeHrJg77ru",
+                           "8K5276kWCmRnS1TLTAKxRznM6NehtHkqCVWxcQhzHrwF",
+                           "DXAEnomAr94Mt1EQzEVts2pUBjJ32A48iaUinPRh9qrK",
+                           "A8CQVwoP5dyb3qmrG8YeZvD5jsrqF5UL8aruLjR6qWbH",
+                           "EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt"
+                       ]
+}
