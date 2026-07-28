@@ -134,6 +134,6 @@ function rejectedResult(tokenCa: string, warning: string): SolanaLiveCaFirstResu
   };
 }
 
-function isSolanaAddress(value: string): boolean {
+export function isSolanaAddress(value: string): boolean {
   return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
 }

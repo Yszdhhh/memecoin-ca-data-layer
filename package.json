@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "tsx --test test/**/*.test.ts",
+    "test": "tsx --test \"test/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check": "npm run harness:doctor && npm run typecheck && npm test && npm run build",
     "harness:doctor": "tsx harness/cli.ts doctor",

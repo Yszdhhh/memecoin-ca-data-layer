@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Ensure the bounded manual Solana CA batch rejects an invalid CA before constructing any Helius source, reports unknown CLI failures without making a false credential claim, and makes the default test command execute the complete test suite.",
   "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-001"],
   "inputs": ["src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts", "package.json"],

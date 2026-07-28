@@ -1,4 +1,5 @@
 import {
+  isSolanaAddress,
   readSolanaLiveCaFirst,
   type SolanaLiveCaFirstResult,
   type SolanaLiveCaFirstSource,
@@ -24,6 +25,7 @@ export async function readSolanaManualCaBatch(
     return rejected(normalized.length, "manual_ca_batch_count_must_be_1_to_10");
   }
   if (new Set(normalized).size !== normalized.length) return rejected(normalized.length, "manual_ca_batch_duplicate_ca");
+  if (!normalized.every(isSolanaAddress)) return rejected(normalized.length, "manual_ca_batch_invalid_ca");
 
   const results: SolanaLiveCaFirstResult[] = [];
   for (const tokenCa of normalized) results.push(await readSolanaLiveCaFirst(tokenCa, sourceFactory()));

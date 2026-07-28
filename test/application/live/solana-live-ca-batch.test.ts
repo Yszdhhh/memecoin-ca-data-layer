@@ -22,11 +22,12 @@ test("manual batch is capped, de-duplicated, and creates one bounded source per 
   assert.equal(created, 2);
 });
 
-test("manual batch rejects empty, over-limit, and duplicate input without a source", async () => {
+test("manual batch rejects empty, over-limit, duplicate, and invalid input without a source", async () => {
   let created = 0;
   const factory = () => { created += 1; return source(); };
   assert.equal((await readSolanaManualCaBatch([], factory)).warnings[0], "manual_ca_batch_count_must_be_1_to_10");
   assert.equal((await readSolanaManualCaBatch(Array.from({ length: 11 }, (_, i) => `${cas[0]}${i}`), factory)).status, "REJECTED");
   assert.equal((await readSolanaManualCaBatch([cas[0]!, cas[0]!], factory)).warnings[0], "manual_ca_batch_duplicate_ca");
+  assert.equal((await readSolanaManualCaBatch([cas[0]!, "not-a-solana-ca"], factory)).warnings[0], "manual_ca_batch_invalid_ca");
   assert.equal(created, 0);
 });

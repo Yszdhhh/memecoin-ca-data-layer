@@ -10,8 +10,11 @@ async function main(): Promise<number> {
     }));
     console.log(JSON.stringify(result));
     return result.status === "OK" ? 0 : 1;
-  } catch {
-    console.log(JSON.stringify({ chain: "solana", status: "REJECTED", warnings: ["helius_runtime_credential_unavailable"] }));
+  } catch (error) {
+    const warning = error instanceof Error && /^helius_[a-z0-9_]+$/.test(error.message)
+      ? error.message
+      : "helius_live_read_unavailable";
+    console.log(JSON.stringify({ chain: "solana", status: "REJECTED", warnings: [warning] }));
     return 1;
   }
 }
