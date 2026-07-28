@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CHAINFM-ADDRESS-INGEST-001",
+  "title": "Pure offline deterministic Solana ChainFM address directory cleaning CLI",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "READY",
+  "objective": "Implement a pure offline, deterministic SOL address directory cleaning CLI that parses sol_address_labels.json (canonical) and sol_addresses.txt (cross-check), normalizes Solana addresses, cleans labels without inference, and outputs sanitized results to an external output directory.",
+  "dependencies": ["HARNESS-001"],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "src/domain/solana-address.ts",
+    "src/domain/types.ts"
+  ],
+  "write_set": [
+    "src/application/chainfm/**",
+    "src/cli/clean-solana-chainfm-addresses.ts",
+    "test/application/chainfm/**",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not perform network calls or credential access.",
+    "Do not write to database, cache, or external storage.",
+    "Do not copy external address/label files into Git or repository fixtures.",
+    "Do not print raw full addresses or label text in reports or logs.",
+    "Do not modify BSC, multi-chain, or trading logic."
+  ],
+  "deliverables": [
+    "src/application/chainfm/clean-solana-address-directory.ts",
+    "src/cli/clean-solana-chainfm-addresses.ts",
+    "test/application/chainfm/clean-solana-address-directory.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

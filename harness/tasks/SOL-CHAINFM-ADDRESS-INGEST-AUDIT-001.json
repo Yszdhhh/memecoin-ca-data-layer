@@ -1,0 +1,35 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001",
+  "title": "Independent audit for SOL-CHAINFM-ADDRESS-INGEST-001",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit SOL-CHAINFM-ADDRESS-INGEST-001 for fail-closed behavior, label fidelity, strict address normalization, zero repository leakage of external inputs, and zero network access.",
+  "dependencies": ["SOL-CHAINFM-ADDRESS-INGEST-001"],
+  "inputs": [
+    "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-001.json",
+    "src/application/chainfm/clean-solana-address-directory.ts",
+    "src/cli/clean-solana-chainfm-addresses.ts",
+    "test/application/chainfm/clean-solana-address-directory.test.ts"
+  ],
+  "write_set": [
+    "harness/reports/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
+    "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not modify application or domain code.",
+    "Do not approve unverified or failing runs."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

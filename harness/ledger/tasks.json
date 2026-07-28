@@ -711,6 +711,16 @@
       "task_id": "HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001",
       "spec": "harness/tasks/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CHAINFM-ADDRESS-INGEST-001",
+      "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001",
+      "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }
