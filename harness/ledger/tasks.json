@@ -511,6 +511,11 @@
       "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
