@@ -506,6 +506,11 @@
       "task_id": "ALPHA-TERMINAL-DESIGN-IMPORT-001",
       "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json",
+      "status": "READY"
     }
   ]
 }

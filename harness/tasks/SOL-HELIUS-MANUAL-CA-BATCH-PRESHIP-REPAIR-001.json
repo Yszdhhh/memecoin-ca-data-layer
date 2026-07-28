@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001",
+  "title": "Repair manual CA batch pre-ship validation gaps",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Ensure the bounded manual Solana CA batch rejects an invalid CA before constructing any Helius source, reports unknown CLI failures without making a false credential claim, and makes the default test command execute the complete test suite.",
+  "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-001"],
+  "inputs": ["src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts", "package.json"],
+  "write_set": ["harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json", "harness/ledger/tasks.json", "package.json", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts"],
+  "forbidden_actions": ["Do not add cron, scheduler, background loops, automatic token discovery, provider fallback, database/cache writes, queues, address-library writes, or non-Solana chains.", "Do not print, store, commit, or record credentials, raw provider payloads, or credential-bearing URLs.", "Do not weaken the manual 1-to-10 CA limit or claim creator, Dev, address, holder-concentration, or full-analysis facts."],
+  "deliverables": ["package.json", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
