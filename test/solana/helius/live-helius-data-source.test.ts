@@ -1,4 +1,4 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
 import test from "node:test";
 import { SourceDataUnavailableError } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
 import { LiveHeliusDataSource } from "../../../src/infrastructure/solana/helius/live-helius-data-source.js";
@@ -115,6 +115,51 @@ test("live Helius source maps the documented flat token-account shape without pr
   );
 });
 
+test("live Helius source keeps a valid transaction and marks partial when a transfer cannot be normalized", async () => {
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json([{
+      signature: "safe-signature",
+      slot: 999,
+      timestamp: 1_783_000_000,
+      tokenTransfers: [{
+        mint: "MintOne",
+        fromUserAccount: "FromOne",
+        toUserAccount: "ToOne",
+        tokenAmount: 1.5,
+      }],
+      nativeTransfers: [{ fromUserAccount: "NativeFrom", toUserAccount: "NativeTo", amount: 7 }],
+    }]),
+  });
+
+  const result = await source.getTransactions([publicCa], new Date("2020-01-01T00:00:00.000Z"));
+  assert.equal(result.watermark.completeness, "partial");
+  assert.deepEqual(result.data, [{
+    signature: "safe-signature",
+    slot: "999",
+    blockTime: "2026-07-02T13:46:40.000Z",
+    tokenTransfers: [],
+    nativeTransfers: [{ eventIndex: 0, from: "NativeFrom", to: "NativeTo", amountRaw: "7" }],
+  }]);
+});
+
+test("live Helius source still rejects a transaction with invalid core identity fields", async () => {
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json([{
+      signature: "",
+      slot: 999,
+      timestamp: 1_783_000_000,
+    }]),
+  });
+
+  await assert.rejects(
+    () => source.getTransactions([publicCa], new Date("2020-01-01T00:00:00.000Z")),
+    (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_transaction_malformed",
+  );
+});
 test("live Helius source enforces its fixed request budget", async () => {
   const source = new LiveHeliusDataSource({
     apiKey: unitCredential,

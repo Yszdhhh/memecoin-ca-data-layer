@@ -149,8 +149,9 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
       if (!Array.isArray(payload)) throw new SourceDataUnavailableError("helius_transactions_malformed");
       if (payload.length === 100) completeness = "partial";
       for (const entry of payload) {
-        const transaction = transactionFromEnhanced(entry);
-        if (new Date(transaction.blockTime) >= since) transactions.push(transaction);
+        const parsed = transactionFromEnhanced(entry);
+        if (parsed.incompleteTransferEvents) completeness = "partial";
+        if (new Date(parsed.transaction.blockTime) >= since) transactions.push(parsed.transaction);
       }
     }
     return this.response(transactions, undefined, undefined, completeness);
@@ -313,7 +314,7 @@ function rawIntegerString(value: unknown): string | undefined {
   return undefined;
 }
 
-function transactionFromEnhanced(value: unknown): HeliusTransaction {
+function transactionFromEnhanced(value: unknown): { transaction: HeliusTransaction; incompleteTransferEvents: boolean } {
   const row = record(value);
   const signature = optionalString(row.signature);
   const slot = slotFrom(row.slot);
@@ -321,19 +322,38 @@ function transactionFromEnhanced(value: unknown): HeliusTransaction {
   if (!signature || slot === undefined || typeof timestamp !== "number" || !Number.isFinite(timestamp)) {
     throw new SourceDataUnavailableError("helius_transaction_malformed");
   }
-  const tokenTransfers = array(row.tokenTransfers).map((transfer, eventIndex) => enhancedTokenTransfer(transfer, eventIndex));
-  const nativeTransfers = array(row.nativeTransfers).map((transfer, eventIndex) => enhancedNativeTransfer(transfer, eventIndex));
+  const tokenTransfers = normalizedTransfers(row.tokenTransfers, enhancedTokenTransfer);
+  const nativeTransfers = normalizedTransfers(row.nativeTransfers, enhancedNativeTransfer);
   return {
-    signature,
-    slot: slot.toString(),
-    blockTime: new Date(timestamp * 1_000).toISOString(),
-    tokenTransfers,
-    nativeTransfers,
+    transaction: {
+      signature,
+      slot: slot.toString(),
+      blockTime: new Date(timestamp * 1_000).toISOString(),
+      tokenTransfers: tokenTransfers.values,
+      nativeTransfers: nativeTransfers.values,
+    },
+    incompleteTransferEvents: tokenTransfers.incomplete || nativeTransfers.incomplete,
   };
 }
 
-function array(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
+function normalizedTransfers<T>(
+  value: unknown,
+  normalize: (entry: unknown, eventIndex: number) => T,
+): { values: T[]; incomplete: boolean } {
+  if (value === undefined) return { values: [], incomplete: false };
+  if (!Array.isArray(value)) return { values: [], incomplete: true };
+
+  const values: T[] = [];
+  let incomplete = false;
+  for (const [eventIndex, entry] of value.entries()) {
+    try {
+      values.push(normalize(entry, eventIndex));
+    } catch (error) {
+      if (!(error instanceof SourceDataUnavailableError)) throw error;
+      incomplete = true;
+    }
+  }
+  return { values, incomplete };
 }
 
 function enhancedTokenTransfer(value: unknown, eventIndex: number) {
