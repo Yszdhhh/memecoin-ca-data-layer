@@ -521,6 +521,11 @@
       "task_id": "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001",
       "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001",
+      "spec": "harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json",
+      "status": "READY"
     }
   ]
 }

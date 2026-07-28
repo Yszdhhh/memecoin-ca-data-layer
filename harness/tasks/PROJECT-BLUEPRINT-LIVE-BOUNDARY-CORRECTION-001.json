@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001",
+  "title": "Correct live Helius and Alpha Terminal blueprint boundaries",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Align the project blueprint, current wave, limitations, Owner decisions, and Alpha Terminal research draft with the verified manual Solana Helius CA-first scope. Separate current executable work, retained research, Owner-gated work, and currently forbidden automation or infrastructure.",
+  "dependencies": ["SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001", "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001", "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001"],
+  "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_ARCHITECTURE.md", "OWNER_DECISIONS_NEEDED.md", "KNOWN_LIMITATIONS.md", "harness/CURRENT_WAVE.md", "docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "write_set": ["harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json", "harness/ledger/tasks.json", "OWNER_DECISIONS_NEEDED.md", "KNOWN_LIMITATIONS.md", "harness/CURRENT_WAVE.md", "docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "forbidden_actions": ["Do not change source code, tests, runtime configuration, providers, chain activation, credentials, database/cache/queue behavior, or automation.", "Do not present Alpha Terminal research as accepted implementation authority.", "Do not authorize BSC, Robinhood, provider fallback, automatic token discovery, cron, background loops, production persistence, Telegram/social ingestion, or live event infrastructure."],
+  "deliverables": ["OWNER_DECISIONS_NEEDED.md", "KNOWN_LIMITATIONS.md", "harness/CURRENT_WAVE.md", "docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run harness:task -- validate harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json", "git diff --check"]
+}
