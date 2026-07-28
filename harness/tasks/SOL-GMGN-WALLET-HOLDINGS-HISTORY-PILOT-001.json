@@ -1,0 +1,56 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001",
+  "title": "Run one bounded signed GMGN wallet-holdings history-field pilot for one Owner-supplied Solana wallet",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "After confirming only the presence of GMGN_API_KEY and GMGN_PRIVATE_KEY, manually run exactly one signed, read-only GMGN `portfolio holdings` request for the one frozen Owner-supplied public Solana wallet below. Strictly Base58-decode and validate the wallet as exactly 32 bytes before spawning the CLI. Use the installed gmgn-cli with Solana, limit 50, total-profit descending, hide-abnormal true, hide-airdrop true and hide-closed false so the pilot can establish only whether the first returned page exposes documented historical-profit and activity fields. Capture stdout/stderr only in process memory; commit only a sanitized report containing safe request-bound evidence, response-shape availability, first-page bounded counts and allowlisted numeric aggregates if safely parsed. This is a borrowed/unverified provider observation, not a full wallet-history, a chain-confirmed PnL result, a quality judgment or an Alpha tier.",
+  "dependencies": [
+    "HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call a chain other than Solana or a provider other than GMGN.",
+    "Do not run more than one GMGN CLI invocation; do not paginate, retry, discover, substitute a wallet, call Helius or invoke any other GMGN command.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw GMGN payloads, arbitrary provider text, full exception text, token mints, token names, transaction signatures, counterparties or per-trade records.",
+    "Do not claim complete all-time wallet PnL, a chain-confirmed realized profit, win rate, wallet quality, wallet classification, common ownership, clustering, address-library admission or Alpha N/R/SR/SSR/UR tier.",
+    "Do not write a database, cache, queue, address library, scheduler, production system, transaction, signing, swap, order or trade.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "frozen_wallet": "5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT",
+  "gmgn_request": {
+    "command": "portfolio holdings",
+    "chain": "sol",
+    "limit": 50,
+    "order_by": "total_profit",
+    "direction": "desc",
+    "interval": "24h",
+    "hide_abnormal": true,
+    "hide_airdrop": true,
+    "hide_closed": false,
+    "pagination": "forbidden"
+  }
+}
