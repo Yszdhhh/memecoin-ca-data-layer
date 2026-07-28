@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001",
+  "title": "Verify normalized Alpha Terminal design draft",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Record a fresh integrity baseline for the Alpha Terminal research draft after its whitespace-only normalization, without accepting the draft as implementation authority or changing runtime behavior.",
+  "dependencies": ["ALPHA-TERMINAL-DESIGN-IMPORT-001"],
+  "inputs": ["harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "write_set": ["harness/tasks/ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001.json", "harness/ledger/tasks.json", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "forbidden_actions": ["Do not change source, tests, runtime configuration, provider behavior, chain activation, automation, persistence, or credentials.", "Do not present the design draft as accepted implementation scope.", "Do not introduce API keys, raw provider payloads, or credential-bearing URLs."],
+  "deliverables": ["docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "acceptance_commands": ["npm run harness:doctor", "git diff --check"]
+}

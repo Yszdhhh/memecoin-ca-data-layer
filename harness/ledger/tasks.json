@@ -516,6 +516,11 @@
       "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001",
+      "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001.json",
+      "status": "READY"
     }
   ]
 }
