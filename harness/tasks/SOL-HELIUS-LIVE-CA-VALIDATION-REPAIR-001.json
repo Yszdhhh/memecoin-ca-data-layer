@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001",
+  "title": "Enforce strict Solana address validation before Helius",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "READY",
+  "objective": "Enforce local, strict 32-byte Base58 Solana address validation before any Live Helius source creation, credential-bearing URL construction, request reservation, or fetch. Apply the same validator to single and manual 1-to-10 CA-first paths and prove invalid inputs make zero source/fetch calls.",
+  "dependencies": ["PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001", "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001"],
+  "inputs": ["src/infrastructure/solana/helius/live-helius-data-source.ts", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-first.ts", "test/solana/helius/live-helius-data-source.test.ts", "test/application/live/solana-live-ca-first.test.ts", "test/application/live/solana-live-ca-batch.test.ts"],
+  "write_set": ["harness/tasks/SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001.json", "harness/ledger/tasks.json", "src/domain/solana-address.ts", "src/infrastructure/solana/helius/live-helius-data-source.ts", "src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "test/solana/helius/live-helius-data-source.test.ts", "test/application/live/solana-live-ca-first.test.ts"],
+  "forbidden_actions": ["Do not call Helius or any network provider in tests.", "Do not add a provider, fallback, dependency, cron, scheduler, background loop, discovery, persistence, cache, queue, address-library write, BSC or Robinhood behavior.", "Do not print, store, commit or record credentials, raw provider payloads, credential-bearing URLs, or arbitrary transport errors."],
+  "deliverables": ["src/domain/solana-address.ts", "src/infrastructure/solana/helius/live-helius-data-source.ts", "src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "test/solana/helius/live-helius-data-source.test.ts", "test/application/live/solana-live-ca-first.test.ts"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
