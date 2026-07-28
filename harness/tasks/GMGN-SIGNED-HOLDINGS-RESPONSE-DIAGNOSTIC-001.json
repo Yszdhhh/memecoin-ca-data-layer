@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "After the local-only diagnostic confirmed both required GMGN variable names are present, issue exactly one new signed, read-only GMGN portfolio-holdings request for the frozen Owner-supplied Solana wallet below. Validate the wallet as strict Base58 and exactly 32 bytes before construction. Capture child stdout/stderr in process memory only; map a failed response to one allowlisted diagnostic code based on generic credential/signature, rate-limit, network/transport or parse indicators without storing, printing or quoting any provider text. On success, retain only the same first-page bounded counts and allowlisted numeric history-profit aggregates as the prior pilot. This task cannot reuse or retry the prior task invocation and cannot claim complete historical profitability.",
   "dependencies": [
     "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001"
