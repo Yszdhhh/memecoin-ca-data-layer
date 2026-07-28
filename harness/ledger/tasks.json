@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-28T16:35:00.000Z",
+  "updated_at_utc": "2026-07-28T15:19:37.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -616,44 +616,37 @@
       "task_id": "HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001",
       "spec": "harness/tasks/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001",
       "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001.json",
       "status": "DONE"
-    }
-,
+    },
     {
       "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001",
       "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001.json",
@@ -673,6 +666,11 @@
       "task_id": "HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001",
       "spec": "harness/tasks/HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
+      "status": "READY"
     }
   ]
 }
