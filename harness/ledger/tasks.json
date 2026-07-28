@@ -667,7 +667,7 @@
     {
       "task_id": "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001",

@@ -6,7 +6,7 @@
     "role":  "auditor",
     "chain":  "solana",
     "layer":  "input",
-    "status":  "READY",
+    "status":  "DONE",
     "objective":  "Independently read and audit the completed SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001 task, its tracked sanitized evidence, task spec, ledger record, git state and test output. Confirm that exactly the eleven frozen public Solana wallets were used, strict validation preceded provider construction, the run stayed bounded to two GMGN portfolio-statistics invocations, no Helius or other provider call occurred, no secret/raw payload/arbitrary provider text leaked into tracked evidence, GMGN statistics remain labeled borrowed/unverified, and no unsupported Alpha tier, PnL, wallet-quality, clustering or address-library claim is made. Produce a tracked audit report with a verdict. The auditor must use a HARNESS_AGENT_ID different from the implementer and must not call any provider or modify implementation code.",
     "dependencies":  [
                          "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001"
