@@ -3,9 +3,54 @@
   "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001",
   "created_at": "2026-07-29T17:40:00.000Z",
   "owner_authorization": "2026-07-29 explicit Owner authorization for one manual signed cumulative holdings smoke after independent preflight audit",
-  "tracked_input_sha256": {"src/domain/solana-address.ts": "4BD12FE15BD1D730FD6BDD2AD0C47A0FEBC0944C8ED316331EAFB9B9FAAC8712", "src/application/gmgn/gmgn-cli-boundary.ts": "03139A054FE87B3E7723E6185E193ECB2CEB11A80CE0A4DAE7A06FCD96D82AA4", "src/infrastructure/gmgn/wallet-holdings-parser.ts": "452F60EB64317A96C9F106E32BFE3AD6A1C5A604051E4BA54E749DD31277ED0A", "package.json": "742A6D5F03E044A4489BF31180FB0C4E60B32F04ACCCA78BC3900DF5C6EB69FB", "package-lock.json": "7365178DE666B02BC7B463EBA8F1209F7844513DC97D0DE999225ED768BDC6E7", "harness/reports/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/acceptance.md": "2929DDA09AAB72BCCE9C08AAFE2F33DC038BB2C91D0E34CF7C04FE49F971D2B2", "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md": "F035681E1DB592CC998BB6AF9FC5110001C634372FC5094A9C99BAFB49E17ADA"},
-  "external_input_sha256_required_before_network": {"sol_addresses.txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C", "sol_address_labels.json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"},
-  "selection": {"source": "approved external sol_addresses.txt only", "rule": "first valid unique strict Base58 32-byte address in source order, retained in memory only", "git_address_storage": false, "fingerprint": "SHA-256 of task-id prefix plus selected address; value recorded only after successful local selection"},
-  "limits": {"wallets_selected": 1, "gmgn_cli_invocations": 1, "physical_provider_requests": 1, "rate_limit_auto_retry_max_wait_ms": 0, "pagination": false, "fallback_provider": false},
-  "privacy": {"plaintext_addresses": false, "labels": false, "credential_values": false, "raw_provider_payloads": false, "raw_provider_errors": false, "raw_stdout_stderr": false}
+  "tracked_input_sha256": {
+    "src/domain/solana-address.ts": "4BD12FE15BD1D730FD6BDD2AD0C47A0FEBC0944C8ED316331EAFB9B9FAAC8712",
+    "src/application/gmgn/gmgn-cli-boundary.ts": "27F96F37F0E8B405126DE231AEC0A1B803726862057C58268E2F115360393562",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts": "452F60EB64317A96C9F106E32BFE3AD6A1C5A604051E4BA54E749DD31277ED0A",
+    "package.json": "742A6D5F03E044A4489BF31180FB0C4E60B32F04ACCCA78BC3900DF5C6EB69FB",
+    "package-lock.json": "7365178DE666B02BC7B463EBA8F1209F7844513DC97D0DE999225ED768BDC6E7",
+    "harness/reports/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/acceptance.md": "2929DDA09AAB72BCCE9C08AAFE2F33DC038BB2C91D0E34CF7C04FE49F971D2B2",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md": "F035681E1DB592CC998BB6AF9FC5110001C634372FC5094A9C99BAFB49E17ADA",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts": "FAF0648B1226C8E010E2A37EE8574C6B1E7CF2E30BE16A1D22EF9BAE366B8F44",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts": "DD2D851C533F7640D72E068C910507BFFF86C1867A5614BFF79B078412405512",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts": "F9568D8ED77FC6C0F93C5FEFF705954B8F655FB4B6C24644EB50FE9AA995063B",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts": "2C3F102C30BFBE4927885BC5F8A5A09C2AA2BB85CF8455CDEC8FE8EA7F2263E0",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json": "26CB05DE70FB132DC7B1CD03E443097FC63BEB38C6E43F25D53F3FFA3C594CDD"
+  },
+  "external_input_sha256_required_before_network": {
+    "sol_addresses.txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels.json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "selection": {
+    "source": "approved external sol_addresses.txt only",
+    "rule": "first valid unique strict Base58 32-byte address in source order, retained in memory only",
+    "git_address_storage": false,
+    "fingerprint": "SHA-256 of task-id prefix plus selected address; value recorded only after successful local selection"
+  },
+  "limits": {
+    "wallets_selected": 1,
+    "gmgn_cli_invocations": 1,
+    "physical_provider_requests": 1,
+    "rate_limit_auto_retry_max_wait_ms": 0,
+    "pagination": false,
+    "fallback_provider": false
+  },
+  "privacy": {
+    "plaintext_addresses": false,
+    "labels": false,
+    "credential_values": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false,
+    "raw_stdout_stderr": false
+  },
+  "bounded_runner_contract": {
+    "runner": "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "cli_entrypoint": "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "gmgn_cli_invocations": 1,
+    "physical_provider_requests_cap": 1,
+    "rate_limit_auto_retry_max_wait_ms": 0,
+    "cursor": false,
+    "pagination": false,
+    "fallback_provider": false
+  }
 }

@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Perform a zero-network repair that adds one tracked, auditable runner for the separately authorized one-wallet GMGN signed cumulative holdings live smoke. The runner must validate both approved external input hashes before any child spawn, select exactly the first valid unique strict Base58 32-byte Solana address only in memory, check only credential presence without revealing values, isolate HOME/CWD, set GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the actual signed child environment, issue at most one fixed holdings CLI invocation with no cursor, parse only sanitized one-page aggregates, and return only allowlisted diagnostics. Amend the blocked live smoke task to require a fresh independent preflight audit after this repair. This repair itself must make zero network or provider requests and must not read external inputs or credentials.",
   "dependencies": [
     "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001"
@@ -31,7 +31,10 @@
     "harness/inputs/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/manifest.json",
     "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/acceptance.md",
     "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
-    "harness/ledger/tasks.json"
+    "harness/ledger/tasks.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/inputs/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/manifest.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json"
   ],
   "forbidden_actions": [
     "Do not issue any HTTP, HTTPS, RPC, WS, GMGN CLI, or other network/provider request.",
@@ -41,9 +44,14 @@
     "Do not execute the live smoke. Do not use git reset --hard, force push, or delete branches."
   ],
   "deliverables": [
-    "A tracked bounded runner and CLI entrypoint with dependency-injected file, environment, and child-process seams for offline tests.",
-    "Pure synthetic tests proving fail-closed hash mismatch and missing-credential paths make no spawn; one invocation has retry disabled and no cursor; safe parser output and safe error classification discard raw output.",
-    "An amended SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 spec which depends on SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002, not the failed preflight audit."
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/acceptance.md"
   ],
   "acceptance_commands": [
     "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.json",

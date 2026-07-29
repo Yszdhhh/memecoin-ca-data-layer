@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   buildApiKeyOnlyGmgnCliEnvironment,
+  buildBoundedSignedGmgnCliEnvironment,
   buildGmgnCumulativeHoldingsInvocation,
   buildGmgnStatsInvocation,
   buildSignedGmgnCliEnvironment,
@@ -108,4 +109,18 @@ test("CLI isolation uses a disposable empty home and working directory", () => {
     fs.rmSync(tempParent, { recursive: true, force: true });
   }
   assert.equal(fs.existsSync(isolation.cwd), false);
+});
+
+test("bounded signed GMGN environment disables CLI rate-limit auto retry", () => {
+  const env = buildBoundedSignedGmgnCliEnvironment({
+    runtimeEnvironment: { PATH: "synthetic-path", GMGN_DEBUG: "ambient-debug" },
+    isolatedHome: "synthetic-isolated-home",
+    apiKey: "fixture-key",
+    privateKey: "fixture-private",
+  });
+
+  assert.equal(env.GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS, "0");
+  assert.equal(env.GMGN_DEBUG, undefined);
+  assert.equal(env.GMGN_API_KEY, "fixture-key");
+  assert.equal(env.GMGN_PRIVATE_KEY, "fixture-private");
 });

@@ -98,6 +98,23 @@ export function buildSignedGmgnCliEnvironment(input: {
   return input.privateKey === undefined ? env : { ...env, GMGN_PRIVATE_KEY: input.privateKey };
 }
 
+/**
+ * Builds the signed CLI environment for the one-request holdings smoke only.
+ * gmgn-cli retries rate limits only when its wait threshold permits it; zero
+ * mechanically disables that expansion without exposing any credential value.
+ */
+export function buildBoundedSignedGmgnCliEnvironment(input: {
+  runtimeEnvironment: NodeJS.ProcessEnv;
+  isolatedHome: string;
+  apiKey?: string | undefined;
+  privateKey?: string | undefined;
+}): NodeJS.ProcessEnv {
+  return {
+    ...buildSignedGmgnCliEnvironment(input),
+    GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS: "0",
+  };
+}
+
 export function buildGmgnStatsInvocation(input: {
   cliPath: string;
   walletAddress: string;
