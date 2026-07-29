@@ -6,7 +6,7 @@
   "chain": "solana",
   "layer": "cold_path",
   "role": "auditor",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Audit the one-request diagnostic evidence with zero network. Confirm only allowlisted field names, location names, JSON types, and non-value lexical classes were recorded.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001"
