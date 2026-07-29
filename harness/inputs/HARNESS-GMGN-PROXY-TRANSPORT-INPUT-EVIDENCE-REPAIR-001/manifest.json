@@ -1,0 +1,26 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001",
+  "baseline_commit": "42c375ec95ac5d6fe2fec49920485114133b7759",
+  "origin_commit_at_start": "b5ff1c823094fdc62b3e9a41ca989dae43ae9582",
+  "local_ahead_of_origin": 7,
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "credential_reads_allowed": 0,
+  "address_processing_allowed": 0,
+  "defect": {
+    "doctor_error": "declared input is not Git-tracked: node_modules/gmgn-cli/package.json",
+    "source_task": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001",
+    "invalid_declared_input": "node_modules/gmgn-cli/package.json",
+    "retained_git_tracked_pin_evidence": [
+      "package.json",
+      "package-lock.json"
+    ]
+  },
+  "privacy": {
+    "credential_values": false,
+    "proxy_url_values": false,
+    "plaintext_addresses": false,
+    "raw_provider_payloads": false
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001",
+  "title": "Offline repair: remove untracked node_modules input from proxy transport repair task",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Pure offline Harness evidence repair. Remove the non-Git-tracked declared input node_modules/gmgn-cli/package.json from GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001 while retaining package.json and package-lock.json as the only Git-tracked gmgn-cli pin evidence. Add evidence-correction notes to related acceptance reports. Do not modify GMGN query implementation, re-run 7d smoke, or issue any network/provider requests.",
+  "dependencies": [
+    "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001/acceptance.md",
+    "package.json",
+    "package-lock.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, browser, web scraping, or any network/provider request.",
+    "Do not modify src/application/gmgn/**, src/cli/**, wallet stats parser, GMGN CLI arguments, proxy environment implementation, or 7d external outputs.",
+    "Do not re-run 7d smoke, create or execute 30d/holdings tasks, or re-interpret live recovery claims.",
+    "Do not add node_modules or gmgn-cli install artifacts to Git.",
+    "Do not read or display credential values, proxy URL values, plaintext addresses, labels, raw payloads, or raw stdout/stderr.",
+    "Do not execute the independent audit task HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.",
+    "Do not force-push or reset --hard."
+  ],
+  "deliverables": [
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/reports/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

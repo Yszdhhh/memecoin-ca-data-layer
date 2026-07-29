@@ -20,8 +20,7 @@
     "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/acceptance.md",
     "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001/acceptance.md",
     "package.json",
-    "package-lock.json",
-    "node_modules/gmgn-cli/package.json"
+    "package-lock.json"
   ],
   "write_set": [
     "src/application/gmgn/gmgn-cli-boundary.ts",

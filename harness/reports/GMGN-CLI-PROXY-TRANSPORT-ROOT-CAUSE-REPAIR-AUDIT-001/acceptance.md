@@ -86,17 +86,27 @@ Executed as acceptance commands of this audit (local toolchain only; zero provid
 | Command | Result |
 | --- | --- |
 | task validate (this audit) | PASS / GREEN |
-| harness:doctor | PASS (at verify) |
+| harness:doctor | PASS (at verify; see evidence correction below) |
 | typecheck | PASS (at verify) |
 | test | PASS (at verify) |
 | build | PASS (at verify) |
 | git diff --check | PASS (at verify) |
 
+## 4b. Evidence correction (Harness declared input — ledger only)
+
+Historical note (not erased): this audit recorded `harness:doctor` as PASS at its original verify time.
+
+Reproducible fact at final 7d audit HEAD `42c375ec95ac5d6fe2fec49920485114133b7759`: Doctor later failed because the audited task still declared untracked input `node_modules/gmgn-cli/package.json`.
+
+This is a **ledger/input-evidence** defect only. It does not invalidate the offline proxy/transport code contracts reviewed in §2 of this audit, nor does it re-open or re-interpret the subsequent 7d live smoke results.
+
+Ledger repair is performed offline by `HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001` (0 provider/network; no GMGN implementation change; no live re-run). Post-correction Doctor GREEN is recorded on that evidence-repair acceptance report.
+
 ## 5. Verdict
 
 **Audit task verdict:** `GREEN`
 
-GREEN means the offline proxy/transport repair and safety contracts are correct. GREEN does **not** mean GMGN live 7d/30d/holdings works.
+GREEN means the offline proxy/transport repair and safety contracts are correct. GREEN does **not** mean GMGN live 7d/30d/holdings works. GREEN at original audit time does not waive later Doctor failure caused by an untracked declared input; that ledger issue is corrected separately.
 
 ## 6. Downstream clearance
 

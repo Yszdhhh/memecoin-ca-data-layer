@@ -866,6 +866,16 @@
       "task_id": "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

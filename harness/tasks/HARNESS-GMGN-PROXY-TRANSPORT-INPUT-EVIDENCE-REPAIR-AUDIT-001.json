@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001",
+  "title": "Independent zero-network audit of proxy-transport input evidence repair",
+  "tier": "T1",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001 with HARNESS_AGENT_ID auditor-harness-gmgn-proxy-transport-input-evidence-repair-001 and zero network/provider requests. Re-run harness doctor, verify Git-tracked inputs only, confirm node_modules/gmgn-cli/package.json is not a declared or tracked input, and confirm no GMGN implementation code changed in this repair.",
+  "dependencies": [
+    "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001/acceptance.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN or any network/provider.",
+    "Do not modify application code, implementer evidence beyond this audit report, package manifests, or node_modules.",
+    "Do not use HARNESS_AGENT_ID implementer-harness-gmgn-proxy-transport-input-evidence-repair-001.",
+    "Do not push to origin."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

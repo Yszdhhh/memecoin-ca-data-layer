@@ -41,13 +41,30 @@ This task repairs only the offline-provable proxy/transport isolation defect. It
 | Check | Result |
 | --- | --- |
 | Provider / browser requests | `0` |
-| `npm run harness:doctor` | GREEN |
+| `npm run harness:doctor` | GREEN (at original repair verify; see evidence correction below) |
 | `npm run typecheck` | PASS (at verify) |
 | `npm test` | PASS (at verify) |
 | `npm run build` | PASS (at verify) |
 | `git diff --check` | PASS (at verify) |
 
 Synthetic coverage includes: proxy forward, no ALL_PROXY, lowercase parent keys, no forged proxy when absent, illegal scheme fail-closed without URL leak, no parent NODE_OPTIONS inheritance, fixed child NODE_OPTIONS, proxy+disposable HOME coexistence, stats private-key exclusion, signed preflight, timeout single settle+kill, safe classifier non-leak, CLI args unchanged with proxy present, real isolated child probe.
+
+## 4b. Evidence correction (Harness declared input — ledger only)
+
+Historical note (not erased): this report originally recorded `npm run harness:doctor` as GREEN during the repair harness verify run.
+
+Reproducible fact at final 7d audit HEAD `42c375ec95ac5d6fe2fec49920485114133b7759`: re-running Doctor failed with:
+
+> `GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001: declared input is not Git-tracked: node_modules/gmgn-cli/package.json`
+
+Cause: this task's `inputs` incorrectly declared the ephemeral runtime path `node_modules/gmgn-cli/package.json`. `node_modules` is not Git-tracked evidence and must not appear as a Harness declared input.
+
+Correction under `HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001` (offline, 0 provider/network):
+
+- Removed `node_modules/gmgn-cli/package.json` from this task's `inputs`.
+- Retained Git-tracked pin evidence only: `package.json` and `package-lock.json` (gmgn-cli@1.5.4 lock constraint).
+- No Proxy/Transport implementation change; no 7d live re-run or re-interpretation.
+- Post-correction Doctor result is recorded on the evidence-repair acceptance report (must re-run to GREEN).
 
 ## 5. Version Drift (read-only)
 
