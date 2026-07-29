@@ -1,0 +1,26 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001",
+  "baseline_commit": "52acdc2f5da742e65b8555e1374dc56eca602c56",
+  "evidence_task": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001",
+  "evidence_audit": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001",
+  "observed_contract": {
+    "canonical_numeric_string_aliases": [
+      "bought_cost",
+      "realized_profit",
+      "realized_profit_pnl",
+      "sold_income",
+      "total_cost"
+    ],
+    "json_number_aliases": [
+      "buy",
+      "sell",
+      "last_timestamp",
+      "token_num",
+      "winrate"
+    ]
+  },
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "gmgn_cli_invocations_allowed": 0
+}

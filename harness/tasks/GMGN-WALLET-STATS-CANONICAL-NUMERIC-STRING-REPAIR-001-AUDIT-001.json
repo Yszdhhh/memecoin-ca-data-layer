@@ -1,0 +1,41 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001",
+  "title": "Independent audit of canonical numeric-string wallet stats parser repair",
+  "tier": "T2",
+  "chain": "solana",
+  "layer": "cold_path",
+  "role": "auditor",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit the canonical numeric-string parser repair with zero network, including exact grammar, finite conversion, integer/range rules, alias conflicts, null/missing semantics, and regression coverage.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001.json",
+    "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/infrastructure/gmgn/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network/provider/GMGN CLI requests.",
+    "Do not read credentials or real addresses.",
+    "Do not modify application or test code."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

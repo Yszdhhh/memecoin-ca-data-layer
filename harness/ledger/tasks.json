@@ -1006,6 +1006,16 @@
       "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }
