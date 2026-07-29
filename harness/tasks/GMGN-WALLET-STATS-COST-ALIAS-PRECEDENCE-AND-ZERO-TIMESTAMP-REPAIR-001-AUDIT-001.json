@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001",
+  "title": "Independent audit of GMGN cost alias precedence and zero timestamp repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit the offline parser repair with zero network. Verify bought_cost family precedence over total_cost fallback, same-family conflict fail-closed behavior, zero timestamp omission without invalid-type noise, strict existing contracts, synthetic coverage, and write-set accuracy.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN or any external network/provider.",
+    "Do not read credentials, addresses, labels, raw payloads, raw errors, or metric values.",
+    "Do not modify parser, application, or test code."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

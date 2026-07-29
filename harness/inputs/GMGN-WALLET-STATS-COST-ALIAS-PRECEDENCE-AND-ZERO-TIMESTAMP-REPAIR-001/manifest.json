@@ -1,0 +1,32 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001",
+  "baseline_commit": "c672bbc8addb53e4110926698068a74abf42a944",
+  "evidence_task": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001",
+  "evidence_audit": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001",
+  "pinned_cli_version": "1.5.4",
+  "observed_contract": {
+    "boughtCost": {
+      "primary_family": [
+        "bought_cost_7d",
+        "bought_cost_30d",
+        "bought_cost"
+      ],
+      "fallback_family": [
+        "total_cost_7d",
+        "total_cost_30d",
+        "total_cost",
+        "buy_volume"
+      ],
+      "coexisting_primary_fallback_relation": "different"
+    },
+    "lastActiveTimestamp": {
+      "alias": "last_timestamp",
+      "json_type": "number",
+      "safe_value_not_retained": true
+    }
+  },
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "gmgn_cli_invocations_allowed": 0
+}
