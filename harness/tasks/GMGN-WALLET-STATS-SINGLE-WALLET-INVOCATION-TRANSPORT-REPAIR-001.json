@@ -1,0 +1,68 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001",
+  "title": "Force one wallet per GMGN wallet-stats CLI invocation after live batch-cardinality truncation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Repair the GMGN wallet-stats transport so every CLI invocation contains exactly one wallet. Remove the invalid 20-wallet batching assumption proven by the audited live cardinality diagnostic, set full 1,433-wallet 7d/30d planning to exactly 2,866 bounded serial invocations, preserve API-key-only isolation and parser semantics, and add pure offline synthetic tests. This task performs zero live requests.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001/acceptance.md",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts"
+  ],
+  "write_set": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue network, provider, or GMGN CLI requests.",
+    "Do not read credentials or real external address files.",
+    "Do not modify or overwrite historical live outputs or reports.",
+    "Do not add retry, concurrency, pagination, fallback, Helius, signed holdings, database, cache, queue, ranking, or LLM behavior.",
+    "Do not weaken source gmgn / verificationStatus unverified or null-on-missing semantics."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}
