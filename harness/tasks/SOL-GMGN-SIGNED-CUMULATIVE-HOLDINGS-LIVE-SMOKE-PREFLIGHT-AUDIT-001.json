@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and offline audit the proposed SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 task before any live execution. Confirm that the task is Solana-only and GMGN-only; requires both external input hashes before network use; selects only one strict valid unique address in memory without storing it; uses exactly one isolated signed CLI invocation; disables the CLI's rate-limit auto retry with GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0; caps physical provider requests at exactly one; prohibits cursor, pagination, fallback, automation and production writes; and retains only allowlisted sanitized outcomes. Confirm that the task does not overclaim cumulative Holdings as complete all-time or chain-confirmed PnL. Do not call any provider or read credentials. Record GREEN, GREEN_WITH_ADVISORY, PARK or FAIL with safe evidence only.",
   "dependencies": ["HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001"],
   "inputs": ["harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json", "harness/dispatches/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.md", "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json", "src/application/gmgn/gmgn-cli-boundary.ts", "src/infrastructure/gmgn/wallet-holdings-parser.ts", "package.json", "package-lock.json", "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md"],
