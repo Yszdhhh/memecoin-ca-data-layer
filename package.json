@@ -16,7 +16,8 @@
     "solana:live:ca-first": "tsx src/cli/run-solana-live-ca-first.ts",
     "solana:live:ca-batch": "tsx src/cli/run-solana-live-ca-batch.ts",
     "solana:daily:new-token-analysis": "tsx src/cli/run-solana-daily-new-token-analysis.ts",
-    "solana:chainfm:clean": "tsx src/cli/clean-solana-chainfm-addresses.ts"
+    "solana:chainfm:clean": "tsx src/cli/clean-solana-chainfm-addresses.ts",
+    "harness:gmgn-wallet-profile-pilot": "tsx harness/gmgn-wallet-profile-pilot.ts"
   },
   "dependencies": {
     "gmgn-cli": "1.5.4",

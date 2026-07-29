@@ -721,6 +721,16 @@
       "task_id": "SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001",
       "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }

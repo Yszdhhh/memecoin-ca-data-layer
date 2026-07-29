@@ -1,12 +1,20 @@
-﻿export const GMGN_WALLET_STATS_PARSER_VERSION = "gmgn-wallet-stats-v1";
+export const GMGN_WALLET_STATS_PARSER_VERSION = "gmgn-wallet-stats-v1";
 
 export type GmgnWalletStatsStatus = "MAPPED" | "PARTIAL" | "UNAVAILABLE";
 export type GmgnWalletStatsMapping = "direct_identity" | "wallet_keyed" | null;
 
 export interface GmgnWalletStatsAggregate {
   periodPnl?: number;
+  realizedProfit?: number;
+  realizedProfitPnl?: number;
   winRate?: number;
   tradeCount?: number;
+  buyCount?: number;
+  sellCount?: number;
+  boughtCost?: number;
+  soldIncome?: number;
+  lastActiveTimestamp?: number;
+  tokenNum?: number;
 }
 
 export interface GmgnWalletStatsResult {
@@ -28,6 +36,7 @@ type Candidate = {
 
 const MAX_DEPTH = 12;
 const MAX_NODES = 10_000;
+
 const PNL_KEYS = new Set([
   "pnl",
   "total_pnl",
@@ -39,8 +48,16 @@ const PNL_KEYS = new Set([
   "total_profit",
   "total_profit_usd",
 ]);
+const REALIZED_PROFIT_KEYS = new Set(["realized_profit"]);
+const REALIZED_PROFIT_PNL_KEYS = new Set(["realized_profit_pnl"]);
 const WIN_RATE_KEYS = new Set(["winrate", "win_rate", "winning_rate", "win_rate_percent"]);
 const TRADE_COUNT_KEYS = new Set(["trade_count", "trade_num", "total_trades", "trades", "tx_count"]);
+const BUY_COUNT_KEYS = new Set(["buy", "buy_count", "bought_count", "buy_num"]);
+const SELL_COUNT_KEYS = new Set(["sell", "sell_count", "sold_count", "sell_num"]);
+const BOUGHT_COST_KEYS = new Set(["bought_cost", "total_cost"]);
+const SOLD_INCOME_KEYS = new Set(["sold_income"]);
+const LAST_ACTIVE_TIMESTAMP_KEYS = new Set(["last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time"]);
+const TOKEN_NUM_KEYS = new Set(["token_num", "token_count"]);
 
 /**
  * Extracts only allowlisted numeric aggregates from a GMGN JSON value already
@@ -161,6 +178,14 @@ function collectAggregates(
       const metric = finiteNumber(child);
       if (metric !== undefined) aggregates.periodPnl = metric;
     }
+    if (aggregates.realizedProfit === undefined && REALIZED_PROFIT_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined) aggregates.realizedProfit = metric;
+    }
+    if (aggregates.realizedProfitPnl === undefined && REALIZED_PROFIT_PNL_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined) aggregates.realizedProfitPnl = metric;
+    }
     if (aggregates.winRate === undefined && WIN_RATE_KEYS.has(key)) {
       const metric = finiteNumber(child);
       if (metric !== undefined && metric >= 0 && metric <= 100) aggregates.winRate = metric;
@@ -169,6 +194,34 @@ function collectAggregates(
       const metric = finiteNumber(child);
       if (metric !== undefined && Number.isSafeInteger(metric) && metric >= 0) aggregates.tradeCount = metric;
     }
+    if (aggregates.buyCount === undefined && BUY_COUNT_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && Number.isSafeInteger(metric) && metric >= 0) aggregates.buyCount = metric;
+    }
+    if (aggregates.sellCount === undefined && SELL_COUNT_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && Number.isSafeInteger(metric) && metric >= 0) aggregates.sellCount = metric;
+    }
+    if (aggregates.boughtCost === undefined && BOUGHT_COST_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && metric >= 0) aggregates.boughtCost = metric;
+    }
+    if (aggregates.soldIncome === undefined && SOLD_INCOME_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && metric >= 0) aggregates.soldIncome = metric;
+    }
+    if (aggregates.lastActiveTimestamp === undefined && LAST_ACTIVE_TIMESTAMP_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && metric > 0) aggregates.lastActiveTimestamp = metric;
+    }
+    if (aggregates.tokenNum === undefined && TOKEN_NUM_KEYS.has(key)) {
+      const metric = finiteNumber(child);
+      if (metric !== undefined && Number.isSafeInteger(metric) && metric >= 0) aggregates.tokenNum = metric;
+    }
+  }
+
+  if (aggregates.tradeCount === undefined && aggregates.buyCount !== undefined && aggregates.sellCount !== undefined) {
+    aggregates.tradeCount = aggregates.buyCount + aggregates.sellCount;
   }
 
   for (const child of Object.values(record)) collectAggregates(child, aggregates, depth + 1, visited);
