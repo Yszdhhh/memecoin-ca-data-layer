@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001 with a distinct HARNESS_AGENT_ID and zero network. Verify exact input hashes, 2-invocation cap, serial delay, parser outcomes, sanitized output, and whether the live result safely authorizes a later bounded batch.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001"
