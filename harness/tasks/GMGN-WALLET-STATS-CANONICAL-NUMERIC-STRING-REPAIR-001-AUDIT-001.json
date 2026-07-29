@@ -15,7 +15,7 @@
     "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001.json",
     "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001/acceptance.md",
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
-    "test/infrastructure/gmgn/gmgn-wallet-stats-parser.test.ts"
+    "test/gmgn-wallet-stats-parser.test.ts"
   ],
   "write_set": [
     "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",

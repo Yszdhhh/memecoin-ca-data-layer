@@ -13,7 +13,7 @@
   ],
   "inputs": [
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
-    "test/infrastructure/gmgn/gmgn-wallet-stats-parser.test.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
     "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/acceptance.md",
     "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001/acceptance.md",
     "harness/inputs/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001/manifest.json"
@@ -27,7 +27,7 @@
     "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001/.gitkeep",
     "harness/ledger/tasks.json",
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
-    "test/infrastructure/gmgn/gmgn-wallet-stats-parser.test.ts"
+    "test/gmgn-wallet-stats-parser.test.ts"
   ],
   "forbidden_actions": [
     "Do not issue network/provider/GMGN CLI requests or read credentials/real addresses.",
