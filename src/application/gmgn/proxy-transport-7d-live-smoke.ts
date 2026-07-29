@@ -55,6 +55,7 @@ export const ALLOWLISTED_7D_SMOKE_CODES = [
   "gmgn_wallet_stats_partial_fields",
   "gmgn_wallet_stats_invalid_field_type",
   "gmgn_wallet_stats_win_rate_unit_ambiguous",
+  "gmgn_wallet_stats_alias_conflict",
 ] as const;
 
 export type Allowlisted7dSmokeCode = (typeof ALLOWLISTED_7D_SMOKE_CODES)[number];

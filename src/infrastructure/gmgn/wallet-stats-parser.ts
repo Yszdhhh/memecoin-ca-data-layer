@@ -37,6 +37,7 @@ export const ALLOWLISTED_WALLET_STATS_WARNING_CODES = [
   "gmgn_wallet_stats_partial_fields",
   "gmgn_wallet_stats_invalid_field_type",
   "gmgn_wallet_stats_win_rate_unit_ambiguous",
+  "gmgn_wallet_stats_alias_conflict",
 ] as const;
 
 type JsonRecord = Record<string, unknown>;
@@ -51,8 +52,8 @@ const TOTAL_SCHEMA_FIELDS = 11;
 /**
  * Version 2 Parser for GMGN Wallet Stats.
  * Implements strict schema contracts, explicit envelope matching, zero arbitrary depth recursion,
- * mandatory expectedPeriod verification, coverage-based completeness without tradeCount derivation,
- * and fail-closed type/unit validation.
+ * safe runtime envelope validation, global multi-location period collection, alias conflict fail-closed behavior,
+ * candidate container ambiguity detection, strict per-field numeric validation, and winRate unit contracts.
  */
 export function parseGmgnWalletStats(
   payload: unknown,
@@ -100,21 +101,6 @@ function parseWalletResult(
     };
   }
 
-  // Check self-describing period contract if present in payload or record
-  const periodStatus = extractPayloadPeriodStatus(payload, record, expectedPeriod);
-  if (periodStatus === "mismatch") {
-    return {
-      wallet,
-      parserVersion: GMGN_WALLET_STATS_PARSER_VERSION,
-      status: "UNAVAILABLE",
-      mapping,
-      completeness: 0,
-      aggregates: {},
-      warningCodes: ["gmgn_wallet_stats_period_mismatch"],
-    };
-  }
-  const periodVerified = periodStatus === "verified";
-
   // Container isolation: extract metrics from candidate metric containers
   const containerResult = selectUniqueMetricContainer(record, expectedPeriod);
   if (!containerResult.success) {
@@ -129,7 +115,35 @@ function parseWalletResult(
     };
   }
 
-  const { aggregates, validCount, warnings } = containerResult;
+  const { aggregates, validCount, warnings, selectedContainer } = containerResult;
+
+  // Collect and validate ALL explicit period declarations across record, root, data, result, and metric containers
+  const periodStatus = extractPayloadPeriodStatus(payload, record, expectedPeriod, selectedContainer);
+  if (periodStatus === "mismatch") {
+    return {
+      wallet,
+      parserVersion: GMGN_WALLET_STATS_PARSER_VERSION,
+      status: "UNAVAILABLE",
+      mapping,
+      completeness: 0,
+      aggregates: {},
+      warningCodes: ["gmgn_wallet_stats_period_mismatch"],
+    };
+  }
+  const periodVerified = periodStatus === "verified";
+
+  // Check alias conflict warning
+  if (warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+    return {
+      wallet,
+      parserVersion: GMGN_WALLET_STATS_PARSER_VERSION,
+      status: "UNAVAILABLE",
+      mapping,
+      completeness: 0,
+      aggregates: {},
+      warningCodes: ["gmgn_wallet_stats_alias_conflict"],
+    };
+  }
 
   // Must contain at least one core profit metric
   const hasCoreProfitMetric =
@@ -189,14 +203,17 @@ function resolveRecordCandidate(payload: unknown, wallet: string): ResolvedRecor
     }
 
     // 2. Wallet-keyed dictionary envelope at root, root.data, or root.result
-    if (asRecord(root[wallet])) {
-      return { record: root[wallet] as JsonRecord, mapping: "wallet_keyed" };
+    const rootWalletRec = asRecord(root[wallet]);
+    if (rootWalletRec) {
+      return { record: rootWalletRec, mapping: "wallet_keyed" };
     }
-    if (dataRec && asRecord(dataRec[wallet])) {
-      return { record: dataRec[wallet] as JsonRecord, mapping: "wallet_keyed" };
+    if (dataRec) {
+      const dataWalletRec = asRecord(dataRec[wallet]);
+      if (dataWalletRec) return { record: dataWalletRec, mapping: "wallet_keyed" };
     }
-    if (resRec && asRecord(resRec[wallet])) {
-      return { record: resRec[wallet] as JsonRecord, mapping: "wallet_keyed" };
+    if (resRec) {
+      const resWalletRec = asRecord(resRec[wallet]);
+      if (resWalletRec) return { record: resWalletRec, mapping: "wallet_keyed" };
     }
 
     // 3. Record-list envelope under root containers or sub-containers (e.g. root.data.rows)
@@ -206,16 +223,18 @@ function resolveRecordCandidate(payload: unknown, wallet: string): ResolvedRecor
       resRec?.rows, resRec?.list, resRec?.wallets, resRec?.records, resRec?.results, resRec?.data,
     ];
     for (const container of rawContainers) {
-      if (Array.isArray(container)) {
-        const found = findRecordInList(container, wallet);
+      const arr = asArray(container);
+      if (arr) {
+        const found = findRecordInList(arr, wallet);
         if (found) return { record: found, mapping: "record_list" };
       }
     }
   }
 
   // 4. Top-level array of records
-  if (Array.isArray(payload)) {
-    const found = findRecordInList(payload, wallet);
+  const topArr = asArray(payload);
+  if (topArr) {
+    const found = findRecordInList(topArr, wallet);
     if (found) return { record: found, mapping: "record_list" };
   }
 
@@ -246,32 +265,49 @@ function extractPayloadPeriodStatus(
   payload: unknown,
   record: JsonRecord,
   expectedPeriod: "7d" | "30d",
+  selectedContainer?: JsonRecord,
 ): "verified" | "unverified" | "mismatch" {
   const root = asRecord(payload);
-  const sources = [record, root, root?.data as JsonRecord, root?.result as JsonRecord];
+  const dataRec = root ? asRecord(root.data) : undefined;
+  const resRec = root ? asRecord(root.result) : undefined;
+
+  const sources = [record, root, dataRec, resRec, selectedContainer];
   const keys = ["period", "window", "time_frame", "timeframe", "bucket"];
+
+  const explicitPeriods: string[] = [];
 
   for (const src of sources) {
     if (!src) continue;
     for (const key of keys) {
       if (!(key in src)) continue;
       const val = src[key];
+      if (val === undefined || val === null) continue;
+
       let periodVal: "7d" | "30d" | "unsupported" | null = null;
       if (val === "7d" || val === "7_days" || val === "7" || val === 7) periodVal = "7d";
       else if (val === "30d" || val === "30_days" || val === "30" || val === 30) periodVal = "30d";
       else periodVal = "unsupported";
 
-      if (periodVal === "unsupported" || periodVal !== expectedPeriod) {
-        return "mismatch";
-      }
-      return "verified";
+      explicitPeriods.push(periodVal);
     }
   }
-  return "unverified";
+
+  if (explicitPeriods.length === 0) {
+    return "unverified";
+  }
+
+  // Any explicit unsupported value or value mismatch or conflict between multiple locations -> mismatch!
+  for (const p of explicitPeriods) {
+    if (p === "unsupported" || p !== expectedPeriod) {
+      return "mismatch";
+    }
+  }
+
+  return "verified";
 }
 
 type ContainerSelectionResult =
-  | { success: true; aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[] }
+  | { success: true; aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[]; selectedContainer: JsonRecord }
   | { success: false; warningCode: string };
 
 function selectUniqueMetricContainer(
@@ -279,16 +315,16 @@ function selectUniqueMetricContainer(
   expectedPeriod: "7d" | "30d",
 ): ContainerSelectionResult {
   // Construct candidate metric containers from record:
-  // 1. Direct scalar/primitive properties of record (excluding nested object containers like pnl_stat, stats, etc.)
-  const rootScalars: JsonRecord = {};
+  // 1. Direct properties of record (excluding sub-container keys pnl_stat and stats)
+  const rootCandidate: JsonRecord = {};
   for (const [key, val] of Object.entries(record)) {
-    if (val === null || typeof val !== "object") {
-      rootScalars[key] = val;
+    if (key !== "pnl_stat" && key !== "stats") {
+      rootCandidate[key] = val;
     }
   }
 
   const candidates: Array<{ name: string; container: JsonRecord }> = [];
-  candidates.push({ name: "root", container: rootScalars });
+  candidates.push({ name: "root", container: rootCandidate });
 
   const pnlStatRec = asRecord(record.pnl_stat);
   if (pnlStatRec) {
@@ -300,29 +336,79 @@ function selectUniqueMetricContainer(
     candidates.push({ name: "stats", container: statsRec });
   }
 
-  const metricRuns = candidates.map((cand) => ({
-    name: cand.name,
-    ...extractMetricsFromSingleContainer(cand.container, expectedPeriod),
-  })).filter((run) => run.validCount > 0 || run.warnings.length > 0);
+  // Evaluate metric intent across all candidate containers
+  const intentCandidates = candidates.filter((cand) => hasMetricIntent(cand.container, expectedPeriod));
 
-  const runsWithValidMetrics = metricRuns.filter((run) => run.validCount > 0);
-
-  if (runsWithValidMetrics.length === 0) {
+  if (intentCandidates.length === 0) {
     return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
   }
 
-  if (runsWithValidMetrics.length > 1) {
-    // Cross-node composition or multiple containers with metrics -> Fail-closed!
+  if (intentCandidates.length > 1) {
+    // Metric keys / intent found in multiple containers -> Fail-closed!
     return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
   }
 
-  const selected = runsWithValidMetrics[0]!;
+  const selectedCandidate = intentCandidates[0]!;
+  const metricExtraction = extractMetricsFromSingleContainer(selectedCandidate.container, expectedPeriod);
+
+  if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+    return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+  }
+
   return {
     success: true,
-    aggregates: selected.aggregates,
-    validCount: selected.validCount,
-    warnings: selected.warnings,
+    aggregates: metricExtraction.aggregates,
+    validCount: metricExtraction.validCount,
+    warnings: metricExtraction.warnings,
+    selectedContainer: selectedCandidate.container,
   };
+}
+
+function hasMetricIntent(container: JsonRecord, expectedPeriod: "7d" | "30d"): boolean {
+  const metricAliases = getAllowlistedMetricAliases(expectedPeriod);
+  for (const key of Object.keys(container)) {
+    if (metricAliases.has(key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getAllowlistedMetricAliases(expectedPeriod: "7d" | "30d"): Set<string> {
+  if (expectedPeriod === "30d") {
+    return new Set([
+      "pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
+      "realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
+      "realized_profit_pnl_30d", "realized_profit_pnl",
+      "winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
+      "trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
+      "buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num",
+      "sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num",
+      "bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume",
+      "sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume",
+      "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
+      "token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens",
+    ]);
+  }
+  return new Set([
+    "pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
+    "realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
+    "realized_profit_pnl_7d", "realized_profit_pnl",
+    "winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
+    "trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
+    "buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num",
+    "sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num",
+    "bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume",
+    "sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume",
+    "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
+    "token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens",
+  ]);
+}
+
+interface AliasGroupDefinition {
+  canonicalName: keyof GmgnWalletStatsAggregate;
+  aliasKeys: string[];
+  kind: "number" | "non_negative_number" | "positive_number" | "integer" | "win_rate_percent" | "win_rate_ratio";
 }
 
 function extractMetricsFromSingleContainer(
@@ -333,162 +419,186 @@ function extractMetricsFromSingleContainer(
   const warnings: string[] = [];
   let validCount = 0;
 
-  const pnlKeys = expectedPeriod === "30d"
-    ? new Set(["pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"])
-    : new Set(["pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"]);
-
-  const realizedProfitKeys = expectedPeriod === "30d"
-    ? new Set(["realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"])
-    : new Set(["realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"]);
-
-  const realizedProfitPnlKeys = expectedPeriod === "30d"
-    ? new Set(["realized_profit_pnl_30d", "realized_profit_pnl"])
-    : new Set(["realized_profit_pnl_7d", "realized_profit_pnl"]);
-
-  const winRatePercentKeys = expectedPeriod === "30d"
-    ? new Set(["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent"])
-    : new Set(["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent"]);
-
-  const winRateRatioKeys = new Set(["win_rate_ratio", "winrate_ratio"]);
-
-  const tradeCountKeys = expectedPeriod === "30d"
-    ? new Set(["trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"])
-    : new Set(["trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"]);
-
-  const buyCountKeys = expectedPeriod === "30d"
-    ? new Set(["buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num"])
-    : new Set(["buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num"]);
-
-  const sellCountKeys = expectedPeriod === "30d"
-    ? new Set(["sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num"])
-    : new Set(["sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num"]);
-
-  const boughtCostKeys = expectedPeriod === "30d"
-    ? new Set(["bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume"])
-    : new Set(["bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume"]);
-
-  const soldIncomeKeys = expectedPeriod === "30d"
-    ? new Set(["sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume"])
-    : new Set(["sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume"]);
-
-  const lastActiveTimestampKeys = new Set([
-    "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
-  ]);
-
-  const tokenNumKeys = expectedPeriod === "30d"
-    ? new Set(["token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens"])
-    : new Set(["token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens"]);
-
   const forbiddenPeriodKeys = expectedPeriod === "30d"
     ? new Set(["pnl_7d", "realized_profit_7d", "realized_profit_pnl_7d", "winrate_7d", "win_rate_7d", "trade_count_7d", "trades_7d", "tx_count_7d", "buy_7d", "buy_count_7d", "sell_7d", "sell_count_7d", "bought_cost_7d", "total_cost_7d", "sold_income_7d", "total_income_7d", "token_num_7d", "token_count_7d"])
     : new Set(["pnl_30d", "realized_profit_30d", "realized_profit_pnl_30d", "winrate_30d", "win_rate_30d", "trade_count_30d", "trades_30d", "tx_count_30d", "buy_30d", "buy_count_30d", "sell_30d", "sell_count_30d", "bought_cost_30d", "total_cost_30d", "sold_income_30d", "total_income_30d", "token_num_30d", "token_count_30d"]);
 
-  for (const [key, rawVal] of Object.entries(container)) {
-    if (forbiddenPeriodKeys.has(key)) continue;
+  const aliasGroups: AliasGroupDefinition[] = [
+    {
+      canonicalName: "periodPnl",
+      aliasKeys: expectedPeriod === "30d" ? ["pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"] : ["pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"],
+      kind: "number",
+    },
+    {
+      canonicalName: "realizedProfit",
+      aliasKeys: expectedPeriod === "30d" ? ["realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"] : ["realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"],
+      kind: "number",
+    },
+    {
+      canonicalName: "realizedProfitPnl",
+      aliasKeys: expectedPeriod === "30d" ? ["realized_profit_pnl_30d", "realized_profit_pnl"] : ["realized_profit_pnl_7d", "realized_profit_pnl"],
+      kind: "number",
+    },
+    {
+      canonicalName: "tradeCount",
+      aliasKeys: expectedPeriod === "30d" ? ["trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"] : ["trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"],
+      kind: "integer",
+    },
+    {
+      canonicalName: "buyCount",
+      aliasKeys: expectedPeriod === "30d" ? ["buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num"] : ["buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num"],
+      kind: "integer",
+    },
+    {
+      canonicalName: "sellCount",
+      aliasKeys: expectedPeriod === "30d" ? ["sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num"] : ["sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num"],
+      kind: "integer",
+    },
+    {
+      canonicalName: "boughtCost",
+      aliasKeys: expectedPeriod === "30d" ? ["bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume"] : ["bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume"],
+      kind: "non_negative_number",
+    },
+    {
+      canonicalName: "soldIncome",
+      aliasKeys: expectedPeriod === "30d" ? ["sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume"] : ["sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume"],
+      kind: "non_negative_number",
+    },
+    {
+      canonicalName: "lastActiveTimestamp",
+      aliasKeys: ["last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at"],
+      kind: "positive_number",
+    },
+    {
+      canonicalName: "tokenNum",
+      aliasKeys: expectedPeriod === "30d" ? ["token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens"] : ["token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens"],
+      kind: "integer",
+    },
+  ];
 
-    if (aggregates.periodPnl === undefined && pnlKeys.has(key)) {
-      const num = parseStrictNumber(rawVal);
-      if (num !== undefined) { aggregates.periodPnl = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
+  for (const group of aliasGroups) {
+    const presentKeys = group.aliasKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    if (presentKeys.length === 0) continue;
 
-    if (aggregates.realizedProfit === undefined && realizedProfitKeys.has(key)) {
-      const num = parseStrictNumber(rawVal);
-      if (num !== undefined) { aggregates.realizedProfit = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
+    const validValues: number[] = [];
+    let hasInvalidFieldType = false;
 
-    if (aggregates.realizedProfitPnl === undefined && realizedProfitPnlKeys.has(key)) {
-      const num = parseStrictNumber(rawVal);
-      if (num !== undefined) { aggregates.realizedProfitPnl = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
+    for (const key of presentKeys) {
+      const rawVal = container[key];
+      if (rawVal === undefined || rawVal === null) continue;
 
-    if (aggregates.winRate === undefined) {
-      if (winRatePercentKeys.has(key)) {
-        const num = parseStrictNumber(rawVal);
-        if (num !== undefined) {
-          if (num > 0 && num < 1) {
-            // Ambiguous (e.g. 0.4 could be 0.4% or ratio 0.40) -> fail-closed with warning
-            warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-          } else if (num >= 0 && num <= 100) {
-            aggregates.winRate = num;
-            validCount++;
-          } else {
-            // Out of percentage range (> 100 or < 0)
-            warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-          }
-        } else if (rawVal !== undefined && rawVal !== null) {
-          warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-        }
-      } else if (winRateRatioKeys.has(key)) {
-        const num = parseStrictNumber(rawVal);
-        if (num !== undefined && num >= 0 && num <= 1) {
-          aggregates.winRate = Math.round(num * 100 * 100) / 100;
-          validCount++;
-        } else if (rawVal !== undefined && rawVal !== null) {
-          warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-        }
+      let parsed: number | undefined;
+      if (group.kind === "number") parsed = parseStrictNumber(rawVal);
+      else if (group.kind === "non_negative_number") parsed = parseNonNegativeNumber(rawVal);
+      else if (group.kind === "positive_number") parsed = parsePositiveNumber(rawVal);
+      else if (group.kind === "integer") parsed = parseStrictInteger(rawVal);
+
+      if (parsed !== undefined) {
+        validValues.push(parsed);
+      } else {
+        hasInvalidFieldType = true;
       }
     }
 
-    if (aggregates.tradeCount === undefined && tradeCountKeys.has(key)) {
-      const num = parseStrictInteger(rawVal);
-      if (num !== undefined && num >= 0) { aggregates.tradeCount = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
+    if (hasInvalidFieldType && validValues.length > 0) {
+      // Combination of valid and invalid alias values for same canonical field -> ALIAS CONFLICT!
+      warnings.push("gmgn_wallet_stats_alias_conflict");
+      continue;
     }
 
-    if (aggregates.buyCount === undefined && buyCountKeys.has(key)) {
-      const num = parseStrictInteger(rawVal);
-      if (num !== undefined && num >= 0) { aggregates.buyCount = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
+    if (hasInvalidFieldType && validValues.length === 0) {
+      warnings.push("gmgn_wallet_stats_invalid_field_type");
+      continue;
     }
 
-    if (aggregates.sellCount === undefined && sellCountKeys.has(key)) {
-      const num = parseStrictInteger(rawVal);
-      if (num !== undefined && num >= 0) { aggregates.sellCount = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
-
-    if (aggregates.boughtCost === undefined && boughtCostKeys.has(key)) {
-      const num = parseNonNegativeNumber(rawVal);
-      if (num !== undefined) { aggregates.boughtCost = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
-
-    if (aggregates.soldIncome === undefined && soldIncomeKeys.has(key)) {
-      const num = parseNonNegativeNumber(rawVal);
-      if (num !== undefined) { aggregates.soldIncome = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
-
-    if (aggregates.lastActiveTimestamp === undefined && lastActiveTimestampKeys.has(key)) {
-      const num = parsePositiveNumber(rawVal);
-      if (num !== undefined) { aggregates.lastActiveTimestamp = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
-    }
-
-    if (aggregates.tokenNum === undefined && tokenNumKeys.has(key)) {
-      const num = parseStrictInteger(rawVal);
-      if (num !== undefined && num >= 0) { aggregates.tokenNum = num; validCount++; }
-      else if (rawVal !== undefined && rawVal !== null) warnings.push("gmgn_wallet_stats_invalid_field_type");
+    const firstVal = validValues[0];
+    if (validValues.length === 1 && firstVal !== undefined) {
+      aggregates[group.canonicalName] = firstVal;
+      validCount++;
+    } else if (validValues.length > 1 && firstVal !== undefined) {
+      const allEqual = validValues.every((v) => v === firstVal);
+      if (allEqual) {
+        aggregates[group.canonicalName] = firstVal;
+        validCount++;
+      } else {
+        // Multiple alias values with different numeric values -> ALIAS CONFLICT!
+        warnings.push("gmgn_wallet_stats_alias_conflict");
+      }
     }
   }
 
-  // NOTE: tradeCount is NOT derived from buyCount + sellCount.
-  // Completeness only counts fields explicitly present and strictly valid in provider payload.
+  // Handle winRate explicitly for percent vs ratio aliases
+  const winRatePercentKeys = expectedPeriod === "30d"
+    ? ["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent"]
+    : ["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent"];
+  const winRateRatioKeys = ["win_rate_ratio", "winrate_ratio"];
+
+  const presentPercentKeys = winRatePercentKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+  const presentRatioKeys = winRateRatioKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+
+  const winRatePercentValues: number[] = [];
+  const winRateRatioValues: number[] = [];
+  let winRateAmbiguous = false;
+  let winRateInvalidType = false;
+
+  for (const key of presentPercentKeys) {
+    const rawVal = container[key];
+    if (rawVal === undefined || rawVal === null) continue;
+    const num = parseStrictNumber(rawVal);
+    if (num !== undefined) {
+      if (num > 0 && num < 1) {
+        // 0 < v < 1 is ambiguous for percent alias (e.g. 0.4 could be 0.4% or ratio 0.40)
+        winRateAmbiguous = true;
+      } else if (num >= 0 && num <= 100) {
+        winRatePercentValues.push(num);
+      } else {
+        winRateAmbiguous = true;
+      }
+    } else {
+      winRateInvalidType = true;
+    }
+  }
+
+  for (const key of presentRatioKeys) {
+    const rawVal = container[key];
+    if (rawVal === undefined || rawVal === null) continue;
+    const num = parseStrictNumber(rawVal);
+    if (num !== undefined && num >= 0 && num <= 1) {
+      winRateRatioValues.push(Math.round(num * 100 * 100) / 100);
+    } else {
+      winRateAmbiguous = true;
+    }
+  }
+
+  if (presentPercentKeys.length > 0 && presentRatioKeys.length > 0) {
+    // Both percent and ratio aliases present -> ALIAS CONFLICT!
+    warnings.push("gmgn_wallet_stats_alias_conflict");
+  } else if (winRateAmbiguous) {
+    warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
+  } else if (winRateInvalidType && winRatePercentValues.length === 0) {
+    warnings.push("gmgn_wallet_stats_invalid_field_type");
+  } else {
+    const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues];
+    const firstWinRate = allParsedWinRates[0];
+    if (allParsedWinRates.length === 1 && firstWinRate !== undefined) {
+      aggregates.winRate = firstWinRate;
+      validCount++;
+    } else if (allParsedWinRates.length > 1 && firstWinRate !== undefined) {
+      if (allParsedWinRates.every((v) => Math.abs(v - firstWinRate) < 1e-6)) {
+        aggregates.winRate = firstWinRate;
+        validCount++;
+      } else {
+        warnings.push("gmgn_wallet_stats_alias_conflict");
+      }
+    }
+  }
 
   return { aggregates, validCount, warnings };
 }
 
 function parseStrictNumber(val: unknown): number | undefined {
-  if (typeof val === "number" && Number.isFinite(val)) return val;
-  if (typeof val === "string") {
-    const trimmed = val.trim();
-    if (/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/.test(trimmed)) {
-      const num = Number(trimmed);
-      return Number.isFinite(num) ? num : undefined;
-    }
+  if (typeof val === "number" && Number.isFinite(val)) {
+    return val;
   }
   return undefined;
 }
@@ -510,4 +620,8 @@ function parseStrictInteger(val: unknown): number | undefined {
 
 function asRecord(value: unknown): JsonRecord | undefined {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as JsonRecord) : undefined;
+}
+
+function asArray(value: unknown): unknown[] | undefined {
+  return Array.isArray(value) ? value : undefined;
 }

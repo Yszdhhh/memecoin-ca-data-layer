@@ -60,6 +60,7 @@ export const ALLOWLISTED_30D_SMOKE_CODES = [
   "gmgn_wallet_stats_partial_fields",
   "gmgn_wallet_stats_invalid_field_type",
   "gmgn_wallet_stats_win_rate_unit_ambiguous",
+  "gmgn_wallet_stats_alias_conflict",
 ] as const;
 
 export type Allowlisted30dSmokeCode = (typeof ALLOWLISTED_30D_SMOKE_CODES)[number];
