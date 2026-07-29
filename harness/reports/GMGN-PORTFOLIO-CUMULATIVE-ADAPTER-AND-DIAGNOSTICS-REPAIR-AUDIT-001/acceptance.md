@@ -4,8 +4,14 @@
 
 - **Task ID**: `GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001`
 - **Auditor HARNESS_AGENT_ID**: `auditor-gmgn-portfolio-cumulative-adapter-repair-001`
-- **Audited Commit SHA**: `cb6ee46cc420f5cf1c9f3f5dca0e158dc375690f`
+- **Audited Implementation Baseline SHA**: `cb6ee46cc420f5cf1c9f3f5dca0e158dc375690f`
+- **Audit Completion Commit SHA**: `9d6729391413c23fa036a67f458ed4995f8719a9`
+- **Remote Branch SHA (`origin/codex/solana-daily-new-token-analysis`)**: `9d6729391413c23fa036a67f458ed4995f8719a9`
+- **Workspace Clean State During Audit**: `PASS` (`git status --short` output was empty)
 - **Git Branch**: `codex/solana-daily-new-token-analysis`
+- **Audit Artifact Files**:
+  - Audit Task Spec: `harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json`
+  - Acceptance Report: `harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md`
 - **Audit Verdict**: `GREEN`
 
 ---
@@ -28,7 +34,11 @@ All offline verification commands passed cleanly on a clean workspace prior to r
 ## 3. Network & Provider Request Statement
 
 - **Provider / Network Requests Issued**: `0`
-- Zero HTTP/HTTPS requests, WebSocket connections, or RPC calls were issued to GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, or any external service/provider.
+- Zero HTTP/HTTPS requests, WebSocket connections, or RPC calls were issued to GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, or any external service/provider during audit.
+- **GREEN Scope Statement**: GREEN verdict strictly represents offline safety, process isolation, error classification, and adapter contract verification.
+- **Live Smoke & Data Status**:
+  - Signed Cumulative Holdings live smoke has **NOT** been executed.
+  - Cumulative holdings data authenticity, completeness, and live availability have **NOT** been verified.
 
 ---
 
@@ -52,7 +62,8 @@ All offline verification commands passed cleanly on a clean workspace prior to r
 
 ### D. Safe Error Classification & Privacy
 - Subprocess errors reduce in-memory to an allowlisted code set (`gmgn_cli_timeout`, `gmgn_cli_auth_rejected`, `gmgn_cli_rate_limited`, `gmgn_cli_network_unavailable`, `gmgn_cli_response_unparseable`, `gmgn_request_unavailable`).
-- Raw `stdout`/`stderr`, credential values, signature values, credential URLs, and raw provider payloads are discarded from memory and are never persisted or printed in output objects, reports, fixtures, or test failures.
+- 原始 stdout/stderr 仅在子进程边界内短暂用于解析或错误分类；不会被持久化、记录、返回、写入 Git、fixture、报告或测试失败信息。完成分类或解析后，调用方不保留其引用。
+- Credential values, signature values, credential URLs, and raw provider payloads are never logged, printed, returned, or persisted in output objects, reports, fixtures, or test failures.
 - Fail-closed behavior enforced; missing values default to `null` rather than fabricated values.
 
 ### E. Cumulative Holdings Parser & Normalization
@@ -71,11 +82,13 @@ All offline verification commands passed cleanly on a clean workspace prior to r
 
 ---
 
-## 6. Authorization for Bounded Live Smoke
+## 6. Request Authorization & Subsequent Live Smoke Boundary
 
-- **Live Smoke Authorization**: **YES / ALLOWED**
-- **Recommendation**: Permission is granted to create a separate dispatch for a minimal-budget, signed cumulative holdings live smoke task.
-- **Conditions for Live Smoke**:
+- **Live Request Authorization**: **NO / ZERO LIVE REQUESTS AUTHORIZED BY THIS AUDIT**
+- **Explicit Conclusion**:
+  > 本审计不授权任何 live 请求。后续 Signed Cumulative Holdings Live Smoke 必须由独立 task spec 和 dispatch 明确规定整数物理请求上限；在该独立任务创建并审计前，不得发起任何 live 请求。
+- **Conditions for Future Task Spec Authoring (When Separately Authorized)**:
   1. Separate dispatch and distinct task ID.
-  2. Bounded invocation budget (e.g., 1–5 calls max).
+  2. Must explicitly specify an integer physical request cap (e.g., 1 or 2 requests).
   3. Strict secret containment (credentials read from process environment at runtime, never logged, printed, or saved).
+  4. Must pass independent audit prior to execution.

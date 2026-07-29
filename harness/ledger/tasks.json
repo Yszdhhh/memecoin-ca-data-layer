@@ -775,7 +775,12 @@
     {
       "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001",
       "spec": "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.json",
+      "status": "DONE"
     }
   ]
 }
