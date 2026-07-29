@@ -1,0 +1,40 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001",
+  "title": "Independent audit of SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 evidence, boundaries, and normalized metrics",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 execution evidence. Verify that request count limit <= 200 was enforced, exactly 100 addresses were deterministically selected (skipping 20 pilot addresses, choosing 21st-120th) from input hash-verified cleaned.jsonl, input evidence manifest exists, no API keys / private keys / raw payloads / raw errors were saved or committed to Git, GMGN data is strictly marked borrowed/unverified, no Helius / BSC / DB / automation / scraper was invoked, serial >=1s rate limiting was enforced, and 7D / 30D metric normalization is reproducible by unit tests.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not execute network calls or provider requests.",
+    "Do not modify implementation or test code.",
+    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

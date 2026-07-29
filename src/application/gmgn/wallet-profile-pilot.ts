@@ -11,14 +11,19 @@ import {
 } from "../../infrastructure/gmgn/wallet-stats-parser.js";
 
 export const PILOT_TASK_ID = "SOL-GMGN-WALLET-PROFILE-PILOT-001";
+export const BATCH_100_TASK_ID = "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001";
 export const EXPECTED_SOL_ADDRESSES_HASH = "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C";
 export const EXPECTED_SOL_LABELS_HASH = "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3";
 export const TARGET_WALLET_COUNT = 20;
 export const MAX_REQUEST_BUDGET = 40;
 
 export interface PilotOptions {
+  taskId?: string;
   inputDir: string;
   outputDir: string;
+  targetWalletCount?: number;
+  offsetWalletCount?: number;
+  maxRequestBudget?: number;
   gmgnCliPath?: string;
   skipNetworkCalls?: boolean;
   credentialAvailable?: boolean;
@@ -27,6 +32,10 @@ export interface PilotOptions {
     walletAddress: string,
     period: "7d" | "30d"
   ) => { exitCode: number; stdout: string };
+  expectedHashes?: {
+    solAddressesTxtHash?: string;
+    solAddressLabelsJsonHash?: string;
+  };
 }
 
 export interface NormalizedWalletMetrics {
@@ -59,13 +68,14 @@ export interface NormalizedWalletProfileRecord {
 
 export interface WalletProfilePilotResult {
   status: "SUCCESS" | "FAIL_CLOSED" | "PARK";
-  taskId: typeof PILOT_TASK_ID;
+  taskId: string;
   inputHashesMatch: boolean;
   selectedCount: number;
   mappedCount: number;
   partialCount: number;
   unavailableCount: number;
   requestBudgetUsed: number;
+  maxRequestBudget: number;
   warningCodeCounts: Record<string, number>;
   outputFiles: {
     normalizedWalletProfilesJson: string;
@@ -87,14 +97,23 @@ export async function runGmgnWalletProfilePilot(
   options: PilotOptions
 ): Promise<WalletProfilePilotResult> {
   const {
+    taskId = PILOT_TASK_ID,
     inputDir,
     outputDir,
+    targetWalletCount = TARGET_WALLET_COUNT,
+    offsetWalletCount = 0,
+    maxRequestBudget,
     gmgnCliPath,
     skipNetworkCalls,
     credentialAvailable,
     sleepFn,
     mockGmgnStatsRunner,
+    expectedHashes,
   } = options;
+
+  const actualMaxBudget = maxRequestBudget ?? targetWalletCount * 2;
+  const expectedTxtHash = expectedHashes?.solAddressesTxtHash ?? EXPECTED_SOL_ADDRESSES_HASH;
+  const expectedJsonHash = expectedHashes?.solAddressLabelsJsonHash ?? EXPECTED_SOL_LABELS_HASH;
 
   const warningCodeCounts: Record<string, number> = {};
   const addWarningCode = (code: string) => {
@@ -112,19 +131,19 @@ export async function runGmgnWalletProfilePilot(
 
   if (!fs.existsSync(txtPath) || !fs.existsSync(jsonPath)) {
     addWarningCode("input_manifest_mismatch");
-    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch");
+    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch", taskId, actualMaxBudget);
   }
 
   const actualTxtHash = computeFileSha256(txtPath);
   const actualJsonHash = computeFileSha256(jsonPath);
 
   const inputHashesMatch =
-    actualTxtHash === EXPECTED_SOL_ADDRESSES_HASH &&
-    actualJsonHash === EXPECTED_SOL_LABELS_HASH;
+    actualTxtHash === expectedTxtHash &&
+    actualJsonHash === expectedJsonHash;
 
   if (!inputHashesMatch) {
     addWarningCode("input_manifest_mismatch");
-    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch");
+    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch", taskId, actualMaxBudget);
   }
 
   // 2. Load or clean external cleaned.jsonl
@@ -134,25 +153,25 @@ export async function runGmgnWalletProfilePilot(
       inputDir,
       outputDir: inputDir,
       expectedHashes: {
-        "sol_addresses.txt": EXPECTED_SOL_ADDRESSES_HASH,
-        "sol_address_labels.json": EXPECTED_SOL_LABELS_HASH,
+        "sol_addresses.txt": expectedTxtHash,
+        "sol_address_labels.json": expectedJsonHash,
       },
     });
   }
 
   if (!fs.existsSync(cleanedJsonlPath)) {
     addWarningCode("input_manifest_mismatch");
-    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch");
+    return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch", taskId, actualMaxBudget);
   }
 
-  // 3. Extract addresses from cleaned.jsonl and select first 20 unique valid addresses
+  // 3. Extract addresses from cleaned.jsonl and select target wallets using deterministic rules
   const cleanedLines = fs
     .readFileSync(cleanedJsonlPath, "utf8")
     .trim()
     .split(/\r?\n/)
     .filter((l) => l.trim().length > 0);
 
-  const selectedAddresses: string[] = [];
+  const validUniqueAddresses: string[] = [];
   const seenAddresses = new Set<string>();
 
   for (const line of cleanedLines) {
@@ -161,19 +180,21 @@ export async function runGmgnWalletProfilePilot(
       const normalized = normalizeSolanaAddress(record.address);
       if (normalized && !seenAddresses.has(normalized)) {
         seenAddresses.add(normalized);
-        selectedAddresses.push(normalized);
-        if (selectedAddresses.length === TARGET_WALLET_COUNT) {
-          break;
-        }
+        validUniqueAddresses.push(normalized);
       }
     } catch {
       // Ignore unparseable line
     }
   }
 
-  if (selectedAddresses.length !== TARGET_WALLET_COUNT) {
+  const selectedAddresses = validUniqueAddresses.slice(
+    offsetWalletCount,
+    offsetWalletCount + targetWalletCount
+  );
+
+  if (selectedAddresses.length !== targetWalletCount) {
     addWarningCode("gmgn_wallet_input_invalid");
-    return failClosedResult(outputDir, warningCodeCounts, "gmgn_wallet_input_invalid");
+    return failClosedResult(outputDir, warningCodeCounts, "gmgn_wallet_input_invalid", taskId, actualMaxBudget);
   }
 
   // 4. Determine credential status (using dependency injection or read-only env check)
@@ -208,13 +229,13 @@ export async function runGmgnWalletProfilePilot(
       }
     }
   } else {
-    // Execute live bounded requests (1 call per wallet per period, total max 40 requests)
+    // Execute live bounded requests (1 call per wallet per period, total max budget requests)
     const resolvedCliPath =
       gmgnCliPath || path.resolve("node_modules/gmgn-cli/dist/index.js");
 
     for (const period of periods) {
       for (const walletAddress of selectedAddresses) {
-        if (totalRequestsUsed >= MAX_REQUEST_BUDGET) {
+        if (totalRequestsUsed >= actualMaxBudget) {
           addWarningCode("gmgn_rate_limited");
           records.push(
             buildUnavailableRecord(
@@ -401,7 +422,7 @@ export async function runGmgnWalletProfilePilot(
   ).length;
 
   const summary = {
-    taskId: PILOT_TASK_ID,
+    taskId,
     status: mappedCount > 0 ? "SUCCESS" : "PARK",
     timestamp: fetchedAt,
     inputHashesMatch,
@@ -411,7 +432,7 @@ export async function runGmgnWalletProfilePilot(
     partialCount,
     unavailableCount,
     requestBudgetUsed: totalRequestsUsed,
-    maxRequestBudget: MAX_REQUEST_BUDGET,
+    maxRequestBudget: actualMaxBudget,
     warningCodeCounts,
   };
 
@@ -419,13 +440,14 @@ export async function runGmgnWalletProfilePilot(
 
   return {
     status: mappedCount > 0 ? "SUCCESS" : "PARK",
-    taskId: PILOT_TASK_ID,
+    taskId,
     inputHashesMatch,
     selectedCount: selectedAddresses.length,
     mappedCount,
     partialCount,
     unavailableCount,
     requestBudgetUsed: totalRequestsUsed,
+    maxRequestBudget: actualMaxBudget,
     warningCodeCounts,
     outputFiles: {
       normalizedWalletProfilesJson: normalizedJsonPath,
@@ -472,7 +494,9 @@ function buildUnavailableRecord(
 function failClosedResult(
   outputDir: string,
   warningCodeCounts: Record<string, number>,
-  primaryErrorCode: string
+  primaryErrorCode: string,
+  taskId: string = PILOT_TASK_ID,
+  maxRequestBudget: number = MAX_REQUEST_BUDGET
 ): WalletProfilePilotResult {
   const fetchedAt = new Date().toISOString();
   if (!fs.existsSync(outputDir)) {
@@ -488,7 +512,7 @@ function failClosedResult(
   fs.writeFileSync(normalizedJsonPath, JSON.stringify([], null, 2), "utf8");
 
   const summary = {
-    taskId: PILOT_TASK_ID,
+    taskId,
     status: "FAIL_CLOSED",
     timestamp: fetchedAt,
     inputHashesMatch: false,
@@ -498,7 +522,7 @@ function failClosedResult(
     partialCount: 0,
     unavailableCount: 0,
     requestBudgetUsed: 0,
-    maxRequestBudget: MAX_REQUEST_BUDGET,
+    maxRequestBudget,
     warningCodeCounts,
     primaryErrorCode,
   };
@@ -507,13 +531,14 @@ function failClosedResult(
 
   return {
     status: "FAIL_CLOSED",
-    taskId: PILOT_TASK_ID,
+    taskId,
     inputHashesMatch: false,
     selectedCount: 0,
     mappedCount: 0,
     partialCount: 0,
     unavailableCount: 0,
     requestBudgetUsed: 0,
+    maxRequestBudget,
     warningCodeCounts,
     outputFiles: {
       normalizedWalletProfilesJson: normalizedJsonPath,

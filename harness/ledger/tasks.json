@@ -736,6 +736,16 @@
       "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
     }
   ]
 }

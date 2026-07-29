@@ -7,53 +7,50 @@ import crypto from "node:crypto";
 import {
   runGmgnWalletProfilePilot,
   PILOT_TASK_ID,
-  EXPECTED_SOL_ADDRESSES_HASH,
-  EXPECTED_SOL_LABELS_HASH,
+  BATCH_100_TASK_ID,
 } from "../../../src/application/gmgn/wallet-profile-pilot.js";
 
-// Valid 32-byte Base58 Solana public key fixture set (20 unique addresses)
-const SYNTHETIC_WALLETS = [
-  "5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT",
-  "EzbeF2bADKo6GutJyWmgodyGJFeBPhcrXSdZUXPX5WGc",
-  "4jRX4iW2F5wBnfYMyB7RjS2PU5MjXrST3fB9DoV4BjHa",
-  "A44rJ9RcW1RhDdtNMr3FHm8GhanM9aQ5Kqhc6VqnCmff",
-  "5wQaABAbgA52cBks6zqXmk9nFftZgy18f78im6UxXhNU",
-  "HyriMMiB1aTi1y6EwUAHUGw2pgF995fzXhiEZAQWF2ib",
-  "79CxhdY2TeFHpGNcaHgnHJTWnv7KA3KgMFoeHrJg77ru",
-  "8K5276kWCmRnS1TLTAKxRznM6NehtHkqCVWxcQhzHrwF",
-  "DXAEnomAr94Mt1EQzEVts2pUBjJ32A48iaUinPRh9qrK",
-  "A8CQVwoP5dyb3qmrG8YeZvD5jsrqF5UL8aruLjR6qWbH",
-  "EwTNPYTuwxMzrvL19nzBsSLXdAoEmVBKkisN87csKgtt",
-  "3b872a604183a0807f65220f1396ab4499bc484aa89a",
-  "11111111111111111111111111111111111111111111",
-  "22222222222222222222222222222222222222222222",
-  "33333333333333333333333333333333333333333333",
-  "44444444444444444444444444444444444444444444",
-  "55555555555555555555555555555555555555555555",
-  "66666666666666666666666666666666666666666666",
-  "77777777777777777777777777777777777777777777",
-  "88888888888888888888888888888888888888888888",
-];
+const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-function setupSyntheticInputDir(dir: string, corruptHash = false): void {
-  const txtContent = SYNTHETIC_WALLETS.join("\n") + "\n";
-  const jsonContent = JSON.stringify(
-    SYNTHETIC_WALLETS.map((address) => ({ address, labels: ["synthetic"] }))
-  );
-
-  fs.writeFileSync(path.join(dir, "sol_addresses.txt"), txtContent, "utf8");
-  fs.writeFileSync(
-    path.join(dir, "sol_address_labels.json"),
-    jsonContent,
-    "utf8"
-  );
-
-  if (corruptHash) {
-    fs.writeFileSync(path.join(dir, "sol_addresses.txt"), "corrupted", "utf8");
+function bufferToBase58(buffer: Buffer): string {
+  let num = BigInt("0x" + buffer.toString("hex"));
+  if (num === 0n) return "1";
+  let encoded = "";
+  while (num > 0n) {
+    const rem = num % 58n;
+    encoded = ALPHABET[Number(rem)] + encoded;
+    num = num / 58n;
   }
+  for (const byte of buffer) {
+    if (byte === 0) encoded = "1" + encoded;
+    else break;
+  }
+  return encoded;
+}
 
-  // Pre-generate cleaned.jsonl matching expected input format
-  const cleanedLines = SYNTHETIC_WALLETS.map((address) =>
+// Generate 130 synthetic valid Base58 Solana public key strings (32-byte public keys encoded)
+const SYNTHETIC_WALLETS = Array.from({ length: 130 }, (_, i) => {
+  const buf = Buffer.alloc(32);
+  buf.writeUInt32BE(i + 1, 28);
+  return bufferToBase58(buf);
+});
+
+function setupSyntheticInputDir(dir: string, walletList = SYNTHETIC_WALLETS): { txtHash: string; jsonHash: string } {
+  const txtContent = walletList.join("\n") + "\n";
+  const jsonContent = JSON.stringify(
+    walletList.map((address) => ({ address, labels: ["synthetic"] }))
+  );
+
+  const txtPath = path.join(dir, "sol_addresses.txt");
+  const jsonPath = path.join(dir, "sol_address_labels.json");
+
+  fs.writeFileSync(txtPath, txtContent, "utf8");
+  fs.writeFileSync(jsonPath, jsonContent, "utf8");
+
+  const txtHash = crypto.createHash("sha256").update(txtContent).digest("hex").toUpperCase();
+  const jsonHash = crypto.createHash("sha256").update(jsonContent).digest("hex").toUpperCase();
+
+  const cleanedLines = walletList.map((address) =>
     JSON.stringify({
       address,
       labelPrimary: "synthetic",
@@ -68,79 +65,140 @@ function setupSyntheticInputDir(dir: string, corruptHash = false): void {
     cleanedLines.join("\n") + "\n",
     "utf8"
   );
+
+  return { txtHash, jsonHash };
 }
 
-function computeSha256(filePath: string): string {
-  return crypto
-    .createHash("sha256")
-    .update(fs.readFileSync(filePath))
-    .digest("hex")
-    .toUpperCase();
-}
-
-test("deterministic 20-wallet selection and 7D / 30D metric normalization", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
+test("default pilot behavior: 20 wallets, offset 0, budget 40", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
-    setupSyntheticInputDir(tmpInputDir);
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
 
-    // Override hash verification to match synthetic files dynamically for test
-    const actualTxtHash = computeSha256(path.join(tmpInputDir, "sol_addresses.txt"));
-    const actualJsonHash = computeSha256(path.join(tmpInputDir, "sol_address_labels.json"));
-
+    const runnerCalls: Array<{ wallet: string; period: string }> = [];
     const delays: number[] = [];
-    const mockRunner = (walletAddress: string, period: "7d" | "30d") => ({
-      exitCode: 0,
-      stdout: JSON.stringify({
-        wallet_address: walletAddress,
-        realized_profit: 25.5,
-        realized_profit_pnl: 0.15,
-        buy: 8,
-        sell: 4,
-        bought_cost: 100.0,
-        sold_income: 125.5,
-        last_timestamp: 1715000000,
-        pnl_stat: { winrate: 66.7, token_num: 5 },
-      }),
-    });
 
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
       sleepFn: async (ms) => {
         delays.push(ms);
       },
-      mockGmgnStatsRunner: (w, p) => {
-        // Enforce hash check pass in test execution by mocking hashes check or using matched input
-        return mockRunner(w, p);
+      mockGmgnStatsRunner: (walletAddress, period) => {
+        runnerCalls.push({ wallet: walletAddress, period });
+        return {
+          exitCode: 0,
+          stdout: JSON.stringify({
+            wallet_address: walletAddress,
+            realized_profit: 50.0,
+            winrate: 0.75,
+          }),
+        };
       },
     });
 
-    // Hash check will fail against global constants EXPECTED_SOL_ADDRESSES_HASH,
-    // so let's verify fail-closed on mismatched constant hashes:
-    assert.equal(result.status, "FAIL_CLOSED");
-    assert.equal(result.inputHashesMatch, false);
-    assert.equal(result.warningCodeCounts["input_manifest_mismatch"], 1);
+    assert.equal(result.status, "SUCCESS");
+    assert.equal(result.taskId, PILOT_TASK_ID);
+    assert.equal(result.selectedCount, 20);
+    assert.equal(result.records.length, 40); // 20 wallets * 2 periods
+    assert.equal(result.requestBudgetUsed, 40);
+    assert.equal(runnerCalls.length, 40);
+    assert.equal(delays.length, 39); // 39 delays for 40 serial calls
+    delays.forEach((d) => assert.ok(d >= 1000, "delay must be >= 1000ms"));
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
   }
 });
 
-test("fails closed when input files do not match expected SHA-256 hashes", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
+test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 delays >= 1000ms", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-out-"));
 
   try {
-    setupSyntheticInputDir(tmpInputDir, true); // Corrupted file
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
+
+    const runnerCalls: Array<{ wallet: string; period: string }> = [];
+    const delays: number[] = [];
+
+    const result = await runGmgnWalletProfilePilot({
+      taskId: BATCH_100_TASK_ID,
+      inputDir: tmpInputDir,
+      outputDir: tmpOutputDir,
+      targetWalletCount: 100,
+      offsetWalletCount: 20,
+      maxRequestBudget: 200,
+      credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
+      sleepFn: async (ms) => {
+        delays.push(ms);
+      },
+      mockGmgnStatsRunner: (walletAddress, period) => {
+        runnerCalls.push({ wallet: walletAddress, period });
+        return {
+          exitCode: 0,
+          stdout: JSON.stringify({
+            wallet_address: walletAddress,
+            realized_profit: 100.0,
+            realized_profit_pnl: 0.25,
+            buy: 10,
+            sell: 5,
+            bought_cost: 400.0,
+            sold_income: 500.0,
+            last_timestamp: 1715000000,
+            pnl_stat: { winrate: 66.7, token_num: 8 },
+          }),
+        };
+      },
+    });
+
+    assert.equal(result.status, "SUCCESS");
+    assert.equal(result.taskId, BATCH_100_TASK_ID);
+    assert.equal(result.selectedCount, 100);
+    assert.equal(result.records.length, 200);
+    assert.equal(result.mappedCount, 200);
+    assert.equal(result.requestBudgetUsed, 200);
+    assert.equal(runnerCalls.length, 200);
+    assert.equal(delays.length, 199);
+    for (const d of delays) {
+      assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
+    }
+
+    // Verify first selected wallet matches SYNTHETIC_WALLETS[20] (21st address)
+    const targetAddr = SYNTHETIC_WALLETS[20]!;
+    assert.equal(result.records[0]?.sourceInputFingerprint, crypto.createHash("sha256").update(targetAddr).digest("hex"));
+  } finally {
+    fs.rmSync(tmpInputDir, { recursive: true, force: true });
+    fs.rmSync(tmpOutputDir, { recursive: true, force: true });
+  }
+});
+
+test("zero network requests on hash mismatch", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
+
+  try {
+    setupSyntheticInputDir(tmpInputDir);
 
     let runnerCalled = false;
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       credentialAvailable: true,
+      // Pass expected hashes that do not match the synthetic files
+      expectedHashes: {
+        solAddressesTxtHash: "0000000000000000000000000000000000000000000000000000000000000000",
+        solAddressLabelsJsonHash: "0000000000000000000000000000000000000000000000000000000000000000",
+      },
       mockGmgnStatsRunner: () => {
         runnerCalled = true;
         return { exitCode: 0, stdout: "{}" };
@@ -149,7 +207,7 @@ test("fails closed when input files do not match expected SHA-256 hashes", async
 
     assert.equal(result.status, "FAIL_CLOSED");
     assert.equal(result.inputHashesMatch, false);
-    assert.equal(runnerCalled, false); // Proves fail-closed before any runner call!
+    assert.equal(runnerCalled, false);
     assert.equal(result.warningCodeCounts["input_manifest_mismatch"], 1);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
@@ -157,105 +215,104 @@ test("fails closed when input files do not match expected SHA-256 hashes", async
   }
 });
 
-test("returns PARK when credentialAvailable is false without process.env mutation", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
+test("credentials unavailable returns PARK without mutating process.env", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
-    // Write synthetic files matching constants to test credential-missing logic
-    fs.writeFileSync(path.join(tmpInputDir, "sol_addresses.txt"), "dummy", "utf8");
-    fs.writeFileSync(path.join(tmpInputDir, "sol_address_labels.json"), "[]", "utf8");
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
+
+    const apiKeyBefore = process.env.GMGN_API_KEY;
+    const privateKeyBefore = process.env.GMGN_PRIVATE_KEY;
 
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       credentialAvailable: false,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
     });
 
-    assert.equal(result.status, "FAIL_CLOSED"); // Hash mismatch comes before credential check
+    assert.equal(result.status, "PARK");
     assert.equal(result.requestBudgetUsed, 0);
+    assert.equal(result.warningCodeCounts["gmgn_credential_unavailable"], 1);
+
+    // Verify process.env GMGN keys were not mutated
+    assert.equal(process.env.GMGN_API_KEY, apiKeyBefore);
+    assert.equal(process.env.GMGN_PRIVATE_KEY, privateKeyBefore);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
   }
 });
 
-test("rate limiting enforces serial execution with 39 gaps >= 1,000ms and budget <= 40", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
+test("missing numeric metrics remain null and incomplete, never fake 0", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
-    // Write exact bytes matching EXPECTED_SOL_ADDRESSES_HASH if possible or test runner logic
-    const txtBuffer = Buffer.from(
-      "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
-      "hex"
-    );
-    // Write synthetic files
-    setupSyntheticInputDir(tmpInputDir);
-
-    const delays: number[] = [];
-    let callCount = 0;
-
-    // Direct check of rate limiting delay contract
-    const sleep = async (ms: number) => {
-      delays.push(ms);
-    };
-
-    // Simulate 40 requests rate limit delay logic
-    for (let req = 0; req < 40; req++) {
-      if (req > 0) {
-        await sleep(1000);
-      }
-      callCount++;
-    }
-
-    assert.equal(callCount, 40);
-    assert.equal(delays.length, 39);
-    for (const delay of delays) {
-      assert.ok(delay >= 1000, `Delay ${delay} must be >= 1000ms`);
-    }
-  } finally {
-    fs.rmSync(tmpInputDir, { recursive: true, force: true });
-    fs.rmSync(tmpOutputDir, { recursive: true, force: true });
-  }
-});
-
-test("missing metrics are null and PARTIAL/UNAVAILABLE, never fake 0", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
-
-  try {
-    setupSyntheticInputDir(tmpInputDir);
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
 
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
-      skipNetworkCalls: true,
+      credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
+      mockGmgnStatsRunner: (walletAddress) => ({
+        exitCode: 0,
+        stdout: JSON.stringify({
+          wallet_address: walletAddress,
+          winrate: 66.7,
+          // All other fields missing!
+        }),
+      }),
     });
 
-    assert.equal(result.status, "FAIL_CLOSED"); // Mismatched hash fails closed cleanly
-    assert.equal(result.records.length, 0);
+    assert.equal(result.status, "SUCCESS");
+    assert.ok(result.records.length > 0);
+
+    const record = result.records[0];
+    assert.ok(record);
+    assert.equal(record.aggregates.winRate, 66.7);
+    assert.equal(record.aggregates.periodPnl, null);
+    assert.equal(record.aggregates.realizedProfit, null);
+    assert.equal(record.aggregates.buyCount, null);
+    assert.equal(record.aggregates.sellCount, null);
+    assert.equal(record.aggregates.boughtCost, null);
+    assert.equal(record.aggregates.soldIncome, null);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
   }
 });
 
-test("skipNetworkCalls returns PARK without faking success data", async () => {
-  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-in-"));
-  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-pilot-out-"));
+test("insufficient or invalid target address count fails closed", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
-    setupSyntheticInputDir(tmpInputDir);
+    // Only 10 synthetic wallets provided, but target is 20
+    const shortWallets = SYNTHETIC_WALLETS.slice(0, 10);
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir, shortWallets);
 
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
-      skipNetworkCalls: true,
+      targetWalletCount: 20,
+      credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
     });
 
-    assert.equal(result.mappedCount, 0);
-    assert.equal(result.requestBudgetUsed, 0);
+    assert.equal(result.status, "FAIL_CLOSED");
+    assert.equal(result.warningCodeCounts["gmgn_wallet_input_invalid"], 1);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
