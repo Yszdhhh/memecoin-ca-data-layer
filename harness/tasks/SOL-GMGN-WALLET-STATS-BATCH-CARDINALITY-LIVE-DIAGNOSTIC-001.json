@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Issue exactly one manual read-only GMGN official API 30d stats CLI invocation for the first 20 hash-verified valid unique Solana wallets and persist only an allowlisted structural/cardinality summary. Determine whether a 20-wallet request returns identity-addressable records for all requested wallets or only a subset, without storing or displaying addresses, identities, raw payload, raw stdout/stderr, credentials, or proxy URLs. Fail closed before network on hash/selection mismatch, PARK if GMGN_API_KEY is absent, and register a separate zero-network audit.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001"
