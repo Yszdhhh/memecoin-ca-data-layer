@@ -4,6 +4,12 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
 import { parseGmgnWalletStats } from "../../infrastructure/gmgn/wallet-stats-parser.js";
+import {
+  buildApiKeyOnlyGmgnCliEnvironment,
+  buildGmgnStatsInvocation,
+  classifyGmgnCliFailure,
+  createGmgnCliIsolation,
+} from "./gmgn-cli-boundary.js";
 
 export const PILOT_TASK_ID = "SOL-GMGN-WALLET-PROFILE-PILOT-001";
 export const BATCH_100_TASK_ID = "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001";
@@ -20,6 +26,11 @@ export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "gmgn_wallet_input_invalid",
   "gmgn_credential_unavailable",
   "gmgn_request_unavailable",
+  "gmgn_cli_timeout",
+  "gmgn_cli_auth_rejected",
+  "gmgn_cli_rate_limited",
+  "gmgn_cli_network_unavailable",
+  "gmgn_cli_response_unparseable",
   "gmgn_rate_limited",
   "gmgn_response_invalid",
   "gmgn_wallet_metric_unavailable",
@@ -120,32 +131,6 @@ function toAllowlistedWarningCode(value: string | undefined): AllowlistedGmgnWar
   return (ALLOWLISTED_GMGN_WARNING_CODES as readonly string[]).includes(value ?? "")
     ? value as AllowlistedGmgnWarningCode
     : "gmgn_expected_metrics_unavailable";
-}
-
-function buildGmgnStatsEnvironment(): NodeJS.ProcessEnv {
-  // Do not inherit process.env: that could pass GMGN_PRIVATE_KEY or unrelated
-  // credentials to the subprocess. Only runtime essentials and GMGN_API_KEY are
-  // intentionally forwarded; no value is logged or persisted.
-  const environment: NodeJS.ProcessEnv = {};
-  const runtimeKeys = [
-    "PATH",
-    "SystemRoot",
-    "ComSpec",
-    "PATHEXT",
-    "TEMP",
-    "TMP",
-    "HOME",
-    "USERPROFILE",
-    "APPDATA",
-    "LOCALAPPDATA",
-  ] as const;
-  for (const key of runtimeKeys) {
-    const value = process.env[key];
-    if (value !== undefined) environment[key] = value;
-  }
-  const apiKey = process.env.GMGN_API_KEY;
-  if (apiKey !== undefined) environment.GMGN_API_KEY = apiKey;
-  return environment;
 }
 
 function externalizeRecord(record: NormalizedWalletProfileRecord): ExternalNormalizedWalletProfileRecord {
@@ -345,30 +330,31 @@ export async function runGmgnWalletProfilePilot(
         totalRequestsUsed += 1;
 
         let rawOutput = "";
+        let rawError = "";
         let exitCode = -1;
+        let timedOut = false;
 
         if (mockGmgnStatsRunner) {
           const res = mockGmgnStatsRunner(walletAddress, period);
           exitCode = res.exitCode;
           rawOutput = res.stdout;
         } else {
-          const args = [
-            resolvedCliPath,
-            "portfolio",
-            "stats",
-            "--chain",
-            "sol",
-            "--wallet",
-            walletAddress,
-            "--period",
-            period,
-            "--raw",
-          ];
-
+          const isolation = createGmgnCliIsolation();
           try {
-            const proc = spawnSync(process.execPath, args, {
-              cwd: process.cwd(),
-              env: buildGmgnStatsEnvironment(),
+            const invocation = buildGmgnStatsInvocation({
+              cliPath: resolvedCliPath,
+              walletAddress,
+              period,
+              cwd: isolation.cwd,
+              env: buildApiKeyOnlyGmgnCliEnvironment({
+                runtimeEnvironment: process.env,
+                isolatedHome: isolation.home,
+                apiKey: process.env.GMGN_API_KEY,
+              }),
+            });
+            const proc = spawnSync(process.execPath, invocation.args, {
+              cwd: invocation.cwd,
+              env: invocation.env,
               encoding: "utf8",
               maxBuffer: 2_000_000,
               shell: false,
@@ -376,13 +362,22 @@ export async function runGmgnWalletProfilePilot(
             });
             exitCode = proc.status ?? -1;
             rawOutput = String(proc.stdout ?? "");
+            rawError = String(proc.stderr ?? "");
+            timedOut = (proc.error as NodeJS.ErrnoException | undefined)?.code === "ETIMEDOUT";
           } catch {
             rawOutput = "";
+            rawError = "";
+          } finally {
+            isolation.cleanup();
           }
         }
 
         if (exitCode !== 0 || !rawOutput.trim()) {
-          const errCode = "gmgn_request_unavailable";
+          const errCode = toAllowlistedWarningCode(
+            classifyGmgnCliFailure({ exitCode, timedOut, stdout: rawOutput, stderr: rawError })
+          );
+          rawOutput = "";
+          rawError = "";
           addWarningCode(errCode);
           records.push(
             buildUnavailableRecord(

@@ -1,0 +1,50 @@
+{
+    "schema_version":  "gmgn-portfolio-cumulative-adapter-repair-input-v1",
+    "task_id":  "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001",
+    "created_at":  "2026-07-29T07:17:48.5893230Z",
+    "evidence":  {
+                     "batch_100_result":  {
+                                              "mapped_records":  0,
+                                              "unavailable_records":  200,
+                                              "safe_code":  "gmgn_request_unavailable",
+                                              "source_input_fingerprint":  "5e180ffdf02db99070eae87daf2f37009ebf3e16a21c159003a32652084e0738"
+                                          },
+                     "full_1433_result":  {
+                                              "mapped_records":  5,
+                                              "unavailable_records":  2861,
+                                              "safe_code":  "gmgn_request_unavailable",
+                                              "source_input_fingerprint":  "4a00cec89a6c353527670c935ded799f3ec03bc066d9a0eef9c0d9f30eca0088"
+                                          },
+                     "signed_holdings_pilot":  {
+                                                   "invocation_budget":  1,
+                                                   "outcome":  "PARK",
+                                                   "safe_code":  "gmgn_request_unavailable"
+                                               }
+                 },
+    "tracked_input_sha256":  {
+                                 "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001/acceptance.md":  "D23C6CC73EF3CC62E640A8C05699C6836B566DFAEB38394BA2EE36E37217D765",
+                                 "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md":  "555395A42A54AFC172239FC05670948AA33BB5BEB1C41DB080BBFAF5B86815A8",
+                                 "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md":  "076195CB884876A0596B2E2661979983DE504D8C918CD1CDE2789715530EDE99",
+                                 "src/application/gmgn/wallet-profile-pilot.ts":  "51C1BEE1810DAB29E6EDEC3268CE5B17AFB7E1E021B1D7B9FE4A3058880AF1D2",
+                                 "test/application/gmgn/wallet-profile-pilot.test.ts":  "40DAC0714D698212FA1CEAF4D6C3F0B9EBBC9D62EB6CDFA065ECED806B349E71",
+                                 "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md":  "51D7E12434A68E4BC58FC9F8F72E6F02F14B44B930AB1027646C5A32787428E8",
+                                 "src/infrastructure/gmgn/wallet-stats-parser.ts":  "CB615804B3F6EB946C32C5746D8895451342AB0C4E851FB3F9878BE933AB32B1"
+                             },
+    "local_cli_contract":  {
+                               "package":  "gmgn-cli",
+                               "pinned_version":  "1.5.4",
+                               "stats_periods":  [
+                                                     "7d",
+                                                     "30d"
+                                                 ],
+                               "holdings_supported_close_position_option":  "--hide-closed false",
+                               "unsupported_in_pinned_help":  "--sell-out"
+                           },
+    "privacy":  {
+                    "plaintext_addresses":  false,
+                    "labels":  false,
+                    "credential_values":  false,
+                    "raw_provider_payloads":  false,
+                    "raw_provider_errors":  false
+                }
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001",
+  "title": "Independent offline audit of GMGN cumulative adapter and sanitized diagnostics repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently and read-only audit GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001 after its implementer evidence is complete. Use a distinct HARNESS_AGENT_ID, make zero provider requests, inspect only committed code, synthetic tests, task evidence and generated sanitized report. Verify separate API-key-only versus signed paths, no ambient credential/config leakage in the child environment design, no raw stdout/stderr or secret retention, no address/label rendering, null-for-missing, cursor-aware completeness, source=gmgn and verificationStatus=unverified. A GREEN or GREEN_WITH_ADVISORY verdict is required before any separately dispatched GMGN live re-test.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+    "harness/dispatches/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.md",
+    "harness/inputs/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not execute GMGN or any provider/network request.",
+    "Do not modify implementation code, tests, manifests, dispatches, historical outputs, credentials, or task evidence outside this audit task write set.",
+    "Do not print or commit secrets, raw stdout/stderr, raw provider payloads, full exceptions, plaintext wallet addresses, labels, or credential-bearing URLs.",
+    "Do not use the implementer HARNESS_AGENT_ID."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -766,6 +766,16 @@
       "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
       "status": "READY"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
