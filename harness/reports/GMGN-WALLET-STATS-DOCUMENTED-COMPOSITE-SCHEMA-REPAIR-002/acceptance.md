@@ -119,3 +119,11 @@ Synthetic test suite in `test/gmgn-wallet-stats-parser.test.ts` covers:
   - Build: PASS
   - `git diff --check`: PASS
 - Resource counters remained zero: network requests, provider requests, GMGN CLI invocations, credential reads, and real-address processing.
+
+## 8. Evidence Hash Correction
+
+The implementation SHA written in Section 7 as `8992f321b4ac936e95581989cf9dc30f3f4c70f0` was a transcription error. The authoritative Git-resolved Repair-002 implementation SHA is:
+
+`8992f320e44acf98bd2ced2a77ac75615ca32b85`
+
+No Git history was rewritten. Auditors must use `06f46955b1967c425180fb645f41166a06f4dc26..8992f320e44acf98bd2ced2a77ac75615ca32b85` for the implementation diff and treat this section as superseding the erroneous value in Section 7.
