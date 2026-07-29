@@ -243,3 +243,27 @@ Allowed writes for this audit only:
 3. `harness/ledger/tasks.json` (this audit task status only)
 
 Audit completion SHA and remote parity are recorded after the normal commit/push of the audit write set (no force push; no amend of implementer history).
+
+## 15. Post-Delivery Evidence Correction
+
+> Added by offline task `HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001` under `HARNESS_AGENT_ID=implementer-harness-sol-gmgn-proxy-transport-30d-live-smoke-audit-completion-evidence-repair-001`. This section only completes Harness completion-evidence accounting. It does **not** re-open the audit, re-run live smoke, modify Findings/Advisories, or change the Final Verdict.
+
+| SHA role | Value |
+| --- | --- |
+| Audited 30d implementer delivery SHA | `5759e2150335ece4140fa9df7306848099c320b4` |
+| Original 30d Audit start baseline SHA | `5759e2150335ece4140fa9df7306848099c320b4` |
+| Original 30d Audit Delivery SHA | `945274487a7dccc427acb2c9bceff0fd01bfddff` |
+| Original Audit Delivery pushed to | `origin/codex/solana-daily-new-token-analysis` |
+| Evidence Repair takeover re-check of remote SHA | `945274487a7dccc427acb2c9bceff0fd01bfddff` |
+| Evidence Repair takeover Ahead / Behind | `0` / `0` |
+| Evidence Repair takeover workspace | Clean |
+
+**Evidence-completion statement**
+
+原 Audit Delivery SHA 由本后置 Evidence Repair 根据 Git 提交历史和远端分支状态补充记录。该补充不改变原 Audit Verdict，不声称原 Audit acceptance 文件能够自引用包含其自身最终提交 SHA。
+
+- Original Final Verdict remains: **`GREEN_WITH_ADVISORY`** (unchanged).
+- All Advisories in §9 / Findings F1–F8 remain in force (unchanged).
+- Scoped recovery boundaries in §10–§13 remain in force (unchanged): 30d single-wallet bounded smoke recovered; Signed Holdings not tested; cursor full pagination not tested; cumulative profitability not recovered; 100 / 1,433 batch re-run not authorized.
+- This Post-Delivery section does **not** claim parser repair.
+- This Repair task's own Delivery SHA is **not** self-recorded here; it is to be recorded by the independent task `HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001` after the Repair commit exists on the branch.

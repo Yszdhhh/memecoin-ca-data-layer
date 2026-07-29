@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001",
+  "title": "Post-delivery evidence repair: record 30d Audit Delivery SHA roles without changing GREEN_WITH_ADVISORY",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Pure offline Harness completion-evidence repair for SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001. Append a Post-Delivery Evidence Correction section that distinguishes audited implementer delivery SHA 5759e2150335ece4140fa9df7306848099c320b4, audit start baseline 5759e2150335ece4140fa9df7306848099c320b4, and original Audit Delivery SHA 945274487a7dccc427acb2c9bceff0fd01bfddff already on origin. Do not change GREEN_WITH_ADVISORY, advisories, findings, GMGN code, parser, tests, live outputs, or technical conclusions. Zero network/provider/credential/address work.",
+  "dependencies": [
+    "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001.json",
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
+    "harness/dispatches/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001.md",
+    "harness/inputs/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001/acceptance.md",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001/.gitkeep",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Fomo, Dune, Dexscreener, Birdeye, RPC, browser, web scraping, or any network/provider request.",
+    "Do not run any live smoke or process wallet addresses.",
+    "Do not read or display GMGN_API_KEY, GMGN_PRIVATE_KEY, proxy URL values, plaintext addresses, labels, or raw payloads.",
+    "Do not modify src/, test/, external normalized live outputs, or the original 30d implementer acceptance.",
+    "Do not delete, rewrite, or downgrade original Audit Findings or Advisories.",
+    "Do not change original Audit Verdict GREEN_WITH_ADVISORY.",
+    "Do not claim parser repair, signed holdings recovery, cursor pagination recovery, cumulative PnL recovery, or authorization for 100/1433 batch re-run.",
+    "Do not execute the independent audit task HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.",
+    "Do not force-push, reset --hard, or amend published history.",
+    "Do not commit pasted-text.txt or non-UTF-8 mojibake into formal Git reports."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
