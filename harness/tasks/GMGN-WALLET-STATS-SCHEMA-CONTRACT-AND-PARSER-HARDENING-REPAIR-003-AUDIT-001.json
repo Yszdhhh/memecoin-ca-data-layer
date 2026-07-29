@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-schema-contract-parser-hardening-repair-003) and zero network/provider requests. Verify winRate unit contract, generic alias handling, invalid_field_type retention, acceptance report corrections, and write-set evidence repair.",
   "dependencies": [
     "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",

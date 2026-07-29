@@ -1,0 +1,65 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001",
+  "title": "Unlock GMGN Wallet Stats Parser Repair 003 audit task dependency following successful evidence repair audit verification",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Verify that GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003, HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001, and HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001 are all DONE with GREEN verdict and Audit Delivery SHA a93ae1956f39dba6f94777f55eaaed73b8d0672c. Transition GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001 from BLOCKED_DEPENDENCY to READY in task spec and ledger without changing application code or running network requests.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001.json",
+    "harness/dispatches/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001.md",
+    "harness/inputs/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not modify src/ or test/ files.",
+    "Do not issue network or provider requests.",
+    "Do not read credentials or plaintext address files.",
+    "Do not execute GMGN CLI, live smoke, or wallet fetching.",
+    "Do not modify application code, test code, historical report text, or live outputs."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}
