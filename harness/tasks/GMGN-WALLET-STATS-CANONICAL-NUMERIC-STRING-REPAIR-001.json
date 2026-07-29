@@ -6,7 +6,7 @@
   "chain": "solana",
   "layer": "cold_path",
   "role": "implementer",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair the GMGN wallet-stats parser using the independently audited one-request value-shape evidence. Accept canonical finite numeric strings only for explicitly allowlisted numeric metric aliases, preserve strict range/integer/unit rules, reject broad coercion, and add pure offline synthetic tests. No live request in this task.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001"
@@ -37,7 +37,7 @@
   ],
   "deliverables": [
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
-    "test/infrastructure/gmgn/gmgn-wallet-stats-parser.test.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
     "harness/reports/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001/acceptance.md",
     "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json"
   ],
