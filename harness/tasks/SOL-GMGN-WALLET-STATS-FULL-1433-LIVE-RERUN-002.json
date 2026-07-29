@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Execute one manually triggered read-only Solana-only GMGN official API rerun for exactly 1,433 hash-verified valid unique wallets. Query only 7d and 30d with exactly one wallet per CLI invocation, at most 2,866 invocations/provider requests, strictly serial with at least 1,000ms spacing. Persist only allowlisted normalized unverified GMGN fields and irreversible fingerprints to a new versioned external directory. Fail closed on hash, selection, budget, or credential preconditions and require independent audit.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001"

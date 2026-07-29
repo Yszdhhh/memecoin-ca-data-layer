@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T23:59:50Z",
+  "updated_at_utc": "2026-07-29T20:23:30Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1100,12 +1100,12 @@
     {
       "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }

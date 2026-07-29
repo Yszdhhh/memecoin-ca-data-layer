@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit corrected full rerun evidence, exact 1,433-wallet selection, 2,866 single-wallet serial budget, normalized field hygiene, data-quality aggregates, source/verification semantics, and non-overwrite guarantee. No live requests.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002"
