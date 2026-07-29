@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and read-only audit HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-batch-100-live-smoke-evidence-repair-001 (distinct from implementer), send zero live/provider requests, verify removal of the 100 per-wallet fingerprint table, confirm retention of selected_fingerprint_sequence_sha256 and aggregate evidence, verify git commit SHA alignment with remote aeaa5ca4422f022f180e1da7a5d6c8f103ea7815, ensure no keys/credentials/addresses in report, and verify safe parking of uncompleted local RUNNING run. Only a GREEN independent audit closes the batch-100 evidence repair milestone.",
   "dependencies": [
     "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001"

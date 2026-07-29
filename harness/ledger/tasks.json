@@ -755,6 +755,16 @@
     {
       "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001",
       "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
       "status": "READY"
     }
   ]

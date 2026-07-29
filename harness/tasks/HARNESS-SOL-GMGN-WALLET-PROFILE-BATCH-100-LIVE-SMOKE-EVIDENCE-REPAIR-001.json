@@ -16,7 +16,6 @@
     "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
     "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
     "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json",
-    "harness/runs/run-sol-gmgn-wallet-profile-batch-100-live-smoke-001/manifest.json",
     "harness/lib/validation.ts"
   ],
   "write_set": [

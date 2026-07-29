@@ -8,6 +8,7 @@ import {
   runGmgnWalletProfilePilot,
   PILOT_TASK_ID,
   BATCH_100_TASK_ID,
+  FULL_1433_TASK_ID,
 } from "../../../src/application/gmgn/wallet-profile-pilot.js";
 
 const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -343,6 +344,172 @@ test("insufficient or invalid target address count fails closed", async () => {
 
     assert.equal(result.status, "FAIL_CLOSED");
     assert.equal(result.warningCodeCounts["gmgn_wallet_input_invalid"], 1);
+  } finally {
+    fs.rmSync(tmpInputDir, { recursive: true, force: true });
+    fs.rmSync(tmpOutputDir, { recursive: true, force: true });
+  }
+});
+
+const SYNTHETIC_1433_WALLETS = Array.from({ length: 1433 }, (_, i) => {
+  const buf = Buffer.alloc(32);
+  buf.writeUInt32BE(i + 1, 28);
+  return bufferToBase58(buf);
+});
+
+test("full-1433 synthetic boundary test: exact 1,433 addresses, 2,866 budget, 2,865 delays >= 1000ms, field whitelist, unverified", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-out-"));
+
+  try {
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir, SYNTHETIC_1433_WALLETS);
+
+    const runnerCalls: Array<{ wallet: string; period: string }> = [];
+    const delays: number[] = [];
+
+    const result = await runGmgnWalletProfilePilot({
+      taskId: FULL_1433_TASK_ID,
+      inputDir: tmpInputDir,
+      outputDir: tmpOutputDir,
+      targetWalletCount: 1433,
+      offsetWalletCount: 0,
+      maxRequestBudget: 2866,
+      credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
+      sleepFn: async (ms) => {
+        delays.push(ms);
+      },
+      mockGmgnStatsRunner: (walletAddress, period) => {
+        runnerCalls.push({ wallet: walletAddress, period });
+        return {
+          exitCode: 0,
+          stdout: JSON.stringify({
+            wallet_address: walletAddress,
+            realized_profit: 250.0,
+            winrate: 0.80,
+            buy: 15,
+            sell: 8,
+          }),
+        };
+      },
+    });
+
+    assert.equal(result.status, "SUCCESS");
+    assert.equal(result.taskId, FULL_1433_TASK_ID);
+    assert.equal(result.selectedCount, 1433);
+    assert.equal(result.records.length, 2866);
+    assert.equal(result.mappedCount, 2866);
+    assert.equal(result.requestBudgetUsed, 2866);
+    assert.equal(runnerCalls.length, 2866);
+    assert.equal(delays.length, 2865);
+    for (const d of delays) {
+      assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
+    }
+
+    const firstAddr = SYNTHETIC_1433_WALLETS[0]!;
+    assert.equal(result.records[0]?.sourceInputFingerprint, crypto.createHash("sha256").update(firstAddr).digest("hex"));
+
+    const externalRecords = JSON.parse(
+      fs.readFileSync(result.outputFiles.normalizedWalletProfilesJson, "utf8")
+    ) as Array<Record<string, unknown>>;
+    assert.equal(externalRecords.length, 2866);
+    assert.deepEqual(Object.keys(externalRecords[0] ?? {}).sort(), [
+      "aggregates",
+      "completeness",
+      "fetchedAt",
+      "period",
+      "requestBudgetUsed",
+      "source",
+      "sourceInputFingerprint",
+      "verificationStatus",
+      "warningCodes",
+    ].sort());
+    assert.equal(JSON.stringify(externalRecords).includes(firstAddr), false);
+    assert.equal("status" in (externalRecords[0] ?? {}), false);
+    assert.equal("walletAddress" in (externalRecords[0] ?? {}), false);
+
+    const externalSummary = JSON.parse(
+      fs.readFileSync(result.outputFiles.summaryJson, "utf8")
+    ) as Record<string, unknown>;
+    assert.deepEqual(Object.keys(externalSummary).sort(), [
+      "completeness",
+      "fetchedAt",
+      "requestBudgetUsed",
+      "source",
+      "sourceInputFingerprint",
+      "verificationStatus",
+      "warningCodes",
+    ].sort());
+    assert.equal(externalSummary.source, "gmgn");
+    assert.equal(externalSummary.verificationStatus, "unverified");
+  } finally {
+    fs.rmSync(tmpInputDir, { recursive: true, force: true });
+    fs.rmSync(tmpOutputDir, { recursive: true, force: true });
+  }
+});
+
+test("full-1433 synthetic: zero requests on hash mismatch", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-out-"));
+
+  try {
+    setupSyntheticInputDir(tmpInputDir, SYNTHETIC_1433_WALLETS);
+
+    let runnerCalled = false;
+    const result = await runGmgnWalletProfilePilot({
+      taskId: FULL_1433_TASK_ID,
+      inputDir: tmpInputDir,
+      outputDir: tmpOutputDir,
+      targetWalletCount: 1433,
+      offsetWalletCount: 0,
+      maxRequestBudget: 2866,
+      credentialAvailable: true,
+      expectedHashes: {
+        solAddressesTxtHash: "0000000000000000000000000000000000000000000000000000000000000000",
+        solAddressLabelsJsonHash: "0000000000000000000000000000000000000000000000000000000000000000",
+      },
+      mockGmgnStatsRunner: () => {
+        runnerCalled = true;
+        return { exitCode: 0, stdout: "{}" };
+      },
+    });
+
+    assert.equal(result.status, "FAIL_CLOSED");
+    assert.equal(result.inputHashesMatch, false);
+    assert.equal(runnerCalled, false);
+    assert.equal(result.warningCodeCounts["input_manifest_mismatch"], 1);
+  } finally {
+    fs.rmSync(tmpInputDir, { recursive: true, force: true });
+    fs.rmSync(tmpOutputDir, { recursive: true, force: true });
+  }
+});
+
+test("full-1433 synthetic: missing credential returns PARK with zero requests", async () => {
+  const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-in-"));
+  const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-out-"));
+
+  try {
+    const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir, SYNTHETIC_1433_WALLETS);
+
+    const result = await runGmgnWalletProfilePilot({
+      taskId: FULL_1433_TASK_ID,
+      inputDir: tmpInputDir,
+      outputDir: tmpOutputDir,
+      targetWalletCount: 1433,
+      offsetWalletCount: 0,
+      maxRequestBudget: 2866,
+      credentialAvailable: false,
+      expectedHashes: {
+        solAddressesTxtHash: txtHash,
+        solAddressLabelsJsonHash: jsonHash,
+      },
+    });
+
+    assert.equal(result.status, "PARK");
+    assert.equal(result.requestBudgetUsed, 0);
+    assert.equal(result.warningCodeCounts["gmgn_credential_unavailable"], 1);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
