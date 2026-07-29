@@ -93,3 +93,22 @@
 - Repair-003 Audit Task (`GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001`): `READY`
 - Repair-002 Audit Task (`GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001`): `BLOCKED_DEPENDENCY`
 - Original Audit Task (`GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001`): `BLOCKED_DEPENDENCY`
+
+## 6. Post-Delivery Evidence Correction (HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001)
+
+1. **Actual Delivery SHA**: `0b7ce3c8c5efc11d6c625cc4df99395caf39c004` (Baseline SHA was `8d67bbab36b5314bc54a8a2acb1fd95267f962ec`).
+2. **External Returned SHA**: The value `0b7ce3c62137ea6c9d784bc131fb0b3b44b827ea` is an incorrect external value and does not correspond to any commit in Git history. Git history was not modified.
+3. **Write-Set Omission**: Original task spec `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json` omitted four consumer test files from its `write_set` that were actually modified in Delivery `0b7ce3c8c5efc11d6c625cc4df99395caf39c004`:
+   - `test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts`
+   - `test/application/gmgn/proxy-transport-30d-live-smoke.test.ts`
+   - `test/application/gmgn/proxy-transport-7d-live-smoke.test.ts`
+   - `test/application/gmgn/wallet-profile-pilot.test.ts`
+4. **Invalid Prior Statement**: The prior claim in this report that "Repair-003 had no write_set boundary violation" is invalid and corrected hereby.
+5. **Nature of Test File Changes**: Read-only verification of the diff between `8d67bbab36b5314bc54a8a2acb1fd95267f962ec` and `0b7ce3c8c5efc11d6c625cc4df99395caf39c004` confirms these four test files were updated ONLY to replace synthetic fixture WinRate field aliases (`win_rate`, `winrate`, `win_rate_7d`, `win_rate_30d`) with `win_rate_percent`. They contained zero network calls, zero real addresses, zero credentials, zero provider raw payloads, and zero production code modifications, strictly adhering to the `win_rate_percent` alias contract.
+6. **No Code Modification in Evidence Repair**: This evidence repair task does not modify any application (`src/`) or test (`test/`) code.
+7. **Separation of Technical and Harness Compliance Conclusions**: Parser technical correctness and Harness write_set compliance are separate. The parser implementation is technically sound, but the task write_set specification had an omission.
+8. **Accurate Offline Test Statistics**:
+   - Total: 292
+   - Passed: 291
+   - Skipped: 1
+   - Failed: 0

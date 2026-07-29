@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001",
+  "title": "Independent zero-network audit of Harness GMGN wallet stats parser repair 003 write-set and SHA evidence repair 001",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently audit HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001 with distinct HARNESS_AGENT_ID (auditor-harness-gmgn-wallet-stats-parser-repair-003-write-set-sha-evidence-repair-001) and zero network/provider requests. Verify accurate SHA recording, write_set omission documentation, 4 consumer test diff verification, append-only correction in Repair-003 acceptance, updated audit dependencies, and accurate Harness limitation statements.",
+  "dependencies": [
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not inspect credential values, proxy URLs, or plaintext address files.",
+    "Do not modify application or test code.",
+    "Do not use HARNESS_AGENT_ID implementer-harness-gmgn-wallet-stats-parser-repair-003-write-set-sha-evidence-repair-001."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

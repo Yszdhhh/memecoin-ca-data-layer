@@ -6,10 +6,12 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
-  "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-schema-contract-parser-hardening-repair-003) and zero network/provider requests. Verify winRate unit contract, generic alias handling, invalid_field_type retention, and acceptance report corrections.",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-schema-contract-parser-hardening-repair-003) and zero network/provider requests. Verify winRate unit contract, generic alias handling, invalid_field_type retention, acceptance report corrections, and write-set evidence repair.",
   "dependencies": [
-    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003"
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001"
   ],
   "inputs": [
     "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
@@ -17,7 +19,17 @@
     "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/manifest.json",
     "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
-    "test/gmgn-wallet-stats-parser.test.ts"
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
   ],
   "write_set": [
     "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
