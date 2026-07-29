@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Offline-only narrow repair of the stale SHA-256 entry in the failed preflight-audit-002 input evidence manifest. Derive the replacement only from the current tracked completed bounded-runner repair audit task specification, record the before/after hashes and immutable task identifiers in a sanitized acceptance report, and create no authorization for a live request. Do not alter runner code, the live task, historical output, or any external input. A new independent preflight audit remains mandatory after this repair before the live task can be unlocked.",
   "dependencies": [
     "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002"
