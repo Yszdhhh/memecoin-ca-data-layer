@@ -1,0 +1,53 @@
+{
+  "schema_version": "harness-evidence-manifest-v1",
+  "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003",
+  "created_at": "2026-07-29T00:00:00.000Z",
+  "tracked_input_sha256": {
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json": "26CB05DE70FB132DC7B1CD03E443097FC63BEB38C6E43F25D53F3FFA3C594CDD",
+    "harness/dispatches/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.md": "09B7B2C053B52FCC9D5E95B336FAC24C5DFF429E33C041587EEF2D814D2BD358",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json": "2A6F01862D16D2DF8317BA10E7DD1B80B13A4A2B10BB0E42B9C5BFE3FA37DDF5",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json": "E13E496D8DC702B247FB0B79A05B8DB4FFB59277220E59D8B089FE9EFB4A9430",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/acceptance.md": "D3F99231189A485FE7E30F47948DEEA9875B9A04770E4159F181B30FBFC919D8",
+    "harness/tasks/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.json": "68CA22F11D5F79CDEC8F473C2B4F5607F6ED70AADA09F5869D288C4032F349F0",
+    "harness/reports/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001/acceptance.md": "4C7B85AAB852F4C356ADA1EDE9F678C4CA5D9BF7C34B30C76CB1B03514CD6827",
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json": "5F75F287A51EA77D465D4EA203CABEB0ED40F272E73E1B9CCEF1EE5C8CE1D733",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md": "1E5056D02A2C88D70E37BED8175FAEB3DA3F5BCE36B25B74D1875D7C6993504A",
+    "src/application/gmgn/gmgn-cli-boundary.ts": "27F96F37F0E8B405126DE231AEC0A1B803726862057C58268E2F115360393562",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts": "FAF0648B1226C8E010E2A37EE8574C6B1E7CF2E30BE16A1D22EF9BAE366B8F44",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts": "DD2D851C533F7640D72E068C910507BFFF86C1867A5614BFF79B078412405512",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts": "452F60EB64317A96C9F106E32BFE3AD6A1C5A604051E4BA54E749DD31277ED0A",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts": "F9568D8ED77FC6C0F93C5FEFF705954B8F655FB4B6C24644EB50FE9AA995063B",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts": "2C3F102C30BFBE4927885BC5F8A5A09C2AA2BB85CF8455CDEC8FE8EA7F2263E0",
+    "package.json": "742A6D5F03E044A4489BF31180FB0C4E60B32F04ACCCA78BC3900DF5C6EB69FB",
+    "package-lock.json": "7365178DE666B02BC7B463EBA8F1209F7844513DC97D0DE999225ED768BDC6E7"
+  },
+  "scope": {
+    "audit_target": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001",
+    "prior_preflight_audit": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002",
+    "prior_preflight_verdict": "FAIL",
+    "evidence_manifest_repair": "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001",
+    "external_input_accessed": false,
+    "live_authorization_created_by_manifest": false
+  },
+  "bounded_runner_contract": {
+    "gmgn_cli_invocations": 1,
+    "physical_provider_requests_cap": 1,
+    "rate_limit_auto_retry_max_wait_ms": 0,
+    "cursor": false,
+    "pagination": false
+  },
+  "privacy": {
+    "plaintext_addresses": false,
+    "labels": false,
+    "credential_values": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false,
+    "raw_stdout_stderr": false
+  },
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0
+  }
+}
