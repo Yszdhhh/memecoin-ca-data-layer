@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and offline audit GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001. Verify tracked implementation, not task prose alone, mechanically binds fail-closed hashes, in-memory strict selection, credential-presence-only behavior, isolated HOME/CWD, GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the signed child environment, exactly one no-cursor invocation, safe parse/error disposal, and no real-input or credential read in tests. Confirm the amended live task is still blocked pending a fresh preflight audit. Do not make provider requests or inspect external files or credentials.",
   "dependencies": [
     "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001"
