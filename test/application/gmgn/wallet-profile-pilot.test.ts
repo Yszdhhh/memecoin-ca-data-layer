@@ -8,7 +8,8 @@ import {
   runGmgnWalletProfilePilot,
   PILOT_TASK_ID,
   BATCH_100_TASK_ID,
-  FULL_1433_TASK_ID,
+  FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET,
+  FULL_1433_RERUN_TASK_ID,
 } from "../../../src/application/gmgn/wallet-profile-pilot.js";
 
 const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -372,12 +373,12 @@ test("full-1433 synthetic boundary uses 144 bounded serial requests", async () =
     const delays: number[] = [];
 
     const result = await runGmgnWalletProfilePilot({
-      taskId: FULL_1433_TASK_ID,
+      taskId: FULL_1433_RERUN_TASK_ID,
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       targetWalletCount: 1433,
       offsetWalletCount: 0,
-      maxRequestBudget: 2866,
+      maxRequestBudget: FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET,
       credentialAvailable: true,
       expectedHashes: {
         solAddressesTxtHash: txtHash,
@@ -402,7 +403,7 @@ test("full-1433 synthetic boundary uses 144 bounded serial requests", async () =
     });
 
     assert.equal(result.status, "SUCCESS");
-    assert.equal(result.taskId, FULL_1433_TASK_ID);
+    assert.equal(result.taskId, FULL_1433_RERUN_TASK_ID);
     assert.equal(result.selectedCount, 1433);
     assert.equal(result.records.length, 2866);
     assert.equal(result.mappedCount + result.partialCount, 2866);
@@ -465,12 +466,12 @@ test("full-1433 synthetic: zero requests on hash mismatch", async () => {
 
     let runnerCalled = false;
     const result = await runGmgnWalletProfilePilot({
-      taskId: FULL_1433_TASK_ID,
+      taskId: FULL_1433_RERUN_TASK_ID,
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       targetWalletCount: 1433,
       offsetWalletCount: 0,
-      maxRequestBudget: 2866,
+      maxRequestBudget: FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET,
       credentialAvailable: true,
       expectedHashes: {
         solAddressesTxtHash: "0000000000000000000000000000000000000000000000000000000000000000",
@@ -500,12 +501,12 @@ test("full-1433 synthetic: missing credential returns PARK with zero requests", 
     const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir, SYNTHETIC_1433_WALLETS);
 
     const result = await runGmgnWalletProfilePilot({
-      taskId: FULL_1433_TASK_ID,
+      taskId: FULL_1433_RERUN_TASK_ID,
       inputDir: tmpInputDir,
       outputDir: tmpOutputDir,
       targetWalletCount: 1433,
       offsetWalletCount: 0,
-      maxRequestBudget: 2866,
+      maxRequestBudget: FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET,
       credentialAvailable: false,
       expectedHashes: {
         solAddressesTxtHash: txtHash,

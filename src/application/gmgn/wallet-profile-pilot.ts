@@ -15,12 +15,14 @@ import {
 export const PILOT_TASK_ID = "SOL-GMGN-WALLET-PROFILE-PILOT-001";
 export const BATCH_100_TASK_ID = "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001";
 export const FULL_1433_TASK_ID = "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001";
+export const FULL_1433_RERUN_TASK_ID = "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001";
 export const EXPECTED_SOL_ADDRESSES_HASH = "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C";
 export const EXPECTED_SOL_LABELS_HASH = "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3";
 export const TARGET_WALLET_COUNT = 20;
 export const MAX_REQUEST_BUDGET = 40;
 export const FULL_1433_TARGET_WALLET_COUNT = 1433;
 export const FULL_1433_MAX_REQUEST_BUDGET = 2866;
+export const FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET = 144;
 
 export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "input_manifest_mismatch",
@@ -48,6 +50,7 @@ export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "gmgn_wallet_stats_partial_fields",
   "gmgn_wallet_stats_invalid_field_type",
   "gmgn_wallet_stats_win_rate_unit_ambiguous",
+  "gmgn_wallet_stats_alias_conflict",
 ] as const;
 
 type AllowlistedGmgnWarningCode = (typeof ALLOWLISTED_GMGN_WARNING_CODES)[number];
