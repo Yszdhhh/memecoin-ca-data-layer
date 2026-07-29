@@ -6,8 +6,8 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
-  "objective": "Independently audit GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-documented-composite-schema-repair-001) and zero network/provider requests. Verify root + pnl_stat composite schema support, field ownership rules, winRate unit contracts, multi-location conflict fail-closed behavior, synthetic unit tests, and resource budget compliance.",
+  "status": "PARK",
+  "objective": "PARKED: Repair-001 supported root + pnl_stat composite, but did not enforce container field ownership. Acceptance and external feedback contained Delivery SHA errors. Superseded by GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002 and its independent Audit. Do not mark GREEN.",
   "dependencies": [
     "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001"
   ],

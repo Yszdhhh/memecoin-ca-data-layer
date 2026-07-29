@@ -81,3 +81,13 @@ Synthetic unit test suite in `test/gmgn-wallet-stats-parser.test.ts` covers:
 ## 5. Audit Transition Notice
 
 The failed Live Re-smoke Audit `SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001` has been transitioned from `READY` to `PARK` because the physical live smoke executed and identified the Parser schema blocker, superseding that audit by this repair (`GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001`) and its audit (`GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001`). Historical live evidence has been preserved intact without deletion or rewriting.
+
+---
+
+## 6. Evidence SHA Correction (Appended by Repair-002)
+
+- **Repair-001 Baseline SHA:** `fc12f3fdc6e14adc1f68e21e2dcda1b11d35d5a7`
+- **Repair-001 Actual Delivery SHA:** `06f46955b1967c425180fb645f41166a06f4dc26`
+- **Correction Notice:** The original header of this report mistakenly recorded the Baseline SHA as the Delivery SHA.
+- **External Feedback Clarification:** The SHA value `06f4695e6381bc67852c003fc1cbb613589b2510` returned in external feedback is an erroneous value and does NOT represent an actual Git commit.
+- **Audit Requirement:** Git history is preserved without rewriting. All subsequent audits must use `fc12f3fdc6e14adc1f68e21e2dcda1b11d35d5a7...06f46955b1967c425180fb645f41166a06f4dc26` as the actual diff range for Repair-001.

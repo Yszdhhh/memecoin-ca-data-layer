@@ -53,7 +53,8 @@ const TOTAL_SCHEMA_FIELDS = 11;
  * Version 2 Parser for GMGN Wallet Stats.
  * Implements strict schema contracts, explicit envelope matching, zero arbitrary depth recursion,
  * safe runtime envelope validation, global multi-location period collection, alias conflict fail-closed behavior,
- * candidate container ambiguity detection, strict per-field numeric validation, and winRate unit contracts.
+ * candidate container ambiguity detection, strict per-field numeric validation, explicit field ownership,
+ * fail-closed mislocated metric handling, and winRate unit contracts.
  */
 export function parseGmgnWalletStats(
   payload: unknown,
@@ -308,6 +309,55 @@ function extractPayloadPeriodStatus(
   return "verified";
 }
 
+const ROOT_OWNED_METRIC_ALIASES_7D = new Set([
+  "pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
+  "realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
+  "realized_profit_pnl_7d", "realized_profit_pnl",
+  "trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
+  "buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num",
+  "sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num",
+  "bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume",
+  "sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume",
+  "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
+]);
+
+const ROOT_OWNED_METRIC_ALIASES_30D = new Set([
+  "pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
+  "realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
+  "realized_profit_pnl_30d", "realized_profit_pnl",
+  "trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
+  "buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num",
+  "sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num",
+  "bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume",
+  "sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume",
+  "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
+]);
+
+const PNL_STAT_OWNED_METRIC_ALIASES_7D = new Set([
+  "token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens",
+  "winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
+]);
+
+const PNL_STAT_OWNED_METRIC_ALIASES_30D = new Set([
+  "token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens",
+  "winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
+]);
+
+function getRootOwnedMetricAliases(expectedPeriod: "7d" | "30d"): Set<string> {
+  return expectedPeriod === "30d" ? ROOT_OWNED_METRIC_ALIASES_30D : ROOT_OWNED_METRIC_ALIASES_7D;
+}
+
+function getPnlStatOwnedMetricAliases(expectedPeriod: "7d" | "30d"): Set<string> {
+  return expectedPeriod === "30d" ? PNL_STAT_OWNED_METRIC_ALIASES_30D : PNL_STAT_OWNED_METRIC_ALIASES_7D;
+}
+
+function hasAnyKeyInSet(container: JsonRecord, keySet: Set<string>): boolean {
+  for (const k of Object.keys(container)) {
+    if (keySet.has(k)) return true;
+  }
+  return false;
+}
+
 type ContainerSelectionResult =
   | { success: true; aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[]; selectedContainer: JsonRecord }
   | { success: false; warningCode: string };
@@ -328,21 +378,27 @@ function selectUniqueMetricContainer(
   const pnlStatRec = asRecord(record.pnl_stat);
   const statsRec = asRecord(record.stats);
 
-  const rootHasIntent = hasMetricIntent(rootCandidate, expectedPeriod, "root");
-  const pnlStatHasIntent = pnlStatRec ? hasMetricIntent(pnlStatRec, expectedPeriod, "pnl_stat") : false;
-  const statsHasIntent = statsRec ? hasMetricIntent(statsRec, expectedPeriod, "stats") : false;
+  const rootOwnedAliases = getRootOwnedMetricAliases(expectedPeriod);
+  const pnlStatOwnedAliases = getPnlStatOwnedMetricAliases(expectedPeriod);
 
-  // Disallowed container combinations: stats cannot be combined with root or pnl_stat
-  if (statsHasIntent && (rootHasIntent || pnlStatHasIntent)) {
+  const rootHasRootIntent = hasAnyKeyInSet(rootCandidate, rootOwnedAliases);
+  const rootHasPnlStatIntent = hasAnyKeyInSet(rootCandidate, pnlStatOwnedAliases);
+
+  const pnlStatHasRootIntent = pnlStatRec ? hasAnyKeyInSet(pnlStatRec, rootOwnedAliases) : false;
+  const pnlStatHasPnlStatIntent = pnlStatRec ? hasAnyKeyInSet(pnlStatRec, pnlStatOwnedAliases) : false;
+
+  const statsHasIntent = statsRec
+    ? hasAnyKeyInSet(statsRec, rootOwnedAliases) || hasAnyKeyInSet(statsRec, pnlStatOwnedAliases)
+    : false;
+
+  // Rule 1: Disallowed container combinations with stats
+  if (statsHasIntent && (rootHasRootIntent || rootHasPnlStatIntent || pnlStatHasRootIntent || pnlStatHasPnlStatIntent)) {
     return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
   }
 
-  if (!rootHasIntent && !pnlStatHasIntent && !statsHasIntent) {
-    return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
-  }
-
-  if (statsHasIntent && !rootHasIntent && !pnlStatHasIntent) {
-    const metricExtraction = extractMetricsFromSingleContainer(statsRec!, expectedPeriod, false);
+  // Rule 2: Standalone stats mode
+  if (statsHasIntent && !rootHasRootIntent && !rootHasPnlStatIntent && !pnlStatHasRootIntent && !pnlStatHasPnlStatIntent) {
+    const metricExtraction = extractMetricsFromSingleContainer(statsRec!, expectedPeriod, "standalone");
     if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
       return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
     }
@@ -355,22 +411,42 @@ function selectUniqueMetricContainer(
     };
   }
 
-  if (pnlStatHasIntent && !rootHasIntent && !statsHasIntent) {
-    const metricExtraction = extractMetricsFromSingleContainer(pnlStatRec!, expectedPeriod, true);
-    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
-      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+  // Rule 3: pnl_stat presence checks & strict field ownership enforcement
+  if (pnlStatRec) {
+    // pnl_stat contains root-owned metrics (e.g. realized_profit, buy_count) -> fail closed!
+    if (pnlStatHasRootIntent) {
+      return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
     }
-    return {
-      success: true,
-      aggregates: metricExtraction.aggregates,
-      validCount: metricExtraction.validCount,
-      warnings: metricExtraction.warnings,
-      selectedContainer: pnlStatRec!,
-    };
+
+    // root contains pnl_stat-owned metrics while pnl_stat is present -> fail closed!
+    if (rootHasPnlStatIntent) {
+      return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
+    }
+
+    // Official composite mode (root + pnl_stat)
+    if (rootHasRootIntent && pnlStatHasPnlStatIntent) {
+      const metricExtraction = extractMetricsFromCompositeContainers(rootCandidate, pnlStatRec, expectedPeriod);
+      if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+        return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+      }
+      return {
+        success: true,
+        aggregates: metricExtraction.aggregates,
+        validCount: metricExtraction.validCount,
+        warnings: metricExtraction.warnings,
+        selectedContainer: rootCandidate,
+      };
+    }
+
+    // pnl_stat has pnl_stat metrics alone (without root metrics): lacks core profit metrics
+    if (pnlStatHasPnlStatIntent && !rootHasRootIntent) {
+      return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
+    }
   }
 
-  if (rootHasIntent && !pnlStatHasIntent && !statsHasIntent) {
-    const metricExtraction = extractMetricsFromSingleContainer(rootCandidate, expectedPeriod, false);
+  // Rule 4: Standalone root mode (no pnl_stat object present)
+  if (!pnlStatRec && (rootHasRootIntent || rootHasPnlStatIntent)) {
+    const metricExtraction = extractMetricsFromSingleContainer(rootCandidate, expectedPeriod, "standalone");
     if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
       return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
     }
@@ -383,67 +459,7 @@ function selectUniqueMetricContainer(
     };
   }
 
-  if (rootHasIntent && pnlStatHasIntent && !statsHasIntent) {
-    // Documented Composite schema: root + pnl_stat
-    const metricExtraction = extractMetricsFromCompositeContainers(rootCandidate, pnlStatRec!, expectedPeriod);
-    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
-      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
-    }
-    return {
-      success: true,
-      aggregates: metricExtraction.aggregates,
-      validCount: metricExtraction.validCount,
-      warnings: metricExtraction.warnings,
-      selectedContainer: rootCandidate,
-    };
-  }
-
-  return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
-}
-
-function hasMetricIntent(
-  container: JsonRecord,
-  expectedPeriod: "7d" | "30d",
-  _containerType: "root" | "pnl_stat" | "stats" = "root",
-): boolean {
-  const metricAliases = getAllowlistedMetricAliases(expectedPeriod);
-  for (const key of Object.keys(container)) {
-    if (metricAliases.has(key)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getAllowlistedMetricAliases(expectedPeriod: "7d" | "30d"): Set<string> {
-  if (expectedPeriod === "30d") {
-    return new Set([
-      "pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
-      "realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
-      "realized_profit_pnl_30d", "realized_profit_pnl",
-      "winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
-      "trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
-      "buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num",
-      "sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num",
-      "bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume",
-      "sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume",
-      "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
-      "token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens",
-    ]);
-  }
-  return new Set([
-    "pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl",
-    "realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd",
-    "realized_profit_pnl_7d", "realized_profit_pnl",
-    "winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent", "win_rate_ratio", "winrate_ratio",
-    "trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count",
-    "buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num",
-    "sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num",
-    "bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume",
-    "sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume",
-    "last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at",
-    "token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens",
-  ]);
+  return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
 }
 
 interface AliasGroupDefinition {
@@ -452,54 +468,86 @@ interface AliasGroupDefinition {
   kind: "number" | "non_negative_number" | "positive_number" | "integer" | "win_rate_percent" | "win_rate_ratio";
 }
 
+const ROOT_ALIAS_GROUPS = (expectedPeriod: "7d" | "30d"): AliasGroupDefinition[] => [
+  {
+    canonicalName: "periodPnl",
+    aliasKeys: expectedPeriod === "30d" ? ["pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"] : ["pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"],
+    kind: "number",
+  },
+  {
+    canonicalName: "realizedProfit",
+    aliasKeys: expectedPeriod === "30d" ? ["realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"] : ["realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"],
+    kind: "number",
+  },
+  {
+    canonicalName: "realizedProfitPnl",
+    aliasKeys: expectedPeriod === "30d" ? ["realized_profit_pnl_30d", "realized_profit_pnl"] : ["realized_profit_pnl_7d", "realized_profit_pnl"],
+    kind: "number",
+  },
+  {
+    canonicalName: "tradeCount",
+    aliasKeys: expectedPeriod === "30d" ? ["trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"] : ["trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"],
+    kind: "integer",
+  },
+  {
+    canonicalName: "buyCount",
+    aliasKeys: expectedPeriod === "30d" ? ["buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num"] : ["buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num"],
+    kind: "integer",
+  },
+  {
+    canonicalName: "sellCount",
+    aliasKeys: expectedPeriod === "30d" ? ["sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num"] : ["sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num"],
+    kind: "integer",
+  },
+  {
+    canonicalName: "boughtCost",
+    aliasKeys: expectedPeriod === "30d" ? ["bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume"] : ["bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume"],
+    kind: "non_negative_number",
+  },
+  {
+    canonicalName: "soldIncome",
+    aliasKeys: expectedPeriod === "30d" ? ["sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume"] : ["sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume"],
+    kind: "non_negative_number",
+  },
+  {
+    canonicalName: "lastActiveTimestamp",
+    aliasKeys: ["last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at"],
+    kind: "positive_number",
+  },
+];
+
+const PNL_STAT_ALIAS_GROUPS = (expectedPeriod: "7d" | "30d"): AliasGroupDefinition[] => [
+  {
+    canonicalName: "tokenNum",
+    aliasKeys: expectedPeriod === "30d" ? ["token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens"] : ["token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens"],
+    kind: "integer",
+  },
+];
+
 function extractMetricsFromCompositeContainers(
   rootContainer: JsonRecord,
   pnlStatContainer: JsonRecord,
   expectedPeriod: "7d" | "30d",
 ): { aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[] } {
-  const rootExt = extractMetricsFromSingleContainer(rootContainer, expectedPeriod, false);
-  const pnlStatExt = extractMetricsFromSingleContainer(pnlStatContainer, expectedPeriod, true);
+  const rootExt = extractMetricsFromSingleContainer(rootContainer, expectedPeriod, "root_only");
+  const pnlStatExt = extractMetricsFromSingleContainer(pnlStatContainer, expectedPeriod, "pnl_stat_only");
 
   const warnings = Array.from(new Set([...rootExt.warnings, ...pnlStatExt.warnings]));
-  const aggregates: GmgnWalletStatsAggregate = {};
-
-  const allKeys: Array<keyof GmgnWalletStatsAggregate> = [
-    "periodPnl", "realizedProfit", "realizedProfitPnl", "winRate",
-    "tradeCount", "buyCount", "sellCount", "boughtCost", "soldIncome",
-    "lastActiveTimestamp", "tokenNum",
-  ];
-
-  let hasConflict = false;
-
-  for (const k of allKeys) {
-    const rootVal = rootExt.aggregates[k];
-    const pnlStatVal = pnlStatExt.aggregates[k];
-
-    if (rootVal !== undefined && pnlStatVal !== undefined) {
-      if (Math.abs(rootVal - pnlStatVal) < 1e-6) {
-        aggregates[k] = rootVal;
-      } else {
-        hasConflict = true;
-      }
-    } else if (rootVal !== undefined) {
-      aggregates[k] = rootVal;
-    } else if (pnlStatVal !== undefined) {
-      aggregates[k] = pnlStatVal;
-    }
-  }
-
-  if (hasConflict && !warnings.includes("gmgn_wallet_stats_alias_conflict")) {
-    warnings.push("gmgn_wallet_stats_alias_conflict");
-  }
+  const aggregates: GmgnWalletStatsAggregate = {
+    ...rootExt.aggregates,
+    ...pnlStatExt.aggregates,
+  };
 
   const validCount = Object.keys(aggregates).length;
   return { aggregates, validCount, warnings };
 }
 
+type ExtractionMode = "root_only" | "pnl_stat_only" | "standalone";
+
 function extractMetricsFromSingleContainer(
   container: JsonRecord,
   expectedPeriod: "7d" | "30d",
-  isPnlStatContainer: boolean = false,
+  mode: ExtractionMode = "standalone",
 ): { aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[] } {
   const aggregates: GmgnWalletStatsAggregate = {};
   const warnings: string[] = [];
@@ -509,58 +557,14 @@ function extractMetricsFromSingleContainer(
     ? new Set(["pnl_7d", "realized_profit_7d", "realized_profit_pnl_7d", "winrate_7d", "win_rate_7d", "trade_count_7d", "trades_7d", "tx_count_7d", "buy_7d", "buy_count_7d", "sell_7d", "sell_count_7d", "bought_cost_7d", "total_cost_7d", "sold_income_7d", "total_income_7d", "token_num_7d", "token_count_7d"])
     : new Set(["pnl_30d", "realized_profit_30d", "realized_profit_pnl_30d", "winrate_30d", "win_rate_30d", "trade_count_30d", "trades_30d", "tx_count_30d", "buy_30d", "buy_count_30d", "sell_30d", "sell_count_30d", "bought_cost_30d", "total_cost_30d", "sold_income_30d", "total_income_30d", "token_num_30d", "token_count_30d"]);
 
-  const aliasGroups: AliasGroupDefinition[] = [
-    {
-      canonicalName: "periodPnl",
-      aliasKeys: expectedPeriod === "30d" ? ["pnl_30d", "realized_pnl_30d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"] : ["pnl_7d", "realized_pnl_7d", "pnl", "total_pnl", "pnl_usd", "realized_pnl"],
-      kind: "number",
-    },
-    {
-      canonicalName: "realizedProfit",
-      aliasKeys: expectedPeriod === "30d" ? ["realized_profit_30d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"] : ["realized_profit_7d", "realized_profit", "realized_profit_usd", "total_profit", "total_profit_usd"],
-      kind: "number",
-    },
-    {
-      canonicalName: "realizedProfitPnl",
-      aliasKeys: expectedPeriod === "30d" ? ["realized_profit_pnl_30d", "realized_profit_pnl"] : ["realized_profit_pnl_7d", "realized_profit_pnl"],
-      kind: "number",
-    },
-    {
-      canonicalName: "tradeCount",
-      aliasKeys: expectedPeriod === "30d" ? ["trade_count_30d", "trades_30d", "tx_count_30d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"] : ["trade_count_7d", "trades_7d", "tx_count_7d", "trade_count", "trade_num", "total_trades", "trades", "tx_count"],
-      kind: "integer",
-    },
-    {
-      canonicalName: "buyCount",
-      aliasKeys: expectedPeriod === "30d" ? ["buy_30d", "buy_count_30d", "buy", "buy_count", "bought_count", "buy_num"] : ["buy_7d", "buy_count_7d", "buy", "buy_count", "bought_count", "buy_num"],
-      kind: "integer",
-    },
-    {
-      canonicalName: "sellCount",
-      aliasKeys: expectedPeriod === "30d" ? ["sell_30d", "sell_count_30d", "sell", "sell_count", "sold_count", "sell_num"] : ["sell_7d", "sell_count_7d", "sell", "sell_count", "sold_count", "sell_num"],
-      kind: "integer",
-    },
-    {
-      canonicalName: "boughtCost",
-      aliasKeys: expectedPeriod === "30d" ? ["bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume"] : ["bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume"],
-      kind: "non_negative_number",
-    },
-    {
-      canonicalName: "soldIncome",
-      aliasKeys: expectedPeriod === "30d" ? ["sold_income_30d", "total_income_30d", "sold_income", "total_income", "sell_volume"] : ["sold_income_7d", "total_income_7d", "sold_income", "total_income", "sell_volume"],
-      kind: "non_negative_number",
-    },
-    {
-      canonicalName: "lastActiveTimestamp",
-      aliasKeys: ["last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at"],
-      kind: "positive_number",
-    },
-    {
-      canonicalName: "tokenNum",
-      aliasKeys: expectedPeriod === "30d" ? ["token_num_30d", "token_count_30d", "token_num", "token_count", "total_tokens"] : ["token_num_7d", "token_count_7d", "token_num", "token_count", "total_tokens"],
-      kind: "integer",
-    },
-  ];
+  let aliasGroups: AliasGroupDefinition[] = [];
+  if (mode === "root_only") {
+    aliasGroups = ROOT_ALIAS_GROUPS(expectedPeriod);
+  } else if (mode === "pnl_stat_only") {
+    aliasGroups = PNL_STAT_ALIAS_GROUPS(expectedPeriod);
+  } else {
+    aliasGroups = [...ROOT_ALIAS_GROUPS(expectedPeriod), ...PNL_STAT_ALIAS_GROUPS(expectedPeriod)];
+  }
 
   for (const group of aliasGroups) {
     const presentKeys = group.aliasKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
@@ -587,7 +591,6 @@ function extractMetricsFromSingleContainer(
     }
 
     if (hasInvalidFieldType && validValues.length > 0) {
-      // Combination of valid and invalid alias values for same canonical field -> ALIAS CONFLICT!
       warnings.push("gmgn_wallet_stats_alias_conflict");
       continue;
     }
@@ -607,105 +610,104 @@ function extractMetricsFromSingleContainer(
         aggregates[group.canonicalName] = firstVal;
         validCount++;
       } else {
-        // Multiple alias values with different numeric values -> ALIAS CONFLICT!
         warnings.push("gmgn_wallet_stats_alias_conflict");
       }
     }
   }
 
-  // Handle winRate explicitly for percent vs ratio aliases
-  const winRatePercentKeys = ["win_rate_percent"];
-  const winRateRatioKeys = ["win_rate_ratio", "winrate_ratio"];
-  const winRateGenericKeys = expectedPeriod === "30d"
-    ? ["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate"]
-    : ["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate"];
+  // Handle winRate for pnl_stat_only or standalone mode
+  if (mode === "pnl_stat_only" || mode === "standalone") {
+    const winRatePercentKeys = ["win_rate_percent"];
+    const winRateRatioKeys = ["win_rate_ratio", "winrate_ratio"];
+    const winRateGenericKeys = expectedPeriod === "30d"
+      ? ["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate"]
+      : ["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate"];
 
-  const presentPercentKeys = winRatePercentKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
-  const presentRatioKeys = winRateRatioKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
-  const presentGenericKeys = winRateGenericKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    const presentPercentKeys = winRatePercentKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    const presentRatioKeys = winRateRatioKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    const presentGenericKeys = winRateGenericKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
 
-  const winRatePercentValues: number[] = [];
-  const winRateRatioValues: number[] = [];
-  const winRateGenericValues: number[] = [];
-  let winRateAmbiguous = false;
-  let winRateInvalidType = false;
+    const winRatePercentValues: number[] = [];
+    const winRateRatioValues: number[] = [];
+    const winRateGenericValues: number[] = [];
+    let winRateAmbiguous = false;
+    let winRateInvalidType = false;
 
-  for (const key of presentPercentKeys) {
-    const rawVal = container[key];
-    if (rawVal === undefined || rawVal === null) continue;
-    const num = parseStrictNumber(rawVal);
-    if (num !== undefined) {
-      if (num >= 0 && num <= 100) {
-        winRatePercentValues.push(num);
-      } else {
-        winRateAmbiguous = true;
-      }
-    } else {
-      winRateInvalidType = true;
-    }
-  }
-
-  for (const key of presentRatioKeys) {
-    const rawVal = container[key];
-    if (rawVal === undefined || rawVal === null) continue;
-    const num = parseStrictNumber(rawVal);
-    if (num !== undefined) {
-      if (num >= 0 && num <= 1) {
-        winRateRatioValues.push(Math.round(num * 100 * 100) / 100);
-      } else {
-        winRateAmbiguous = true;
-      }
-    } else {
-      winRateInvalidType = true;
-    }
-  }
-
-  for (const key of presentGenericKeys) {
-    const rawVal = container[key];
-    if (rawVal === undefined || rawVal === null) continue;
-    const num = parseStrictNumber(rawVal);
-    if (num !== undefined) {
-      if (isPnlStatContainer) {
-        // In pnl_stat, official GMGN pnl_stat.winrate is a ratio in [0, 1]
-        if (num >= 0 && num <= 1) {
-          winRateGenericValues.push(Math.round(num * 100 * 100) / 100);
+    for (const key of presentPercentKeys) {
+      const rawVal = container[key];
+      if (rawVal === undefined || rawVal === null) continue;
+      const num = parseStrictNumber(rawVal);
+      if (num !== undefined) {
+        if (num >= 0 && num <= 100) {
+          winRatePercentValues.push(num);
         } else {
           winRateAmbiguous = true;
         }
       } else {
-        // Generic alias on root without schema evidence -> unit-unverified
-        winRateAmbiguous = true;
+        winRateInvalidType = true;
       }
-    } else {
-      winRateInvalidType = true;
     }
-  }
 
-  const explicitGroupCount = (presentPercentKeys.length > 0 ? 1 : 0) + (presentRatioKeys.length > 0 ? 1 : 0);
-  const totalWinRateAliasesPresent = presentPercentKeys.length + presentRatioKeys.length + presentGenericKeys.length;
+    for (const key of presentRatioKeys) {
+      const rawVal = container[key];
+      if (rawVal === undefined || rawVal === null) continue;
+      const num = parseStrictNumber(rawVal);
+      if (num !== undefined) {
+        if (num >= 0 && num <= 1) {
+          winRateRatioValues.push(Math.round(num * 100 * 100) / 100);
+        } else {
+          winRateAmbiguous = true;
+        }
+      } else {
+        winRateInvalidType = true;
+      }
+    }
 
-  if (explicitGroupCount > 1 || (!isPnlStatContainer && presentGenericKeys.length > 0 && (presentPercentKeys.length > 0 || presentRatioKeys.length > 0))) {
-    // Multiple conflicting winRate alias families present -> ALIAS CONFLICT!
-    warnings.push("gmgn_wallet_stats_alias_conflict");
-  } else if (!isPnlStatContainer && presentGenericKeys.length > 0) {
-    // Generic alias present on root (unit-unverified without schema evidence) -> unit-unverified!
-    warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-  } else if (winRateAmbiguous) {
-    warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-  } else if (winRateInvalidType && winRatePercentValues.length === 0 && winRateRatioValues.length === 0 && winRateGenericValues.length === 0) {
-    warnings.push("gmgn_wallet_stats_invalid_field_type");
-  } else if (totalWinRateAliasesPresent > 0) {
-    const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues, ...winRateGenericValues];
-    const firstWinRate = allParsedWinRates[0];
-    if (allParsedWinRates.length === 1 && firstWinRate !== undefined) {
-      aggregates.winRate = firstWinRate;
-      validCount++;
-    } else if (allParsedWinRates.length > 1 && firstWinRate !== undefined) {
-      if (allParsedWinRates.every((v) => Math.abs(v - firstWinRate) < 1e-6)) {
+    for (const key of presentGenericKeys) {
+      const rawVal = container[key];
+      if (rawVal === undefined || rawVal === null) continue;
+      const num = parseStrictNumber(rawVal);
+      if (num !== undefined) {
+        if (mode === "pnl_stat_only") {
+          // In pnl_stat, official GMGN pnl_stat.winrate is a ratio in [0, 1]
+          if (num >= 0 && num <= 1) {
+            winRateGenericValues.push(Math.round(num * 100 * 100) / 100);
+          } else {
+            winRateAmbiguous = true;
+          }
+        } else {
+          // Generic alias on root/standalone without schema evidence -> unit-unverified
+          winRateAmbiguous = true;
+        }
+      } else {
+        winRateInvalidType = true;
+      }
+    }
+
+    const explicitGroupCount = (presentPercentKeys.length > 0 ? 1 : 0) + (presentRatioKeys.length > 0 ? 1 : 0);
+    const totalWinRateAliasesPresent = presentPercentKeys.length + presentRatioKeys.length + presentGenericKeys.length;
+
+    if (explicitGroupCount > 1 || (mode === "standalone" && presentGenericKeys.length > 0 && (presentPercentKeys.length > 0 || presentRatioKeys.length > 0))) {
+      warnings.push("gmgn_wallet_stats_alias_conflict");
+    } else if (mode === "standalone" && presentGenericKeys.length > 0) {
+      warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
+    } else if (winRateAmbiguous) {
+      warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
+    } else if (winRateInvalidType && winRatePercentValues.length === 0 && winRateRatioValues.length === 0 && winRateGenericValues.length === 0) {
+      warnings.push("gmgn_wallet_stats_invalid_field_type");
+    } else if (totalWinRateAliasesPresent > 0) {
+      const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues, ...winRateGenericValues];
+      const firstWinRate = allParsedWinRates[0];
+      if (allParsedWinRates.length === 1 && firstWinRate !== undefined) {
         aggregates.winRate = firstWinRate;
         validCount++;
-      } else {
-        warnings.push("gmgn_wallet_stats_alias_conflict");
+      } else if (allParsedWinRates.length > 1 && firstWinRate !== undefined) {
+        if (allParsedWinRates.every((v) => Math.abs(v - firstWinRate) < 1e-6)) {
+          aggregates.winRate = firstWinRate;
+          validCount++;
+        } else {
+          warnings.push("gmgn_wallet_stats_alias_conflict");
+        }
       }
     }
   }

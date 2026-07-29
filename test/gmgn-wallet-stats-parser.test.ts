@@ -442,7 +442,7 @@ test("11. pnl_stat.winrate = 0.4 maps to 40 percent", () => {
   assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
 });
 
-test("12. root and pnl_stat returning conflicting values for same canonical metric fail-closed", () => {
+test("12. root and pnl_stat mislocated metric fail-closed", () => {
   const payload = {
     wallet: walletA,
     period: "7d",
@@ -454,7 +454,63 @@ test("12. root and pnl_stat returning conflicting values for same canonical metr
 
   const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
   assert.equal(parsed.status, "UNAVAILABLE");
-  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
+});
+
+test("12b. pnl_stat.realized_profit alone fails-closed", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    pnl_stat: {
+      realized_profit: 100.0,
+    },
+  };
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
+});
+
+test("12c. pnl_stat.buy_count alone fails-closed", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    pnl_stat: {
+      buy_count: 5,
+    },
+  };
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
+});
+
+test("12d. root.token_num in composite mode fails-closed", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    pnl: 100.0,
+    token_num: 5,
+    pnl_stat: {
+      winrate: 0.6,
+    },
+  };
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
+});
+
+test("12e. mislocated field with same value in root and pnl_stat fails-closed", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    realized_profit: 100.0,
+    pnl_stat: {
+      realized_profit: 100.0,
+      winrate: 0.6,
+    },
+  };
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 });
 
 test("13. primitive or array pnl_stat safely returns UNAVAILABLE without throwing exception", () => {
