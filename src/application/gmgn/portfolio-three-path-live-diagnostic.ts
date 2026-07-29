@@ -95,7 +95,7 @@ export interface GmgnThreePathLiveDiagnosticResult {
   targetFingerprint: string | null;
   credentialApiKeyPresent: boolean;
   credentialPrivateKeyPresent: boolean;
-  cliInvocationBudgetCap: typeof MAX_CLI_INVOCATIONS;
+  cliInvocationBudgetCap: number;
   cliInvocationBudgetUsed: number;
   physicalProviderRequestUpperBound: number;
   stats7d: PathDiagnosticRecord<ParsedGmgnWalletStats>;
@@ -114,10 +114,6 @@ export interface GmgnThreePathLiveDiagnosticResult {
 
 function sha256Upper(value: Uint8Array | string): string {
   return createHash("sha256").update(value).digest("hex").toUpperCase();
-}
-
-function sha256Lower(value: string): string {
-  return createHash("sha256").update(value).digest("hex").toLowerCase();
 }
 
 function selectFirstValidUniqueSolanaAddress(addressesText: string): string | null {
