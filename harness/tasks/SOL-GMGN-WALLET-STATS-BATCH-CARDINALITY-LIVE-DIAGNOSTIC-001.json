@@ -1,0 +1,66 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001",
+  "title": "Safe one-invocation GMGN wallet-stats batch response cardinality diagnostic",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Issue exactly one manual read-only GMGN official API 30d stats CLI invocation for the first 20 hash-verified valid unique Solana wallets and persist only an allowlisted structural/cardinality summary. Determine whether a 20-wallet request returns identity-addressable records for all requested wallets or only a subset, without storing or displaying addresses, identities, raw payload, raw stdout/stderr, credentials, or proxy URLs. Fail closed before network on hash/selection mismatch, PARK if GMGN_API_KEY is absent, and register a separate zero-network audit.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001/manifest.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "src/infrastructure/gmgn/wallet-stats-envelope-diagnostics.ts",
+    "src/application/gmgn/wallet-stats-batch-cardinality-diagnostic.ts",
+    "src/cli/run-gmgn-wallet-stats-batch-cardinality-live-diagnostic.ts",
+    "test/infrastructure/gmgn/wallet-stats-envelope-diagnostics.test.ts",
+    "test/application/gmgn/wallet-stats-batch-cardinality-diagnostic.test.ts",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not exceed one GMGN CLI invocation or one physical provider request. Do not retry, paginate, auto-fill, use concurrency, or query any period other than 30d.",
+    "Do not call Helius, Chain.fm APIs, Dune, RPC, browser automation, web scraping, GMGN web pages, third-party providers, or fallback.",
+    "Do not read, display, persist, or forward GMGN_PRIVATE_KEY. Stats authentication is API-key-only and API-key presence may be recorded only as a Boolean.",
+    "Do not print, persist, or commit plaintext wallet addresses, labels, identity values, credentials, proxy URLs, credential URLs, raw provider payloads, raw stdout/stderr, token or transaction identifiers, counterparties, arbitrary provider keys, or complete exceptions.",
+    "Do not modify the wallet-stats parser behavior in this diagnostic task.",
+    "Do not overwrite historical output or claim that full-batch recovery is complete."
+  ],
+  "deliverables": [
+    "src/infrastructure/gmgn/wallet-stats-envelope-diagnostics.ts",
+    "src/cli/run-gmgn-wallet-stats-batch-cardinality-live-diagnostic.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001.json",
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 1,
+    "provider_requests": 1,
+    "gmgn_cli_invocations": 1,
+    "credential_reads": "presence_only_api_key",
+    "address_processing": 20
+  }
+}
