@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and read-only audit GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001 after its implementer evidence is complete. Use a distinct HARNESS_AGENT_ID, make zero provider requests, inspect only committed code, synthetic tests, task evidence and generated sanitized report. Verify separate API-key-only versus signed paths, no ambient credential/config leakage in the child environment design, no raw stdout/stderr or secret retention, no address/label rendering, null-for-missing, cursor-aware completeness, source=gmgn and verificationStatus=unverified. A GREEN or GREEN_WITH_ADVISORY verdict is required before any separately dispatched GMGN live re-test.",
   "dependencies": [
     "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001"
