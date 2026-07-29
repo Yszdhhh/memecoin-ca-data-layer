@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "After GREEN proxy-transport input-evidence repair audit and GREEN 7d live smoke audit, execute exactly one Solana GMGN portfolio stats live request for period=30d against exactly one in-memory selected wallet from hash-verified external inputs using the same deterministic target selection rule and fingerprint binding as the 7d smoke. Max 1 CLI invocation, max 1 physical provider request, no retry, no pagination, no 7d, no holdings, no fallback. Export sanitized aggregates only. Do not claim signed holdings or cumulative PnL recovery.",
   "dependencies": [
     "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001",

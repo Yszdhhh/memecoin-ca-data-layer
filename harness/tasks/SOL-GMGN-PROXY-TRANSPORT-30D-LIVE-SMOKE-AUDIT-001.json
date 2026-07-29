@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001 with a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify one-invocation budget, period=30d only, same target fingerprint as 7d smoke, null/zero field semantics, privacy, and whether scoped 30d recovery claims are justified by sanitized evidence only. Do not test Signed Holdings.",
   "dependencies": [
     "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001"
