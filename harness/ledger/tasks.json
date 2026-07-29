@@ -810,7 +810,7 @@
     {
       "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002",
       "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }

@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently and offline preflight-audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after the bounded-runner repair audit is GREEN. Verify the actual tracked runner enforces both required input hashes before any child spawn, selects one strict valid unique address in memory only, uses credential presence checks without disclosure, creates disposable HOME/CWD, sets GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 for the actual signed child, constructs only one no-cursor holdings invocation, and returns only sanitized unverified GMGN aggregates or allowlisted safe codes. Confirm the live task remains blocked unless this audit is GREEN. Do not issue any network request, read external inputs, or inspect credentials.",
   "dependencies": [
     "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001"
