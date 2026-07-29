@@ -735,7 +735,7 @@
     {
       "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
