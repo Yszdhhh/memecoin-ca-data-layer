@@ -48,6 +48,13 @@ export const ALLOWLISTED_7D_SMOKE_CODES = [
   "gmgn_request_unavailable",
   "gmgn_response_invalid",
   "gmgn_expected_metrics_unavailable",
+  "gmgn_wallet_stats_schema_unrecognized",
+  "gmgn_wallet_stats_identity_mismatch",
+  "gmgn_wallet_stats_period_mismatch",
+  "gmgn_wallet_stats_period_unverified",
+  "gmgn_wallet_stats_partial_fields",
+  "gmgn_wallet_stats_invalid_field_type",
+  "gmgn_wallet_stats_win_rate_unit_ambiguous",
 ] as const;
 
 export type Allowlisted7dSmokeCode = (typeof ALLOWLISTED_7D_SMOKE_CODES)[number];
@@ -174,7 +181,7 @@ function writeSanitizedOutputs(
     diagnosticCode: resultData.diagnosticCode,
     source: "gmgn" as const,
     verificationStatus: "unverified" as const,
-    completeness: resultData.record?.status === "MAPPED" ? 1 : resultData.record?.status === "PARTIAL" ? 0.5 : 0,
+    completeness: resultData.record?.completeness ?? 0,
     aggregates: resultData.record?.aggregates ?? null,
     warningCodes: resultData.record?.warningCodes ?? [],
     requestBudgetUsed: resultData.cliInvocationBudgetUsed,
@@ -364,11 +371,11 @@ export async function runProxyTransport7dLiveSmoke(
         status = "UNAVAILABLE";
       }
       if (payload !== undefined) {
-        const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
+        const parsedList = parseGmgnWalletStats(payload, [selectedAddress], "7d");
         const parsed = parsedList[0];
         if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           record = parsed;
-          status = parsed.status === "MAPPED" ? "SUCCESS" : "PARTIAL";
+          status = "SUCCESS";
         } else {
           diagnosticCode =
             (parsed?.warningCodes[0] as Allowlisted7dSmokeCode | undefined) ??

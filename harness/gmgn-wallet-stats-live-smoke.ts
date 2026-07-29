@@ -1,4 +1,4 @@
-﻿import { spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -76,6 +76,7 @@ function unavailablePeriod(
       wallet: address,
       parserVersion: GMGN_WALLET_STATS_PARSER_VERSION,
       status: "UNAVAILABLE",
+      completeness: 0,
       mapping: null,
       aggregates: {},
       warningCodes: [warningCode],

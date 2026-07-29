@@ -55,6 +55,13 @@ export const ALLOWLISTED_THREE_PATH_DIAGNOSTIC_CODES = [
   "gmgn_request_unavailable",
   "gmgn_response_invalid",
   "gmgn_expected_metrics_unavailable",
+  "gmgn_wallet_stats_schema_unrecognized",
+  "gmgn_wallet_stats_identity_mismatch",
+  "gmgn_wallet_stats_period_mismatch",
+  "gmgn_wallet_stats_period_unverified",
+  "gmgn_wallet_stats_partial_fields",
+  "gmgn_wallet_stats_invalid_field_type",
+  "gmgn_wallet_stats_win_rate_unit_ambiguous",
 ] as const;
 
 export type AllowlistedThreePathDiagnosticCode =
@@ -192,7 +199,7 @@ function writeSanitizedExternalOutputs(
     diagnosticCode: resultData.stats7d.diagnosticCode,
     source: "gmgn" as const,
     verificationStatus: "unverified" as const,
-    completeness: resultData.stats7d.record?.status === "MAPPED" ? 1 : 0,
+    completeness: resultData.stats7d.record?.completeness ?? 0,
     aggregates: resultData.stats7d.record?.aggregates ?? null,
     warningCodes: resultData.stats7d.record?.warningCodes ?? [],
     requestBudgetUsed: resultData.cliInvocationBudgetUsed > 0 ? 1 : 0,
@@ -206,7 +213,7 @@ function writeSanitizedExternalOutputs(
     diagnosticCode: resultData.stats30d.diagnosticCode,
     source: "gmgn" as const,
     verificationStatus: "unverified" as const,
-    completeness: resultData.stats30d.record?.status === "MAPPED" ? 1 : 0,
+    completeness: resultData.stats30d.record?.completeness ?? 0,
     aggregates: resultData.stats30d.record?.aggregates ?? null,
     warningCodes: resultData.stats30d.record?.warningCodes ?? [],
     requestBudgetUsed: resultData.cliInvocationBudgetUsed > 1 ? 1 : 0,
@@ -435,7 +442,7 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
         stats7dStatus = "UNAVAILABLE";
       }
       if (payload !== undefined) {
-        const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
+        const parsedList = parseGmgnWalletStats(payload, [selectedAddress], "7d");
         const parsed = parsedList[0];
         if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           stats7dRecord = parsed;
@@ -518,7 +525,7 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
         stats30dStatus = "UNAVAILABLE";
       }
       if (payload !== undefined) {
-        const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
+        const parsedList = parseGmgnWalletStats(payload, [selectedAddress], "30d");
         const parsed = parsedList[0];
         if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           stats30dRecord = parsed;

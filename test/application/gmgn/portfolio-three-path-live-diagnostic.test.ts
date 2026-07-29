@@ -159,7 +159,20 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: 7d succeeds but 30d fails stops e
             return {
               exitCode: 0,
               stdout: JSON.stringify({
-                data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 100, pnl: 0.5 }],
+                data: [{
+                  wallet: DUMMY_SOL_ADDRESS,
+                  pnl: 100,
+                  realized_profit: 80,
+                  realized_profit_pnl: 0.2,
+                  win_rate: 80,
+                  trade_count: 10,
+                  buy_count: 6,
+                  sell_count: 4,
+                  bought_cost: 200,
+                  sold_income: 300,
+                  last_active_timestamp: 1715000000,
+                  token_num: 5,
+                }],
               }),
               stderr: "",
             };
@@ -201,7 +214,20 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: malformed Private Key fails prefl
           return {
             exitCode: 0,
             stdout: JSON.stringify({
-              data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 100, pnl: 0.5 }],
+              data: [{
+                wallet: DUMMY_SOL_ADDRESS,
+                pnl: 100,
+                realized_profit: 80,
+                realized_profit_pnl: 0.2,
+                win_rate: 80,
+                trade_count: 10,
+                buy_count: 6,
+                sell_count: 4,
+                bought_cost: 200,
+                sold_income: 300,
+                last_active_timestamp: 1715000000,
+                token_num: 5,
+              }],
             }),
             stderr: "",
           };
@@ -245,7 +271,20 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: three paths succeed with 3 serial
             return {
               exitCode: 0,
               stdout: JSON.stringify({
-                data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 100, win_rate: 0.8 }],
+                data: [{
+                  wallet: DUMMY_SOL_ADDRESS,
+                  pnl: 100,
+                  realized_profit: 80,
+                  realized_profit_pnl: 0.2,
+                  win_rate: 80,
+                  trade_count: 10,
+                  buy_count: 6,
+                  sell_count: 4,
+                  bought_cost: 200,
+                  sold_income: 300,
+                  last_active_timestamp: 1715000000,
+                  token_num: 5,
+                }],
               }),
               stderr: "",
             };
@@ -254,7 +293,20 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: three paths succeed with 3 serial
             return {
               exitCode: 0,
               stdout: JSON.stringify({
-                data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 500, win_rate: 0.75 }],
+                data: [{
+                  wallet: DUMMY_SOL_ADDRESS,
+                  pnl_30d: 500,
+                  realized_profit_30d: 400,
+                  realized_profit_pnl_30d: 0.3,
+                  win_rate_30d: 75,
+                  trade_count_30d: 20,
+                  buy_30d: 12,
+                  sell_30d: 8,
+                  bought_cost_30d: 1000,
+                  sold_income_30d: 1400,
+                  last_active_timestamp: 1715000000,
+                  token_num_30d: 8,
+                }],
               }),
               stderr: "",
             };

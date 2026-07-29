@@ -1,0 +1,20 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001",
+  "baseline_commit": "85f9503b2d68fecb328a8902db29575dcb4395e2",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "cli_invocation_budget": 0,
+  "credential_reads_allowed": 0,
+  "address_processing_allowed": 0,
+  "offline_only": true,
+  "parser_version": "gmgn-wallet-stats-v2",
+  "privacy": {
+    "credential_values": false,
+    "proxy_url_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}

@@ -53,6 +53,13 @@ export const ALLOWLISTED_30D_SMOKE_CODES = [
   "gmgn_request_unavailable",
   "gmgn_response_invalid",
   "gmgn_expected_metrics_unavailable",
+  "gmgn_wallet_stats_schema_unrecognized",
+  "gmgn_wallet_stats_identity_mismatch",
+  "gmgn_wallet_stats_period_mismatch",
+  "gmgn_wallet_stats_period_unverified",
+  "gmgn_wallet_stats_partial_fields",
+  "gmgn_wallet_stats_invalid_field_type",
+  "gmgn_wallet_stats_win_rate_unit_ambiguous",
 ] as const;
 
 export type Allowlisted30dSmokeCode = (typeof ALLOWLISTED_30D_SMOKE_CODES)[number];
@@ -196,13 +203,10 @@ function writeSanitizedOutputs(
   const aggregates = resultData.record?.aggregates;
 
   const completeness =
-    resultData.record?.status === "MAPPED"
-      ? 1
-      : resultData.record?.status === "PARTIAL"
-        ? 0.5
-        : resultData.status === "SUCCESS" || resultData.status === "PARTIAL"
-          ? null
-          : 0;
+    resultData.record?.completeness ??
+    (resultData.status === "SUCCESS" || resultData.status === "PARTIAL"
+      ? resultData.completeness
+      : 0);
 
   const externalStats = {
     period: "30d" as const,
@@ -289,7 +293,7 @@ export async function runProxyTransport30dLiveSmoke(
   ): ProxyTransport30dLiveSmokeResult => {
     const completeness =
       partial.completeness ??
-      (partial.record?.status === "MAPPED" ? 1 : partial.record?.status === "PARTIAL" ? 0.5 : 0);
+      (partial.record?.completeness ?? 0);
     const base = {
       ...partial,
       period: "30d" as const,
@@ -443,7 +447,7 @@ export async function runProxyTransport30dLiveSmoke(
         status = "UNAVAILABLE";
       }
       if (payload !== undefined) {
-        const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
+        const parsedList = parseGmgnWalletStats(payload, [selectedAddress], "30d");
         const parsed = parsedList[0];
         if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           const explicitCount = countExplicitNumericFields(parsed.aggregates);
@@ -453,7 +457,7 @@ export async function runProxyTransport30dLiveSmoke(
             status = "UNAVAILABLE";
           } else {
             record = parsed;
-            status = parsed.status === "MAPPED" ? "SUCCESS" : "PARTIAL";
+            status = "SUCCESS";
           }
         } else {
           diagnosticCode =

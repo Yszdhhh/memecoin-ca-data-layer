@@ -41,6 +41,13 @@ export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "gmgn_response_invalid",
   "gmgn_wallet_metric_unavailable",
   "gmgn_expected_metrics_unavailable",
+  "gmgn_wallet_stats_schema_unrecognized",
+  "gmgn_wallet_stats_identity_mismatch",
+  "gmgn_wallet_stats_period_mismatch",
+  "gmgn_wallet_stats_period_unverified",
+  "gmgn_wallet_stats_partial_fields",
+  "gmgn_wallet_stats_invalid_field_type",
+  "gmgn_wallet_stats_win_rate_unit_ambiguous",
 ] as const;
 
 type AllowlistedGmgnWarningCode = (typeof ALLOWLISTED_GMGN_WARNING_CODES)[number];
@@ -411,10 +418,10 @@ export async function runGmgnWalletProfilePilot(
           rawError = "";
         }
 
-        const parsedResults = parseGmgnWalletStats(parsedJson, walletBatch);
+        const parsedResults = parseGmgnWalletStats(parsedJson, walletBatch, period);
         for (const parsed of parsedResults) {
           const walletAddress = parsed.wallet;
-          if (parsed.status === "MAPPED") {
+          if (parsed.status === "MAPPED" || parsed.status === "PARTIAL") {
             const aggregates: NormalizedWalletMetrics = {
               periodPnl: parsed.aggregates.periodPnl ?? null,
               realizedProfit: parsed.aggregates.realizedProfit ?? null,
@@ -428,22 +435,23 @@ export async function runGmgnWalletProfilePilot(
               lastActiveTimestamp: parsed.aggregates.lastActiveTimestamp ?? null,
               tokenNum: parsed.aggregates.tokenNum ?? null,
             };
-            const nonNullCount = Object.values(aggregates).filter((value) => value !== null).length;
-            if (nonNullCount > 0) {
-              records.push({
-                period,
-                status: "MAPPED",
-                source: "gmgn",
-                verificationStatus: "unverified",
-                completeness: Math.round((nonNullCount / 11) * 100) / 100,
-                aggregates,
-                warningCodes: [],
-                requestBudgetUsed: totalRequestsUsed,
-                sourceInputFingerprint: computeStringSha256(walletAddress),
-                fetchedAt,
-              });
-              continue;
+            const warningCodes = parsed.warningCodes.map(toAllowlistedWarningCode);
+            for (const code of warningCodes) {
+              addWarningCode(code);
             }
+            records.push({
+              period,
+              status: parsed.status,
+              source: "gmgn",
+              verificationStatus: "unverified",
+              completeness: parsed.completeness,
+              aggregates,
+              warningCodes,
+              requestBudgetUsed: totalRequestsUsed,
+              sourceInputFingerprint: computeStringSha256(walletAddress),
+              fetchedAt,
+            });
+            continue;
           }
 
           const warningCode = toAllowlistedWarningCode(
@@ -472,7 +480,7 @@ export async function runGmgnWalletProfilePilot(
   const unavailableCount = records.filter((record) => record.status === "UNAVAILABLE").length;
 
   return {
-    status: mappedCount > 0 ? "SUCCESS" : "PARK",
+    status: (mappedCount > 0 || partialCount > 0) ? "SUCCESS" : "PARK",
     taskId,
     inputHashesMatch,
     selectedCount: selectedAddresses.length,

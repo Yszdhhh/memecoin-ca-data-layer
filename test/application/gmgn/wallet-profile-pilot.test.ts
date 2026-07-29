@@ -167,7 +167,7 @@ test("batch-100 configuration uses ten bounded serial requests", async () => {
     assert.equal(result.taskId, BATCH_100_TASK_ID);
     assert.equal(result.selectedCount, 100);
     assert.equal(result.records.length, 200);
-    assert.equal(result.mappedCount, 200);
+    assert.equal(result.mappedCount + result.partialCount, 200);
     assert.equal(result.requestBudgetUsed, 10);
     assert.equal(runnerCalls.length, 10);
     assert.equal(runnerCalls[0]?.wallets.length, 20);
@@ -301,6 +301,7 @@ test("missing numeric metrics remain null and incomplete, never fake 0", async (
         exitCode: 0,
         stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
           wallet_address: walletAddress,
+          realized_profit: 100.0,
           winrate: 66.7,
           // All other fields missing!
         }))),
@@ -314,7 +315,7 @@ test("missing numeric metrics remain null and incomplete, never fake 0", async (
     assert.ok(record);
     assert.equal(record.aggregates.winRate, 66.7);
     assert.equal(record.aggregates.periodPnl, null);
-    assert.equal(record.aggregates.realizedProfit, null);
+    assert.equal(record.aggregates.realizedProfit, 100.0);
     assert.equal(record.aggregates.buyCount, null);
     assert.equal(record.aggregates.sellCount, null);
     assert.equal(record.aggregates.boughtCost, null);
@@ -403,7 +404,7 @@ test("full-1433 synthetic boundary uses 144 bounded serial requests", async () =
     assert.equal(result.taskId, FULL_1433_TASK_ID);
     assert.equal(result.selectedCount, 1433);
     assert.equal(result.records.length, 2866);
-    assert.equal(result.mappedCount, 2866);
+    assert.equal(result.mappedCount + result.partialCount, 2866);
     assert.equal(result.requestBudgetUsed, 144);
     assert.equal(runnerCalls.length, 144);
     assert.equal(runnerCalls.at(-1)?.wallets.length, 13);
