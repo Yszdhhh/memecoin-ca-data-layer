@@ -831,6 +831,11 @@
       "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001",
       "spec": "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
+      "status": "DONE"
     }
   ]
 }

@@ -1,0 +1,52 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001",
+  "title": "Audit evidence correction for GMGN portfolio query transport diagnostics repair audit",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Correct delivery commit SHA role attribution and UTF-8 encoding in GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001 acceptance report. Distinguish Repair baseline (acca1888e3e5e9490396ed6c10e9032d86cfeaf8), Repair implementation delivery (0a12d7239c26b2cc812558679c2dead990d41e3f), Signed Live Smoke Audit completion (cfe6022f49e19516c6f2b28d9fed219f489b9580), and Repair Audit completion (0635d1d02a2355508099da90bbad3879541cee02). Repair UTF-8 mojibake characters. Retain true conclusion: Repair Code & Security Contract GREEN, GMGN Live Availability NOT YET VERIFIED, zero network requests, zero provider requests. Zero credential reads, zero address processing.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
+    "harness/dispatches/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.md",
+    "harness/inputs/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001/acceptance.md",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not read or expose GMGN_API_KEY or GMGN_PRIVATE_KEY or external address files.",
+    "Do not modify application code, test files, package.json, or dependencies.",
+    "Do not rewrite Git history or amend existing commits."
+  ],
+  "deliverables": [
+    "harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
+    "harness/dispatches/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.md",
+    "harness/inputs/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001/acceptance.md",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

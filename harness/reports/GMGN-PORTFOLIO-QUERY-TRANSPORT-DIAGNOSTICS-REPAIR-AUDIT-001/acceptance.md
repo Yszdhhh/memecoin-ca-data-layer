@@ -5,8 +5,10 @@
 - **Audit Task ID:** `GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001`
 - **HARNESS_AGENT_ID:** `auditor-gmgn-portfolio-query-transport-diagnostics-repair-001`
 - **Audited Task ID:** `GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001`
-- **Audited Baseline SHA:** `acca1888e3e5e9490396ed6c10e9032d86cfeaf8`
-- **Audited Delivery Commit SHA:** `cfe6022f49e19516c6f2b28d9fed219f489b9580`
+- **Audited Baseline SHA (Repair baseline):** `acca1888e3e5e9490396ed6c10e9032d86cfeaf8`
+- **Audited Delivery Commit SHA (Repair implementation delivery):** `0a12d7239c26b2cc812558679c2dead990d41e3f`
+- **Prior Signed Live Smoke Audit Completion SHA:** `cfe6022f49e19516c6f2b28d9fed219f489b9580`
+- **Repair Audit Completion SHA:** `0635d1d02a2355508099da90bbad3879541cee02`
 - **Branch:** `codex/solana-daily-new-token-analysis`
 - **Execution Limits & Resource Usage:**
   - `network_requests`: `0`
@@ -29,9 +31,9 @@ This audit is a strictly zero-network, zero-provider independent inspection of t
 3. **Strict Serial Execution & Mandatory Inter-Invocation Delay:**
    - PASS. `runGmgnWalletProfilePilot` iterates batches strictly serially across periods and enforces `await sleep(1000)` between consecutive CLI calls.
 4. **Synthetic Batch Planning Verification:**
-   - 20 wallets: 2 invocations (1 batch of 20 × 2 periods).
-   - 100 wallets: 10 invocations (5 batches of 20 × 2 periods).
-   - 1,433 wallets: 144 invocations (72 batches of 20 × 2 periods).
+   - 20 wallets: 2 invocations (1 batch of 20 x 2 periods).
+   - 100 wallets: 10 invocations (5 batches of 20 x 2 periods).
+   - 1,433 wallets: 144 invocations (72 batches of 20 x 2 periods).
 5. **No Concurrency, Infinite Retry, or Pagination Expansion:**
    - PASS. No background loops, auto-retry, pagination expansion, or concurrency exist in the stats path.
 
