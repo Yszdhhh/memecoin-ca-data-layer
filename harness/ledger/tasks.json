@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T19:09:57.166Z",
+  "updated_at_utc": "2026-07-29T19:18:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1030,12 +1030,12 @@
     {
       "task_id": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }

@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Audit SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001 with zero network and a distinct identity. Verify exact one-request budget, sanitized classifications, no values or identities, and evidence sufficient for a narrow parser repair.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001"

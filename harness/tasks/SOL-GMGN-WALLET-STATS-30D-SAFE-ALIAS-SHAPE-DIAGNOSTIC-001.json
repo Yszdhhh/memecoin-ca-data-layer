@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Use exactly one 30d GMGN stats CLI invocation to classify only allowlisted metric alias presence, JSON type, canonical numeric lexical class, and within-group equality/conflict class at recognized root/pnl_stat locations. Retain no values, wallet identities, raw payloads, raw process output, credentials, proxy URLs, labels, or complete errors.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001-AUDIT-001"
