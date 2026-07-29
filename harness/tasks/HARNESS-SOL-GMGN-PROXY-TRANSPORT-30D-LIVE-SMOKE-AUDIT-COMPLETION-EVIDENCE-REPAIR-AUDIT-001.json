@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001 with HARNESS_AGENT_ID auditor-harness-sol-gmgn-proxy-transport-30d-live-smoke-audit-completion-evidence-repair-001 and zero network/provider requests. Verify write-set hygiene, Post-Delivery Evidence Correction completeness (implementer delivery SHA vs audit start baseline vs original Audit Delivery SHA 945274487a7dccc427acb2c9bceff0fd01bfddff), remote parity language, unchanged GREEN_WITH_ADVISORY and Advisories, no src/test/live-output changes, and that this repair does not claim parser fix. Record Repair Delivery SHA after inspecting the repair commit; do not assert that either acceptance report self-references its own final commit SHA.",
   "dependencies": [
     "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001"
