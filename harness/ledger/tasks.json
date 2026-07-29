@@ -1075,7 +1075,7 @@
     {
       "task_id": "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

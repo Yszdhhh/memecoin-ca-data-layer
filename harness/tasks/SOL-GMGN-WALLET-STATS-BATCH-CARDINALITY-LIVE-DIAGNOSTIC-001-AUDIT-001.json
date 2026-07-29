@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit the one-invocation batch response cardinality diagnostic without network access. Verify exact request budget, input hashes, 20-wallet deterministic selection, structural summary allowlist, absence of identity/raw-payload leakage, and whether evidence supports retaining batch size 20 or repairing transport to one wallet per invocation.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001"
