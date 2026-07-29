@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit the sanitized evidence and normalized external outputs of the two-invocation live re-smoke with zero additional network/provider/CLI requests. Verify hashes, budget, parser statuses, field semantics, privacy, and Git evidence.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002"
