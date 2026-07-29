@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T19:03:17.705Z",
+  "updated_at_utc": "2026-07-29T19:04:17.602Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1015,7 +1015,7 @@
     {
       "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
