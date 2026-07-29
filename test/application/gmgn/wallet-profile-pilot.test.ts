@@ -98,7 +98,7 @@ test("default pilot batches 20 wallets into two serial period requests", async (
           stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
             wallet_address: walletAddress,
             realized_profit: 50.0,
-            winrate: 0.75,
+            winrate: 75,
           }))),
         };
       },
@@ -152,12 +152,13 @@ test("batch-100 configuration uses ten bounded serial requests", async () => {
             wallet_address: walletAddress,
             realized_profit: 100.0,
             realized_profit_pnl: 0.25,
+            winrate: 66.7,
             buy: 10,
             sell: 5,
             bought_cost: 400.0,
             sold_income: 500.0,
             last_timestamp: 1715000000,
-            pnl_stat: { winrate: 66.7, token_num: 8 },
+            token_num: 8,
           }))),
         };
       },
@@ -392,7 +393,7 @@ test("full-1433 synthetic boundary uses 144 bounded serial requests", async () =
           stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
             wallet_address: walletAddress,
             realized_profit: 250.0,
-            winrate: 0.80,
+            winrate: 80,
             buy: 15,
             sell: 8,
           }))),

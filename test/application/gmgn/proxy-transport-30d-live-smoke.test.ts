@@ -123,7 +123,7 @@ test("30d proxy smoke: missing credential parks with zero invocations", async ()
   }
 });
 
-test("30d proxy smoke: single invocation only; never spawns 7d/holdings", async () => {
+test("30d proxy smoke: single invocation only; MAPPED parser status yields SUCCESS", async () => {
   const fx = createFixtureDir();
   try {
     let executions = 0;
@@ -146,7 +146,21 @@ test("30d proxy smoke: single invocation only; never spawns 7d/holdings", async 
           return {
             exitCode: 0,
             stdout: JSON.stringify({
-              data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 0, pnl: 0, buy_30d: 0 }],
+              data: [{
+                wallet: DUMMY_SOL_ADDRESS,
+                pnl_30d: 500,
+                realized_profit_30d: 400,
+                realized_profit_pnl_30d: 0.3,
+                win_rate_30d: 75,
+                trade_count_30d: 20,
+                buy_30d: 12,
+                sell_30d: 8,
+                bought_cost_30d: 1000,
+                sold_income_30d: 1400,
+                last_active_timestamp: 1715000000,
+                token_num_30d: 8,
+                period: "30d",
+              }],
             }),
             stderr: "",
           };
@@ -154,6 +168,7 @@ test("30d proxy smoke: single invocation only; never spawns 7d/holdings", async 
       },
     });
     assert.equal(result.status, "SUCCESS");
+    assert.equal(result.record?.status, "MAPPED");
     assert.equal(result.cliInvocationBudgetUsed, 1);
     assert.equal(result.physicalProviderRequestUpperBound, 1);
     assert.equal(executions, 1);
@@ -164,14 +179,42 @@ test("30d proxy smoke: single invocation only; never spawns 7d/holdings", async 
 
     const stats = JSON.parse(fs.readFileSync(result.outputFiles.stats30dJson, "utf8"));
     assert.equal(stats.period, "30d");
-    assert.equal(stats.realizedProfit, 0);
-    assert.equal(stats.periodPnl, 0);
-    assert.equal(stats.lastActiveTimestamp, null);
+    assert.equal(stats.realizedProfit, 400);
+    assert.equal(stats.periodPnl, 500);
     assert.equal(JSON.stringify(stats).includes(DUMMY_SOL_ADDRESS), false);
 
     const summary = fs.readFileSync(result.outputFiles.summaryJson, "utf8");
     assert.equal(summary.includes(DUMMY_SOL_ADDRESS), false);
     assert.equal(summary.includes("dummy_api_key"), false);
+  } finally {
+    fx.cleanup();
+  }
+});
+
+test("30d proxy smoke: PARTIAL parser status propagates to top-level PARTIAL, not SUCCESS", async () => {
+  const fx = createFixtureDir();
+  try {
+    const result = await runProxyTransport30dLiveSmoke({
+      inputDir: fx.inputDir,
+      outputDir: fx.outputDir,
+      runtimeEnvironment: { GMGN_API_KEY: "dummy_api_key" },
+      expectedHashes: {
+        solAddressesTxtHash: fx.txtHash,
+        solAddressLabelsJsonHash: fx.jsonHash,
+      },
+      expectedTargetFingerprint: fx.expectedFingerprint,
+      dependencies: {
+        execute: async () => ({
+          exitCode: 0,
+          stdout: JSON.stringify({
+            data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit_30d: 0, pnl_30d: 0 }],
+          }),
+          stderr: "",
+        }),
+      },
+    });
+    assert.equal(result.status, "PARTIAL");
+    assert.equal(result.record?.status, "PARTIAL");
   } finally {
     fx.cleanup();
   }

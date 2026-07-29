@@ -63,7 +63,7 @@ function runPeriod(period: typeof PERIODS[number]): Array<{ period: typeof perio
     return unavailablePeriod(period, "gmgn_response_unparseable");
   }
 
-  return parseGmgnWalletStats(payload, WALLETS.map(({ address }) => address)).map((result) => ({ period, result }));
+  return parseGmgnWalletStats(payload, WALLETS.map(({ address }) => address), period).map((result) => ({ period, result }));
 }
 
 function unavailablePeriod(

@@ -1,0 +1,74 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001",
+  "title": "Repair GMGN wallet stats parser schema contract, container isolation, period contract, and consumer status propagation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Repair Write Set boundary, enforce mandatory expectedPeriod contract, container-isolated aggregate extraction, fail-closed unsupported periods/ambiguous winRate units, genuine provider completeness without tradeCount derivation, and exact consumer status propagation.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001/.gitkeep",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001/acceptance.md",
+    "harness/ledger/tasks.json",
+    "harness/gmgn-wallet-stats-live-smoke.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/application/gmgn/proxy-transport-30d-live-smoke.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not issue any live network or provider requests; budget must be strictly zero.",
+    "Do not call GMGN CLI, Helius, Chain.fm, Dune, Dexscreener, Birdeye, or RPC.",
+    "Do not read, display, or forward credentials, GMGN_API_KEY, GMGN_PRIVATE_KEY, proxy URLs, or plaintext address files.",
+    "Do not modify node_modules or include node_modules in task inputs or Git.",
+    "Do not perform cross-node field composition or depth-weighted candidate scoring.",
+    "Do not map PARTIAL parser status to top-level SUCCESS in consumers.",
+    "Do not derive tradeCount into provider completeness count.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

@@ -103,3 +103,14 @@
 ## 4. Declaration
 
 本任务 GREEN 只证明 Wallet Stats Parser 的离线 Schema Contract、安全降级和 Consumer 完整度逻辑通过；不证明 GMGN 当前 Live Schema 与 Parser V2 实际兼容。实际兼容性必须由后续独立、小预算 Live Regression 任务验证。
+
+## 5. Post-Delivery Write Set Boundary Correction
+
+> Added by repair task `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001`.
+
+Historical commit `214c010c3200601657b509bbb49431b4fb2e1412` modified the following files outside the original task's declared write_set:
+- `harness/gmgn-wallet-stats-live-smoke.ts`
+- `src/application/gmgn/portfolio-three-path-live-diagnostic.ts`
+- `test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts`
+
+Repair task `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001` explicitly includes these files within its tracked write_set, repairs all schema/parser/consumer contracts, and provides dedicated tests. Original audit task `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001` is set to `BLOCKED_DEPENDENCY` until `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001` completes GREEN.

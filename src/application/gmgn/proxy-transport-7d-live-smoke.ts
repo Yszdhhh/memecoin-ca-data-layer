@@ -373,15 +373,20 @@ export async function runProxyTransport7dLiveSmoke(
       if (payload !== undefined) {
         const parsedList = parseGmgnWalletStats(payload, [selectedAddress], "7d");
         const parsed = parsedList[0];
-        if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
-          record = parsed;
-          status = "SUCCESS";
-        } else {
-          diagnosticCode =
-            (parsed?.warningCodes[0] as Allowlisted7dSmokeCode | undefined) ??
-            "gmgn_expected_metrics_unavailable";
-          warningCodesSet.add(diagnosticCode);
-          status = "UNAVAILABLE";
+        if (parsed) {
+          if (parsed.status === "MAPPED") {
+            record = parsed;
+            status = "SUCCESS";
+          } else if (parsed.status === "PARTIAL") {
+            record = parsed;
+            status = "PARTIAL";
+          } else {
+            diagnosticCode =
+              (parsed.warningCodes[0] as Allowlisted7dSmokeCode | undefined) ??
+              "gmgn_expected_metrics_unavailable";
+            warningCodesSet.add(diagnosticCode);
+            status = "UNAVAILABLE";
+          }
         }
       }
     }

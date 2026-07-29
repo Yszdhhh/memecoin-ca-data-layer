@@ -86,7 +86,7 @@ test("7d proxy smoke: missing credential parks with zero invocations", async () 
   }
 });
 
-test("7d proxy smoke: single invocation only; never spawns second path", async () => {
+test("7d proxy smoke: single invocation only; MAPPED parser status yields SUCCESS", async () => {
   const fx = createFixtureDir();
   try {
     let executions = 0;
@@ -108,7 +108,21 @@ test("7d proxy smoke: single invocation only; never spawns second path", async (
           return {
             exitCode: 0,
             stdout: JSON.stringify({
-              data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 100, pnl: 0.5 }],
+              data: [{
+                wallet: DUMMY_SOL_ADDRESS,
+                pnl_7d: 100,
+                realized_profit_7d: 80,
+                realized_profit_pnl_7d: 0.2,
+                win_rate_7d: 75,
+                trade_count_7d: 10,
+                buy_7d: 6,
+                sell_7d: 4,
+                bought_cost_7d: 500,
+                sold_income_7d: 600,
+                last_active_time: 1715000000,
+                token_num_7d: 5,
+                period: "7d",
+              }],
             }),
             stderr: "",
           };
@@ -116,6 +130,7 @@ test("7d proxy smoke: single invocation only; never spawns second path", async (
       },
     });
     assert.equal(result.status, "SUCCESS");
+    assert.equal(result.record?.status, "MAPPED");
     assert.equal(result.cliInvocationBudgetUsed, 1);
     assert.equal(result.physicalProviderRequestUpperBound, 1);
     assert.equal(executions, 1);
@@ -125,6 +140,34 @@ test("7d proxy smoke: single invocation only; never spawns second path", async (
     const summary = fs.readFileSync(result.outputFiles.summaryJson, "utf8");
     assert.equal(summary.includes(DUMMY_SOL_ADDRESS), false);
     assert.equal(summary.includes("dummy_api_key"), false);
+  } finally {
+    fx.cleanup();
+  }
+});
+
+test("7d proxy smoke: PARTIAL parser status propagates to top-level PARTIAL, not SUCCESS", async () => {
+  const fx = createFixtureDir();
+  try {
+    const result = await runProxyTransport7dLiveSmoke({
+      inputDir: fx.inputDir,
+      outputDir: fx.outputDir,
+      runtimeEnvironment: { GMGN_API_KEY: "dummy_api_key" },
+      expectedHashes: {
+        solAddressesTxtHash: fx.txtHash,
+        solAddressLabelsJsonHash: fx.jsonHash,
+      },
+      dependencies: {
+        execute: async () => ({
+          exitCode: 0,
+          stdout: JSON.stringify({
+            data: [{ wallet: DUMMY_SOL_ADDRESS, realized_profit: 100, pnl: 0.5 }],
+          }),
+          stderr: "",
+        }),
+      },
+    });
+    assert.equal(result.status, "PARTIAL");
+    assert.equal(result.record?.status, "PARTIAL");
   } finally {
     fx.cleanup();
   }
