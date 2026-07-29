@@ -870,12 +870,12 @@
     {
       "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001",
       "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
-      "status": "READY"
+      "status": "DONE"
     },
     {
       "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001",
       "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     }
   ]
 }

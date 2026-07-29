@@ -8,6 +8,8 @@
 - **Baseline HEAD at task open:** `42c375ec95ac5d6fe2fec49920485114133b7759`
 - **Origin HEAD at task open:** `b5ff1c823094fdc62b3e9a41ca989dae43ae9582`
 - **Local ahead of origin at open:** `7`
+- **Evidence repair delivery SHA:** `b370c65987496ccc4cc14315535c30202dc6701a`
+- **Harness run ID:** `20260729131859_HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001`
 - **Provider / Network Requests:** `0`
 - **Credential reads:** `0`
 - **Address processing:** `0`

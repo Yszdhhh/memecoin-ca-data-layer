@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Pure offline Harness evidence repair. Remove the non-Git-tracked declared input node_modules/gmgn-cli/package.json from GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001 while retaining package.json and package-lock.json as the only Git-tracked gmgn-cli pin evidence. Add evidence-correction notes to related acceptance reports. Do not modify GMGN query implementation, re-run 7d smoke, or issue any network/provider requests.",
   "dependencies": [
     "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001"
