@@ -19,8 +19,8 @@
     "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
     "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
     "src/infrastructure/gmgn/wallet-holdings-parser.ts",
-    "test/gmgn-cli-boundary.test.ts",
-    "test/signed-cumulative-holdings-live-smoke.test.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
     "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json"
   ],
   "write_set": [

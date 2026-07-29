@@ -20,7 +20,7 @@
     "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
     "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
     "src/infrastructure/gmgn/wallet-holdings-parser.ts",
-    "test/signed-cumulative-holdings-live-smoke.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
     "package.json",
     "package-lock.json"
   ],
