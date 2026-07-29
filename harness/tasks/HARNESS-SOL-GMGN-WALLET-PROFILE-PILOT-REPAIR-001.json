@@ -1,0 +1,56 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001",
+  "title": "Repair GMGN wallet profile pilot test synthetic isolation, credential injection, rate limiting, and audit dependencies",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Repair engineering acceptance issues of SOL-GMGN-WALLET-PROFILE-PILOT-001. Eliminate process.env credential mutations in tests via dependency injection; ensure all unit tests run completely synthetic in temporary directories without referencing external C:\\Users\\10639\\chainfm_out; implement and test serial <=1req/s rate limiting with injected sleep; refine metric mapping rigor; update SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001 to depend on this repair task; and achieve clean npm run check.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-PILOT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/gmgn-wallet-profile-pilot.ts",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
+    "package.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/gmgn-wallet-profile-pilot.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json",
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001/**",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not set, delete, or reassign process.env.GMGN_API_KEY or process.env.GMGN_PRIVATE_KEY in code or tests.",
+    "Do not read C:\\Users\\10639\\chainfm_out or real user files inside unit tests.",
+    "Do not perform network calls or CLI invocations in unit tests.",
+    "Do not make Helius calls, BSC calls, web scraping, or DB/Redis/queue writes.",
+    "Do not print or commit API keys, private keys, raw payloads, or raw error text.",
+    "Do not act as final Auditor for this milestone."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check",
+    "npm run check"
+  ]
+}

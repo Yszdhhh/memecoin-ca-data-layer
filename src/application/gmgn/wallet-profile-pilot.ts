@@ -21,6 +21,12 @@ export interface PilotOptions {
   outputDir: string;
   gmgnCliPath?: string;
   skipNetworkCalls?: boolean;
+  credentialAvailable?: boolean;
+  sleepFn?: (ms: number) => Promise<void>;
+  mockGmgnStatsRunner?: (
+    walletAddress: string,
+    period: "7d" | "30d"
+  ) => { exitCode: number; stdout: string };
 }
 
 export interface NormalizedWalletMetrics {
@@ -80,12 +86,25 @@ function computeStringSha256(val: string): string {
 export async function runGmgnWalletProfilePilot(
   options: PilotOptions
 ): Promise<WalletProfilePilotResult> {
-  const { inputDir, outputDir, gmgnCliPath, skipNetworkCalls } = options;
+  const {
+    inputDir,
+    outputDir,
+    gmgnCliPath,
+    skipNetworkCalls,
+    credentialAvailable,
+    sleepFn,
+    mockGmgnStatsRunner,
+  } = options;
 
   const warningCodeCounts: Record<string, number> = {};
   const addWarningCode = (code: string) => {
     warningCodeCounts[code] = (warningCodeCounts[code] || 0) + 1;
   };
+
+  const sleep =
+    sleepFn ||
+    (async (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms)));
 
   // 1. Verify input directory & files exist and match exact SHA-256 hashes
   const txtPath = path.join(inputDir, "sol_addresses.txt");
@@ -157,8 +176,11 @@ export async function runGmgnWalletProfilePilot(
     return failClosedResult(outputDir, warningCodeCounts, "gmgn_wallet_input_invalid");
   }
 
-  // 4. Check credentials
-  const credentialPresent = Boolean(process.env.GMGN_API_KEY?.trim());
+  // 4. Determine credential status (using dependency injection or read-only env check)
+  const credentialPresent =
+    credentialAvailable !== undefined
+      ? credentialAvailable
+      : Boolean(process.env.GMGN_API_KEY?.trim());
 
   const fetchedAt = new Date().toISOString();
   const periods: Array<"7d" | "30d"> = ["7d", "30d"];
@@ -206,37 +228,48 @@ export async function runGmgnWalletProfilePilot(
           continue;
         }
 
-        totalRequestsUsed += 1;
+        // Rate-limiting delay: >= 1,000ms after the first request
+        if (totalRequestsUsed > 0) {
+          await sleep(1000);
+        }
 
-        const args = [
-          resolvedCliPath,
-          "portfolio",
-          "stats",
-          "--chain",
-          "sol",
-          "--wallet",
-          walletAddress,
-          "--period",
-          period,
-          "--raw",
-        ];
+        totalRequestsUsed += 1;
 
         let rawOutput = "";
         let exitCode = -1;
 
-        try {
-          const proc = spawnSync(process.execPath, args, {
-            cwd: process.cwd(),
-            env: process.env,
-            encoding: "utf8",
-            maxBuffer: 2_000_000,
-            shell: false,
-            timeout: 5_000,
-          });
-          exitCode = proc.status ?? -1;
-          rawOutput = String(proc.stdout ?? "");
-        } catch {
-          rawOutput = "";
+        if (mockGmgnStatsRunner) {
+          const res = mockGmgnStatsRunner(walletAddress, period);
+          exitCode = res.exitCode;
+          rawOutput = res.stdout;
+        } else {
+          const args = [
+            resolvedCliPath,
+            "portfolio",
+            "stats",
+            "--chain",
+            "sol",
+            "--wallet",
+            walletAddress,
+            "--period",
+            period,
+            "--raw",
+          ];
+
+          try {
+            const proc = spawnSync(process.execPath, args, {
+              cwd: process.cwd(),
+              env: process.env,
+              encoding: "utf8",
+              maxBuffer: 2_000_000,
+              shell: false,
+              timeout: 5_000,
+            });
+            exitCode = proc.status ?? -1;
+            rawOutput = String(proc.stdout ?? "");
+          } catch {
+            rawOutput = "";
+          }
         }
 
         if (exitCode !== 0 || !rawOutput.trim()) {
@@ -296,21 +329,35 @@ export async function runGmgnWalletProfilePilot(
           const nonNullCount = Object.values(aggregates).filter(
             (v) => v !== null
           ).length;
-          const completeness = Math.round((nonNullCount / 11) * 100) / 100;
 
-          records.push({
-            walletAddress: parsed.wallet,
-            period,
-            status: "MAPPED",
-            source: "gmgn",
-            verificationStatus: "unverified",
-            completeness,
-            aggregates,
-            warningCodes: [],
-            requestBudgetUsed: totalRequestsUsed,
-            sourceInputFingerprint: computeStringSha256(parsed.wallet),
-            fetchedAt,
-          });
+          if (nonNullCount > 0) {
+            const completeness = Math.round((nonNullCount / 11) * 100) / 100;
+            records.push({
+              walletAddress: parsed.wallet,
+              period,
+              status: "MAPPED",
+              source: "gmgn",
+              verificationStatus: "unverified",
+              completeness,
+              aggregates,
+              warningCodes: [],
+              requestBudgetUsed: totalRequestsUsed,
+              sourceInputFingerprint: computeStringSha256(parsed.wallet),
+              fetchedAt,
+            });
+          } else {
+            const warningCode = "gmgn_expected_metrics_unavailable";
+            addWarningCode(warningCode);
+            records.push(
+              buildUnavailableRecord(
+                walletAddress,
+                period,
+                warningCode,
+                totalRequestsUsed,
+                fetchedAt
+              )
+            );
+          }
         } else {
           const warningCode =
             (parsed && parsed.warningCodes[0]) ||

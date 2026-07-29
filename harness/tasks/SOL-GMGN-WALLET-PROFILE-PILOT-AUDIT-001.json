@@ -9,11 +9,14 @@
   "status": "READY",
   "objective": "Independently audit SOL-GMGN-WALLET-PROFILE-PILOT-001 execution evidence. Verify that request count limit <= 40 was enforced, exactly 20 addresses were deterministically selected from input hash-verified cleaned.jsonl, input evidence manifest exists, no API keys / private keys / raw payloads / raw errors were saved or committed to Git, GMGN data is strictly marked borrowed/unverified, no Helius / BSC / DB / automation / scraper was invoked, and 7D / 30D field mapping is reproducible by unit tests.",
   "dependencies": [
-    "SOL-GMGN-WALLET-PROFILE-PILOT-001"
+    "SOL-GMGN-WALLET-PROFILE-PILOT-001",
+    "HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001"
   ],
   "inputs": [
     "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json",
     "harness/reports/SOL-GMGN-WALLET-PROFILE-PILOT-001/acceptance.md",
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001/acceptance.md",
     "harness/inputs/SOL-GMGN-WALLET-PROFILE-PILOT-001/manifest.json",
     "harness/ledger/tasks.json"
   ],

@@ -728,6 +728,11 @@
       "status": "DONE"
     },
     {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
       "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
       "status": "READY"
