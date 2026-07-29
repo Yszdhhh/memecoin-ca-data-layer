@@ -19,7 +19,7 @@ import {
 } from "./gmgn-cli-boundary.js";
 import {
   parseGmgnWalletStats,
-  type ParsedGmgnWalletStats,
+  type GmgnWalletStatsResult,
 } from "../../infrastructure/gmgn/wallet-stats-parser.js";
 import {
   parseGmgnWalletHoldingsPage,
@@ -98,8 +98,8 @@ export interface GmgnThreePathLiveDiagnosticResult {
   cliInvocationBudgetCap: number;
   cliInvocationBudgetUsed: number;
   physicalProviderRequestUpperBound: number;
-  stats7d: PathDiagnosticRecord<ParsedGmgnWalletStats>;
-  stats30d: PathDiagnosticRecord<ParsedGmgnWalletStats>;
+  stats7d: PathDiagnosticRecord<GmgnWalletStatsResult>;
+  stats30d: PathDiagnosticRecord<GmgnWalletStatsResult>;
   signedHoldings: PathDiagnosticRecord<ParsedGmgnWalletHoldingsPage> & {
     nextCursorRemaining: boolean;
   };
@@ -391,7 +391,7 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
   const resolvedCliPath = gmgnCliPath || path.resolve("node_modules/gmgn-cli/dist/index.js");
 
   let totalInvocations = 0;
-  let stats7dRecord: ParsedGmgnWalletStats | null = null;
+  let stats7dRecord: GmgnWalletStatsResult | null = null;
   let stats7dStatus: "MAPPED" | "PARTIAL" | "UNAVAILABLE" | "PARK" = "PARK";
   let stats7dDiagnosticCode: AllowlistedThreePathDiagnosticCode | null = null;
 
@@ -427,9 +427,9 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
       if (payload !== undefined) {
         const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
         const parsed = parsedList[0];
-        if (parsed && parsed.status === "MAPPED") {
+        if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           stats7dRecord = parsed;
-          stats7dStatus = "MAPPED";
+          stats7dStatus = parsed.status;
         } else {
           stats7dDiagnosticCode = (parsed?.warningCodes[0] as AllowlistedThreePathDiagnosticCode | undefined) ?? "gmgn_expected_metrics_unavailable";
           warningCodesSet.add(stats7dDiagnosticCode);
@@ -445,12 +445,12 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
     isolation1.cleanup();
   }
 
-  let stats30dRecord: ParsedGmgnWalletStats | null = null;
+  let stats30dRecord: GmgnWalletStatsResult | null = null;
   let stats30dStatus: "MAPPED" | "PARTIAL" | "UNAVAILABLE" | "PARK" = "PARK";
   let stats30dDiagnosticCode: AllowlistedThreePathDiagnosticCode | null = null;
 
-  // If 7d failed, stop here!
-  if (stats7dStatus !== "MAPPED" && stats7dStatus !== "PARTIAL") {
+  // If 7d failed (UNAVAILABLE or PARK), stop here!
+  if (stats7dStatus === "UNAVAILABLE" || stats7dStatus === "PARK") {
     const resultBase = {
       status: "PARTIAL_RECOVERY" as const,
       taskId,
@@ -506,9 +506,9 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
       if (payload !== undefined) {
         const parsedList = parseGmgnWalletStats(payload, [selectedAddress]);
         const parsed = parsedList[0];
-        if (parsed && parsed.status === "MAPPED") {
+        if (parsed && (parsed.status === "MAPPED" || parsed.status === "PARTIAL")) {
           stats30dRecord = parsed;
-          stats30dStatus = "MAPPED";
+          stats30dStatus = parsed.status;
         } else {
           stats30dDiagnosticCode = (parsed?.warningCodes[0] as AllowlistedThreePathDiagnosticCode | undefined) ?? "gmgn_expected_metrics_unavailable";
           warningCodesSet.add(stats30dDiagnosticCode);
@@ -529,8 +529,8 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
   let signedDiagnosticCode: AllowlistedThreePathDiagnosticCode | null = null;
   let nextCursorRemaining = false;
 
-  // If 30d failed, stop here!
-  if (stats30dStatus !== "MAPPED" && stats30dStatus !== "PARTIAL") {
+  // If 30d failed (UNAVAILABLE or PARK), stop here!
+  if (stats30dStatus === "UNAVAILABLE" || stats30dStatus === "PARK") {
     const resultBase = {
       status: "PARTIAL_RECOVERY" as const,
       taskId,
@@ -652,8 +652,8 @@ export async function runGmgnPortfolioThreePathLiveDiagnostic(
   }
 
   const overallSuccess =
-    stats7dStatus === "MAPPED" &&
-    stats30dStatus === "MAPPED" &&
+    (stats7dStatus === "MAPPED" || stats7dStatus === "PARTIAL") &&
+    (stats30dStatus === "MAPPED" || stats30dStatus === "PARTIAL") &&
     (signedStatus === "MAPPED" || signedStatus === "PARTIAL");
 
   const resultBase = {
