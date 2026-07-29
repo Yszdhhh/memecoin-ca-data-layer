@@ -845,7 +845,7 @@
     {
       "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001 using a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify that input SHA-256 hashes matched before any CLI invocation, exactly one target address was selected in memory, CLI invocations were bounded by 3, strictly serial with 1000ms delay and zero retries, API-key-only stats mode did not forward private key, local private key preflight was enforced, and Git evidence contains no plaintext address, credentials, raw payload, or raw stdout/stderr.",
   "dependencies": [
     "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001"
