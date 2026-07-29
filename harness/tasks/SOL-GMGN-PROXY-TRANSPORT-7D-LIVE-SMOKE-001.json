@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "After GREEN proxy transport repair audit, execute exactly one Solana GMGN portfolio stats live request for period=7d against exactly one in-memory selected wallet from hash-verified external inputs. Max 1 CLI invocation, max 1 physical provider request, no retry, no pagination, no 30d, no holdings, no fallback. Export sanitized aggregates only. Do not claim 30d or holdings recovery.",
   "dependencies": [
     "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001"
