@@ -795,7 +795,7 @@
     {
       "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     },
     {
       "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001",
@@ -821,6 +821,16 @@
       "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003",
       "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

@@ -1,0 +1,63 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001",
+  "baseline_commit": "acca1888e3e5e9490396ed6c10e9032d86cfeaf8",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "observed_safe_history": {
+    "batch_100": {
+      "mapped": 0,
+      "unavailable": 200,
+      "safe_code": "gmgn_request_unavailable"
+    },
+    "full_1433": {
+      "mapped": 5,
+      "unavailable": 2861,
+      "safe_code": "gmgn_request_unavailable"
+    },
+    "signed_holdings_smoke": {
+      "cli_invocations": 1,
+      "outcome": "UNAVAILABLE",
+      "safe_code": "gmgn_request_unavailable"
+    }
+  },
+  "known_mechanical_defects": [
+    "stats runner uses one CLI invocation per wallet although the pinned CLI accepts multiple wallet arguments",
+    "stats child timeout is 5000ms",
+    "signed holdings child has no timeout",
+    "generic failure classification is not actionable for contract, clock, signing-material, or provider-5xx failures",
+    "signed holdings report records activation baseline as Commit SHA and contains mojibake",
+    "signed holdings report states an exact physical request count that the child boundary did not independently observe"
+  ],
+  "local_cli_contract": {
+    "package": "gmgn-cli",
+    "pinned_version": "1.5.4",
+    "stats_periods": [
+      "7d",
+      "30d"
+    ],
+    "stats_supports_multiple_wallets": true,
+    "holdings_auth": "GMGN_API_KEY plus GMGN_PRIVATE_KEY",
+    "holdings_close_position_option": "--hide-closed false"
+  },
+  "tracked_input_sha256": {
+    "src/application/gmgn/gmgn-cli-boundary.ts": "27F96F37F0E8B405126DE231AEC0A1B803726862057C58268E2F115360393562",
+    "src/application/gmgn/wallet-profile-pilot.ts": "C45B382F0A6376607A90ED409109319543491441F1D6ED3F3287F1E4D45A4E87",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts": "FAF0648B1226C8E010E2A37EE8574C6B1E7CF2E30BE16A1D22EF9BAE366B8F44",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts": "F9568D8ED77FC6C0F93C5FEFF705954B8F655FB4B6C24644EB50FE9AA995063B",
+    "test/application/gmgn/wallet-profile-pilot.test.ts": "40DAC0714D698212FA1CEAF4D6C3F0B9EBBC9D62EB6CDFA065ECED806B349E71",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts": "2C3F102C30BFBE4927885BC5F8A5A09C2AA2BB85CF8455CDEC8FE8EA7F2263E0",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md": "555395A42A54AFC172239FC05670948AA33BB5BEB1C41DB080BBFAF5B86815A8",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md": "51D7E12434A68E4BC58FC9F8F72E6F02F14B44B930AB1027646C5A32787428E8",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md": "001DDDD39F58F56534B54515F44BAC6793BB70125C26C13132E1E919210A8013",
+    "package.json": "742A6D5F03E044A4489BF31180FB0C4E60B32F04ACCCA78BC3900DF5C6EB69FB",
+    "package-lock.json": "7365178DE666B02BC7B463EBA8F1209F7844513DC97D0DE999225ED768BDC6E7"
+  },
+  "privacy": {
+    "credential_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}

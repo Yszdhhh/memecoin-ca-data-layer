@@ -1,11 +1,15 @@
-﻿import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
+import assert from "node:assert/strict";
+import { createHash, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
 import {
   runBoundedSignedHoldingsSmoke,
   type BoundedSignedHoldingsSmokeDependencies,
 } from "../../../src/application/gmgn/signed-cumulative-holdings-live-smoke.js";
+
+const SYNTHETIC_PRIVATE_KEY = generateKeyPairSync("ed25519").privateKey
+  .export({ type: "pkcs8", format: "pem" })
+  .toString();
 
 function encodeBase58(bytes: Uint8Array): string {
   const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -51,7 +55,7 @@ function baseRunInput(dependencies: Partial<BoundedSignedHoldingsSmokeDependenci
     runtimeEnvironment: {
       PATH: "synthetic-path",
       GMGN_API_KEY: "fixture-api-key",
-      GMGN_PRIVATE_KEY: "fixture-private-key",
+      GMGN_PRIVATE_KEY: SYNTHETIC_PRIVATE_KEY,
       GMGN_DEBUG: "ambient-debug",
     } as NodeJS.ProcessEnv,
     dependencies: {
@@ -136,7 +140,7 @@ test("bounded holdings smoke makes one fixed no-cursor invocation with retry dis
   assert.equal(typeof result.sourceInputFingerprint, "string");
   assert.equal(result.sourceInputFingerprint?.length, 64);
   assert.equal(JSON.stringify(result).includes("fixture-api-key"), false);
-  assert.equal(JSON.stringify(result).includes("fixture-private-key"), false);
+  assert.equal(JSON.stringify(result).includes("BEGIN PRIVATE KEY"), false);
 });
 
 test("bounded holdings smoke discards raw child failure text after safe classification", async () => {
@@ -147,4 +151,33 @@ test("bounded holdings smoke discards raw child failure text after safe classifi
   assert.equal(result.status, "UNAVAILABLE");
   assert.equal(result.diagnosticCode, "gmgn_cli_rate_limited");
   assert.equal(JSON.stringify(result).includes("synthetic opaque"), false);
+});
+
+test("bounded holdings smoke rejects malformed private key before any invocation", async () => {
+  let spawnCount = 0;
+  const input = baseRunInput({
+    execute: async () => {
+      spawnCount += 1;
+      return { exitCode: 0, stdout: "{}", stderr: "" };
+    },
+  });
+  input.runtimeEnvironment.GMGN_PRIVATE_KEY = "malformed-private-key";
+
+  const result = await runBoundedSignedHoldingsSmoke(input);
+
+  assert.equal(result.status, "PARK");
+  assert.equal(result.requestBudgetUsed, 0);
+  assert.equal(result.diagnosticCode, "gmgn_cli_signing_key_invalid");
+  assert.equal(spawnCount, 0);
+});
+
+test("bounded holdings smoke maps an execution timeout to a safe code", async () => {
+  const result = await runBoundedSignedHoldingsSmoke(baseRunInput({
+    execute: async () => ({ exitCode: null, stdout: "", stderr: "opaque", timedOut: true }),
+  }));
+
+  assert.equal(result.status, "UNAVAILABLE");
+  assert.equal(result.requestBudgetUsed, 1);
+  assert.equal(result.diagnosticCode, "gmgn_cli_timeout");
+  assert.equal(JSON.stringify(result).includes("opaque"), false);
 });

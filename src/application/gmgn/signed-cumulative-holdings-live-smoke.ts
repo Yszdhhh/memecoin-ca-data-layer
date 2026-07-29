@@ -1,4 +1,4 @@
-﻿import { createHash } from "node:crypto";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 
@@ -8,6 +8,7 @@ import {
   buildGmgnCumulativeHoldingsInvocation,
   classifyGmgnCliFailure,
   createGmgnCliIsolation,
+  validateGmgnPrivateKey,
   type GmgnCliInvocation,
   type GmgnCliIsolation,
   type AllowlistedGmgnCliFailureCode,
@@ -119,10 +120,22 @@ async function executeGmgnCli(invocation: GmgnCliInvocation): Promise<GmgnCliExe
     });
     let stdout = "";
     let stderr = "";
+    let settled = false;
+    const finish = (result: GmgnCliExecutionResult) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(result);
+    };
+    const timer = setTimeout(() => {
+      child.kill();
+      finish({ exitCode: null, stdout, stderr, timedOut: true });
+    }, invocation.timeoutMs);
+
     child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString("utf8"); });
     child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString("utf8"); });
-    child.once("error", () => resolve({ exitCode: null, stdout, stderr }));
-    child.once("close", (exitCode) => resolve({ exitCode, stdout, stderr }));
+    child.once("error", () => finish({ exitCode: null, stdout, stderr }));
+    child.once("close", (exitCode) => finish({ exitCode, stdout, stderr }));
   });
 }
 
@@ -178,13 +191,24 @@ export async function runBoundedSignedHoldingsSmoke(
   }
 
   const fingerprint = targetFingerprint(selectedAddress);
+  const privateKeyValidation = validateGmgnPrivateKey(privateKey);
+  if (!privateKeyValidation.ok) {
+    return safeResult({
+      status: "PARK",
+      requestBudgetUsed: 0,
+      sourceInputFingerprint: fingerprint,
+      diagnosticCode: privateKeyValidation.code,
+    });
+  }
+
   const isolation = dependencies.createIsolation();
+  let invocationAttempted = false;
   try {
     const environment = buildBoundedSignedGmgnCliEnvironment({
       runtimeEnvironment: input.runtimeEnvironment,
       isolatedHome: isolation.home,
       apiKey,
-      privateKey,
+      privateKey: privateKeyValidation.normalizedPrivateKey,
     });
     const invocation = buildGmgnCumulativeHoldingsInvocation({
       cliPath: input.cliPath,
@@ -192,6 +216,7 @@ export async function runBoundedSignedHoldingsSmoke(
       cwd: isolation.cwd,
       env: environment,
     });
+    invocationAttempted = true;
     const execution = await dependencies.execute(invocation);
     if (execution.exitCode !== 0) {
       const diagnosticCode = classifyGmgnCliFailure(execution);
@@ -226,7 +251,7 @@ export async function runBoundedSignedHoldingsSmoke(
   } catch {
     return safeResult({
       status: "UNAVAILABLE",
-      requestBudgetUsed: 1,
+      requestBudgetUsed: invocationAttempted ? 1 : 0,
       sourceInputFingerprint: fingerprint,
       diagnosticCode: "gmgn_request_unavailable",
     });

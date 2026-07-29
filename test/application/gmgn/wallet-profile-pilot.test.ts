@@ -70,14 +70,14 @@ function setupSyntheticInputDir(dir: string, walletList = SYNTHETIC_WALLETS): { 
   return { txtHash, jsonHash };
 }
 
-test("default pilot behavior: 20 wallets, offset 0, budget 40", async () => {
+test("default pilot batches 20 wallets into two serial period requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
     const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
 
-    const runnerCalls: Array<{ wallet: string; period: string }> = [];
+    const runnerCalls: Array<{ wallets: readonly string[]; period: string }> = [];
     const delays: number[] = [];
 
     const result = await runGmgnWalletProfilePilot({
@@ -91,15 +91,15 @@ test("default pilot behavior: 20 wallets, offset 0, budget 40", async () => {
       sleepFn: async (ms) => {
         delays.push(ms);
       },
-      mockGmgnStatsRunner: (walletAddress, period) => {
-        runnerCalls.push({ wallet: walletAddress, period });
+      mockGmgnStatsRunner: (walletAddresses, period) => {
+        runnerCalls.push({ wallets: walletAddresses, period });
         return {
           exitCode: 0,
-          stdout: JSON.stringify({
+          stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
             wallet_address: walletAddress,
             realized_profit: 50.0,
             winrate: 0.75,
-          }),
+          }))),
         };
       },
     });
@@ -108,9 +108,10 @@ test("default pilot behavior: 20 wallets, offset 0, budget 40", async () => {
     assert.equal(result.taskId, PILOT_TASK_ID);
     assert.equal(result.selectedCount, 20);
     assert.equal(result.records.length, 40); // 20 wallets * 2 periods
-    assert.equal(result.requestBudgetUsed, 40);
-    assert.equal(runnerCalls.length, 40);
-    assert.equal(delays.length, 39); // 39 delays for 40 serial calls
+    assert.equal(result.requestBudgetUsed, 2);
+    assert.equal(runnerCalls.length, 2);
+    assert.equal(runnerCalls[0]?.wallets.length, 20);
+    assert.equal(delays.length, 1);
     delays.forEach((d) => assert.ok(d >= 1000, "delay must be >= 1000ms"));
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
@@ -118,14 +119,14 @@ test("default pilot behavior: 20 wallets, offset 0, budget 40", async () => {
   }
 });
 
-test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 delays >= 1000ms", async () => {
+test("batch-100 configuration uses ten bounded serial requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-out-"));
 
   try {
     const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
 
-    const runnerCalls: Array<{ wallet: string; period: string }> = [];
+    const runnerCalls: Array<{ wallets: readonly string[]; period: string }> = [];
     const delays: number[] = [];
 
     const result = await runGmgnWalletProfilePilot({
@@ -143,11 +144,11 @@ test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 
       sleepFn: async (ms) => {
         delays.push(ms);
       },
-      mockGmgnStatsRunner: (walletAddress, period) => {
-        runnerCalls.push({ wallet: walletAddress, period });
+      mockGmgnStatsRunner: (walletAddresses, period) => {
+        runnerCalls.push({ wallets: walletAddresses, period });
         return {
           exitCode: 0,
-          stdout: JSON.stringify({
+          stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
             wallet_address: walletAddress,
             realized_profit: 100.0,
             realized_profit_pnl: 0.25,
@@ -157,7 +158,7 @@ test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 
             sold_income: 500.0,
             last_timestamp: 1715000000,
             pnl_stat: { winrate: 66.7, token_num: 8 },
-          }),
+          }))),
         };
       },
     });
@@ -167,9 +168,10 @@ test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 
     assert.equal(result.selectedCount, 100);
     assert.equal(result.records.length, 200);
     assert.equal(result.mappedCount, 200);
-    assert.equal(result.requestBudgetUsed, 200);
-    assert.equal(runnerCalls.length, 200);
-    assert.equal(delays.length, 199);
+    assert.equal(result.requestBudgetUsed, 10);
+    assert.equal(runnerCalls.length, 10);
+    assert.equal(runnerCalls[0]?.wallets.length, 20);
+    assert.equal(delays.length, 9);
     for (const d of delays) {
       assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
     }
@@ -294,13 +296,14 @@ test("missing numeric metrics remain null and incomplete, never fake 0", async (
         solAddressesTxtHash: txtHash,
         solAddressLabelsJsonHash: jsonHash,
       },
-      mockGmgnStatsRunner: (walletAddress) => ({
+      sleepFn: async () => {},
+      mockGmgnStatsRunner: (walletAddresses) => ({
         exitCode: 0,
-        stdout: JSON.stringify({
+        stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
           wallet_address: walletAddress,
           winrate: 66.7,
           // All other fields missing!
-        }),
+        }))),
       }),
     });
 
@@ -356,14 +359,14 @@ const SYNTHETIC_1433_WALLETS = Array.from({ length: 1433 }, (_, i) => {
   return bufferToBase58(buf);
 });
 
-test("full-1433 synthetic boundary test: exact 1,433 addresses, 2,866 budget, 2,865 delays >= 1000ms, field whitelist, unverified", async () => {
+test("full-1433 synthetic boundary uses 144 bounded serial requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-out-"));
 
   try {
     const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir, SYNTHETIC_1433_WALLETS);
 
-    const runnerCalls: Array<{ wallet: string; period: string }> = [];
+    const runnerCalls: Array<{ wallets: readonly string[]; period: string }> = [];
     const delays: number[] = [];
 
     const result = await runGmgnWalletProfilePilot({
@@ -381,17 +384,17 @@ test("full-1433 synthetic boundary test: exact 1,433 addresses, 2,866 budget, 2,
       sleepFn: async (ms) => {
         delays.push(ms);
       },
-      mockGmgnStatsRunner: (walletAddress, period) => {
-        runnerCalls.push({ wallet: walletAddress, period });
+      mockGmgnStatsRunner: (walletAddresses, period) => {
+        runnerCalls.push({ wallets: walletAddresses, period });
         return {
           exitCode: 0,
-          stdout: JSON.stringify({
+          stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
             wallet_address: walletAddress,
             realized_profit: 250.0,
             winrate: 0.80,
             buy: 15,
             sell: 8,
-          }),
+          }))),
         };
       },
     });
@@ -401,9 +404,10 @@ test("full-1433 synthetic boundary test: exact 1,433 addresses, 2,866 budget, 2,
     assert.equal(result.selectedCount, 1433);
     assert.equal(result.records.length, 2866);
     assert.equal(result.mappedCount, 2866);
-    assert.equal(result.requestBudgetUsed, 2866);
-    assert.equal(runnerCalls.length, 2866);
-    assert.equal(delays.length, 2865);
+    assert.equal(result.requestBudgetUsed, 144);
+    assert.equal(runnerCalls.length, 144);
+    assert.equal(runnerCalls.at(-1)?.wallets.length, 13);
+    assert.equal(delays.length, 143);
     for (const d of delays) {
       assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
     }

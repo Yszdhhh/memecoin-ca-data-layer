@@ -9,6 +9,7 @@ import {
   buildGmgnStatsInvocation,
   classifyGmgnCliFailure,
   createGmgnCliIsolation,
+  GMGN_STATS_BATCH_SIZE,
 } from "./gmgn-cli-boundary.js";
 
 export const PILOT_TASK_ID = "SOL-GMGN-WALLET-PROFILE-PILOT-001";
@@ -27,9 +28,14 @@ export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "gmgn_credential_unavailable",
   "gmgn_request_unavailable",
   "gmgn_cli_timeout",
+  "gmgn_cli_signing_key_invalid",
+  "gmgn_cli_clock_skew",
   "gmgn_cli_auth_rejected",
   "gmgn_cli_rate_limited",
+  "gmgn_cli_contract_mismatch",
   "gmgn_cli_network_unavailable",
+  "gmgn_cli_provider_unavailable",
+  "gmgn_cli_request_rejected",
   "gmgn_cli_response_unparseable",
   "gmgn_rate_limited",
   "gmgn_response_invalid",
@@ -46,14 +52,15 @@ export interface PilotOptions {
   targetWalletCount?: number;
   offsetWalletCount?: number;
   maxRequestBudget?: number;
+  walletBatchSize?: number;
   gmgnCliPath?: string;
   skipNetworkCalls?: boolean;
   credentialAvailable?: boolean;
   sleepFn?: (ms: number) => Promise<void>;
   mockGmgnStatsRunner?: (
-    walletAddress: string,
+    walletAddresses: readonly string[],
     period: "7d" | "30d"
-  ) => { exitCode: number; stdout: string };
+  ) => { exitCode: number; stdout: string; stderr?: string; timedOut?: boolean };
   expectedHashes?: {
     solAddressesTxtHash?: string;
     solAddressLabelsJsonHash?: string;
@@ -183,6 +190,7 @@ export async function runGmgnWalletProfilePilot(
     targetWalletCount = TARGET_WALLET_COUNT,
     offsetWalletCount = 0,
     maxRequestBudget,
+    walletBatchSize = GMGN_STATS_BATCH_SIZE,
     gmgnCliPath,
     skipNetworkCalls,
     credentialAvailable,
@@ -191,7 +199,10 @@ export async function runGmgnWalletProfilePilot(
     expectedHashes,
   } = options;
 
-  const actualMaxBudget = maxRequestBudget ?? targetWalletCount * 2;
+  if (!Number.isInteger(walletBatchSize) || walletBatchSize < 1 || walletBatchSize > GMGN_STATS_BATCH_SIZE) {
+    throw new Error("Unsupported GMGN stats wallet batch size");
+  }
+  const actualMaxBudget = maxRequestBudget ?? Math.ceil(targetWalletCount / walletBatchSize) * 2;
   const expectedTxtHash = expectedHashes?.solAddressesTxtHash ?? EXPECTED_SOL_ADDRESSES_HASH;
   const expectedJsonHash = expectedHashes?.solAddressLabelsJsonHash ?? EXPECTED_SOL_LABELS_HASH;
 
@@ -302,31 +313,25 @@ export async function runGmgnWalletProfilePilot(
       }
     }
   } else {
-    // Execute live bounded requests (1 call per wallet per period, total max budget requests)
+    // gmgn-cli portfolio stats accepts multiple wallets. A bounded batch is one
+    // CLI invocation and one request-budget unit; periods remain strictly serial.
     const resolvedCliPath =
       gmgnCliPath || path.resolve("node_modules/gmgn-cli/dist/index.js");
 
     for (const period of periods) {
-      for (const walletAddress of selectedAddresses) {
+      for (let batchStart = 0; batchStart < selectedAddresses.length; batchStart += walletBatchSize) {
+        const walletBatch = selectedAddresses.slice(batchStart, batchStart + walletBatchSize);
         if (totalRequestsUsed >= actualMaxBudget) {
           addWarningCode("gmgn_rate_limited");
-          records.push(
-            buildUnavailableRecord(
-              walletAddress,
-              period,
-              "gmgn_rate_limited",
-              totalRequestsUsed,
-              fetchedAt
-            )
-          );
+          for (const walletAddress of walletBatch) {
+            records.push(buildUnavailableRecord(
+              walletAddress, period, "gmgn_rate_limited", totalRequestsUsed, fetchedAt,
+            ));
+          }
           continue;
         }
 
-        // Rate-limiting delay: >= 1,000ms after the first request
-        if (totalRequestsUsed > 0) {
-          await sleep(1000);
-        }
-
+        if (totalRequestsUsed > 0) await sleep(1000);
         totalRequestsUsed += 1;
 
         let rawOutput = "";
@@ -335,15 +340,17 @@ export async function runGmgnWalletProfilePilot(
         let timedOut = false;
 
         if (mockGmgnStatsRunner) {
-          const res = mockGmgnStatsRunner(walletAddress, period);
-          exitCode = res.exitCode;
-          rawOutput = res.stdout;
+          const result = mockGmgnStatsRunner(walletBatch, period);
+          exitCode = result.exitCode;
+          rawOutput = result.stdout;
+          rawError = result.stderr ?? "";
+          timedOut = result.timedOut ?? false;
         } else {
           const isolation = createGmgnCliIsolation();
           try {
             const invocation = buildGmgnStatsInvocation({
               cliPath: resolvedCliPath,
-              walletAddress,
+              walletAddresses: walletBatch,
               period,
               cwd: isolation.cwd,
               env: buildApiKeyOnlyGmgnCliEnvironment({
@@ -358,7 +365,7 @@ export async function runGmgnWalletProfilePilot(
               encoding: "utf8",
               maxBuffer: 2_000_000,
               shell: false,
-              timeout: 5_000,
+              timeout: invocation.timeoutMs,
             });
             exitCode = proc.status ?? -1;
             rawOutput = String(proc.stdout ?? "");
@@ -373,21 +380,17 @@ export async function runGmgnWalletProfilePilot(
         }
 
         if (exitCode !== 0 || !rawOutput.trim()) {
-          const errCode = toAllowlistedWarningCode(
-            classifyGmgnCliFailure({ exitCode, timedOut, stdout: rawOutput, stderr: rawError })
+          const warningCode = toAllowlistedWarningCode(
+            classifyGmgnCliFailure({ exitCode, timedOut, stdout: rawOutput, stderr: rawError }),
           );
           rawOutput = "";
           rawError = "";
-          addWarningCode(errCode);
-          records.push(
-            buildUnavailableRecord(
-              walletAddress,
-              period,
-              errCode,
-              totalRequestsUsed,
-              fetchedAt
-            )
-          );
+          addWarningCode(warningCode);
+          for (const walletAddress of walletBatch) {
+            records.push(buildUnavailableRecord(
+              walletAddress, period, warningCode, totalRequestsUsed, fetchedAt,
+            ));
+          }
           continue;
         }
 
@@ -395,84 +398,61 @@ export async function runGmgnWalletProfilePilot(
         try {
           parsedJson = JSON.parse(rawOutput);
         } catch {
-          const errCode = "gmgn_response_invalid";
-          addWarningCode(errCode);
-          records.push(
-            buildUnavailableRecord(
-              walletAddress,
-              period,
-              errCode,
-              totalRequestsUsed,
-              fetchedAt
-            )
-          );
+          const warningCode = "gmgn_response_invalid";
+          addWarningCode(warningCode);
+          for (const walletAddress of walletBatch) {
+            records.push(buildUnavailableRecord(
+              walletAddress, period, warningCode, totalRequestsUsed, fetchedAt,
+            ));
+          }
           continue;
+        } finally {
+          rawOutput = "";
+          rawError = "";
         }
 
-        // Erase raw output string from memory reference
-        rawOutput = "";
-
-        const parsedResults = parseGmgnWalletStats(parsedJson, [walletAddress]);
-        const parsed = parsedResults[0];
-
-        if (parsed && parsed.status === "MAPPED") {
-          const aggregates: NormalizedWalletMetrics = {
-            periodPnl: parsed.aggregates.periodPnl ?? null,
-            realizedProfit: parsed.aggregates.realizedProfit ?? null,
-            realizedProfitPnl: parsed.aggregates.realizedProfitPnl ?? null,
-            winRate: parsed.aggregates.winRate ?? null,
-            tradeCount: parsed.aggregates.tradeCount ?? null,
-            buyCount: parsed.aggregates.buyCount ?? null,
-            sellCount: parsed.aggregates.sellCount ?? null,
-            boughtCost: parsed.aggregates.boughtCost ?? null,
-            soldIncome: parsed.aggregates.soldIncome ?? null,
-            lastActiveTimestamp: parsed.aggregates.lastActiveTimestamp ?? null,
-            tokenNum: parsed.aggregates.tokenNum ?? null,
-          };
-
-          const nonNullCount = Object.values(aggregates).filter(
-            (v) => v !== null
-          ).length;
-
-          if (nonNullCount > 0) {
-            const completeness = Math.round((nonNullCount / 11) * 100) / 100;
-            records.push({
-              period,
-              status: "MAPPED",
-              source: "gmgn",
-              verificationStatus: "unverified",
-              completeness,
-              aggregates,
-              warningCodes: [],
-              requestBudgetUsed: totalRequestsUsed,
-              sourceInputFingerprint: computeStringSha256(walletAddress),
-              fetchedAt,
-            });
-          } else {
-            const warningCode = "gmgn_expected_metrics_unavailable";
-            addWarningCode(warningCode);
-            records.push(
-              buildUnavailableRecord(
-                walletAddress,
+        const parsedResults = parseGmgnWalletStats(parsedJson, walletBatch);
+        for (const parsed of parsedResults) {
+          const walletAddress = parsed.wallet;
+          if (parsed.status === "MAPPED") {
+            const aggregates: NormalizedWalletMetrics = {
+              periodPnl: parsed.aggregates.periodPnl ?? null,
+              realizedProfit: parsed.aggregates.realizedProfit ?? null,
+              realizedProfitPnl: parsed.aggregates.realizedProfitPnl ?? null,
+              winRate: parsed.aggregates.winRate ?? null,
+              tradeCount: parsed.aggregates.tradeCount ?? null,
+              buyCount: parsed.aggregates.buyCount ?? null,
+              sellCount: parsed.aggregates.sellCount ?? null,
+              boughtCost: parsed.aggregates.boughtCost ?? null,
+              soldIncome: parsed.aggregates.soldIncome ?? null,
+              lastActiveTimestamp: parsed.aggregates.lastActiveTimestamp ?? null,
+              tokenNum: parsed.aggregates.tokenNum ?? null,
+            };
+            const nonNullCount = Object.values(aggregates).filter((value) => value !== null).length;
+            if (nonNullCount > 0) {
+              records.push({
                 period,
-                warningCode,
-                totalRequestsUsed,
-                fetchedAt
-              )
-            );
+                status: "MAPPED",
+                source: "gmgn",
+                verificationStatus: "unverified",
+                completeness: Math.round((nonNullCount / 11) * 100) / 100,
+                aggregates,
+                warningCodes: [],
+                requestBudgetUsed: totalRequestsUsed,
+                sourceInputFingerprint: computeStringSha256(walletAddress),
+                fetchedAt,
+              });
+              continue;
+            }
           }
-        } else {
-          const warningCode = toAllowlistedWarningCode(parsed?.warningCodes[0]);
-          addWarningCode(warningCode);
-          records.push(
-            buildUnavailableRecord(
-              walletAddress,
-              period,
-              warningCode,
-              totalRequestsUsed,
-              fetchedAt
-            )
+
+          const warningCode = toAllowlistedWarningCode(
+            parsed.warningCodes[0] ?? "gmgn_expected_metrics_unavailable",
           );
+          addWarningCode(warningCode);
+          records.push(buildUnavailableRecord(
+            walletAddress, period, warningCode, totalRequestsUsed, fetchedAt,
+          ));
         }
       }
     }

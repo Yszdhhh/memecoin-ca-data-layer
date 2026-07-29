@@ -6,13 +6,45 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "BLOCKED_DEPENDENCY",
-  "objective": "Independently and read-only audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after it finishes. Confirm the preflight audit was independently GREEN; both external input hashes matched before any provider action; only one strict valid Solana wallet was selected in memory; exactly one isolated GMGN portfolio holdings invocation was attempted; GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 prevented automatic retry expansion; no cursor, pagination, fallback or other provider was used; and Git evidence retains only an anonymized fingerprint, safe aggregate fields and allowlisted codes. Confirm no secret, address, label, raw provider payload, raw stdout/stderr or full provider error was retained. Do not make a provider request. Record a verdict and do not upgrade GMGN data beyond source gmgn / verificationStatus unverified.",
-  "dependencies": ["SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001"],
-  "inputs": ["harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json", "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md", "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json", "harness/ledger/tasks.json", "src/application/gmgn/gmgn-cli-boundary.ts", "src/infrastructure/gmgn/wallet-holdings-parser.ts"],
-  "write_set": ["harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json", "harness/ledger/tasks.json", "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001/acceptance.md"],
-  "forbidden_actions": ["Do not call GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC or any network provider.", "Do not inspect, display or retain credential values, addresses, labels, raw payloads, raw stdout/stderr or full provider errors.", "Do not modify application code, package manifests, tests, configuration, external files or the implementer task artifacts.", "Do not write outside the exact tracked write set."],
-  "deliverables": ["harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001/acceptance.md"],
-  "acceptance_commands": ["npm run harness:task -- validate harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json", "npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"],
-  "execution_limits": {"network_requests": 0, "provider_requests": 0, "address_processing": 0, "credential_reads": 0}
+  "status": "READY",
+  "objective": "Independently and read-only audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after it finishes. Confirm the preflight audit was independently GREEN; both external input hashes matched before any provider action; only one strict valid Solana wallet was selected in memory; one isolated GMGN portfolio holdings CLI invocation was attempted and the physical provider request count is reported only as an upper bound of at most one; GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 prevented automatic retry expansion; no cursor, pagination, fallback or other provider was used; and Git evidence retains only an anonymized fingerprint, safe aggregate fields and allowlisted codes. Confirm no secret, address, label, raw provider payload, raw stdout/stderr or full provider error was retained. Do not make a provider request. Record a verdict and do not upgrade GMGN data beyond source gmgn / verificationStatus unverified.",
+  "dependencies": [
+    "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/ledger/tasks.json",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC or any network provider.",
+    "Do not inspect, display or retain credential values, addresses, labels, raw payloads, raw stdout/stderr or full provider errors.",
+    "Do not modify application code, package manifests, tests, configuration, external files or the implementer task artifacts.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "address_processing": 0,
+    "credential_reads": 0
+  }
 }
