@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "IN_PROGRESS",
+  "status": "DONE",
   "objective": "Offline-only repair of the GMGN CLI child-process isolation so allowlisted HTTP_PROXY/HTTPS_PROXY/NO_PROXY (http/https schemes only) are forwarded into the disposable HOME/CWD sandbox, while parent NODE_OPTIONS are never inherited and child NODE_OPTIONS is fixed to --use-env-proxy --dns-result-order=ipv4first. Expand in-memory safe network failure classification without retaining raw stdout/stderr. Clear pre-existing three-path doctor blockers (absolute input paths, false-positive INLINE_API_CREDENTIAL identifier match, static test PEM block). Do not send any live provider request; do not claim 7d/30d/holdings recovery.",
   "dependencies": [
     "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001"

@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001 with a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify allowlisted proxy forwarding, no ALL_PROXY, scheme fail-closed, fixed NODE_OPTIONS without parent inheritance, stats private-key exclusion, signed preflight, timeout kill once, expanded safe error codes without raw stderr leakage, and that no live recovery claim is made.",
   "dependencies": [
     "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001"

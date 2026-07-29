@@ -5,7 +5,9 @@
 - **Task ID:** `GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001`
 - **HARNESS_AGENT_ID:** `implementer-gmgn-cli-proxy-transport-root-cause-repair-001`
 - **Baseline SHA (audit completion):** `a435992280134e4b2b3cc9a3f31cb84ade630172`
+- **Implementation delivery SHA:** `31422e4f53d7fcab0b6b51fb5ddcfb7e28ad943a`
 - **Branch:** `codex/solana-daily-new-token-analysis`
+- **Run ID:** `20260729125249_GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001`
 - **Provider / Network Requests:** `0`
 - **External Address Processing:** `0`
 - **Credential Value Reads:** `0`
