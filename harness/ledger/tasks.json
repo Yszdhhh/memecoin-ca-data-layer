@@ -836,6 +836,16 @@
       "task_id": "HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001",
       "spec": "harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

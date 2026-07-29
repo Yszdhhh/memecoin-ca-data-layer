@@ -1,0 +1,51 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
+  "title": "Independent zero-network audit of Solana GMGN three-path live diagnostic",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001 using a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify that input SHA-256 hashes matched before any CLI invocation, exactly one target address was selected in memory, CLI invocations were bounded by 3, strictly serial with 1000ms delay and zero retries, API-key-only stats mode did not forward private key, local private key preflight was enforced, and Git evidence contains no plaintext address, credentials, raw payload, or raw stdout/stderr.",
+  "dependencies": [
+    "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "harness/dispatches/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.md",
+    "harness/inputs/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/manifest.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "src/cli/run-gmgn-portfolio-three-path-live-diagnostic.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, a browser, web scraping, or any network provider.",
+    "Do not inspect, display, retain, or test against credential values, external address files, plaintext addresses, labels, raw payloads, raw stdout/stderr, complete exceptions, signatures, or credential URLs.",
+    "Do not modify application code, tests, package manifests, implementer evidence, historical normalized outputs, or external files.",
+    "Do not use HARNESS_AGENT_ID implementer-sol-gmgn-portfolio-three-path-live-diagnostic-001."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "address_processing": 0,
+    "credential_reads": 0
+  }
+}

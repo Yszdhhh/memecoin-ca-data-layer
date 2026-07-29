@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001",
+  "title": "Single-invocation, bounded, read-only Solana GMGN three-path live diagnostic",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "IN_PROGRESS",
+  "objective": "Execute a single, manual, read-only, bounded 3-path live diagnostic for Solana GMGN portfolio queries (7d stats, 30d stats, signed holdings snapshot). Validate sol_addresses.txt and sol_address_labels.json SHA-256 hashes before any provider request. Select exactly one target address in memory. Limit CLI invocations to at most 3 strictly serial calls with 1000ms delay and zero retries. Stop immediately if any stats call fails. Enforce local private key preflight. Export sanitized records only to external output directory with no plaintext address, credentials, or raw payloads.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "C:\\Users\\10639\\chainfm_out\\sol\\sol_addresses.txt",
+    "C:\\Users\\10639\\chainfm_out\\sol\\sol_address_labels.json",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "src/cli/run-gmgn-portfolio-three-path-live-diagnostic.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+  ],
+  "write_set": [
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "src/cli/run-gmgn-portfolio-three-path-live-diagnostic.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "harness/dispatches/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.md",
+    "harness/inputs/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/manifest.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm, Dune, Dexscreener, Birdeye, BSC, Robinhood, RPC, web scraping, browser automation, or any third-party provider.",
+    "Do not exceed 3 CLI invocations.",
+    "Do not enable automatic rate-limit retry, pagination, holdings cursor continuation, fallback, cron, background loops, or concurrency.",
+    "Do not display, print, store, commit, or return plaintext wallet addresses, labels, API keys, private keys, credential URLs, raw provider payloads, raw stdout/stderr, or full exceptions.",
+    "Do not run the downstream audit SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001."
+  ],
+  "deliverables": [
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "src/cli/run-gmgn-portfolio-three-path-live-diagnostic.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "harness/dispatches/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.md",
+    "harness/inputs/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/manifest.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

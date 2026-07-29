@@ -1,0 +1,19 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001",
+  "baseline_commit": "ee24e2bb44f3cf0034ea7d139da10af928e1c9d3",
+  "network_requests_allowed": 3,
+  "provider_requests_allowed": 3,
+  "expected_input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "cli_invocation_budget": 3,
+  "privacy": {
+    "credential_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}
