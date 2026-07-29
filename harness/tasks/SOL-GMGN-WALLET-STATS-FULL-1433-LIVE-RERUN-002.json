@@ -1,0 +1,70 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002",
+  "title": "Corrected full 1,433-wallet GMGN stats live rerun using one wallet per invocation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Execute one manually triggered read-only Solana-only GMGN official API rerun for exactly 1,433 hash-verified valid unique wallets. Query only 7d and 30d with exactly one wallet per CLI invocation, at most 2,866 invocations/provider requests, strictly serial with at least 1,000ms spacing. Persist only allowlisted normalized unverified GMGN fields and irreversible fingerprints to a new versioned external directory. Fail closed on hash, selection, budget, or credential preconditions and require independent audit.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002/manifest.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "src/cli/run-gmgn-wallet-stats-full-1433-live-rerun-002.ts",
+    "test/application/gmgn/wallet-stats-full-1433-live-rerun-002.test.ts",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm APIs, Dune, RPC, browser automation, web scraping, GMGN web pages, third-party providers, or fallback.",
+    "Do not use any chain other than Solana and do not enable BSC, Robinhood, cron, background loops, auto-discovery, ranking, or automatic daily updates.",
+    "Do not exceed 2,866 GMGN CLI invocations or provider requests. Do not retry, paginate, auto-fill, or use concurrency.",
+    "Do not query signed holdings or read, display, persist, or forward GMGN_PRIVATE_KEY. Stats authentication is API-key-only and key presence may be recorded only as a Boolean.",
+    "Do not print, persist, or commit plaintext wallet addresses, labels, credentials, proxy URLs, raw provider payloads, raw stdout/stderr, token identifiers, transaction identifiers, counterparties, or complete exceptions.",
+    "Do not write databases, Redis, caches, queues, or production systems.",
+    "Do not overwrite or reinterpret any historical 100-wallet or 1,433-wallet output.",
+    "Do not label GMGN data as chain-confirmed, verified profitability, wallet quality, UR/N/P grades, or LLM conclusions."
+  ],
+  "deliverables": [
+    "src/cli/run-gmgn-wallet-stats-full-1433-live-rerun-002.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002.json",
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 2866,
+    "provider_requests": 2866,
+    "gmgn_cli_invocations": 2866,
+    "credential_reads": "presence_only_api_key",
+    "address_processing": 1433
+  }
+}
