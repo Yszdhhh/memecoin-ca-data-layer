@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and read-only audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after it finishes. Confirm the preflight audit was independently GREEN; both external input hashes matched before any provider action; only one strict valid Solana wallet was selected in memory; one isolated GMGN portfolio holdings CLI invocation was attempted and the physical provider request count is reported only as an upper bound of at most one; GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 prevented automatic retry expansion; no cursor, pagination, fallback or other provider was used; and Git evidence retains only an anonymized fingerprint, safe aggregate fields and allowlisted codes. Confirm no secret, address, label, raw provider payload, raw stdout/stderr or full provider error was retained. Do not make a provider request. Record a verdict and do not upgrade GMGN data beyond source gmgn / verificationStatus unverified.",
   "dependencies": [
     "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001"
