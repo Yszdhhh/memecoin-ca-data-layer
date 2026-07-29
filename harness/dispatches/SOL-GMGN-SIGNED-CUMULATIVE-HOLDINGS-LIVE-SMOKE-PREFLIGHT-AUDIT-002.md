@@ -1,0 +1,3 @@
+# Dispatch: SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002
+
+Audit only `harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002.json` after the bounded-runner repair audit is DONE and GREEN. Use a distinct `HARNESS_AGENT_ID` from every implementer and prior auditor. This is a zero-network, read-only preflight. Do not read external inputs or credentials, select a wallet, run the CLI, or authorize a request by implication. Verify the repaired live path mechanically enforces its one-request bound and sanitized output contract. Record a safe GREEN, GREEN_WITH_ADVISORY, PARK, or FAIL verdict. The live smoke may proceed only after an explicit GREEN verdict.

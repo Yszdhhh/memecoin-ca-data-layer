@@ -1,0 +1,32 @@
+{
+  "schema_version": "harness-evidence-manifest-v1",
+  "created_at": "2026-07-29T00:00:00.000Z",
+  "tracked_input_sha256": {
+    "src/domain/solana-address.ts": "4BD12FE15BD1D730FD6BDD2AD0C47A0FEBC0944C8ED316331EAFB9B9FAAC8712",
+    "src/application/gmgn/gmgn-cli-boundary.ts": "03139A054FE87B3E7723E6185E193ECB2CEB11A80CE0A4DAE7A06FCD96D82AA4",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts": "452F60EB64317A96C9F106E32BFE3AD6A1C5A604051E4BA54E749DD31277ED0A",
+    "package.json": "742A6D5F03E044A4489BF31180FB0C4E60B32F04ACCCA78BC3900DF5C6EB69FB",
+    "package-lock.json": "7365178DE666B02BC7B463EBA8F1209F7844513DC97D0DE999225ED768BDC6E7",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001/acceptance.md": "0255EB5F614EC074560FCAB47580B9F8D20D41D970DADF8965696F889D87C7F7"
+  },
+  "privacy": {
+    "plaintext_addresses": false,
+    "labels": false,
+    "credential_values": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false,
+    "raw_stdout_stderr": false
+  },
+  "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001",
+  "owner_authorization": "Independent audit required by operating controls; audit is zero-network and does not authorize live execution.",
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0
+  },
+  "scope": {
+    "audit_target": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001",
+    "external_input_accessed": false
+  }
+}
