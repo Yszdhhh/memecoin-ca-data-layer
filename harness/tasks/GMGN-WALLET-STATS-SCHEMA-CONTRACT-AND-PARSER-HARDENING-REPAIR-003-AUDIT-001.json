@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001",
+  "title": "Independent zero-network audit of GMGN wallet stats schema contract and parser hardening repair 003",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-schema-contract-parser-hardening-repair-003) and zero network/provider requests. Verify winRate unit contract, generic alias handling, invalid_field_type retention, and acceptance report corrections.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not inspect credential values, proxy URLs, or plaintext address files.",
+    "Do not modify application or test code.",
+    "Do not use HARNESS_AGENT_ID implementer-gmgn-wallet-stats-schema-contract-parser-hardening-repair-003."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

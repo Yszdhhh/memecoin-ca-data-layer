@@ -113,7 +113,7 @@ test("7d proxy smoke: single invocation only; MAPPED parser status yields SUCCES
                 pnl_7d: 100,
                 realized_profit_7d: 80,
                 realized_profit_pnl_7d: 0.2,
-                win_rate_7d: 75,
+                win_rate_percent: 75,
                 trade_count_7d: 10,
                 buy_7d: 6,
                 sell_7d: 4,

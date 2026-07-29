@@ -6,7 +6,6 @@ import {
 } from "../src/infrastructure/gmgn/wallet-stats-parser.js";
 
 const walletA = "5K3N1vqmdgPNfk79SXJdmdhbR2q5KvcunZiWd6D7iTUT";
-const walletB = "EzbeF2bADKo6GutJyWmgodyGJFeBPhcrXSdZUXPX5WGc";
 
 test("1. maps direct wallet-identity record with exact matching and 11/11 explicit provider fields", () => {
   const payload = {
@@ -15,7 +14,7 @@ test("1. maps direct wallet-identity record with exact matching and 11/11 explic
     pnl: 100.5,
     realized_profit: 80.0,
     realized_profit_pnl: 0.25,
-    win_rate: 60,
+    win_rate_percent: 60,
     trade_count: 10,
     buy_count: 6,
     sell_count: 4,
@@ -46,7 +45,7 @@ test("2. maps wallet-keyed dictionary envelope", () => {
         pnl: 42.0,
         realized_profit: 40.0,
         realized_profit_pnl: 0.1,
-        winrate: 50,
+        win_rate_percent: 50,
         trade_count: 5,
         buy: 3,
         sell: 2,
@@ -176,17 +175,6 @@ test("5. Requirement C: alias conflict fail-closed behavior", () => {
   assert.equal(res2.status, "UNAVAILABLE");
   assert.ok(res2.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
 
-  // win_rate_7d vs win_rate conflict
-  const winRateConflict = {
-    wallet: walletA,
-    pnl: 50,
-    win_rate_7d: 50,
-    win_rate: 60,
-  };
-  const res3 = parseGmgnWalletStats(winRateConflict, [walletA], "7d")[0]!;
-  assert.equal(res3.status, "UNAVAILABLE");
-  assert.ok(res3.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
-
   // trade_count vs tx_count conflict
   const tradeCountConflict = {
     wallet: walletA,
@@ -232,10 +220,10 @@ test("6. Requirement D: invalid candidate container ambiguity handling", () => {
   assert.equal(res1.status, "UNAVAILABLE");
   assert.ok(res1.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 
-  // root win_rate={}, pnl_stat realized_profit=10 -> intent in root & pnl_stat -> UNAVAILABLE
+  // root win_rate_percent={}, pnl_stat realized_profit=10 -> intent in root & pnl_stat -> UNAVAILABLE
   const rootObjPnlStatValid = {
     wallet: walletA,
-    win_rate: {},
+    win_rate_percent: {},
     pnl_stat: {
       realized_profit: 10,
     },
@@ -259,49 +247,130 @@ test("6. Requirement D: invalid candidate container ambiguity handling", () => {
   assert.ok(!res3.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 });
 
-test("7. Requirement E: strict per-field numeric type validation (reject numeric strings)", () => {
-  // Numeric strings "100" are rejected with invalid_field_type
+test("7. Requirement E & Repair-003 C: strict per-field numeric type validation & retaining invalid_field_type diagnostic", () => {
+  // Numeric string "123.45" on pnl -> status UNAVAILABLE, contains BOTH invalid_field_type AND expected_metrics_unavailable
   const numericStringPayload = {
     wallet: walletA,
-    pnl: "100",
+    pnl: "123.45",
   };
   const res1 = parseGmgnWalletStats(numericStringPayload, [walletA], "7d")[0]!;
   assert.equal(res1.status, "UNAVAILABLE");
   assert.equal(res1.aggregates.periodPnl, undefined);
+  assert.ok(res1.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"), "must contain invalid_field_type");
+  assert.ok(res1.warningCodes.includes("gmgn_expected_metrics_unavailable"), "must contain expected_metrics_unavailable");
 
-  // NaN, Infinity, objects, arrays, empty strings, text with units
-  const invalidTypes = {
+  // Object on realized_profit -> status UNAVAILABLE, contains BOTH invalid_field_type AND expected_metrics_unavailable
+  const objectProfitPayload = {
     wallet: walletA,
-    pnl: NaN,
-    realized_profit: Infinity,
-    trade_count: {},
-    win_rate: [],
-    buy_count: "",
-    sell_count: "10.5 SOL",
+    realized_profit: {},
   };
-  const res2 = parseGmgnWalletStats(invalidTypes, [walletA], "7d")[0]!;
+  const res2 = parseGmgnWalletStats(objectProfitPayload, [walletA], "7d")[0]!;
   assert.equal(res2.status, "UNAVAILABLE");
-  assert.equal(res2.aggregates.periodPnl, undefined);
   assert.equal(res2.aggregates.realizedProfit, undefined);
-  assert.equal(res2.aggregates.tradeCount, undefined);
+  assert.ok(res2.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+  assert.ok(res2.warningCodes.includes("gmgn_expected_metrics_unavailable"));
+
+  // Array on bought_cost with valid pnl -> status PARTIAL, contains invalid_field_type
+  const arrayCostPayload = {
+    wallet: walletA,
+    period: "7d",
+    pnl: 100,
+    bought_cost: [],
+  };
+  const res3 = parseGmgnWalletStats(arrayCostPayload, [walletA], "7d")[0]!;
+  assert.equal(res3.status, "PARTIAL");
+  assert.equal(res3.aggregates.periodPnl, 100);
+  assert.equal(res3.aggregates.boughtCost, undefined);
+  assert.ok(res3.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+
+  // Multiple core metrics all invalid
+  const multipleInvalidPayload = {
+    wallet: walletA,
+    pnl: "100",
+    realized_profit: {},
+    realized_profit_pnl: [],
+  };
+  const res4 = parseGmgnWalletStats(multipleInvalidPayload, [walletA], "7d")[0]!;
+  assert.equal(res4.status, "UNAVAILABLE");
+  assert.ok(res4.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+  assert.ok(res4.warningCodes.includes("gmgn_expected_metrics_unavailable"));
+
+  // Valid core metric mixed with invalid alias of same field (pnl_7d: 100, pnl: "bad") -> fail closed with alias conflict
+  const validAndInvalidAliasPayload = {
+    wallet: walletA,
+    pnl_7d: 100,
+    pnl: "bad",
+  };
+  const res5 = parseGmgnWalletStats(validAndInvalidAliasPayload, [walletA], "7d")[0]!;
+  assert.equal(res5.status, "UNAVAILABLE");
+  assert.ok(res5.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
 });
 
-test("8. Requirement F: winRate unit contracts for percent vs ratio aliases", () => {
-  // Percent alias 45.5 is valid
-  const percentValid = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate: 45.5 }, [walletA], "7d")[0]!;
-  assert.equal(percentValid.aggregates.winRate, 45.5);
+test("8. Requirement F & Repair-003 A & B: winRate unit contracts and boundary counterexamples", () => {
+  // 1. win_rate_percent alias: 0, 0.4, 1, 45.5, 100 are ALL deterministically accepted as percent
+  for (const [val, expected] of [[0, 0], [0.4, 0.4], [1, 1], [45.5, 45.5], [100, 100]]) {
+    const res = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: val }, [walletA], "7d")[0]!;
+    assert.equal(res.aggregates.winRate, expected, `win_rate_percent ${val} should equal ${expected}`);
+    assert.ok(!res.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
+  }
 
-  // Ambiguous 0 < v < 1 (e.g. 0.4) on percent alias emits win_rate_unit_ambiguous and omits winRate
-  const ambiguousVal = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate: 0.4 }, [walletA], "7d")[0]!;
-  assert.equal(ambiguousVal.aggregates.winRate, undefined);
-  assert.ok(ambiguousVal.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
+  // win_rate_percent out-of-range: -0.01, 100.01 emit win_rate_unit_ambiguous and omit winRate
+  for (const invalidVal of [-0.01, 100.01]) {
+    const res = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: invalidVal }, [walletA], "7d")[0]!;
+    assert.equal(res.aggregates.winRate, undefined);
+    assert.ok(res.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
+  }
 
-  // Ratio alias win_rate_ratio: 0.45 converts to 45%
-  const ratioValid = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_ratio: 0.45 }, [walletA], "7d")[0]!;
-  assert.equal(ratioValid.aggregates.winRate, 45);
+  // win_rate_percent invalid types: numeric string, NaN, Infinity, object, array -> invalid_field_type
+  for (const badTypeVal of ["45.5", NaN, Infinity, {}, []]) {
+    const res = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: badTypeVal }, [walletA], "7d")[0]!;
+    assert.equal(res.aggregates.winRate, undefined);
+    assert.ok(res.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+  }
 
-  // Presenting both percent and ratio aliases in same container causes alias conflict fail-closed
-  const bothAliases = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate: 45, win_rate_ratio: 0.45 }, [walletA], "7d")[0]!;
-  assert.equal(bothAliases.status, "UNAVAILABLE");
-  assert.ok(bothAliases.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+  // 2. win_rate_ratio & winrate_ratio aliases: 0, 0.4, 1 converted to %, 0 -> 0, 0.4 -> 40, 1 -> 100
+  for (const aliasKey of ["win_rate_ratio", "winrate_ratio"]) {
+    const res0 = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: 0 }, [walletA], "7d")[0]!;
+    assert.equal(res0.aggregates.winRate, 0);
+
+    const res04 = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: 0.4 }, [walletA], "7d")[0]!;
+    assert.equal(res04.aggregates.winRate, 40);
+
+    const res1 = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: 1 }, [walletA], "7d")[0]!;
+    assert.equal(res1.aggregates.winRate, 100);
+
+    // out of range for ratio
+    for (const badRatio of [-0.01, 1.01]) {
+      const resBad = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: badRatio }, [walletA], "7d")[0]!;
+      assert.equal(resBad.aggregates.winRate, undefined);
+      assert.ok(resBad.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
+    }
+
+    // invalid types for ratio
+    for (const badTypeVal of ["0.4", NaN, Infinity]) {
+      const resBadType = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: badTypeVal }, [walletA], "7d")[0]!;
+      assert.equal(resBadType.aggregates.winRate, undefined);
+      assert.ok(resBadType.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+    }
+  }
+
+  // 3. Both percent and ratio aliases present -> alias conflict fail-closed
+  const bothSameConverted = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: 40, win_rate_ratio: 0.4 }, [walletA], "7d")[0]!;
+  assert.equal(bothSameConverted.status, "UNAVAILABLE");
+  assert.ok(bothSameConverted.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+
+  const bothDiffConverted = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: 50, win_rate_ratio: 0.4 }, [walletA], "7d")[0]!;
+  assert.equal(bothDiffConverted.status, "UNAVAILABLE");
+  assert.ok(bothDiffConverted.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+
+  // 4. Generic aliases without schema evidence (win_rate, winrate, winning_rate, win_rate_7d, win_rate_30d):
+  // 0, 0.4, 1 use completely identical rules (unit-unverified, omit winRate, emit win_rate_unit_ambiguous)
+  for (const genericAlias of ["win_rate", "winrate", "winning_rate", "win_rate_7d"]) {
+    for (const val of [0, 0.4, 1]) {
+      const res = parseGmgnWalletStats({ wallet: walletA, pnl: 100, [genericAlias]: val }, [walletA], "7d")[0]!;
+      assert.equal(res.aggregates.winRate, undefined, `Generic alias ${genericAlias} with val ${val} must not output winRate`);
+      assert.equal(res.aggregates.periodPnl, 100, "Must not affect parsing of other valid metrics");
+      assert.ok(res.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"), "Must emit win_rate_unit_ambiguous");
+    }
+  }
 });

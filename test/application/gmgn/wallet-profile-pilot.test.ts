@@ -303,7 +303,7 @@ test("missing numeric metrics remain null and incomplete, never fake 0", async (
         stdout: JSON.stringify(walletAddresses.map((walletAddress) => ({
           wallet_address: walletAddress,
           realized_profit: 100.0,
-          winrate: 66.7,
+          win_rate_percent: 66.7,
           // All other fields missing!
         }))),
       }),

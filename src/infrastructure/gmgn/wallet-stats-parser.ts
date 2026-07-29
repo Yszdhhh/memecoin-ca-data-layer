@@ -152,6 +152,8 @@ function parseWalletResult(
     aggregates.realizedProfitPnl !== undefined;
 
   if (!hasCoreProfitMetric) {
+    const warningCodesSet = new Set<string>(warnings);
+    warningCodesSet.add("gmgn_expected_metrics_unavailable");
     return {
       wallet,
       parserVersion: GMGN_WALLET_STATS_PARSER_VERSION,
@@ -159,7 +161,7 @@ function parseWalletResult(
       mapping,
       completeness: 0,
       aggregates: {},
-      warningCodes: ["gmgn_expected_metrics_unavailable"],
+      warningCodes: Array.from(warningCodesSet).sort(),
     };
   }
 
@@ -528,13 +530,15 @@ function extractMetricsFromSingleContainer(
   }
 
   // Handle winRate explicitly for percent vs ratio aliases
-  const winRatePercentKeys = expectedPeriod === "30d"
-    ? ["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate", "win_rate_percent"]
-    : ["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate", "win_rate_percent"];
+  const winRatePercentKeys = ["win_rate_percent"];
   const winRateRatioKeys = ["win_rate_ratio", "winrate_ratio"];
+  const winRateGenericKeys = expectedPeriod === "30d"
+    ? ["winrate_30d", "win_rate_30d", "winrate", "win_rate", "winning_rate"]
+    : ["winrate_7d", "win_rate_7d", "winrate", "win_rate", "winning_rate"];
 
   const presentPercentKeys = winRatePercentKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
   const presentRatioKeys = winRateRatioKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+  const presentGenericKeys = winRateGenericKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
 
   const winRatePercentValues: number[] = [];
   const winRateRatioValues: number[] = [];
@@ -546,10 +550,7 @@ function extractMetricsFromSingleContainer(
     if (rawVal === undefined || rawVal === null) continue;
     const num = parseStrictNumber(rawVal);
     if (num !== undefined) {
-      if (num > 0 && num < 1) {
-        // 0 < v < 1 is ambiguous for percent alias (e.g. 0.4 could be 0.4% or ratio 0.40)
-        winRateAmbiguous = true;
-      } else if (num >= 0 && num <= 100) {
+      if (num >= 0 && num <= 100) {
         winRatePercentValues.push(num);
       } else {
         winRateAmbiguous = true;
@@ -563,21 +564,40 @@ function extractMetricsFromSingleContainer(
     const rawVal = container[key];
     if (rawVal === undefined || rawVal === null) continue;
     const num = parseStrictNumber(rawVal);
-    if (num !== undefined && num >= 0 && num <= 1) {
-      winRateRatioValues.push(Math.round(num * 100 * 100) / 100);
+    if (num !== undefined) {
+      if (num >= 0 && num <= 1) {
+        winRateRatioValues.push(Math.round(num * 100 * 100) / 100);
+      } else {
+        winRateAmbiguous = true;
+      }
     } else {
-      winRateAmbiguous = true;
+      winRateInvalidType = true;
     }
   }
 
-  if (presentPercentKeys.length > 0 && presentRatioKeys.length > 0) {
-    // Both percent and ratio aliases present -> ALIAS CONFLICT!
+  for (const key of presentGenericKeys) {
+    const rawVal = container[key];
+    if (rawVal === undefined || rawVal === null) continue;
+    const num = parseStrictNumber(rawVal);
+    if (num === undefined) {
+      winRateInvalidType = true;
+    }
+  }
+
+  const explicitGroupCount = (presentPercentKeys.length > 0 ? 1 : 0) + (presentRatioKeys.length > 0 ? 1 : 0);
+  const totalWinRateAliasesPresent = presentPercentKeys.length + presentRatioKeys.length + presentGenericKeys.length;
+
+  if (explicitGroupCount > 1 || (presentGenericKeys.length > 0 && (presentPercentKeys.length > 0 || presentRatioKeys.length > 0))) {
+    // Multiple conflicting winRate alias families present -> ALIAS CONFLICT!
     warnings.push("gmgn_wallet_stats_alias_conflict");
+  } else if (presentGenericKeys.length > 0) {
+    // Generic alias present (unit-unverified without schema evidence in repo) -> unit-unverified!
+    warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
   } else if (winRateAmbiguous) {
     warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-  } else if (winRateInvalidType && winRatePercentValues.length === 0) {
+  } else if (winRateInvalidType && winRatePercentValues.length === 0 && winRateRatioValues.length === 0) {
     warnings.push("gmgn_wallet_stats_invalid_field_type");
-  } else {
+  } else if (totalWinRateAliasesPresent > 0) {
     const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues];
     const firstWinRate = allParsedWinRates[0];
     if (allParsedWinRates.length === 1 && firstWinRate !== undefined) {

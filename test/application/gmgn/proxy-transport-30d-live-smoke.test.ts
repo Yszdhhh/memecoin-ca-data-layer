@@ -151,7 +151,7 @@ test("30d proxy smoke: single invocation only; MAPPED parser status yields SUCCE
                 pnl_30d: 500,
                 realized_profit_30d: 400,
                 realized_profit_pnl_30d: 0.3,
-                win_rate_30d: 75,
+                win_rate_percent: 75,
                 trade_count_30d: 20,
                 buy_30d: 12,
                 sell_30d: 8,
