@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "IN_PROGRESS",
+  "status": "DONE",
   "objective": "Based on hash-verified Chain.fm Solana address-cleaning output, execute one manually triggered, strictly bounded, read-only GMGN official-API 100-wallet statistical profile smoke. Deterministically validate Base58/32-byte addresses, skip the pilot’s first 20 unique valid wallets, and select positions 21–120 only. Fetch 7d and 30d statistics serially with >=1,000ms between adjacent requests and a hard 200-request budget. Save only allowlisted normalized metrics to the designated external derived directory; all GMGN values remain source=gmgn and verificationStatus=unverified. GMGN_PRIVATE_KEY is neither read nor passed to the statistics subprocess. The batch is not independently completed until the downstream audit is GREEN.",
   "dependencies": [
     "SOL-GMGN-WALLET-PROFILE-PILOT-001",

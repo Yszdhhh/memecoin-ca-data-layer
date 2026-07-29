@@ -1,0 +1,54 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001",
+  "title": "Repair batch-100 evidence hygiene, Git SHA alignment, and local lifecycle state",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Repair batch-100 evidence hygiene, Git SHA alignment, and local lifecycle state. Remove the 100 per-wallet fingerprint table from SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 acceptance report while retaining selected_fingerprint_sequence_sha256 and aggregate evidence. Reconcile local task status (SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 and SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001 to DONE) with remote SHA aeaa5ca4422f022f180e1da7a5d6c8f103ea7815. Safely park uncompleted local RUNNING run without deleting evidence or faking GREEN. Create repair acceptance report and downstream repair audit task spec.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json",
+    "harness/runs/run-sol-gmgn-wallet-profile-batch-100-live-smoke-001/manifest.json",
+    "harness/lib/validation.ts"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001/**",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+    "harness/runs/run-sol-gmgn-wallet-profile-batch-100-live-smoke-001/manifest.json",
+    "harness/ledger/tasks.json",
+    "harness/lib/validation.ts"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any third-party network provider or API.",
+    "Do not modify application code, parsers, business logic, test suites, or external derived outputs.",
+    "Do not replay 200 requests or execute new live runs.",
+    "Do not run git reset --hard, force push, or delete git branches.",
+    "Do not print, store, commit, or log API keys, private keys, plaintext addresses, address labels, raw payloads, or complete exception tracebacks.",
+    "Do not self-assert GREEN on downstream repair audit task HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

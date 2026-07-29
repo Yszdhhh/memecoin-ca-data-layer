@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001",
+  "title": "Independent audit of batch-100 evidence repair, Git commit alignment, and report hygiene",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently and read-only audit HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-batch-100-live-smoke-evidence-repair-001 (distinct from implementer), send zero live/provider requests, verify removal of the 100 per-wallet fingerprint table, confirm retention of selected_fingerprint_sequence_sha256 and aggregate evidence, verify git commit SHA alignment with remote aeaa5ca4422f022f180e1da7a5d6c8f103ea7815, ensure no keys/credentials/addresses in report, and verify safe parking of uncompleted local RUNNING run. Only a GREEN independent audit closes the batch-100 evidence repair milestone.",
+  "dependencies": [
+    "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not execute network calls or provider requests.",
+    "Do not modify implementation or test code.",
+    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts.",
+    "Do not write per-address fingerprints in the audit report.",
+    "Do not use the implementer HARNESS_AGENT_ID; use the distinct auditor HARNESS_AGENT_ID declared in this task objective.",
+    "Do not mark the batch-100 repair milestone complete unless the audit run finishes GREEN or GREEN_WITH_ADVISORY with valid evidence."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

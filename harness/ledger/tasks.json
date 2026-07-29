@@ -740,12 +740,22 @@
     {
       "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
-      "status": "IN_PROGRESS"
+      "status": "DONE"
     },
     {
       "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }

@@ -10,7 +10,7 @@ import type {
 import { exists, readJson } from "./files.js";
 import { gitDirty, gitTrackedFiles } from "./git.js";
 
-const TASK_ID = /^[A-Z][A-Z0-9-]{2,63}$/;
+const TASK_ID = /^[A-Z][A-Z0-9-]{2,127}$/;
 const TIERS = new Set(["T1", "T2", "T3"]);
 const ROLES = new Set(["coordinator", "implementer", "researcher", "auditor"]);
 const STATUSES = new Set(["READY", "BLOCKED_DEPENDENCY", "BLOCKED_STAGE", "IN_PROGRESS", "DONE", "PARK"]);

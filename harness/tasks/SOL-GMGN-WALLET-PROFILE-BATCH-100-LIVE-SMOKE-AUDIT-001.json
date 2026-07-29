@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "DONE",
   "objective": "Independently and read-only audit the evidence for SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-batch-100-live-smoke-001, which is different from the implementer identity, and must send no live/provider requests. Verify hash gating, deterministic 21st–120th selection after the 20-wallet pilot skip, <=200 request budget, >=1,000ms serial delay, field/output hygiene, no GMGN_PRIVATE_KEY dependency, GMGN source=gmgn and verificationStatus=unverified, and absence of Helius, BSC, database, automation, scraper, and raw credential/payload/error leakage. Only a GREEN independent audit closes the batch-100 completion gate.",
   "dependencies": [
     "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001"
