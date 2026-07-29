@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001 with a distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-schema-contract-and-parser-hardening-001) and zero network/provider requests. Verify all findings F1-F8 are truly repaired without recursive guessing, arbitrary composition, or forced completeness=1.",
   "dependencies": [
     "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001",
