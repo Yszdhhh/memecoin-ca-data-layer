@@ -20,9 +20,35 @@
 
 - **Periods**: `7d`, `30d`
 - **Expected maximum requests**: `2866`
-- **Request budget limit**: `2866`
+- **Request budget used**: `2866`
+- **Budget respected**: `true`
 - **Serial request minimum interval**: `>= 1,000ms`
+- **Normalized records**: `2866`
+- **Mapped / partial / unavailable**: `5` / `0` / `2861`
+- **Average completeness**: `0`
 - **GMGN classification**: `source: "gmgn"`, `verificationStatus: "unverified"` only.
+
+## Field Coverage
+
+| Allowlisted normalized field | Coverage |
+|---|---:|
+| `periodPnl` | 0.17% |
+| `realizedProfit` | 0.17% |
+| `realizedProfitPnl` | 0.17% |
+| `winRate` | 0.17% |
+| `tradeCount` | 0.17% |
+| `buyCount` | 0.17% |
+| `sellCount` | 0.17% |
+| `boughtCost` | 0.17% |
+| `soldIncome` | 0.17% |
+| `lastActiveTimestamp` | 0.07% |
+| `tokenNum` | 0.17% |
+
+## Allowlisted Warning / Error Codes
+
+| Code | Count |
+|---|---:|
+| `gmgn_request_unavailable` | 2861 |
 
 ## Safety and Evidence Boundaries
 
