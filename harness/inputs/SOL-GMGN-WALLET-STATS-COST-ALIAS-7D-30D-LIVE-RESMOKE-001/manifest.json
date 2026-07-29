@@ -1,0 +1,23 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001",
+  "baseline_commit": "1ebea19",
+  "expected_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "selection": {
+    "chain": "solana",
+    "valid_unique_index": 1,
+    "count": 1
+  },
+  "periods": [
+    "7d",
+    "30d"
+  ],
+  "cli_invocation_cap": 2,
+  "physical_provider_request_upper_bound": 2,
+  "min_inter_request_delay_ms": 1000,
+  "source": "gmgn",
+  "verificationStatus": "unverified"
+}

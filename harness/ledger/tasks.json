@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T19:42:00.000Z",
+  "updated_at_utc": "2026-07-29T19:48:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1046,6 +1046,16 @@
       "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }
