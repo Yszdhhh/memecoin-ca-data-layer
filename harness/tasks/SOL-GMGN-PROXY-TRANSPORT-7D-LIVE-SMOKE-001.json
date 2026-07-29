@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001",
+  "title": "One-request Solana GMGN 7d stats live smoke after proxy transport repair",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "After GREEN proxy transport repair audit, execute exactly one Solana GMGN portfolio stats live request for period=7d against exactly one in-memory selected wallet from hash-verified external inputs. Max 1 CLI invocation, max 1 physical provider request, no retry, no pagination, no 30d, no holdings, no fallback. Export sanitized aggregates only. Do not claim 30d or holdings recovery.",
+  "dependencies": [
+    "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/cli/run-gmgn-proxy-transport-7d-live-smoke.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "harness/inputs/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001/manifest.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/cli/run-gmgn-proxy-transport-7d-live-smoke.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001.md",
+    "harness/inputs/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm, Dune, Dexscreener, Birdeye, BSC, Robinhood, RPC, browser, or web scraping.",
+    "Do not exceed 1 CLI invocation or 1 physical provider request.",
+    "Do not retry, paginate, test 30d, test holdings, use fallback, cron, or concurrency.",
+    "Do not print, store, or commit plaintext addresses, labels, credentials, proxy URLs, raw payloads, or raw stdout/stderr.",
+    "Do not re-run 100 or 1433 wallets.",
+    "Do not claim 30d or holdings recovery from this task."
+  ],
+  "deliverables": [
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/cli/run-gmgn-proxy-transport-7d-live-smoke.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
