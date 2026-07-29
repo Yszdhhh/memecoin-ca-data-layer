@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Use independently audited one-request 30d alias-shape evidence and pinned gmgn-cli@1.5.4 skill semantics to stop treating bought_cost and total_cost as unconditional equal aliases. Prefer the documented bought_cost field family and use total_cost only as a fallback family, retain fail-closed conflicts inside a chosen family, treat an explicit zero last_timestamp as an unavailable sentinel rather than an invalid type or fabricated activity, and add pure offline synthetic tests. No live request.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001"

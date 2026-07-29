@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit the offline parser repair with zero network. Verify bought_cost family precedence over total_cost fallback, same-family conflict fail-closed behavior, zero timestamp omission without invalid-type noise, strict existing contracts, synthetic coverage, and write-set accuracy.",
   "dependencies": [
     "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001"
