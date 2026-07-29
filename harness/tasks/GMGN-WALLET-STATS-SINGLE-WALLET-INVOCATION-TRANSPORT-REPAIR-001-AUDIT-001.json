@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit that GMGN stats transport now permits exactly one wallet per CLI invocation, plans 1,433 wallets times 7d/30d as 2,866 strictly serial bounded invocations, preserves isolation and fail-closed semantics, and has adequate offline synthetic coverage. No live requests.",
   "dependencies": [
     "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001"

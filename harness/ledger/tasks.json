@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T19:35:41.421Z",
+  "updated_at_utc": "2026-07-29T23:58:00Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1085,7 +1085,7 @@
     {
       "task_id": "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
