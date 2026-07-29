@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002",
+  "title": "Single-wallet GMGN 7d and 30d live re-smoke after documented composite schema repair 002",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Execute exactly one single-wallet 7d request and one single-wallet 30d request through the repaired documented root + pnl_stat composite parser. Strict max 2 CLI invocations, serial with at least 1000ms separation, no retries, pagination, holdings, fallback, Helius, database writes, or plaintext/raw provider evidence.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/manifest.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm, Dune, browser automation, web scraping, or any provider other than GMGN official API via the pinned CLI boundary.",
+    "Do not exceed 2 CLI invocations or retry, paginate, run holdings, use fallback, or run concurrently.",
+    "Do not print, persist, or commit plaintext wallet addresses, labels, credential values, proxy URLs, raw provider payloads, raw stdout/stderr, or complete exceptions.",
+    "Do not overwrite prior live-smoke output directories.",
+    "Do not run 100-wallet or 1,433-wallet batches in this task."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 2,
+    "provider_requests": 2,
+    "gmgn_cli_invocations": 2,
+    "credential_reads": "presence_only",
+    "address_processing": 1
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001",
+  "title": "Independent audit of documented composite schema 7d and 30d live re-smoke 002",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit the sanitized evidence and normalized external outputs of the two-invocation live re-smoke with zero additional network/provider/CLI requests. Verify hashes, budget, parser statuses, field semantics, privacy, and Git evidence.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network/provider/GMGN CLI requests.",
+    "Do not read credential values, plaintext address files, labels, raw payloads, raw stdout/stderr, or proxy URLs.",
+    "Do not modify application code or implementer evidence."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
