@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "input",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently and offline preflight-audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after the narrow evidence-manifest repair. Verify the fresh immutable evidence manifest hashes match its tracked inputs and the actual tracked runner mechanically enforces both required external input hashes before any child spawn, first strict valid unique selection in memory only, credential presence-only handling, disposable HOME/CWD, GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the signed child, exactly one no-cursor holdings invocation, and only sanitized unverified GMGN output or allowlisted safe codes. This audit must give an explicit GREEN before the live task may be made READY. Do not issue network/provider requests or read external inputs/credentials.",
   "dependencies": [
     "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001"
