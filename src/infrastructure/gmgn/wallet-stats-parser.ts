@@ -465,7 +465,8 @@ function selectUniqueMetricContainer(
 interface AliasGroupDefinition {
   canonicalName: keyof GmgnWalletStatsAggregate;
   aliasKeys: string[];
-  kind: "number" | "non_negative_number" | "positive_number" | "integer" | "win_rate_percent" | "win_rate_ratio";
+  fallbackAliasKeys?: string[];
+  kind: "number" | "non_negative_number" | "positive_timestamp" | "integer" | "win_rate_percent" | "win_rate_ratio";
 }
 
 const ROOT_ALIAS_GROUPS = (expectedPeriod: "7d" | "30d"): AliasGroupDefinition[] => [
@@ -501,7 +502,8 @@ const ROOT_ALIAS_GROUPS = (expectedPeriod: "7d" | "30d"): AliasGroupDefinition[]
   },
   {
     canonicalName: "boughtCost",
-    aliasKeys: expectedPeriod === "30d" ? ["bought_cost_30d", "total_cost_30d", "bought_cost", "total_cost", "buy_volume"] : ["bought_cost_7d", "total_cost_7d", "bought_cost", "total_cost", "buy_volume"],
+    aliasKeys: expectedPeriod === "30d" ? ["bought_cost_30d", "bought_cost"] : ["bought_cost_7d", "bought_cost"],
+    fallbackAliasKeys: expectedPeriod === "30d" ? ["total_cost_30d", "total_cost", "buy_volume"] : ["total_cost_7d", "total_cost", "buy_volume"],
     kind: "non_negative_number",
   },
   {
@@ -512,7 +514,7 @@ const ROOT_ALIAS_GROUPS = (expectedPeriod: "7d" | "30d"): AliasGroupDefinition[]
   {
     canonicalName: "lastActiveTimestamp",
     aliasKeys: ["last_timestamp", "last_active_timestamp", "last_trade_time", "last_active_time", "last_active", "updated_at"],
-    kind: "positive_number",
+    kind: "positive_timestamp",
   },
 ];
 
@@ -567,7 +569,10 @@ function extractMetricsFromSingleContainer(
   }
 
   for (const group of aliasGroups) {
-    const presentKeys = group.aliasKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    const presentPrimaryKeys = group.aliasKeys.filter((k) => k in container && !forbiddenPeriodKeys.has(k));
+    const presentKeys = presentPrimaryKeys.length > 0
+      ? presentPrimaryKeys
+      : (group.fallbackAliasKeys ?? []).filter((k) => k in container && !forbiddenPeriodKeys.has(k));
     if (presentKeys.length === 0) continue;
 
     const validValues: number[] = [];
@@ -580,7 +585,11 @@ function extractMetricsFromSingleContainer(
       let parsed: number | undefined;
       if (group.kind === "number") parsed = parseStrictNumber(rawVal);
       else if (group.kind === "non_negative_number") parsed = parseNonNegativeNumber(rawVal);
-      else if (group.kind === "positive_number") parsed = parsePositiveNumber(rawVal);
+      else if (group.kind === "positive_timestamp") {
+        const timestamp = parseStrictNumber(rawVal);
+        if (timestamp === 0) continue;
+        parsed = timestamp !== undefined && timestamp > 0 ? timestamp : undefined;
+      }
       else if (group.kind === "integer") parsed = parseStrictInteger(rawVal);
 
       if (parsed !== undefined) {
@@ -733,10 +742,6 @@ function parseNonNegativeNumber(val: unknown): number | undefined {
   return num !== undefined && num >= 0 ? num : undefined;
 }
 
-function parsePositiveNumber(val: unknown): number | undefined {
-  const num = parseStrictNumber(val);
-  return num !== undefined && num > 0 ? num : undefined;
-}
 
 function parseStrictInteger(val: unknown): number | undefined {
   const num = parseStrictNumber(val);

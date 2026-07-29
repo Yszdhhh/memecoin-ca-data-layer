@@ -662,3 +662,84 @@ test("20. null remains missing and never becomes zero", () => {
   assert.equal(parsed.aggregates.realizedProfit, undefined);
   assert.equal(parsed.aggregates.boughtCost, undefined);
 });
+
+
+test("21. bought_cost primary family takes precedence over different total_cost fallback", () => {
+  const parsed = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", bought_cost: "100", total_cost: "125" },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.boughtCost, 100);
+  assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("22. bought_cost conflicts still fail closed inside the selected primary family", () => {
+  const parsed = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", bought_cost_30d: "100", bought_cost: "125", total_cost: "100" },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("23. total_cost family is used only when bought_cost family is absent", () => {
+  const fallback = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", total_cost: "125" },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(fallback.status, "PARTIAL");
+  assert.equal(fallback.aggregates.boughtCost, 125);
+
+  const conflict = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", total_cost: "125", buy_volume: "126" },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(conflict.status, "UNAVAILABLE");
+  assert.ok(conflict.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("24. present null bought_cost suppresses fallback rather than inventing precedence", () => {
+  const parsed = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", bought_cost: null, total_cost: "125" },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.boughtCost, undefined);
+  assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("25. zero last timestamp is an unavailable sentinel without fabricated activity", () => {
+  const parsed = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", last_timestamp: 0 },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.lastActiveTimestamp, undefined);
+  assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+});
+
+test("26. positive timestamps remain valid while negative and malformed timestamps are rejected", () => {
+  const positive = parseGmgnWalletStats(
+    { wallet: walletA, realized_profit: "5", last_timestamp: 1710000000 },
+    [walletA],
+    "30d",
+  )[0]!;
+  assert.equal(positive.aggregates.lastActiveTimestamp, 1710000000);
+
+  for (const badTimestamp of [-1, "bad"]) {
+    const parsed = parseGmgnWalletStats(
+      { wallet: walletA, realized_profit: "5", last_timestamp: badTimestamp },
+      [walletA],
+      "30d",
+    )[0]!;
+    assert.equal(parsed.aggregates.lastActiveTimestamp, undefined);
+    assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+  }
+});
