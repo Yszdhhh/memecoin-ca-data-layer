@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit the bounded post-repair live re-smoke evidence. Require exactly four single-wallet invocations, two identities each with 7d and 30d parseable PARTIAL or MAPPED records, clean sanitized outputs, and no budget or security violation. No live requests.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001"
