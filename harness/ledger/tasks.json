@@ -885,7 +885,7 @@
     {
       "task_id": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
