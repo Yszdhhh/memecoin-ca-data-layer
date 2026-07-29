@@ -102,3 +102,20 @@ Synthetic test suite in `test/gmgn-wallet-stats-parser.test.ts` covers:
 - **GMGN CLI Invocations:** `0`
 - **Credential Reads:** `0`
 - **Real Address Processing:** `0`
+
+---
+
+## 7. Post-Commit Execution Evidence
+
+- **Repair-002 baseline SHA:** `06f46955b1967c425180fb645f41166a06f4dc26`
+- **Repair-002 implementation SHA:** `8992f321b4ac936e95581989cf9dc30f3f4c70f0`
+- The earlier `Delivery SHA` value in this report was a pre-commit baseline placeholder and is not the implementation delivery identifier.
+- Clean-tree validation on implementation commit `8992f321b4ac936e95581989cf9dc30f3f4c70f0`:
+  - Repair task validation: GREEN
+  - Repair audit task validation: GREEN
+  - Harness Doctor: GREEN, 0 errors, 0 warnings
+  - Typecheck: PASS
+  - Tests: 315 total, 314 passed, 1 skipped, 0 failed
+  - Build: PASS
+  - `git diff --check`: PASS
+- Resource counters remained zero: network requests, provider requests, GMGN CLI invocations, credential reads, and real-address processing.
