@@ -715,11 +715,17 @@ function extractMetricsFromSingleContainer(
   return { aggregates, validCount, warnings };
 }
 
+const CANONICAL_JSON_NUMBER = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/;
+
 function parseStrictNumber(val: unknown): number | undefined {
-  if (typeof val === "number" && Number.isFinite(val)) {
-    return val;
+  if (typeof val === "number") {
+    return Number.isFinite(val) ? val : undefined;
   }
-  return undefined;
+  if (typeof val !== "string" || !CANONICAL_JSON_NUMBER.test(val)) {
+    return undefined;
+  }
+  const parsed = Number(val);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 function parseNonNegativeNumber(val: unknown): number | undefined {
@@ -734,7 +740,7 @@ function parsePositiveNumber(val: unknown): number | undefined {
 
 function parseStrictInteger(val: unknown): number | undefined {
   const num = parseStrictNumber(val);
-  return num !== undefined && Number.isSafeInteger(num) ? num : undefined;
+  return num !== undefined && Number.isSafeInteger(num) && num >= 0 ? num : undefined;
 }
 
 function asRecord(value: unknown): JsonRecord | undefined {

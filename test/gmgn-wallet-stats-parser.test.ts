@@ -250,17 +250,16 @@ test("6. Requirement D: invalid candidate container ambiguity handling", () => {
   assert.ok(!res3.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 });
 
-test("7. Requirement E & Repair-003 C: strict per-field numeric type validation & retaining invalid_field_type diagnostic", () => {
-  // Numeric string "123.45" on pnl -> status UNAVAILABLE, contains BOTH invalid_field_type AND expected_metrics_unavailable
+test("7. Requirement E & numeric-string repair: canonical numeric strings with strict rejection", () => {
+  // Independently audited live evidence shows allowlisted monetary/profit metrics may be canonical numeric strings.
   const numericStringPayload = {
     wallet: walletA,
     pnl: "123.45",
   };
   const res1 = parseGmgnWalletStats(numericStringPayload, [walletA], "7d")[0]!;
-  assert.equal(res1.status, "UNAVAILABLE");
-  assert.equal(res1.aggregates.periodPnl, undefined);
-  assert.ok(res1.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"), "must contain invalid_field_type");
-  assert.ok(res1.warningCodes.includes("gmgn_expected_metrics_unavailable"), "must contain expected_metrics_unavailable");
+  assert.equal(res1.status, "PARTIAL");
+  assert.equal(res1.aggregates.periodPnl, 123.45);
+  assert.ok(!res1.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
 
   // Object on realized_profit -> status UNAVAILABLE, contains BOTH invalid_field_type AND expected_metrics_unavailable
   const objectProfitPayload = {
@@ -289,7 +288,7 @@ test("7. Requirement E & Repair-003 C: strict per-field numeric type validation 
   // Multiple core metrics all invalid
   const multipleInvalidPayload = {
     wallet: walletA,
-    pnl: "100",
+    pnl: "100 usd",
     realized_profit: {},
     realized_profit_pnl: [],
   };
@@ -324,8 +323,10 @@ test("8. Requirement F & Repair-003 A & B: winRate unit contracts and boundary c
     assert.ok(res.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
   }
 
-  // win_rate_percent invalid types: numeric string, NaN, Infinity, object, array -> invalid_field_type
-  for (const badTypeVal of ["45.5", NaN, Infinity, {}, []]) {
+  // Canonical numeric strings are accepted for explicit aliases; non-finite/object/array remain invalid.
+  const stringPercent = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: "45.5" }, [walletA], "7d")[0]!;
+  assert.equal(stringPercent.aggregates.winRate, 45.5);
+  for (const badTypeVal of [NaN, Infinity, {}, []]) {
     const res = parseGmgnWalletStats({ wallet: walletA, pnl: 10, win_rate_percent: badTypeVal }, [walletA], "7d")[0]!;
     assert.equal(res.aggregates.winRate, undefined);
     assert.ok(res.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
@@ -349,8 +350,11 @@ test("8. Requirement F & Repair-003 A & B: winRate unit contracts and boundary c
       assert.ok(resBad.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
     }
 
+    const stringRatio = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: "0.4" }, [walletA], "7d")[0]!;
+    assert.equal(stringRatio.aggregates.winRate, 40);
+
     // invalid types for ratio
-    for (const badTypeVal of ["0.4", NaN, Infinity]) {
+    for (const badTypeVal of [NaN, Infinity]) {
       const resBadType = parseGmgnWalletStats({ wallet: walletA, pnl: 10, [aliasKey]: badTypeVal }, [walletA], "7d")[0]!;
       assert.equal(resBadType.aggregates.winRate, undefined);
       assert.ok(resBadType.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
@@ -589,4 +593,72 @@ test("16. explicit 0 is preserved as 0, missing fields remain undefined", () => 
   assert.equal(parsed.aggregates.boughtCost, undefined);
   assert.equal(parsed.aggregates.soldIncome, undefined);
   assert.equal(parsed.aggregates.tradeCount, undefined);
+});
+
+
+test("17. canonical numeric strings preserve live composite fields and metric-specific rules", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    realized_profit: "-12.5",
+    realized_profit_pnl: "-0.125",
+    buy: 3,
+    sell: 2,
+    bought_cost: "100",
+    total_cost: "100",
+    sold_income: "87.5",
+    last_timestamp: 1710000000,
+    pnl_stat: { token_num: 4, winrate: 0.4 },
+  };
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.realizedProfit, -12.5);
+  assert.equal(parsed.aggregates.realizedProfitPnl, -0.125);
+  assert.equal(parsed.aggregates.boughtCost, 100);
+  assert.equal(parsed.aggregates.soldIncome, 87.5);
+  assert.equal(parsed.aggregates.buyCount, 3);
+  assert.equal(parsed.aggregates.sellCount, 2);
+  assert.equal(parsed.aggregates.lastActiveTimestamp, 1710000000);
+  assert.equal(parsed.aggregates.tokenNum, 4);
+  assert.equal(parsed.aggregates.winRate, 40);
+  assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+});
+
+test("18. non-canonical numeric strings and non-finite conversions remain fail-closed", () => {
+  for (const bad of [" 1", "1 ", "+1", "01", ".5", "1.", "1,000", "1 USD", "0x10", "", "NaN", "Infinity", "1e309"]) {
+    const parsed = parseGmgnWalletStats({ wallet: walletA, pnl: bad }, [walletA], "7d")[0]!;
+    assert.equal(parsed.status, "UNAVAILABLE", bad);
+    assert.equal(parsed.aggregates.periodPnl, undefined, bad);
+    assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"), bad);
+  }
+});
+
+test("19. canonical numeric strings reapply integer, sign, and alias-conflict constraints", () => {
+  const integer = parseGmgnWalletStats({ wallet: walletA, pnl: "1", buy_count: "2" }, [walletA], "7d")[0]!;
+  assert.equal(integer.aggregates.buyCount, 2);
+
+  for (const badCount of ["2.5", "9007199254740992", "-1"]) {
+    const parsed = parseGmgnWalletStats({ wallet: walletA, pnl: "1", buy_count: badCount }, [walletA], "7d")[0]!;
+    assert.equal(parsed.aggregates.buyCount, undefined, badCount);
+    assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"), badCount);
+  }
+
+  const negativeCost = parseGmgnWalletStats({ wallet: walletA, pnl: "1", bought_cost: "-1" }, [walletA], "7d")[0]!;
+  assert.equal(negativeCost.aggregates.boughtCost, undefined);
+  assert.ok(negativeCost.warningCodes.includes("gmgn_wallet_stats_invalid_field_type"));
+
+  const same = parseGmgnWalletStats({ wallet: walletA, pnl_7d: 1, pnl: "1.0" }, [walletA], "7d")[0]!;
+  assert.equal(same.aggregates.periodPnl, 1);
+  assert.ok(!same.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+
+  const conflict = parseGmgnWalletStats({ wallet: walletA, pnl_7d: 1, pnl: "2" }, [walletA], "7d")[0]!;
+  assert.equal(conflict.status, "UNAVAILABLE");
+  assert.ok(conflict.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("20. null remains missing and never becomes zero", () => {
+  const parsed = parseGmgnWalletStats({ wallet: walletA, pnl: "1", realized_profit: null, bought_cost: null }, [walletA], "7d")[0]!;
+  assert.equal(parsed.aggregates.periodPnl, 1);
+  assert.equal(parsed.aggregates.realizedProfit, undefined);
+  assert.equal(parsed.aggregates.boughtCost, undefined);
 });
