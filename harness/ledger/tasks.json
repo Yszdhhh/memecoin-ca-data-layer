@@ -985,7 +985,7 @@
     {
       "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }

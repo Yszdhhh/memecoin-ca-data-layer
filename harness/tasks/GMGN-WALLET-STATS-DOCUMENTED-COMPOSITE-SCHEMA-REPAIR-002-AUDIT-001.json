@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently audit GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-documented-composite-schema-repair-002) and zero network/provider requests. Verify root + pnl_stat explicit field ownership, fail-closed mislocated metric rules, standalone stats mode, synthetic test counterexamples, evidence SHA corrections, and resource budget compliance.",
   "dependencies": [
     "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002"
