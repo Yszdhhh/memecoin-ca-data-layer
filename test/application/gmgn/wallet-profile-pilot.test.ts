@@ -173,9 +173,45 @@ test("batch-100 configuration: target 100 addresses, offset 20, budget 200, 199 
       assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
     }
 
-    // Verify first selected wallet matches SYNTHETIC_WALLETS[20] (21st address)
+    // Verify first selected wallet matches SYNTHETIC_WALLETS[20] (21st address).
     const targetAddr = SYNTHETIC_WALLETS[20]!;
     assert.equal(result.records[0]?.sourceInputFingerprint, crypto.createHash("sha256").update(targetAddr).digest("hex"));
+
+    // The external normalized file must never persist a plaintext wallet or the
+    // internal execution status, while preserving only the allowlisted metrics.
+    const externalRecords = JSON.parse(
+      fs.readFileSync(result.outputFiles.normalizedWalletProfilesJson, "utf8")
+    ) as Array<Record<string, unknown>>;
+    assert.equal(externalRecords.length, 200);
+    assert.deepEqual(Object.keys(externalRecords[0] ?? {}).sort(), [
+      "aggregates",
+      "completeness",
+      "fetchedAt",
+      "period",
+      "requestBudgetUsed",
+      "source",
+      "sourceInputFingerprint",
+      "verificationStatus",
+      "warningCodes",
+    ].sort());
+    assert.equal(JSON.stringify(externalRecords).includes(targetAddr), false);
+    assert.equal("status" in (externalRecords[0] ?? {}), false);
+    assert.equal("walletAddress" in (externalRecords[0] ?? {}), false);
+
+    const externalSummary = JSON.parse(
+      fs.readFileSync(result.outputFiles.summaryJson, "utf8")
+    ) as Record<string, unknown>;
+    assert.deepEqual(Object.keys(externalSummary).sort(), [
+      "completeness",
+      "fetchedAt",
+      "requestBudgetUsed",
+      "source",
+      "sourceInputFingerprint",
+      "verificationStatus",
+      "warningCodes",
+    ].sort());
+    assert.equal(externalSummary.source, "gmgn");
+    assert.equal(externalSummary.verificationStatus, "unverified");
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });
@@ -215,15 +251,12 @@ test("zero network requests on hash mismatch", async () => {
   }
 });
 
-test("credentials unavailable returns PARK without mutating process.env", async () => {
+test("injected unavailable credential state returns PARK with zero requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
   try {
     const { txtHash, jsonHash } = setupSyntheticInputDir(tmpInputDir);
-
-    const apiKeyBefore = process.env.GMGN_API_KEY;
-    const privateKeyBefore = process.env.GMGN_PRIVATE_KEY;
 
     const result = await runGmgnWalletProfilePilot({
       inputDir: tmpInputDir,
@@ -239,9 +272,6 @@ test("credentials unavailable returns PARK without mutating process.env", async 
     assert.equal(result.requestBudgetUsed, 0);
     assert.equal(result.warningCodeCounts["gmgn_credential_unavailable"], 1);
 
-    // Verify process.env GMGN keys were not mutated
-    assert.equal(process.env.GMGN_API_KEY, apiKeyBefore);
-    assert.equal(process.env.GMGN_PRIVATE_KEY, privateKeyBefore);
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
     fs.rmSync(tmpOutputDir, { recursive: true, force: true });

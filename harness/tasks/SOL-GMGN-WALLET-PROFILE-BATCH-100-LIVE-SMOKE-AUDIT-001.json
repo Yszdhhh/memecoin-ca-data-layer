@@ -6,8 +6,8 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "DONE",
-  "objective": "Independently audit SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 execution evidence. Verify that request count limit <= 200 was enforced, exactly 100 addresses were deterministically selected (skipping 20 pilot addresses, choosing 21st-120th) from input hash-verified cleaned.jsonl, input evidence manifest exists, no API keys / private keys / raw payloads / raw errors were saved or committed to Git, GMGN data is strictly marked borrowed/unverified, no Helius / BSC / DB / automation / scraper was invoked, serial >=1s rate limiting was enforced, and 7D / 30D metric normalization is reproducible by unit tests.",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently and read-only audit the evidence for SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-batch-100-live-smoke-001, which is different from the implementer identity, and must send no live/provider requests. Verify hash gating, deterministic 21st–120th selection after the 20-wallet pilot skip, <=200 request budget, >=1,000ms serial delay, field/output hygiene, no GMGN_PRIVATE_KEY dependency, GMGN source=gmgn and verificationStatus=unverified, and absence of Helius, BSC, database, automation, scraper, and raw credential/payload/error leakage. Only a GREEN independent audit closes the batch-100 completion gate.",
   "dependencies": [
     "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001"
   ],
@@ -24,7 +24,9 @@
   "forbidden_actions": [
     "Do not execute network calls or provider requests.",
     "Do not modify implementation or test code.",
-    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts."
+    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts.",
+    "Do not use the implementer HARNESS_AGENT_ID; use the distinct auditor HARNESS_AGENT_ID declared in this task objective.",
+    "Do not mark the batch-100 milestone complete unless the audit run finishes GREEN or GREEN_WITH_ADVISORY with valid evidence."
   ],
   "deliverables": [
     "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001/acceptance.md"

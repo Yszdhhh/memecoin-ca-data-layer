@@ -3,12 +3,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
-import { cleanSolanaAddressDirectory } from "../chainfm/clean-solana-address-directory.js";
-import {
-  GMGN_WALLET_STATS_PARSER_VERSION,
-  parseGmgnWalletStats,
-  type GmgnWalletStatsResult,
-} from "../../infrastructure/gmgn/wallet-stats-parser.js";
+import { parseGmgnWalletStats } from "../../infrastructure/gmgn/wallet-stats-parser.js";
 
 export const PILOT_TASK_ID = "SOL-GMGN-WALLET-PROFILE-PILOT-001";
 export const BATCH_100_TASK_ID = "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001";
@@ -16,6 +11,19 @@ export const EXPECTED_SOL_ADDRESSES_HASH = "64764807CCFED755A2E4C0316D44FF589ACC
 export const EXPECTED_SOL_LABELS_HASH = "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3";
 export const TARGET_WALLET_COUNT = 20;
 export const MAX_REQUEST_BUDGET = 40;
+
+export const ALLOWLISTED_GMGN_WARNING_CODES = [
+  "input_manifest_mismatch",
+  "gmgn_wallet_input_invalid",
+  "gmgn_credential_unavailable",
+  "gmgn_request_unavailable",
+  "gmgn_rate_limited",
+  "gmgn_response_invalid",
+  "gmgn_wallet_metric_unavailable",
+  "gmgn_expected_metrics_unavailable",
+] as const;
+
+type AllowlistedGmgnWarningCode = (typeof ALLOWLISTED_GMGN_WARNING_CODES)[number];
 
 export interface PilotOptions {
   taskId?: string;
@@ -53,16 +61,28 @@ export interface NormalizedWalletMetrics {
 }
 
 export interface NormalizedWalletProfileRecord {
-  walletAddress: string;
   period: "7d" | "30d";
+  /** Internal-only execution classification; never persisted to external output. */
   status: "MAPPED" | "PARTIAL" | "UNAVAILABLE";
   source: "gmgn";
   verificationStatus: "unverified";
   completeness: number;
   aggregates: NormalizedWalletMetrics;
-  warningCodes: string[];
+  warningCodes: AllowlistedGmgnWarningCode[];
   requestBudgetUsed: number;
   sourceInputFingerprint: string;
+  fetchedAt: string;
+}
+
+type ExternalNormalizedWalletProfileRecord = Omit<NormalizedWalletProfileRecord, "status">;
+
+interface ExternalOutputSummary {
+  completeness: number | null;
+  warningCodes: AllowlistedGmgnWarningCode[];
+  requestBudgetUsed: number;
+  source: "gmgn";
+  verificationStatus: "unverified";
+  sourceInputFingerprint: string | null;
   fetchedAt: string;
 }
 
@@ -93,6 +113,78 @@ function computeStringSha256(val: string): string {
   return crypto.createHash("sha256").update(val).digest("hex");
 }
 
+function toAllowlistedWarningCode(value: string | undefined): AllowlistedGmgnWarningCode {
+  return (ALLOWLISTED_GMGN_WARNING_CODES as readonly string[]).includes(value ?? "")
+    ? value as AllowlistedGmgnWarningCode
+    : "gmgn_expected_metrics_unavailable";
+}
+
+function buildGmgnStatsEnvironment(): NodeJS.ProcessEnv {
+  // Do not inherit process.env: that could pass GMGN_PRIVATE_KEY or unrelated
+  // credentials to the subprocess. Only runtime essentials and GMGN_API_KEY are
+  // intentionally forwarded; no value is logged or persisted.
+  const environment: NodeJS.ProcessEnv = {};
+  const runtimeKeys = [
+    "PATH",
+    "SystemRoot",
+    "ComSpec",
+    "PATHEXT",
+    "TEMP",
+    "TMP",
+    "HOME",
+    "USERPROFILE",
+    "APPDATA",
+    "LOCALAPPDATA",
+  ] as const;
+  for (const key of runtimeKeys) {
+    const value = process.env[key];
+    if (value !== undefined) environment[key] = value;
+  }
+  const apiKey = process.env.GMGN_API_KEY;
+  if (apiKey !== undefined) environment.GMGN_API_KEY = apiKey;
+  return environment;
+}
+
+function externalizeRecord(record: NormalizedWalletProfileRecord): ExternalNormalizedWalletProfileRecord {
+  const { status: _status, ...externalRecord } = record;
+  return externalRecord;
+}
+
+function writeExternalOutputs(
+  outputDir: string,
+  records: NormalizedWalletProfileRecord[],
+  warningCodeCounts: Record<string, number>,
+  requestBudgetUsed: number,
+  fetchedAt: string,
+): WalletProfilePilotResult["outputFiles"] {
+  fs.mkdirSync(outputDir, { recursive: true });
+  const normalizedWalletProfilesJson = path.join(outputDir, "normalized_wallet_profiles.json");
+  const summaryJson = path.join(outputDir, "summary.json");
+  const externalRecords = records.map(externalizeRecord);
+  const sourceFingerprints = Array.from(new Set(records.map((record) => record.sourceInputFingerprint)));
+  const completeness = records.length > 0
+    ? Math.round((records.reduce((sum, record) => sum + record.completeness, 0) / records.length) * 100) / 100
+    : null;
+  const summary: ExternalOutputSummary = {
+    completeness,
+    warningCodes: Object.keys(warningCodeCounts)
+      .map((code) => toAllowlistedWarningCode(code))
+      .filter((code, index, codes) => codes.indexOf(code) === index)
+      .sort(),
+    requestBudgetUsed,
+    source: "gmgn",
+    verificationStatus: "unverified",
+    sourceInputFingerprint: sourceFingerprints.length > 0
+      ? computeStringSha256(sourceFingerprints.join("\n"))
+      : null,
+    fetchedAt,
+  };
+
+  fs.writeFileSync(normalizedWalletProfilesJson, JSON.stringify(externalRecords, null, 2), "utf8");
+  fs.writeFileSync(summaryJson, JSON.stringify(summary, null, 2), "utf8");
+  return { normalizedWalletProfilesJson, summaryJson };
+}
+
 export async function runGmgnWalletProfilePilot(
   options: PilotOptions
 ): Promise<WalletProfilePilotResult> {
@@ -116,7 +208,7 @@ export async function runGmgnWalletProfilePilot(
   const expectedJsonHash = expectedHashes?.solAddressLabelsJsonHash ?? EXPECTED_SOL_LABELS_HASH;
 
   const warningCodeCounts: Record<string, number> = {};
-  const addWarningCode = (code: string) => {
+  const addWarningCode = (code: AllowlistedGmgnWarningCode) => {
     warningCodeCounts[code] = (warningCodeCounts[code] || 0) + 1;
   };
 
@@ -146,19 +238,9 @@ export async function runGmgnWalletProfilePilot(
     return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch", taskId, actualMaxBudget);
   }
 
-  // 2. Load or clean external cleaned.jsonl
+  // 2. Read an existing cleaned result only. This task must never write into
+  // the external input directory; a missing cleaned result therefore fails closed.
   const cleanedJsonlPath = path.join(inputDir, "cleaned.jsonl");
-  if (!fs.existsSync(cleanedJsonlPath)) {
-    await cleanSolanaAddressDirectory({
-      inputDir,
-      outputDir: inputDir,
-      expectedHashes: {
-        "sol_addresses.txt": expectedTxtHash,
-        "sol_address_labels.json": expectedJsonHash,
-      },
-    });
-  }
-
   if (!fs.existsSync(cleanedJsonlPath)) {
     addWarningCode("input_manifest_mismatch");
     return failClosedResult(outputDir, warningCodeCounts, "input_manifest_mismatch", taskId, actualMaxBudget);
@@ -197,11 +279,11 @@ export async function runGmgnWalletProfilePilot(
     return failClosedResult(outputDir, warningCodeCounts, "gmgn_wallet_input_invalid", taskId, actualMaxBudget);
   }
 
-  // 4. Determine credential status (using dependency injection or read-only env check)
+  // 4. Determine credential status by presence only; never log or persist it.
   const credentialPresent =
     credentialAvailable !== undefined
       ? credentialAvailable
-      : Boolean(process.env.GMGN_API_KEY?.trim());
+      : Object.prototype.hasOwnProperty.call(process.env, "GMGN_API_KEY");
 
   const fetchedAt = new Date().toISOString();
   const periods: Array<"7d" | "30d"> = ["7d", "30d"];
@@ -280,7 +362,7 @@ export async function runGmgnWalletProfilePilot(
           try {
             const proc = spawnSync(process.execPath, args, {
               cwd: process.cwd(),
-              env: process.env,
+              env: buildGmgnStatsEnvironment(),
               encoding: "utf8",
               maxBuffer: 2_000_000,
               shell: false,
@@ -354,7 +436,6 @@ export async function runGmgnWalletProfilePilot(
           if (nonNullCount > 0) {
             const completeness = Math.round((nonNullCount / 11) * 100) / 100;
             records.push({
-              walletAddress: parsed.wallet,
               period,
               status: "MAPPED",
               source: "gmgn",
@@ -363,7 +444,7 @@ export async function runGmgnWalletProfilePilot(
               aggregates,
               warningCodes: [],
               requestBudgetUsed: totalRequestsUsed,
-              sourceInputFingerprint: computeStringSha256(parsed.wallet),
+              sourceInputFingerprint: computeStringSha256(walletAddress),
               fetchedAt,
             });
           } else {
@@ -380,9 +461,7 @@ export async function runGmgnWalletProfilePilot(
             );
           }
         } else {
-          const warningCode =
-            (parsed && parsed.warningCodes[0]) ||
-            "gmgn_expected_metrics_unavailable";
+          const warningCode = toAllowlistedWarningCode(parsed?.warningCodes[0]);
           addWarningCode(warningCode);
           records.push(
             buildUnavailableRecord(
@@ -398,45 +477,18 @@ export async function runGmgnWalletProfilePilot(
     }
   }
 
-  // 5. Write external output files
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  const normalizedJsonPath = path.join(
+  // 5. Persist only the allowlisted normalized external representation.
+  const outputFiles = writeExternalOutputs(
     outputDir,
-    "normalized_wallet_profiles.json"
-  );
-  const summaryJsonPath = path.join(outputDir, "summary.json");
-
-  fs.writeFileSync(
-    normalizedJsonPath,
-    JSON.stringify(records, null, 2),
-    "utf8"
-  );
-
-  const mappedCount = records.filter((r) => r.status === "MAPPED").length;
-  const partialCount = records.filter((r) => r.status === "PARTIAL").length;
-  const unavailableCount = records.filter(
-    (r) => r.status === "UNAVAILABLE"
-  ).length;
-
-  const summary = {
-    taskId,
-    status: mappedCount > 0 ? "SUCCESS" : "PARK",
-    timestamp: fetchedAt,
-    inputHashesMatch,
-    selectedCount: selectedAddresses.length,
-    totalRecords: records.length,
-    mappedCount,
-    partialCount,
-    unavailableCount,
-    requestBudgetUsed: totalRequestsUsed,
-    maxRequestBudget: actualMaxBudget,
+    records,
     warningCodeCounts,
-  };
+    totalRequestsUsed,
+    fetchedAt,
+  );
 
-  fs.writeFileSync(summaryJsonPath, JSON.stringify(summary, null, 2), "utf8");
+  const mappedCount = records.filter((record) => record.status === "MAPPED").length;
+  const partialCount = records.filter((record) => record.status === "PARTIAL").length;
+  const unavailableCount = records.filter((record) => record.status === "UNAVAILABLE").length;
 
   return {
     status: mappedCount > 0 ? "SUCCESS" : "PARK",
@@ -449,10 +501,7 @@ export async function runGmgnWalletProfilePilot(
     requestBudgetUsed: totalRequestsUsed,
     maxRequestBudget: actualMaxBudget,
     warningCodeCounts,
-    outputFiles: {
-      normalizedWalletProfilesJson: normalizedJsonPath,
-      summaryJson: summaryJsonPath,
-    },
+    outputFiles,
     records,
   };
 }
@@ -460,12 +509,11 @@ export async function runGmgnWalletProfilePilot(
 function buildUnavailableRecord(
   walletAddress: string,
   period: "7d" | "30d",
-  warningCode: string,
+  warningCode: AllowlistedGmgnWarningCode,
   requestBudgetUsed: number,
   fetchedAt: string
 ): NormalizedWalletProfileRecord {
   return {
-    walletAddress,
     period,
     status: "UNAVAILABLE",
     source: "gmgn",
@@ -499,35 +547,14 @@ function failClosedResult(
   maxRequestBudget: number = MAX_REQUEST_BUDGET
 ): WalletProfilePilotResult {
   const fetchedAt = new Date().toISOString();
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  const normalizedJsonPath = path.join(
+  const safePrimaryErrorCode = toAllowlistedWarningCode(primaryErrorCode);
+  const outputFiles = writeExternalOutputs(
     outputDir,
-    "normalized_wallet_profiles.json"
+    [],
+    { ...warningCodeCounts, [safePrimaryErrorCode]: warningCodeCounts[safePrimaryErrorCode] ?? 1 },
+    0,
+    fetchedAt,
   );
-  const summaryJsonPath = path.join(outputDir, "summary.json");
-
-  fs.writeFileSync(normalizedJsonPath, JSON.stringify([], null, 2), "utf8");
-
-  const summary = {
-    taskId,
-    status: "FAIL_CLOSED",
-    timestamp: fetchedAt,
-    inputHashesMatch: false,
-    selectedCount: 0,
-    totalRecords: 0,
-    mappedCount: 0,
-    partialCount: 0,
-    unavailableCount: 0,
-    requestBudgetUsed: 0,
-    maxRequestBudget,
-    warningCodeCounts,
-    primaryErrorCode,
-  };
-
-  fs.writeFileSync(summaryJsonPath, JSON.stringify(summary, null, 2), "utf8");
 
   return {
     status: "FAIL_CLOSED",
@@ -540,10 +567,7 @@ function failClosedResult(
     requestBudgetUsed: 0,
     maxRequestBudget,
     warningCodeCounts,
-    outputFiles: {
-      normalizedWalletProfilesJson: normalizedJsonPath,
-      summaryJson: summaryJsonPath,
-    },
+    outputFiles,
     records: [],
   };
 }

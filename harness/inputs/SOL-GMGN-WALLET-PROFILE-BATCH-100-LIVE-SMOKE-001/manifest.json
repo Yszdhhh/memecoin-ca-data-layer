@@ -116,5 +116,15 @@
     "6840407937ffcb2b114241eb61cc055a9c950cb9a19156da59c2727510d5f5e7",
     "be3316b6881ce461ce6904a729e96fe779d1511ed02b452bf4d9aa8238d964c7",
     "b0a427f87a5f5296a859dea2dc9e53c8ea97cd8d7e7744d5b4d9adbd28129396"
-  ]
+  ],
+  "selection_index_range": {
+    "skip_first_unique_valid": 20,
+    "select_positions_inclusive": [
+      21,
+      120
+    ]
+  },
+  "selected_fingerprint_sequence_sha256": "5e180ffdf02db99070eae87daf2f37009ebf3e16a21c159003a32652084e0738",
+  "external_input_directory": "C:/Users/10639/chainfm_out/sol",
+  "sensitivity": "No plaintext addresses or labels; fingerprints are irreversible SHA-256 values only."
 }

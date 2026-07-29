@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import {
@@ -5,6 +6,7 @@ import {
   BATCH_100_TASK_ID,
   EXPECTED_SOL_ADDRESSES_HASH,
   EXPECTED_SOL_LABELS_HASH,
+  type NormalizedWalletMetrics,
   type WalletProfilePilotResult,
 } from "../src/application/gmgn/wallet-profile-pilot.js";
 
@@ -19,6 +21,7 @@ const OUTPUT_DIR =
 const TARGET_WALLET_COUNT = 100;
 const OFFSET_WALLET_COUNT = 20;
 const MAX_REQUEST_BUDGET = 200;
+const IMPLEMENTER_AGENT_ID = "implementer-sol-gmgn-wallet-profile-batch-100-live-smoke-001";
 
 async function main(): Promise<void> {
   const result = await runGmgnWalletProfilePilot({
@@ -31,131 +34,116 @@ async function main(): Promise<void> {
   });
 
   await mkdir(dirname(REPORT_PATH), { recursive: true });
-  await writeFile(
-    REPORT_PATH,
-    renderAcceptanceReport(result),
-    "utf8"
-  );
+  await writeFile(REPORT_PATH, renderAcceptanceReport(result), "utf8");
 
-  const avgCompleteness =
-    result.records.length > 0
-      ? Math.round(
-          (result.records.reduce((acc, r) => acc + r.completeness, 0) /
-            result.records.length) *
-            100
-        ) / 100
-      : 0;
+  console.log(JSON.stringify({
+    task_id: BATCH_100_TASK_ID,
+    status: result.status,
+    selected_count: result.selectedCount,
+    total_records: result.records.length,
+    mapped_count: result.mappedCount,
+    partial_count: result.partialCount,
+    unavailable_count: result.unavailableCount,
+    average_completeness: averageCompleteness(result),
+    request_budget_used: result.requestBudgetUsed,
+    request_budget_limit: MAX_REQUEST_BUDGET,
+    request_limit_satisfied: result.requestBudgetUsed <= MAX_REQUEST_BUDGET,
+    selection_fingerprint: selectionFingerprint(result),
+    warning_code_counts: result.warningCodeCounts,
+  }));
+}
 
-  console.log(
-    JSON.stringify({
-      task_id: BATCH_100_TASK_ID,
-      status: result.status,
-      selected_count: result.selectedCount,
-      total_records: result.records.length,
-      mapped_count: result.mappedCount,
-      partial_count: result.partialCount,
-      unavailable_count: result.unavailableCount,
-      avg_completeness: avgCompleteness,
-      request_budget_used: result.requestBudgetUsed,
-      request_limit_satisfied: result.requestBudgetUsed <= MAX_REQUEST_BUDGET,
-      external_output_dir: OUTPUT_DIR,
-      warning_code_counts: result.warningCodeCounts,
-    })
-  );
+function selectionFingerprint(res: WalletProfilePilotResult): string | null {
+  const fingerprints = Array.from(new Set(res.records.map((record) => record.sourceInputFingerprint)));
+  return fingerprints.length > 0
+    ? crypto.createHash("sha256").update(fingerprints.join("\n")).digest("hex")
+    : null;
+}
+
+function averageCompleteness(res: WalletProfilePilotResult): number | null {
+  return res.records.length > 0
+    ? Math.round((res.records.reduce((sum, record) => sum + record.completeness, 0) / res.records.length) * 100) / 100
+    : null;
+}
+
+function fieldCoverage(res: WalletProfilePilotResult): Array<[keyof NormalizedWalletMetrics, number | null]> {
+  const metricKeys: Array<keyof NormalizedWalletMetrics> = [
+    "periodPnl",
+    "realizedProfit",
+    "realizedProfitPnl",
+    "winRate",
+    "tradeCount",
+    "buyCount",
+    "sellCount",
+    "boughtCost",
+    "soldIncome",
+    "lastActiveTimestamp",
+    "tokenNum",
+  ];
+  return metricKeys.map((key) => {
+    if (res.records.length === 0) return [key, null];
+    const populated = res.records.filter((record) => record.aggregates[key] !== null).length;
+    return [key, Math.round((populated / res.records.length) * 10_000) / 100];
+  });
 }
 
 function renderAcceptanceReport(res: WalletProfilePilotResult): string {
-  const selectedFingerprints = Array.from(
-    new Set(res.records.map((r) => r.sourceInputFingerprint))
-  );
-
-  const fingerprintsTable = selectedFingerprints
-    .map((fp, i) => `| ${i + 1} | \`${fp}\` |`)
+  const warningCountsTable = Object.entries(res.warningCodeCounts)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([code, count]) => `| \`${code}\` | ${count} |`)
+    .join("\n") || "| none | 0 |";
+  const fieldCoverageTable = fieldCoverage(res)
+    .map(([field, coverage]) => `| \`${field}\` | ${coverage === null ? "null" : `${coverage}%`} |`)
     .join("\n");
-
-  const warningCountsTable =
-    Object.entries(res.warningCodeCounts)
-      .map(([code, cnt]) => `| \`${code}\` | ${cnt} |`)
-      .join("\n") || "| none | 0 |";
-
-  const avgCompleteness =
-    res.records.length > 0
-      ? Math.round(
-          (res.records.reduce((acc, r) => acc + r.completeness, 0) /
-            res.records.length) *
-            100
-        ) / 100
-      : 0;
 
   return `# Acceptance Report: SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001
 
-## Task Identity
+## Execution Gate
 
 - **Task ID**: \`${BATCH_100_TASK_ID}\`
-- **Role**: implementer
-- **Agent ID**: \`implementer-sol-gmgn-wallet-profile-batch-100-live-smoke-001\`
-- **Chain**: solana
-- **Layer**: cold_path
-- **Status**: ${res.status}
+- **Role / HARNESS_AGENT_ID**: implementer / \`${IMPLEMENTER_AGENT_ID}\`
+- **Run status**: \`${res.status}\`
+- **Independent-completion gate**: This batch is **not complete** until \`SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001\` produces valid GREEN audit evidence from a different agent identity.
 
-## External Inputs & Selection Evidence
+## Input Evidence and Deterministic Selection
 
-- **Input Directory**: \`${INPUT_DIR}\`
-- **Expected & Verified SHA-256 Hashes**:
-  - \`sol_addresses.txt\`: \`${EXPECTED_SOL_ADDRESSES_HASH}\` (1,433 records)
-  - \`sol_address_labels.json\`: \`${EXPECTED_SOL_LABELS_HASH}\` (1,433 records)
-- **Input Manifest Hash Match**: \`${res.inputHashesMatch}\`
-- **Selection Rule**: Deterministic Base58 + 32-byte validated Solana addresses from cleaned.jsonl after SHA-256 verification: skip first 20 addresses (used in pilot), select next 100 addresses (21st to 120th in sequence).
-- **Selected Address Count**: \`${res.selectedCount}\` (exact target: ${TARGET_WALLET_COUNT})
+- **\`sol_addresses.txt\` SHA-256**: \`${EXPECTED_SOL_ADDRESSES_HASH}\`
+- **\`sol_address_labels.json\` SHA-256**: \`${EXPECTED_SOL_LABELS_HASH}\`
+- **Hash gate passed before request eligibility**: \`${res.inputHashesMatch}\`
+- **Selection rule**: Base58 plus exact 32-byte validation and input-order deduplication; skip the first 20 valid unique pilot wallets and select positions 21–120 only.
+- **Selected wallet count**: \`${res.selectedCount}\` (target: \`${TARGET_WALLET_COUNT}\`)
+- **Irreversible selected-fingerprint sequence SHA-256**: \`${selectionFingerprint(res) ?? "null"}\`
 
-### Selected Address Fingerprints (Irreversible Hashes, 100 Wallets)
+## Request Budget and Aggregate Results
 
-| # | Address Fingerprint (SHA-256) |
-|---|---|
-${fingerprintsTable}
+- **Periods**: \`7d\`, \`30d\`
+- **Expected maximum requests**: \`${MAX_REQUEST_BUDGET}\`
+- **Request budget used**: \`${res.requestBudgetUsed}\`
+- **Budget respected**: \`${res.requestBudgetUsed <= MAX_REQUEST_BUDGET}\`
+- **Serial request minimum interval**: \`>= 1,000ms\`
+- **Normalized records**: \`${res.records.length}\`
+- **Mapped / partial / unavailable**: \`${res.mappedCount}\` / \`${res.partialCount}\` / \`${res.unavailableCount}\`
+- **Average completeness**: \`${averageCompleteness(res) ?? "null"}\`
+- **GMGN classification**: \`source: "gmgn"\`, \`verificationStatus: "unverified"\` only.
 
-## Execution & Metric Normalization Results
+## Field Coverage
 
-- **Periods Checked**: \`7d\` and \`30d\` (2 periods per wallet)
-- **Total Profile Records Produced**: \`${res.records.length}\`
-- **Mapped Records**: \`${res.mappedCount}\`
-- **Partial Records**: \`${res.partialCount}\`
-- **Unavailable Records**: \`${res.unavailableCount}\`
-- **Average Field Completeness**: \`${avgCompleteness}\` (across all records)
-- **Request Count**: \`${res.requestBudgetUsed}\` (Limit: <= ${MAX_REQUEST_BUDGET}; Satisfied: \`${res.requestBudgetUsed <= MAX_REQUEST_BUDGET}\`)
-- **Serial Rate Limit Delay**: \`>= 1,000ms\` enforced between adjacent requests
+| Allowlisted normalized field | Coverage |
+|---|---:|
+${fieldCoverageTable}
 
-### Allowlisted Safe Error / Warning Code Counts
+## Allowlisted Warning / Error Codes
 
 | Code | Count |
 |---|---:|
 ${warningCountsTable}
 
-## Verification Commands Passed
+## Safety and Evidence Boundaries
 
-- \`npm run harness:doctor\`: Passed
-- \`npm run typecheck\`: Passed
-- \`npm test\`: Passed
-- \`npm run build\`: Passed
-- \`git diff --check\`: Passed
-
-## External Output Directory
-
-- **Derived Profiles Directory**: \`${OUTPUT_DIR}\`
-- **Files**:
-  - \`normalized_wallet_profiles.json\`
-  - \`summary.json\`
-
-## Boundaries & Constraints Compliance
-
-1. **Solana-Only**: Verified. Zero BSC or Robinhood calls.
-2. **Official CLI / OpenAPI Only**: Verified. Zero web scraping, zero Cloudflare bypass, zero GMGN Web pages.
-3. **Read-Only**: Verified. Zero trading, zero signing, zero order placement.
-4. **Manual Single Execution**: Verified. Zero cron, zero background loops, zero auto-discovery.
-5. **No Helius Calls**: Verified. Zero Helius network invocations.
-6. **No Production Database Writes**: Verified. Outputs restricted to local external directory.
-7. **Zero Leakage**: Verified. No API keys, private keys, raw provider payloads, raw stdout/stderr, or plaintext addresses saved or committed to Git.
-8. **No LLM Interpretations / Confirmations**: Verified. GMGN metrics strictly classified as \`source: "gmgn"\`, \`verificationStatus: "unverified"\`.
+- The external derived files contain only allowlisted normalized metrics, nulls for missing values, safe warning codes, request-budget data, source metadata, irreversible input fingerprints, and fetch timestamps.
+- No plaintext addresses or labels, API/private keys, credential URLs, raw provider payloads, or complete provider exceptions are written to Git evidence or the normalized external output.
+- The implementation is Solana-only, manual, single-run, read-only, GMGN-only, without Helius, BSC, Robinhood, scraping, browser automation, fallback providers, persistence systems, background/cron work, wallet-quality rankings, UR/N/P grading, or LLM conclusions.
+- Harness command outcomes are recorded in the Harness run manifest; this report does not pre-assert verification success.
 `;
 }
 

@@ -6,8 +6,8 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "DONE",
-  "objective": "Based on verified Chain.fm SOL address cleaning output, perform a strictly bounded, manually triggered, Solana-only, GMGN-only 100-wallet statistical profile batch live smoke. For 100 deterministically selected addresses (skipping the first 20 pilot addresses, choosing 21st-120th), fetch and normalize GMGN 7D and 30D wallet stats with rate-limiting (>=1s serial delay, <=200 total request budget), collecting only allowlisted metrics with source=gmgn, verification_status=unverified, completeness, warning/error codes, and fetchedAt watermark. Outputs are saved to external directory C:\\Users\\10639\\chainfm_out\\sol\\derived\\gmgn-wallet-profile-batch-100-live-smoke-001, strictly marked borrowed/unverified.",
+  "status": "IN_PROGRESS",
+  "objective": "Based on hash-verified Chain.fm Solana address-cleaning output, execute one manually triggered, strictly bounded, read-only GMGN official-API 100-wallet statistical profile smoke. Deterministically validate Base58/32-byte addresses, skip the pilot’s first 20 unique valid wallets, and select positions 21–120 only. Fetch 7d and 30d statistics serially with >=1,000ms between adjacent requests and a hard 200-request budget. Save only allowlisted normalized metrics to the designated external derived directory; all GMGN values remain source=gmgn and verificationStatus=unverified. GMGN_PRIVATE_KEY is neither read nor passed to the statistics subprocess. The batch is not independently completed until the downstream audit is GREEN.",
   "dependencies": [
     "SOL-GMGN-WALLET-PROFILE-PILOT-001",
     "HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001",
@@ -15,7 +15,6 @@
   ],
   "inputs": [
     "src/domain/solana-address.ts",
-    "src/application/chainfm/clean-solana-address-directory.ts",
     "src/infrastructure/gmgn/wallet-stats-parser.ts",
     "src/application/gmgn/wallet-profile-pilot.ts",
     "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json",
@@ -27,9 +26,8 @@
     "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
     "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/**",
     "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/**",
-    "harness/ledger/tasks.json",
     "test/application/gmgn/wallet-profile-pilot.test.ts",
-    "package.json"
+    "harness/dispatches/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.md"
   ],
   "forbidden_actions": [
     "Do not call BSC, Robinhood, multichain, or any chain other than Solana.",
@@ -39,13 +37,17 @@
     "Do not call Helius or perform on-chain verification in this task.",
     "Do not write to databases, Redis, queues, or production systems.",
     "Do not print, persist, or commit API keys, private keys, raw payloads, raw errors, or full user address lists in Git.",
-    "Do not claim GMGN metrics are chain-confirmed facts, and do not use LLMs to score or explain individual wallets."
+    "Do not claim GMGN metrics are chain-confirmed facts, and do not use LLMs to score or explain individual wallets.",
+    "Do not read, display, persist, or pass GMGN_PRIVATE_KEY to the statistics subprocess; only GMGN_API_KEY may be supplied to the official GMGN statistics client.",
+    "Do not persist plaintext addresses, labels, credential URLs, raw provider payloads, complete provider exceptions, or non-allowlisted normalized fields in the external output or Git artifacts."
   ],
   "deliverables": [
     "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
     "src/application/gmgn/wallet-profile-pilot.ts",
     "harness/gmgn-wallet-profile-batch-100-live-smoke.ts",
-    "test/application/gmgn/wallet-profile-pilot.test.ts"
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/dispatches/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json"
   ],
   "acceptance_commands": [
     "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
