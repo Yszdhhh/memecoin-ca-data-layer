@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Execute exactly one single-wallet 7d request and one single-wallet 30d request through the repaired documented root + pnl_stat composite parser. Strict max 2 CLI invocations, serial with at least 1000ms separation, no retries, pagination, holdings, fallback, Helius, database writes, or plaintext/raw provider evidence.",
   "dependencies": [
     "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001"
