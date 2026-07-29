@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T13:51:15.724Z",
+  "updated_at_utc": "2026-07-30T01:17:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -905,7 +905,7 @@
     {
       "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     },
     {
       "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001",
@@ -925,7 +925,7 @@
     {
       "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001",
       "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "PARK"
     },
     {
       "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
@@ -950,6 +950,11 @@
     {
       "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001",
       "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.json",
       "status": "DONE"
     }
   ]

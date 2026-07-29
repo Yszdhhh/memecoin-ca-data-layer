@@ -1,0 +1,67 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001",
+  "title": "Final Parser Hardening Audit dependency reconciliation and Repair-002 Audit PARK",
+  "tier": "T1",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Deterministic state and dependency alignment for GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001: (1) PARK the Repair-002 Audit because Repair-003 has fully superseded it with an independent GREEN audit; (2) remove Repair-002 Audit from the Final Audit dependency list; (3) set the Final Audit to READY. Zero network, zero provider, zero CLI, zero credentials, zero real addresses. No src/ or test/ modifications.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002",
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+    "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001",
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001/acceptance.md",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.json",
+    "harness/dispatches/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.md",
+    "harness/inputs/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not invoke GMGN CLI.",
+    "Do not read credentials or plaintext address files.",
+    "Do not modify src/ or test/ files.",
+    "Do not modify historical live outputs.",
+    "Do not mark Repair-002 Audit as DONE or GREEN.",
+    "Do not create a fake acceptance report for Repair-002 Audit.",
+    "Do not modify role, objective, write_set, forbidden_actions or acceptance_commands of the Final Audit except for deterministic dependency list correction."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

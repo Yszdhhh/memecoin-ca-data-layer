@@ -1,0 +1,36 @@
+{
+  "schema_version": "manifest-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001",
+  "created_at_utc": "2026-07-30T01:16:00.000Z",
+  "baseline_sha": "d279bbc1e0553f681f09e9fa9fddf8a8a5ec69b0",
+  "branch": "codex/solana-daily-new-token-analysis",
+  "tracked_inputs": [
+    {
+      "path": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
+      "role": "task_spec_to_park"
+    },
+    {
+      "path": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+      "role": "final_audit_task_spec_to_unblock"
+    },
+    {
+      "path": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+      "role": "prerequisite_green_audit"
+    },
+    {
+      "path": "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001/acceptance.md",
+      "role": "green_audit_evidence"
+    },
+    {
+      "path": "harness/ledger/tasks.json",
+      "role": "ledger"
+    }
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}
