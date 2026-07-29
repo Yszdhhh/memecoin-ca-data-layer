@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "BLOCKED_DEPENDENCY",
+  "status": "READY",
   "objective": "Independently audit the two-request live re-smoke with zero new network requests. Verify input hashes, budgets, serial delay, sanitized outputs, parser outcomes, warning codes, and whether both periods are usable enough to unlock a separately specified full batch.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001"
