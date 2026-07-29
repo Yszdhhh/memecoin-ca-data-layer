@@ -6,7 +6,7 @@ import { spawn } from "node:child_process";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
 import {
   buildApiKeyOnlyGmgnCliEnvironment,
-  buildGmgnStatsInvocation,
+  buildGmgnBatchCardinalityDiagnosticInvocation,
   classifyGmgnCliFailure,
   createGmgnCliIsolation,
   GmgnCliEnvironmentError,
@@ -104,7 +104,7 @@ export async function runBatchCardinalityDiagnostic(options: BatchCardinalityOpt
   if (!present) return { ...base, status:"PARK", inputHashesMatch:true, credentialApiKeyPresent:false, requestBudgetUsed:0, diagnosticCode:"gmgn_credentials_missing", selectionFingerprint:fingerprint, envelope:null };
   const isolation = dependencies.createIsolation();
   try {
-    const invocation = buildGmgnStatsInvocation({ cliPath: options.gmgnCliPath ?? path.resolve("node_modules/gmgn-cli/dist/index.js"), walletAddresses: wallets, period:"30d", cwd:isolation.cwd, env:buildApiKeyOnlyGmgnCliEnvironment({ runtimeEnvironment:environment, isolatedHome:isolation.home, existAuthCredential:apiKey }) });
+    const invocation = buildGmgnBatchCardinalityDiagnosticInvocation({ cliPath: options.gmgnCliPath ?? path.resolve("node_modules/gmgn-cli/dist/index.js"), walletAddresses: wallets, period:"30d", cwd:isolation.cwd, env:buildApiKeyOnlyGmgnCliEnvironment({ runtimeEnvironment:environment, isolatedHome:isolation.home, existAuthCredential:apiKey }) });
     const execution = await dependencies.execute(invocation);
     if (execution.exitCode !== 0) { const code=classifyGmgnCliFailure(execution); execution.stdout=""; execution.stderr=""; return { ...base,status:"UNAVAILABLE",inputHashesMatch:true,credentialApiKeyPresent:true,requestBudgetUsed:1,diagnosticCode:code,selectionFingerprint:fingerprint,envelope:null }; }
     let payload: unknown;

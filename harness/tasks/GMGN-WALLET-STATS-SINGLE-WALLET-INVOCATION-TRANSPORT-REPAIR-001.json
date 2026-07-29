@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Repair the GMGN wallet-stats transport so every CLI invocation contains exactly one wallet. Remove the invalid 20-wallet batching assumption proven by the audited live cardinality diagnostic, set full 1,433-wallet 7d/30d planning to exactly 2,866 bounded serial invocations, preserve API-key-only isolation and parser semantics, and add pure offline synthetic tests. This task performs zero live requests.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001"
@@ -23,11 +23,13 @@
     "src/application/gmgn/gmgn-cli-boundary.ts",
     "src/application/gmgn/wallet-profile-pilot.ts",
     "test/application/gmgn/gmgn-cli-boundary.test.ts",
-    "test/application/gmgn/wallet-profile-pilot.test.ts"
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "src/application/gmgn/wallet-stats-batch-cardinality-diagnostic.ts"
   ],
   "write_set": [
     "src/application/gmgn/gmgn-cli-boundary.ts",
     "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/wallet-stats-batch-cardinality-diagnostic.ts",
     "test/application/gmgn/gmgn-cli-boundary.test.ts",
     "test/application/gmgn/wallet-profile-pilot.test.ts",
     "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001.json",

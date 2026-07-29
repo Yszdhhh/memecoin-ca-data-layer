@@ -71,7 +71,7 @@ function setupSyntheticInputDir(dir: string, walletList = SYNTHETIC_WALLETS): { 
   return { txtHash, jsonHash };
 }
 
-test("default pilot batches 20 wallets into two serial period requests", async () => {
+test("default pilot uses one wallet per invocation across both periods", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-test-out-"));
 
@@ -109,10 +109,10 @@ test("default pilot batches 20 wallets into two serial period requests", async (
     assert.equal(result.taskId, PILOT_TASK_ID);
     assert.equal(result.selectedCount, 20);
     assert.equal(result.records.length, 40); // 20 wallets * 2 periods
-    assert.equal(result.requestBudgetUsed, 2);
-    assert.equal(runnerCalls.length, 2);
-    assert.equal(runnerCalls[0]?.wallets.length, 20);
-    assert.equal(delays.length, 1);
+    assert.equal(result.requestBudgetUsed, 40);
+    assert.equal(runnerCalls.length, 40);
+    assert.ok(runnerCalls.every((call) => call.wallets.length === 1));
+    assert.equal(delays.length, 39);
     delays.forEach((d) => assert.ok(d >= 1000, "delay must be >= 1000ms"));
   } finally {
     fs.rmSync(tmpInputDir, { recursive: true, force: true });
@@ -120,7 +120,7 @@ test("default pilot batches 20 wallets into two serial period requests", async (
   }
 });
 
-test("batch-100 configuration uses ten bounded serial requests", async () => {
+test("batch-100 configuration uses 200 bounded serial single-wallet requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-batch-out-"));
 
@@ -170,10 +170,10 @@ test("batch-100 configuration uses ten bounded serial requests", async () => {
     assert.equal(result.selectedCount, 100);
     assert.equal(result.records.length, 200);
     assert.equal(result.mappedCount + result.partialCount, 200);
-    assert.equal(result.requestBudgetUsed, 10);
-    assert.equal(runnerCalls.length, 10);
-    assert.equal(runnerCalls[0]?.wallets.length, 20);
-    assert.equal(delays.length, 9);
+    assert.equal(result.requestBudgetUsed, 200);
+    assert.equal(runnerCalls.length, 200);
+    assert.ok(runnerCalls.every((call) => call.wallets.length === 1));
+    assert.equal(delays.length, 199);
     for (const d of delays) {
       assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
     }
@@ -362,7 +362,7 @@ const SYNTHETIC_1433_WALLETS = Array.from({ length: 1433 }, (_, i) => {
   return bufferToBase58(buf);
 });
 
-test("full-1433 synthetic boundary uses 144 bounded serial requests", async () => {
+test("full-1433 synthetic boundary uses 2866 bounded serial single-wallet requests", async () => {
   const tmpInputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-in-"));
   const tmpOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "gmgn-full1433-out-"));
 
@@ -407,10 +407,10 @@ test("full-1433 synthetic boundary uses 144 bounded serial requests", async () =
     assert.equal(result.selectedCount, 1433);
     assert.equal(result.records.length, 2866);
     assert.equal(result.mappedCount + result.partialCount, 2866);
-    assert.equal(result.requestBudgetUsed, 144);
-    assert.equal(runnerCalls.length, 144);
-    assert.equal(runnerCalls.at(-1)?.wallets.length, 13);
-    assert.equal(delays.length, 143);
+    assert.equal(result.requestBudgetUsed, 2866);
+    assert.equal(runnerCalls.length, 2866);
+    assert.ok(runnerCalls.every((call) => call.wallets.length === 1));
+    assert.equal(delays.length, 2865);
     for (const d of delays) {
       assert.ok(d >= 1000, `Delay ${d} must be >= 1000ms`);
     }

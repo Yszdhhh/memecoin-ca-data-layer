@@ -222,7 +222,7 @@ test("signed holdings command includes closed positions without unsupported flag
   assert.equal(invocation.timeoutMs, GMGN_CLI_TIMEOUT_MS);
 });
 
-test("stats command remains limited to 7d or 30d and is unaffected by proxy repair", () => {
+test("stats command is limited to one wallet and a 7d or 30d period", () => {
   const env = buildApiKeyOnlyGmgnCliEnvironment({
     runtimeEnvironment: {
       PATH: "synthetic-path",
@@ -233,7 +233,7 @@ test("stats command remains limited to 7d or 30d and is unaffected by proxy repa
   });
   const invocation = buildGmgnStatsInvocation({
     cliPath: "synthetic-cli.js",
-    walletAddresses: ["synthetic-wallet-a", "synthetic-wallet-b"],
+    walletAddresses: ["synthetic-wallet-a"],
     period: "30d",
     cwd: "synthetic-cwd",
     env,
@@ -246,7 +246,6 @@ test("stats command remains limited to 7d or 30d and is unaffected by proxy repa
     "sol",
     "--wallet",
     "synthetic-wallet-a",
-    "synthetic-wallet-b",
     "--period",
     "30d",
     "--raw",
@@ -255,6 +254,17 @@ test("stats command remains limited to 7d or 30d and is unaffected by proxy repa
   assert.equal(invocation.env.HTTP_PROXY, SENSITIVE_PROXY);
   assert.equal(invocation.env.GMGN_PRIVATE_KEY, undefined);
   assertNoProxyLeak(JSON.stringify(invocation.args));
+
+  assert.throws(
+    () => buildGmgnStatsInvocation({
+      cliPath: "synthetic-cli.js",
+      walletAddresses: ["synthetic-wallet-a", "synthetic-wallet-b"],
+      period: "30d",
+      cwd: "synthetic-cwd",
+      env,
+    }),
+    /exactly one wallet/,
+  );
 });
 
 test("CLI failure classifier returns only safe diagnostic codes and never echoes raw text", () => {

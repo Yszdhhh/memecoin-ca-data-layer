@@ -22,7 +22,7 @@ export const TARGET_WALLET_COUNT = 20;
 export const MAX_REQUEST_BUDGET = 40;
 export const FULL_1433_TARGET_WALLET_COUNT = 1433;
 export const FULL_1433_MAX_REQUEST_BUDGET = 2866;
-export const FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET = 144;
+export const FULL_1433_RERUN_MAX_CLI_INVOCATION_BUDGET = FULL_1433_MAX_REQUEST_BUDGET;
 
 export const ALLOWLISTED_GMGN_WARNING_CODES = [
   "input_manifest_mismatch",
@@ -209,8 +209,8 @@ export async function runGmgnWalletProfilePilot(
     expectedHashes,
   } = options;
 
-  if (!Number.isInteger(walletBatchSize) || walletBatchSize < 1 || walletBatchSize > GMGN_STATS_BATCH_SIZE) {
-    throw new Error("Unsupported GMGN stats wallet batch size");
+  if (walletBatchSize !== GMGN_STATS_BATCH_SIZE) {
+    throw new Error("GMGN stats requires exactly one wallet per invocation");
   }
   const actualMaxBudget = maxRequestBudget ?? Math.ceil(targetWalletCount / walletBatchSize) * 2;
   const expectedTxtHash = expectedHashes?.solAddressesTxtHash ?? EXPECTED_SOL_ADDRESSES_HASH;
@@ -323,8 +323,9 @@ export async function runGmgnWalletProfilePilot(
       }
     }
   } else {
-    // gmgn-cli portfolio stats accepts multiple wallets. A bounded batch is one
-    // CLI invocation and one request-budget unit; periods remain strictly serial.
+    // Audited live evidence showed that multi-wallet stats requests can return only
+    // one identity record. Each request therefore carries exactly one wallet; periods
+    // and wallets remain strictly serial and each invocation consumes one budget unit.
     const resolvedCliPath =
       gmgnCliPath || path.resolve("node_modules/gmgn-cli/dist/index.js");
 

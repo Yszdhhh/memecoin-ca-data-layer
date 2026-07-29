@@ -6,7 +6,8 @@ import path from "node:path";
 export const GMGN_CLI_PINNED_VERSION = "1.5.4";
 export const GMGN_STATS_PERIODS = ["7d", "30d"] as const;
 export const GMGN_CLI_TIMEOUT_MS = 30_000;
-export const GMGN_STATS_BATCH_SIZE = 20;
+/** Live cardinality evidence proves multi-wallet stats responses can truncate silently. */
+export const GMGN_STATS_BATCH_SIZE = 1;
 /** Fixed child NODE_OPTIONS — never inherit parent NODE_OPTIONS. */
 export const GMGN_NODE_OPTIONS = "--use-env-proxy --dns-result-order=ipv4first";
 export type GmgnStatsPeriod = (typeof GMGN_STATS_PERIODS)[number];
@@ -217,18 +218,17 @@ export function validateGmgnPrivateKey(privateKey: string): GmgnPrivateKeyValida
   }
 }
 
-export function buildGmgnStatsInvocation(input: {
+interface GmgnStatsInvocationInput {
   cliPath: string;
   walletAddresses: readonly string[];
   period: GmgnStatsPeriod;
   cwd: string;
   env: NodeJS.ProcessEnv;
-}): GmgnCliInvocation {
+}
+
+function buildGmgnStatsInvocationArgs(input: GmgnStatsInvocationInput): GmgnCliInvocation {
   if (!GMGN_STATS_PERIODS.includes(input.period)) {
     throw new Error("Unsupported GMGN stats period");
-  }
-  if (input.walletAddresses.length === 0 || input.walletAddresses.length > GMGN_STATS_BATCH_SIZE) {
-    throw new Error("Unsupported GMGN stats wallet batch size");
   }
   return {
     args: [
@@ -247,6 +247,23 @@ export function buildGmgnStatsInvocation(input: {
     env: input.env,
     timeoutMs: GMGN_CLI_TIMEOUT_MS,
   };
+}
+
+export function buildGmgnStatsInvocation(input: GmgnStatsInvocationInput): GmgnCliInvocation {
+  if (input.walletAddresses.length !== GMGN_STATS_BATCH_SIZE) {
+    throw new Error("GMGN stats requires exactly one wallet per invocation");
+  }
+  return buildGmgnStatsInvocationArgs(input);
+}
+
+/** Historical diagnostic-only builder. Production stats flows must not use this. */
+export function buildGmgnBatchCardinalityDiagnosticInvocation(
+  input: GmgnStatsInvocationInput,
+): GmgnCliInvocation {
+  if (input.walletAddresses.length !== 20) {
+    throw new Error("GMGN batch cardinality diagnostic requires exactly twenty wallets");
+  }
+  return buildGmgnStatsInvocationArgs(input);
 }
 
 export function buildGmgnCumulativeHoldingsInvocation(input: {
