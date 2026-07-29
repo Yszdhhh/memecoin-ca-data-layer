@@ -1,0 +1,51 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001",
+  "title": "Independent zero-network audit of full 1,433-wallet GMGN stats rerun",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit the completed full 1,433-wallet rerun without issuing network requests. Verify Git/evidence chain, input hashes, exact deterministic selection, batching and request budget, serial-delay contract, normalized output schema, aggregate status/coverage/warnings, privacy boundaries, and whether the rerun may be marked complete.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/cli/run-gmgn-wallet-stats-full-1433-live-rerun.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network, provider, or GMGN CLI requests.",
+    "Do not read credentials, plaintext addresses, labels, raw provider payloads, raw stdout/stderr, proxy URLs, or complete exceptions.",
+    "Do not modify application, parser, runner, tests, or external live output.",
+    "Do not mark the full rerun complete if hashes, selected count, request cap, serial execution, sanitized schema, or source/verification semantics fail."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}
