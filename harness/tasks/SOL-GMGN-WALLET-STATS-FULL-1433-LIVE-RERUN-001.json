@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "PARK",
   "objective": "Execute one manually triggered, read-only, Solana-only, GMGN-official-API rerun for exactly 1,433 hash-verified valid unique wallets. Query only 7d and 30d stats in batches of at most 20 wallets, with at most 72 CLI invocations per period and 144 total, strictly serial with at least 1,000ms between adjacent invocations. Persist only allowlisted normalized unverified GMGN fields and irreversible fingerprints to a new external output directory. Fail closed before network on input hash or selection mismatch, PARK on absent API key, and require a separate zero-network independent audit before completion.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001"

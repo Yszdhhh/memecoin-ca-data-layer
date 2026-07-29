@@ -1060,7 +1060,7 @@
     {
       "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001.json",
-      "status": "READY"
+      "status": "PARK"
     },
     {
       "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001",
