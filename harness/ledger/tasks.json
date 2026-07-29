@@ -956,6 +956,16 @@
       "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001",
       "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }

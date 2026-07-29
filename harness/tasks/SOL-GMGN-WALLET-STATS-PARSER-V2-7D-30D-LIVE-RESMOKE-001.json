@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001",
+  "title": "Single-wallet 7d and 30d GMGN wallet stats live re-smoke using hardened Parser V2",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Execute authorized live re-smoke of single-wallet 7d and 30d GMGN wallet stats using hardened Parser V2. Strict max 2 CLI invocations, max 2 physical provider requests, strictly serial with 1,000ms delay, no retry, no pagination, no holdings, no fallback. Sanitize external outputs completely.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001",
+    "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001",
+    "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "src/cli/run-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "test/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.test.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/manifest.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "src/cli/run-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "test/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.test.ts",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm, Dune, Dexscreener, Birdeye, BSC, Robinhood, RPC, browser, or web scraping.",
+    "Do not exceed 2 CLI invocations or 2 physical provider requests.",
+    "Do not retry, paginate, test holdings, use fallback, cron, or concurrency.",
+    "Do not print, store, or commit plaintext addresses, labels, credentials, proxy URLs, raw payloads, or raw stdout/stderr.",
+    "Do not re-run 100 or 1433 wallets."
+  ],
+  "deliverables": [
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "src/cli/run-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "test/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.test.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
