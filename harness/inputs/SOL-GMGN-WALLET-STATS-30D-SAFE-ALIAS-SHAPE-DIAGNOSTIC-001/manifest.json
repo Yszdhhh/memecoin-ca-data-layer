@@ -1,0 +1,37 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001",
+  "baseline_commit": "93fa191",
+  "network_requests_allowed": 1,
+  "provider_requests_allowed": 1,
+  "cli_invocation_budget": 1,
+  "period": "30d",
+  "wallets": 1,
+  "retry": false,
+  "pagination": false,
+  "holdings": false,
+  "fallback": false,
+  "expected_input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "allowed_observation_fields": [
+    "location",
+    "canonicalMetric",
+    "alias",
+    "jsonType",
+    "numericLexicalClass",
+    "groupRelation"
+  ],
+  "privacy": {
+    "metric_values": false,
+    "credential_values": false,
+    "private_key_read": false,
+    "proxy_url_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "wallet_keyed_keys": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}
