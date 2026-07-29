@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T19:32:00.000Z",
+  "updated_at_utc": "2026-07-29T19:33:03.789Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1055,7 +1055,7 @@
     {
       "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
