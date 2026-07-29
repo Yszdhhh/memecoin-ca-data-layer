@@ -220,15 +220,18 @@ test("6. Requirement D: invalid candidate container ambiguity handling", () => {
   assert.equal(res1.status, "UNAVAILABLE");
   assert.ok(res1.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 
-  // root win_rate_percent={}, pnl_stat realized_profit=10 -> intent in root & pnl_stat -> UNAVAILABLE
-  const rootObjPnlStatValid = {
+  // root pnl=10, stats pnl=10, pnl_stat winrate=0.5 -> 3-way intent -> UNAVAILABLE
+  const rootStatsPnlStatThreeWay = {
     wallet: walletA,
-    win_rate_percent: {},
+    pnl: 10,
+    stats: {
+      pnl: 10,
+    },
     pnl_stat: {
-      realized_profit: 10,
+      winrate: 0.5,
     },
   };
-  const res2 = parseGmgnWalletStats(rootObjPnlStatValid, [walletA], "7d")[0]!;
+  const res2 = parseGmgnWalletStats(rootStatsPnlStatThreeWay, [walletA], "7d")[0]!;
   assert.equal(res2.status, "UNAVAILABLE");
   assert.ok(res2.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
 
@@ -373,4 +376,161 @@ test("8. Requirement F & Repair-003 A & B: winRate unit contracts and boundary c
       assert.ok(res.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"), "Must emit win_rate_unit_ambiguous");
     }
   }
+});
+
+test("9. Official root + pnl_stat composite fixture is successfully parsed to MAPPED (11/11)", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    pnl: 120.5,
+    realized_profit: 100.0,
+    realized_profit_pnl: 0.5,
+    trade_count: 15,
+    buy_count: 10,
+    sell_count: 5,
+    bought_cost: 500.0,
+    sold_income: 600.0,
+    last_active_timestamp: 1715000000,
+    pnl_stat: {
+      token_num: 8,
+      winrate: 0.6,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.wallet, walletA);
+  assert.equal(parsed.status, "MAPPED");
+  assert.equal(parsed.mapping, "direct_identity");
+  assert.equal(parsed.completeness, 1.0);
+  assert.equal(parsed.warningCodes.length, 0);
+  assert.equal(parsed.aggregates.periodPnl, 120.5);
+  assert.equal(parsed.aggregates.realizedProfit, 100.0);
+  assert.equal(parsed.aggregates.tokenNum, 8);
+  assert.equal(parsed.aggregates.winRate, 60);
+});
+
+test("10. root realized_profit + pnl_stat winrate/token_num valid composite combination", () => {
+  const payload = {
+    wallet: walletA,
+    period: "30d",
+    realized_profit_30d: 300.0,
+    pnl_stat: {
+      token_num: 12,
+      winrate: 0.75,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "30d")[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.realizedProfit, 300.0);
+  assert.equal(parsed.aggregates.tokenNum, 12);
+  assert.equal(parsed.aggregates.winRate, 75);
+  assert.ok(parsed.completeness > 0 && parsed.completeness < 1.0);
+});
+
+test("11. pnl_stat.winrate = 0.4 maps to 40 percent", () => {
+  const payload = {
+    wallet: walletA,
+    pnl: 50.0,
+    pnl_stat: {
+      winrate: 0.4,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.aggregates.winRate, 40);
+  assert.ok(!parsed.warningCodes.includes("gmgn_wallet_stats_win_rate_unit_ambiguous"));
+});
+
+test("12. root and pnl_stat returning conflicting values for same canonical metric fail-closed", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    realized_profit: 100.0,
+    pnl_stat: {
+      realized_profit: 200.0,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_alias_conflict"));
+});
+
+test("13. primitive or array pnl_stat safely returns UNAVAILABLE without throwing exception", () => {
+  assert.doesNotThrow(() => {
+    const parsedStr = parseGmgnWalletStats({ wallet: walletA, pnl_stat: "invalid_string" }, [walletA], "7d")[0]!;
+    assert.equal(parsedStr.status, "UNAVAILABLE");
+
+    const parsedNum = parseGmgnWalletStats({ wallet: walletA, pnl_stat: 12345 }, [walletA], "7d")[0]!;
+    assert.equal(parsedNum.status, "UNAVAILABLE");
+
+    const parsedArr = parseGmgnWalletStats({ wallet: walletA, pnl_stat: [1, 2, 3] }, [walletA], "7d")[0]!;
+    assert.equal(parsedArr.status, "UNAVAILABLE");
+
+    const parsedBool = parseGmgnWalletStats({ wallet: walletA, pnl_stat: true }, [walletA], "7d")[0]!;
+    assert.equal(parsedBool.status, "UNAVAILABLE");
+  });
+});
+
+test("14. root + stats + pnl_stat multi-container ambiguity fails-closed with gmgn_wallet_stats_schema_unrecognized", () => {
+  const payload = {
+    wallet: walletA,
+    pnl: 100,
+    stats: {
+      pnl: 100,
+    },
+    pnl_stat: {
+      winrate: 0.5,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.ok(parsed.warningCodes.includes("gmgn_wallet_stats_schema_unrecognized"));
+});
+
+test("15. decoy, summary, market, token sub-nodes cannot contribute metrics", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    summary: { pnl: 500, realized_profit: 400 },
+    market: { win_rate_percent: 80 },
+    token: { trade_count: 50 },
+    decoy: { token_num: 10 },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "UNAVAILABLE");
+  assert.equal(parsed.aggregates.periodPnl, undefined);
+  assert.equal(parsed.aggregates.realizedProfit, undefined);
+  assert.equal(parsed.aggregates.winRate, undefined);
+  assert.ok(parsed.warningCodes.includes("gmgn_expected_metrics_unavailable"));
+});
+
+test("16. explicit 0 is preserved as 0, missing fields remain undefined", () => {
+  const payload = {
+    wallet: walletA,
+    period: "7d",
+    pnl: 0,
+    realized_profit: 0,
+    buy_count: 0,
+    sell_count: 0,
+    pnl_stat: {
+      winrate: 0,
+      token_num: 0,
+    },
+  };
+
+  const parsed = parseGmgnWalletStats(payload, [walletA], "7d")[0]!;
+  assert.equal(parsed.status, "PARTIAL");
+  assert.equal(parsed.aggregates.periodPnl, 0);
+  assert.equal(parsed.aggregates.realizedProfit, 0);
+  assert.equal(parsed.aggregates.buyCount, 0);
+  assert.equal(parsed.aggregates.sellCount, 0);
+  assert.equal(parsed.aggregates.winRate, 0);
+  assert.equal(parsed.aggregates.tokenNum, 0);
+  assert.equal(parsed.aggregates.boughtCost, undefined);
+  assert.equal(parsed.aggregates.soldIncome, undefined);
+  assert.equal(parsed.aggregates.tradeCount, undefined);
 });

@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "PARK",
   "objective": "Independently audit SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001 with a distinct HARNESS_AGENT_ID (auditor-sol-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke-001) and zero network/provider requests. Verify 2-invocation budget, 7d/30d serial execution, privacy, and sanitized evidence.",
   "dependencies": [
     "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001"

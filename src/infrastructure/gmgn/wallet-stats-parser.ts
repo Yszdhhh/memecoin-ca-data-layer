@@ -325,48 +325,87 @@ function selectUniqueMetricContainer(
     }
   }
 
-  const candidates: Array<{ name: string; container: JsonRecord }> = [];
-  candidates.push({ name: "root", container: rootCandidate });
-
   const pnlStatRec = asRecord(record.pnl_stat);
-  if (pnlStatRec) {
-    candidates.push({ name: "pnl_stat", container: pnlStatRec });
-  }
-
   const statsRec = asRecord(record.stats);
-  if (statsRec) {
-    candidates.push({ name: "stats", container: statsRec });
-  }
 
-  // Evaluate metric intent across all candidate containers
-  const intentCandidates = candidates.filter((cand) => hasMetricIntent(cand.container, expectedPeriod));
+  const rootHasIntent = hasMetricIntent(rootCandidate, expectedPeriod, "root");
+  const pnlStatHasIntent = pnlStatRec ? hasMetricIntent(pnlStatRec, expectedPeriod, "pnl_stat") : false;
+  const statsHasIntent = statsRec ? hasMetricIntent(statsRec, expectedPeriod, "stats") : false;
 
-  if (intentCandidates.length === 0) {
-    return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
-  }
-
-  if (intentCandidates.length > 1) {
-    // Metric keys / intent found in multiple containers -> Fail-closed!
+  // Disallowed container combinations: stats cannot be combined with root or pnl_stat
+  if (statsHasIntent && (rootHasIntent || pnlStatHasIntent)) {
     return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
   }
 
-  const selectedCandidate = intentCandidates[0]!;
-  const metricExtraction = extractMetricsFromSingleContainer(selectedCandidate.container, expectedPeriod);
-
-  if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
-    return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+  if (!rootHasIntent && !pnlStatHasIntent && !statsHasIntent) {
+    return { success: false, warningCode: "gmgn_expected_metrics_unavailable" };
   }
 
-  return {
-    success: true,
-    aggregates: metricExtraction.aggregates,
-    validCount: metricExtraction.validCount,
-    warnings: metricExtraction.warnings,
-    selectedContainer: selectedCandidate.container,
-  };
+  if (statsHasIntent && !rootHasIntent && !pnlStatHasIntent) {
+    const metricExtraction = extractMetricsFromSingleContainer(statsRec!, expectedPeriod, false);
+    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+    }
+    return {
+      success: true,
+      aggregates: metricExtraction.aggregates,
+      validCount: metricExtraction.validCount,
+      warnings: metricExtraction.warnings,
+      selectedContainer: statsRec!,
+    };
+  }
+
+  if (pnlStatHasIntent && !rootHasIntent && !statsHasIntent) {
+    const metricExtraction = extractMetricsFromSingleContainer(pnlStatRec!, expectedPeriod, true);
+    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+    }
+    return {
+      success: true,
+      aggregates: metricExtraction.aggregates,
+      validCount: metricExtraction.validCount,
+      warnings: metricExtraction.warnings,
+      selectedContainer: pnlStatRec!,
+    };
+  }
+
+  if (rootHasIntent && !pnlStatHasIntent && !statsHasIntent) {
+    const metricExtraction = extractMetricsFromSingleContainer(rootCandidate, expectedPeriod, false);
+    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+    }
+    return {
+      success: true,
+      aggregates: metricExtraction.aggregates,
+      validCount: metricExtraction.validCount,
+      warnings: metricExtraction.warnings,
+      selectedContainer: rootCandidate,
+    };
+  }
+
+  if (rootHasIntent && pnlStatHasIntent && !statsHasIntent) {
+    // Documented Composite schema: root + pnl_stat
+    const metricExtraction = extractMetricsFromCompositeContainers(rootCandidate, pnlStatRec!, expectedPeriod);
+    if (metricExtraction.warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+      return { success: false, warningCode: "gmgn_wallet_stats_alias_conflict" };
+    }
+    return {
+      success: true,
+      aggregates: metricExtraction.aggregates,
+      validCount: metricExtraction.validCount,
+      warnings: metricExtraction.warnings,
+      selectedContainer: rootCandidate,
+    };
+  }
+
+  return { success: false, warningCode: "gmgn_wallet_stats_schema_unrecognized" };
 }
 
-function hasMetricIntent(container: JsonRecord, expectedPeriod: "7d" | "30d"): boolean {
+function hasMetricIntent(
+  container: JsonRecord,
+  expectedPeriod: "7d" | "30d",
+  _containerType: "root" | "pnl_stat" | "stats" = "root",
+): boolean {
   const metricAliases = getAllowlistedMetricAliases(expectedPeriod);
   for (const key of Object.keys(container)) {
     if (metricAliases.has(key)) {
@@ -413,9 +452,54 @@ interface AliasGroupDefinition {
   kind: "number" | "non_negative_number" | "positive_number" | "integer" | "win_rate_percent" | "win_rate_ratio";
 }
 
+function extractMetricsFromCompositeContainers(
+  rootContainer: JsonRecord,
+  pnlStatContainer: JsonRecord,
+  expectedPeriod: "7d" | "30d",
+): { aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[] } {
+  const rootExt = extractMetricsFromSingleContainer(rootContainer, expectedPeriod, false);
+  const pnlStatExt = extractMetricsFromSingleContainer(pnlStatContainer, expectedPeriod, true);
+
+  const warnings = Array.from(new Set([...rootExt.warnings, ...pnlStatExt.warnings]));
+  const aggregates: GmgnWalletStatsAggregate = {};
+
+  const allKeys: Array<keyof GmgnWalletStatsAggregate> = [
+    "periodPnl", "realizedProfit", "realizedProfitPnl", "winRate",
+    "tradeCount", "buyCount", "sellCount", "boughtCost", "soldIncome",
+    "lastActiveTimestamp", "tokenNum",
+  ];
+
+  let hasConflict = false;
+
+  for (const k of allKeys) {
+    const rootVal = rootExt.aggregates[k];
+    const pnlStatVal = pnlStatExt.aggregates[k];
+
+    if (rootVal !== undefined && pnlStatVal !== undefined) {
+      if (Math.abs(rootVal - pnlStatVal) < 1e-6) {
+        aggregates[k] = rootVal;
+      } else {
+        hasConflict = true;
+      }
+    } else if (rootVal !== undefined) {
+      aggregates[k] = rootVal;
+    } else if (pnlStatVal !== undefined) {
+      aggregates[k] = pnlStatVal;
+    }
+  }
+
+  if (hasConflict && !warnings.includes("gmgn_wallet_stats_alias_conflict")) {
+    warnings.push("gmgn_wallet_stats_alias_conflict");
+  }
+
+  const validCount = Object.keys(aggregates).length;
+  return { aggregates, validCount, warnings };
+}
+
 function extractMetricsFromSingleContainer(
   container: JsonRecord,
   expectedPeriod: "7d" | "30d",
+  isPnlStatContainer: boolean = false,
 ): { aggregates: GmgnWalletStatsAggregate; validCount: number; warnings: string[] } {
   const aggregates: GmgnWalletStatsAggregate = {};
   const warnings: string[] = [];
@@ -542,6 +626,7 @@ function extractMetricsFromSingleContainer(
 
   const winRatePercentValues: number[] = [];
   const winRateRatioValues: number[] = [];
+  const winRateGenericValues: number[] = [];
   let winRateAmbiguous = false;
   let winRateInvalidType = false;
 
@@ -579,7 +664,19 @@ function extractMetricsFromSingleContainer(
     const rawVal = container[key];
     if (rawVal === undefined || rawVal === null) continue;
     const num = parseStrictNumber(rawVal);
-    if (num === undefined) {
+    if (num !== undefined) {
+      if (isPnlStatContainer) {
+        // In pnl_stat, official GMGN pnl_stat.winrate is a ratio in [0, 1]
+        if (num >= 0 && num <= 1) {
+          winRateGenericValues.push(Math.round(num * 100 * 100) / 100);
+        } else {
+          winRateAmbiguous = true;
+        }
+      } else {
+        // Generic alias on root without schema evidence -> unit-unverified
+        winRateAmbiguous = true;
+      }
+    } else {
       winRateInvalidType = true;
     }
   }
@@ -587,18 +684,18 @@ function extractMetricsFromSingleContainer(
   const explicitGroupCount = (presentPercentKeys.length > 0 ? 1 : 0) + (presentRatioKeys.length > 0 ? 1 : 0);
   const totalWinRateAliasesPresent = presentPercentKeys.length + presentRatioKeys.length + presentGenericKeys.length;
 
-  if (explicitGroupCount > 1 || (presentGenericKeys.length > 0 && (presentPercentKeys.length > 0 || presentRatioKeys.length > 0))) {
+  if (explicitGroupCount > 1 || (!isPnlStatContainer && presentGenericKeys.length > 0 && (presentPercentKeys.length > 0 || presentRatioKeys.length > 0))) {
     // Multiple conflicting winRate alias families present -> ALIAS CONFLICT!
     warnings.push("gmgn_wallet_stats_alias_conflict");
-  } else if (presentGenericKeys.length > 0) {
-    // Generic alias present (unit-unverified without schema evidence in repo) -> unit-unverified!
+  } else if (!isPnlStatContainer && presentGenericKeys.length > 0) {
+    // Generic alias present on root (unit-unverified without schema evidence) -> unit-unverified!
     warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
   } else if (winRateAmbiguous) {
     warnings.push("gmgn_wallet_stats_win_rate_unit_ambiguous");
-  } else if (winRateInvalidType && winRatePercentValues.length === 0 && winRateRatioValues.length === 0) {
+  } else if (winRateInvalidType && winRatePercentValues.length === 0 && winRateRatioValues.length === 0 && winRateGenericValues.length === 0) {
     warnings.push("gmgn_wallet_stats_invalid_field_type");
   } else if (totalWinRateAliasesPresent > 0) {
-    const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues];
+    const allParsedWinRates = [...winRatePercentValues, ...winRateRatioValues, ...winRateGenericValues];
     const firstWinRate = allParsedWinRates[0];
     if (allParsedWinRates.length === 1 && firstWinRate !== undefined) {
       aggregates.winRate = firstWinRate;

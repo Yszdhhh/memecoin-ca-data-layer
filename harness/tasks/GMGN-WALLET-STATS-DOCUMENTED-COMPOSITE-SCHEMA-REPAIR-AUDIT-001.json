@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001",
+  "title": "Independent audit of GMGN wallet stats parser documented composite schema repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently audit GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001 with distinct HARNESS_AGENT_ID (auditor-gmgn-wallet-stats-documented-composite-schema-repair-001) and zero network/provider requests. Verify root + pnl_stat composite schema support, field ownership rules, winRate unit contracts, multi-location conflict fail-closed behavior, synthetic unit tests, and resource budget compliance.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN CLI or any network provider.",
+    "Do not inspect credential values, proxy URLs, plaintext addresses, or raw payloads.",
+    "Do not modify application code or implementer evidence.",
+    "Do not use HARNESS_AGENT_ID implementer-gmgn-wallet-stats-documented-composite-schema-repair-001."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}
