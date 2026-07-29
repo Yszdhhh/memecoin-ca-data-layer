@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001",
+  "title": "Offline root-cause repair: forward allowlisted HTTP(S) proxy env into GMGN CLI isolation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "IN_PROGRESS",
+  "objective": "Offline-only repair of the GMGN CLI child-process isolation so allowlisted HTTP_PROXY/HTTPS_PROXY/NO_PROXY (http/https schemes only) are forwarded into the disposable HOME/CWD sandbox, while parent NODE_OPTIONS are never inherited and child NODE_OPTIONS is fixed to --use-env-proxy --dns-result-order=ipv4first. Expand in-memory safe network failure classification without retaining raw stdout/stderr. Clear pre-existing three-path doctor blockers (absolute input paths, false-positive INLINE_API_CREDENTIAL identifier match, static test PEM block). Do not send any live provider request; do not claim 7d/30d/holdings recovery.",
+  "dependencies": [
+    "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/acceptance.md",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001/acceptance.md",
+    "package.json",
+    "package-lock.json",
+    "node_modules/gmgn-cli/package.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+    "harness/reports/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001/acceptance.md",
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/dispatches/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.md",
+    "harness/inputs/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, browser, web scraping, or any network/provider request.",
+    "Do not print, return, log, commit, fixture, or write proxy URL values, credential values, plaintext addresses, labels, raw stdout/stderr, or full exceptions.",
+    "Do not forward ALL_PROXY by default; do not set NODE_TLS_REJECT_UNAUTHORIZED=0; do not inherit parent NODE_OPTIONS; do not read user HOME GMGN config to bypass explicit credentials.",
+    "Do not upgrade gmgn-cli; do not re-run 100 or 1433 wallets; do not claim 7d/30d/holdings live recovery.",
+    "Do not write a database, Redis, cache, queue, production system, or perform force-push/reset --hard."
+  ],
+  "deliverables": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

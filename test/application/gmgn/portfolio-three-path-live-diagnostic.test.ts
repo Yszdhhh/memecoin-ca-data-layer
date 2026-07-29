@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { createHash } from "node:crypto";
+import { createHash, generateKeyPairSync } from "node:crypto";
 
 import {
   runGmgnPortfolioThreePathLiveDiagnostic,
@@ -12,9 +12,11 @@ import {
 } from "../../../src/application/gmgn/portfolio-three-path-live-diagnostic.js";
 
 const DUMMY_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
-const DUMMY_ED25519_PEM = `-----BEGIN PRIVATE KEY-----
-MC4CAQAwBQYDK2VwBCIEIK+3rB1/g99tH7Y/Y591/u/15+3487+v152438/1+5+3
------END PRIVATE KEY-----`;
+
+function syntheticEd25519Pem(): string {
+  const { privateKey } = generateKeyPairSync("ed25519");
+  return privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+}
 
 function sha256Upper(val: string | Uint8Array): string {
   return createHash("sha256").update(val).digest("hex").toUpperCase();
@@ -128,7 +130,7 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: 7d failure stops execution at 1 i
     assert.equal(result.cliInvocationBudgetUsed, 1);
     assert.equal(executionsCount, 1);
     assert.equal(result.stats7d.status, "UNAVAILABLE");
-    assert.equal(result.stats7d.diagnosticCode, "gmgn_cli_network_unavailable");
+    assert.equal(result.stats7d.diagnosticCode, "gmgn_cli_connection_refused");
     assert.equal(result.stats30d.status, "PARK");
     assert.equal(result.signedHoldings.status, "PARK");
   } finally {
@@ -229,7 +231,7 @@ test("runGmgnPortfolioThreePathLiveDiagnostic: three paths succeed with 3 serial
     const result = await runGmgnPortfolioThreePathLiveDiagnostic({
       inputDir: fx.inputDir,
       outputDir: fx.outputDir,
-      runtimeEnvironment: { GMGN_API_KEY: "dummy_api_key", GMGN_PRIVATE_KEY: DUMMY_ED25519_PEM },
+      runtimeEnvironment: { GMGN_API_KEY: "dummy_api_key", GMGN_PRIVATE_KEY: syntheticEd25519Pem() },
       expectedHashes: {
         solAddressesTxtHash: fx.txtHash,
         solAddressLabelsJsonHash: fx.jsonHash,

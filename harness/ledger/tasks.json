@@ -846,6 +846,16 @@
       "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
       "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001",
+      "spec": "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

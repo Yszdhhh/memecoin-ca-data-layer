@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001",
+  "title": "Independent zero-network audit of GMGN CLI proxy transport root-cause repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001 with a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify allowlisted proxy forwarding, no ALL_PROXY, scheme fail-closed, fixed NODE_OPTIONS without parent inheritance, stats private-key exclusion, signed preflight, timeout kill once, expanded safe error codes without raw stderr leakage, and that no live recovery claim is made.",
+  "dependencies": [
+    "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+    "harness/dispatches/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.md",
+    "harness/inputs/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001/acceptance.md",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, browser, web scraping, or any network provider.",
+    "Do not inspect, display, retain, or test against credential values, proxy URL values, plaintext addresses, labels, raw payloads, raw stdout/stderr, or complete exceptions.",
+    "Do not modify application code, tests, package manifests, or implementer evidence.",
+    "Do not use HARNESS_AGENT_ID implementer-gmgn-cli-proxy-transport-root-cause-repair-001."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

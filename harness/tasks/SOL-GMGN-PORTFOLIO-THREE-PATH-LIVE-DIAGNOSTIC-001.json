@@ -12,12 +12,11 @@
     "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001"
   ],
   "inputs": [
-    "C:\\Users\\10639\\chainfm_out\\sol\\sol_addresses.txt",
-    "C:\\Users\\10639\\chainfm_out\\sol\\sol_address_labels.json",
     "src/application/gmgn/gmgn-cli-boundary.ts",
     "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
     "src/cli/run-gmgn-portfolio-three-path-live-diagnostic.ts",
-    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "harness/inputs/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001/manifest.json"
   ],
   "write_set": [
     "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",

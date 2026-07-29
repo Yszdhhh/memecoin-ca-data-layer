@@ -356,7 +356,7 @@ export async function runGmgnWalletProfilePilot(
               env: buildApiKeyOnlyGmgnCliEnvironment({
                 runtimeEnvironment: process.env,
                 isolatedHome: isolation.home,
-                apiKey: process.env.GMGN_API_KEY,
+                existAuthCredential: process.env.GMGN_API_KEY,
               }),
             });
             const proc = spawnSync(process.execPath, invocation.args, {

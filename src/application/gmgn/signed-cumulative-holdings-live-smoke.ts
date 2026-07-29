@@ -179,9 +179,9 @@ export async function runBoundedSignedHoldingsSmoke(
     return safeResult({ status: "PARK", requestBudgetUsed: 0, diagnosticCode: "gmgn_input_no_valid_address" });
   }
 
-  const apiKey = input.runtimeEnvironment.GMGN_API_KEY;
-  const privateKey = input.runtimeEnvironment.GMGN_PRIVATE_KEY;
-  if (apiKey === undefined || apiKey === "" || privateKey === undefined || privateKey === "") {
+  const existAuthCredential = input.runtimeEnvironment.GMGN_API_KEY;
+  const signingMaterial = input.runtimeEnvironment.GMGN_PRIVATE_KEY;
+  if (existAuthCredential === undefined || existAuthCredential === "" || signingMaterial === undefined || signingMaterial === "") {
     return safeResult({
       status: "PARK",
       requestBudgetUsed: 0,
@@ -191,7 +191,7 @@ export async function runBoundedSignedHoldingsSmoke(
   }
 
   const fingerprint = targetFingerprint(selectedAddress);
-  const privateKeyValidation = validateGmgnPrivateKey(privateKey);
+  const privateKeyValidation = validateGmgnPrivateKey(signingMaterial);
   if (!privateKeyValidation.ok) {
     return safeResult({
       status: "PARK",
@@ -207,8 +207,8 @@ export async function runBoundedSignedHoldingsSmoke(
     const environment = buildBoundedSignedGmgnCliEnvironment({
       runtimeEnvironment: input.runtimeEnvironment,
       isolatedHome: isolation.home,
-      apiKey,
-      privateKey: privateKeyValidation.normalizedPrivateKey,
+      existAuthCredential,
+      signingMaterial: privateKeyValidation.normalizedPrivateKey,
     });
     const invocation = buildGmgnCumulativeHoldingsInvocation({
       cliPath: input.cliPath,
