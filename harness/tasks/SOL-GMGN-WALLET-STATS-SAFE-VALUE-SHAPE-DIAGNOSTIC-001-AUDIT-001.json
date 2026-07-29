@@ -1,0 +1,36 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001",
+  "title": "Independent audit of sanitized wallet stats value-shape diagnostic",
+  "tier": "T2",
+  "chain": "solana",
+  "layer": "cold_path",
+  "role": "auditor",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Audit the one-request diagnostic evidence with zero network. Confirm only allowlisted field names, location names, JSON types, and non-value lexical classes were recorded.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network/provider/CLI requests.",
+    "Do not inspect raw payload, raw stdout/stderr, credential values, proxy URLs, addresses, or labels.",
+    "Do not modify application code."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "git diff --check"
+  ]
+}

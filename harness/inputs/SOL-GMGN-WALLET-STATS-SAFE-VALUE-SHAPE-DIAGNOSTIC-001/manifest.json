@@ -1,0 +1,35 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001",
+  "baseline_commit": "5fcde56",
+  "period": "7d",
+  "wallets": 1,
+  "network_requests_allowed": 1,
+  "provider_requests_allowed": 1,
+  "cli_invocation_budget": 1,
+  "retry": false,
+  "pagination": false,
+  "expected_input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "allowed_evidence": [
+    "recognized_location",
+    "allowlisted_metric_alias",
+    "json_type",
+    "numeric_string_lexical_class",
+    "presence_boolean",
+    "safe_diagnostic_code"
+  ],
+  "forbidden_evidence": [
+    "values",
+    "raw_payload",
+    "raw_stdout",
+    "raw_stderr",
+    "addresses",
+    "wallet_object_keys",
+    "labels",
+    "credentials",
+    "proxy_urls"
+  ]
+}

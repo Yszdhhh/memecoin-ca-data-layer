@@ -1,0 +1,52 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001",
+  "title": "One-request sanitized GMGN wallet stats value-shape diagnostic",
+  "tier": "T2",
+  "chain": "solana",
+  "layer": "cold_path",
+  "role": "implementer",
+  "status": "READY",
+  "objective": "Use exactly one 7d GMGN stats CLI invocation to classify only the JSON value types and lexical classes of allowlisted wallet-stat metric aliases at recognized root/pnl_stat/stats locations. Do not retain or expose values, identities, raw payload, stdout/stderr, credentials, proxy URLs, addresses, or labels. Use the result solely to repair the parser value-encoding contract.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/domain/solana-address.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/manifest.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue more than one CLI/provider request.",
+    "Do not print or persist metric values, raw provider payload, raw stdout/stderr, complete exceptions, credentials, proxy URLs, plaintext addresses, labels, token identifiers, or wallet-keyed object keys.",
+    "Do not retry, paginate, call holdings, use fallback, Helius, browser, scraping, database, cache, queue, or production writes."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 1,
+    "provider_requests": 1,
+    "gmgn_cli_invocations": 1,
+    "credential_reads": "presence_only",
+    "address_processing": 1
+  }
+}
