@@ -1,4 +1,4 @@
-﻿# Dispatch: SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-001
+# Dispatch: SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-001
 
 - Role: Independent auditor
 - HARNESS_AGENT_ID: `auditor-sol-wallet-intelligence-master-clean-rank-repair-001`
