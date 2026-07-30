@@ -1,0 +1,33 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+  "title": "CA holder hotpath Operator API (loopback, Helius-only, memory tasks)",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Local 127.0.0.1 Operator API for single public CA holder analysis using existing cleaning pilot pipeline. Explicit live gate. Memory tasks. Offline tests GREEN. Bounded Live smoke if credential present; otherwise report BLOCKED for live portion only.",
+  "dependencies": ["OPERATOR-CONSOLE-SHELL-001"],
+  "write_set": [
+    "src/application/operator-api/**",
+    "src/cli/run-operator-api.ts",
+    "test/application/operator-api/**",
+    "package.json",
+    "docs/contracts/OPERATOR_CA_HOLDER_API_V1.md",
+    "harness/CURRENT_WAVE.md",
+    "harness/tasks/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001.json",
+    "harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001/**"
+  ],
+  "forbidden_actions": [
+    "No GMGN/DexScreener/auto discovery/cron/PG/Redis",
+    "No force-push; do not auto-merge main without Owner",
+    "No chainfm_out / DPAPI upload"
+  ],
+  "baseline": {
+    "branch": "feature/sol-ca-holder-hotpath-integration-001",
+    "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196"
+  },
+  "verdict": "GREEN",
+  "live_smoke": "see live-smoke-summary.json"
+}

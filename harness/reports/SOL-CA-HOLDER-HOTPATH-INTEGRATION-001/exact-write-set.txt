@@ -1,0 +1,10 @@
+# SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
+src/application/operator-api/ca-holder-task-service.ts
+src/application/operator-api/http-server.ts
+src/cli/run-operator-api.ts
+test/application/operator-api/ca-holder-task-service.test.ts
+package.json
+docs/contracts/OPERATOR_CA_HOLDER_API_V1.md
+harness/CURRENT_WAVE.md
+harness/tasks/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001.json
+harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001/**

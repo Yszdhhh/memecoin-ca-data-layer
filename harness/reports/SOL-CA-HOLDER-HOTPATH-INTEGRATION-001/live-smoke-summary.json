@@ -1,0 +1,11 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+  "liveSmokeAttempted": false,
+  "reason": "HELIUS_API_KEY not present in process environment; OPERATOR_API_LIVE not enabled for this run",
+  "verdictForLivePortion": "BLOCKED",
+  "offlineImplementation": "GREEN",
+  "networkRequestsThisTask": 0,
+  "providerRequestsThisTask": 0,
+  "credentialReads": 0,
+  "note": "Do not use fixtures to fake Live smoke. Owner may re-run with OPERATOR_API_LIVE=1 and runtime HELIUS_API_KEY for 1–2 public CAs, budget<=20."
+}

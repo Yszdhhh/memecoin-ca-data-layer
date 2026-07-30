@@ -1,0 +1,13 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+  "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196",
+  "commands": {
+    "typecheck": "PASS",
+    "hotpathTests": { "pass": 9, "fail": 0 },
+    "rootTest": "see full suite on commit",
+    "consoleCheck": "PASS post-shell-merge"
+  },
+  "offline": "GREEN",
+  "liveSmoke": "BLOCKED (no HELIUS_API_KEY in env)",
+  "overall": "GREEN for offline delivery; Live smoke blocked without credential"
+}
