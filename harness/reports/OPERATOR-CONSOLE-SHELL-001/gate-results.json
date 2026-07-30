@@ -1,0 +1,24 @@
+{
+  "taskId": "OPERATOR-CONSOLE-SHELL-001",
+  "M1_BASE_MAIN_SHA": "a3a96379abfc6b6561783553fbad7a602ae4e66d",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "credentialReads": 0,
+  "commands": {
+    "harnessDoctor": "GREEN (dirty-tree warning expected mid-delivery)",
+    "typecheck": "PASS",
+    "test": { "result": "PASS", "pass": 407, "fail": 0, "skipped": 1 },
+    "build": "PASS",
+    "consoleCheck": { "typecheck": "PASS", "vitest": "9/9 PASS", "build": "PASS" },
+    "consoleBuild": "PASS"
+  },
+  "scans": {
+    "credentialSecretValues": "PASS",
+    "privateWalletArtifacts": "PASS",
+    "absoluteLocalPathInBundle": "PASS",
+    "trackedRawPayload": "PASS",
+    "browserBundleSecrets": "PASS",
+    "utf8AuthorityDocsMojibake": "FIXED (docs-only rewrite of corrupted 3 files)"
+  },
+  "summary": "ALL_GATES_PASS"
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "OPERATOR-CONSOLE-SHELL-001",
+  "title": "Operator Console Shell — browser fixture console (M1 phase 1)",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Ship apps/operator-console with React+Vite fixture data source, four main routes (CA/wallets/addresses/tasks), trust split display, zero Live Provider, and production build + tests GREEN.",
+  "dependencies": [
+    "M0-CA-CLEANING-MAIN-INTEGRATION-001",
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002"
+  ],
+  "write_set": [
+    "apps/operator-console/**",
+    "package.json",
+    "docs/contracts/OPERATOR_CONSOLE_DATA_SOURCE_V1.md",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md",
+    "harness/CURRENT_WAVE.md",
+    "harness/tasks/OPERATOR-CONSOLE-SHELL-001.json",
+    "harness/reports/OPERATOR-CONSOLE-SHELL-001/**"
+  ],
+  "forbidden_actions": [
+    "No Live Helius/GMGN/RPC calls",
+    "No chainfm_out / DPAPI / credentials",
+    "No PostgreSQL",
+    "No force-push / squash history rewrite"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run console:check",
+    "npm run console:build"
+  ],
+  "baseline": {
+    "branch": "feature/operator-console-shell-001",
+    "M1_BASE_MAIN_SHA": "a3a96379abfc6b6561783553fbad7a602ae4e66d"
+  },
+  "verdict": "GREEN",
+  "next_gate": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001"
+}

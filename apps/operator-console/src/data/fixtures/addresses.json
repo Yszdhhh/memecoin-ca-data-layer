@@ -1,0 +1,31 @@
+{
+  "disclaimer": "Local demo data — not persisted to production database",
+  "items": [
+    {
+      "id": "demo-addr-1",
+      "display": "demo…addr1",
+      "labels": [
+        {
+          "label": "research_watch",
+          "source": "local_demo",
+          "confidence": 0.5,
+          "verificationStatus": "unverified"
+        }
+      ],
+      "note": "Fixture address for console shell"
+    },
+    {
+      "id": "demo-addr-2",
+      "display": "demo…addr2",
+      "labels": [
+        {
+          "label": "lp_suspect_unverified",
+          "source": "local_demo",
+          "confidence": 0.3,
+          "verificationStatus": "unverified"
+        }
+      ],
+      "note": ""
+    }
+  ]
+}

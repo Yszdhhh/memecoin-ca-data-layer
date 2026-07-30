@@ -1,0 +1,14 @@
+{
+  "taskId": "OPERATOR-CONSOLE-SHELL-001",
+  "capturedAt": "2026-07-30T15:50:00Z",
+  "method": "playwright-core channel=chrome against vite preview 127.0.0.1:4173",
+  "networkLiveProviders": 0,
+  "screenshots": [
+    { "id": "ca-list", "path": "screenshots/ca-list.png", "route": "/ca", "containsPrivateData": false },
+    { "id": "ca-ok", "path": "screenshots/ca-ok.png", "route": "/ca/H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump", "containsPrivateData": false },
+    { "id": "ca-partial", "path": "screenshots/ca-partial.png", "route": "/ca/H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump", "containsPrivateData": false },
+    { "id": "wallet-detail", "path": "screenshots/wallet-detail.png", "route": "/wallets/fp-b0368d73", "containsPrivateData": false },
+    { "id": "addresses", "path": "screenshots/addresses.png", "route": "/addresses", "containsPrivateData": false },
+    { "id": "tasks", "path": "screenshots/tasks.png", "route": "/tasks", "containsPrivateData": false }
+  ]
+}

@@ -1,0 +1,571 @@
+{
+  "generatedFrom": "SOL-CA-REAL-DATA-CLEANING-PILOT-001+REPAIR-002 remap",
+  "networkRequests": 0,
+  "items": [
+    {
+      "mint": "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump",
+      "status": "OK",
+      "symbol": "BNUT",
+      "name": "Baseball Squirrel",
+      "decimals": 6,
+      "mintSupplyRaw": "966968333378029",
+      "observedAt": "2026-07-30T09:12:12.623Z",
+      "sourceWatermark": "pagination_complete",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 6,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": true,
+      "accounting": {
+        "mintSupplyRaw": "966968333378029",
+        "enumeratedTokenAccountBalanceRaw": "966968333378029",
+        "includedOwnerBalanceRaw": "966968333378029",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "0",
+        "accountingResidualRatio": 0,
+        "completeness": "complete",
+        "paginationComplete": true,
+        "residualReasons": [],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 2265,
+        "included": 2265,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 2270
+      },
+      "paginationComplete": true,
+      "concentration": {
+        "top1": {
+          "numerator": "315947465296453",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "401013503325765",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "463331015755564",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "552874852247110",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "699539796546903",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "808643367814253",
+          "denominator": "966968333378029",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    },
+    {
+      "mint": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+      "status": "OK",
+      "symbol": "bulltom",
+      "name": "bulltom",
+      "decimals": 6,
+      "mintSupplyRaw": "963545584098470",
+      "observedAt": "2026-07-30T09:07:46.831Z",
+      "sourceWatermark": "pagination_complete",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 4,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": true,
+      "accounting": {
+        "mintSupplyRaw": "963545584098470",
+        "enumeratedTokenAccountBalanceRaw": "963545584098470",
+        "includedOwnerBalanceRaw": "963545584098470",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "0",
+        "accountingResidualRatio": 0,
+        "completeness": "complete",
+        "paginationComplete": true,
+        "residualReasons": [],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 653,
+        "included": 653,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 654
+      },
+      "paginationComplete": true,
+      "concentration": {
+        "top1": {
+          "numerator": "801134572575120",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "877231664974712",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "908772783529188",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "937860492723929",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "956859100513932",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "961871534063103",
+          "denominator": "963545584098470",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    },
+    {
+      "mint": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "status": "PARTIAL",
+      "symbol": "Himgajria",
+      "name": "The Black Bear",
+      "decimals": 6,
+      "mintSupplyRaw": "999969213669535",
+      "observedAt": "2026-07-30T09:08:01.806Z",
+      "sourceWatermark": "pagination_complete",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 5,
+      "accountingEligible": false,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": false,
+      "accounting": {
+        "mintSupplyRaw": "999969213669535",
+        "enumeratedTokenAccountBalanceRaw": "999762700736565",
+        "includedOwnerBalanceRaw": "999762700736565",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "206512932970",
+        "accountingResidualRatio": 0.000206,
+        "completeness": "partial",
+        "paginationComplete": true,
+        "residualReasons": [
+          "mint_gt_enumerated"
+        ],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 1846,
+        "included": 1846,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 1854
+      },
+      "paginationComplete": true,
+      "concentration": {
+        "top1": {
+          "numerator": "800000000000000",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "881917968001775",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "901441745043773",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "922495730915525",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "955990667161764",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "978640002350904",
+          "denominator": "999969213669535",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [
+        {
+          "code": "supply_mismatch",
+          "severity": "error",
+          "affectedRecordCount": 1,
+          "affectedBalance": "206512932970",
+          "whetherManualReviewRequired": true,
+          "evidence": [
+            "mintSupplyRaw=999969213669535",
+            "enumerated=999762700736565",
+            "paginationComplete=true"
+          ]
+        }
+      ],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    },
+    {
+      "mint": "BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump",
+      "status": "OK",
+      "symbol": "EVE",
+      "name": "Eve",
+      "decimals": 6,
+      "mintSupplyRaw": "994554165960313",
+      "observedAt": "2026-07-30T09:12:28.305Z",
+      "sourceWatermark": "pagination_complete",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 4,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": true,
+      "accounting": {
+        "mintSupplyRaw": "994554165960313",
+        "enumeratedTokenAccountBalanceRaw": "994554165960313",
+        "includedOwnerBalanceRaw": "994554165960313",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "0",
+        "accountingResidualRatio": 0,
+        "completeness": "complete",
+        "paginationComplete": true,
+        "residualReasons": [],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 571,
+        "included": 571,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 571
+      },
+      "paginationComplete": true,
+      "concentration": {
+        "top1": {
+          "numerator": "64672086956750",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "134392509746342",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "197935664771608",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "317263921565652",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "613311150913738",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "922781665239227",
+          "denominator": "994554165960313",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    },
+    {
+      "mint": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
+      "status": "PARTIAL",
+      "symbol": "neet",
+      "name": "NotInEmploymentEducationTraining",
+      "decimals": 6,
+      "mintSupplyRaw": "999764613589960",
+      "observedAt": "2026-07-30T09:09:10.246Z",
+      "sourceWatermark": "pagination_partial",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 5,
+      "accountingEligible": false,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": false,
+      "accounting": {
+        "mintSupplyRaw": "999764613589960",
+        "enumeratedTokenAccountBalanceRaw": "47686650240371",
+        "includedOwnerBalanceRaw": "47686650240371",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "952077963349589",
+        "accountingResidualRatio": 0.952302,
+        "completeness": "partial",
+        "paginationComplete": false,
+        "residualReasons": [
+          "pagination_incomplete",
+          "mint_gt_enumerated"
+        ],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 996,
+        "included": 996,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 1000
+      },
+      "paginationComplete": false,
+      "concentration": {
+        "top1": {
+          "numerator": "6000000000000",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "23467133057312",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "31066854272265",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "38326211572919",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "45165715837884",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "47032125264505",
+          "denominator": "999764613589960",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [
+        {
+          "code": "pagination_incomplete",
+          "severity": "warning",
+          "affectedRecordCount": 1000,
+          "affectedBalance": "47686650240371",
+          "whetherManualReviewRequired": true,
+          "evidence": [
+            "paginationComplete=false"
+          ]
+        },
+        {
+          "code": "supply_mismatch",
+          "severity": "warning",
+          "affectedRecordCount": 1,
+          "affectedBalance": "952077963349589",
+          "whetherManualReviewRequired": true,
+          "evidence": [
+            "mintSupplyRaw=999764613589960",
+            "enumerated=47686650240371",
+            "paginationComplete=false"
+          ]
+        }
+      ],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    },
+    {
+      "mint": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "status": "PARTIAL",
+      "symbol": "Brötchen",
+      "name": "Brötchen",
+      "decimals": 6,
+      "mintSupplyRaw": "999830823774071",
+      "observedAt": "2026-07-30T09:10:00.940Z",
+      "sourceWatermark": "pagination_partial",
+      "dataSource": "fixture",
+      "provider": "helius-scrubbed-pilot",
+      "heliusRequestCountHistorical": 6,
+      "accountingEligible": false,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "judgmentEligibleDeprecated": false,
+      "accounting": {
+        "mintSupplyRaw": "999830823774071",
+        "enumeratedTokenAccountBalanceRaw": "521518199300547",
+        "includedOwnerBalanceRaw": "521518199300547",
+        "excludedBalanceRaw": "0",
+        "unresolvedBalanceRaw": "0",
+        "accountingResidualRaw": "478312624473524",
+        "accountingResidualRatio": 0.478393,
+        "completeness": "partial",
+        "paginationComplete": false,
+        "residualReasons": [
+          "pagination_incomplete",
+          "mint_gt_enumerated"
+        ],
+        "identity": "enumerated = included + excluded + unresolved"
+      },
+      "ownerCounts": {
+        "total": 1993,
+        "included": 1993,
+        "excluded": 0,
+        "unresolved": 0,
+        "tokenAccounts": 2000
+      },
+      "paginationComplete": false,
+      "concentration": {
+        "top1": {
+          "numerator": "26751415119358",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top5": {
+          "numerator": "85171631553090",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top10": {
+          "numerator": "126707410717011",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top20": {
+          "numerator": "180238411084135",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top50": {
+          "numerator": "274210624133530",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        },
+        "top100": {
+          "numerator": "350356322713836",
+          "denominator": "999830823774071",
+          "ratio": null,
+          "verificationStatus": "unverified"
+        }
+      },
+      "concentrationWarnings": [
+        "pool_exclusion_coverage_incomplete",
+        "not_cleaned_investor_concentration",
+        "concentration_partial_or_unconfirmed"
+      ],
+      "issues": [
+        {
+          "code": "pagination_incomplete",
+          "severity": "warning",
+          "affectedRecordCount": 2000,
+          "affectedBalance": "521518199300547",
+          "whetherManualReviewRequired": true,
+          "evidence": [
+            "paginationComplete=false"
+          ]
+        },
+        {
+          "code": "supply_mismatch",
+          "severity": "warning",
+          "affectedRecordCount": 1,
+          "affectedBalance": "478312624473524",
+          "whetherManualReviewRequired": true,
+          "evidence": [
+            "mintSupplyRaw=999830823774071",
+            "enumerated=521518199300547",
+            "paginationComplete=false"
+          ]
+        }
+      ],
+      "universeDefinition": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete"
+    }
+  ]
+}
