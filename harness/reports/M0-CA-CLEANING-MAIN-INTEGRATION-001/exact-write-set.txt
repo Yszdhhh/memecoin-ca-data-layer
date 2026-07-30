@@ -1,0 +1,44 @@
+# M0-CA-CLEANING-MAIN-INTEGRATION-001 exact write-set ledger
+# Integration role: docs/report only on main after merge gates.
+# Merge commit: 2976316e3853e377eff112484f9817ac2e1eba57
+# Audited implementation pin: a1d56dade268d24a1205e010581b6f6c478ac1bb
+# Audit-artifact commit: f2b1ab1d7f3702d2b141d8a18f76b4902cf75998
+
+## A) Audit-artifact commit on feature (f2b1ab1) — docs/harness only
+docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md
+docs/handoffs/STATUS_SYSTEM_20260730.md
+harness/CURRENT_WAVE.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/_probe.mjs
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/acceptance.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/exact-write-set.txt
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/findings.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/lineage.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/probe-output.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/regression-results.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/remap-diff-summary.json
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002.json
+
+Note: _probe.mjs + probe-output.json included (relative imports only; no credentials;
+no raw provider payload; audit reproduction value).
+
+## B) Feature → main merge delta (777e013..2976316) — 80 paths
+# Full list is the audited pilot + audit lineage brought by the merge.
+# Includes: holder-data-cleaning, map-holder-cleaning-to-ca-scan, pilot app/cli,
+# tests, scrubbed pilot reports (6 CA), AUDIT-001, REPAIR-002, REPAIR-AUDIT-002,
+# clean-rank replay desensitized summary, status/plan docs, package.json script line.
+# Explicitly NOT included: chainfm_out, .env, DPAPI, private wallet tables, raw RPC payloads.
+
+## C) This integration-report commit on main (docs only)
+harness/tasks/M0-CA-CLEANING-MAIN-INTEGRATION-001.json
+harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/acceptance.md
+harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/lineage.json
+harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/exact-write-set.txt
+harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/gate-results.json
+
+## Explicitly not modified by integration-report commit
+src/**
+test/**
+db/**
+package.json
+provider implementations
+domain rules

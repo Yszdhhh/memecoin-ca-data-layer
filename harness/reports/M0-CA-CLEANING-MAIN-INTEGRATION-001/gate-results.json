@@ -1,0 +1,55 @@
+{
+  "taskId": "M0-CA-CLEANING-MAIN-INTEGRATION-001",
+  "runOn": "2976316e3853e377eff112484f9817ac2e1eba57",
+  "branch": "main",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "credentialReads": 0,
+  "liveHelius": 0,
+  "liveGmgn": 0,
+  "commands": {
+    "harnessDoctor": {
+      "command": "npm run harness:doctor",
+      "result": "GREEN",
+      "errors": [],
+      "warnings": []
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    "test": {
+      "command": "npm test",
+      "result": "PASS",
+      "tests": 408,
+      "pass": 407,
+      "fail": 0,
+      "skipped": 1,
+      "duration_ms": 3866.375
+    },
+    "build": {
+      "command": "npm run build",
+      "result": "PASS"
+    }
+  },
+  "scans": {
+    "forbiddenPrivatePathsInTree": "PASS",
+    "forbiddenCredentialSecretValuesInMergeDelta": "PASS",
+    "forbiddenProviderSecretUrlsInMergeDelta": "PASS",
+    "trackedRawProviderPayloadInPilotReports": "PASS",
+    "chainfmOutInGit": "PASS_ABSENT",
+    "dotEnvInGit": "PASS_ABSENT",
+    "dpapiBlobsInGit": "PASS_ABSENT",
+    "gitDiffHygiene": "PASS"
+  },
+  "ancestry": {
+    "a1d56da_ancestor_of_merge": true,
+    "f2b1ab1_ancestor_of_merge": true,
+    "mergeIsTrueMergeCommit": true,
+    "parents": [
+      "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+      "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998"
+    ]
+  },
+  "summary": "ALL_GATES_PASS"
+}

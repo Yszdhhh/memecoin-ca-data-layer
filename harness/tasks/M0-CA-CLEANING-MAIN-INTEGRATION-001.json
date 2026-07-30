@@ -1,0 +1,62 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "M0-CA-CLEANING-MAIN-INTEGRATION-001",
+  "title": "Integrate audited CA cleaning pilot into main via merge commit",
+  "tier": "T3",
+  "role": "integrator",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Commit REPAIR-AUDIT-002 GREEN artifacts on feature, push, open PR to main, merge with merge-commit (no squash/rebase), run offline integration gates on the merge commit, and stop without starting next-stage work.",
+  "dependencies": [
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002"
+  ],
+  "inputs": [
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/**",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md"
+  ],
+  "write_set": [
+    "harness/tasks/M0-CA-CLEANING-MAIN-INTEGRATION-001.json",
+    "harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/**"
+  ],
+  "forbidden_actions": [
+    "No squash/rebase/cherry-pick of implementation commits.",
+    "No force-push or history rewrite.",
+    "No Live Provider, credential reads, chainfm_out import.",
+    "Do not start OPERATOR-CONSOLE, hotpath, Live batches, PG, liquidity after GREEN."
+  ],
+  "deliverables": [
+    "harness/tasks/M0-CA-CLEANING-MAIN-INTEGRATION-001.json",
+    "harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/acceptance.md",
+    "harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/lineage.json",
+    "harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/exact-write-set.txt",
+    "harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/gate-results.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "baseline": {
+    "sourceBranch": "feature/sol-ca-real-data-cleaning-pilot-001",
+    "auditedImplementationPin": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+    "auditArtifactCommit": "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998",
+    "mainBase": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+    "mergeCommit": "2976316e3853e377eff112484f9817ac2e1eba57",
+    "pr": "https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/4"
+  },
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "credential_reads": 0,
+    "live_helius": 0,
+    "live_gmgn": 0
+  },
+  "verdict": "GREEN",
+  "next_recommended": [
+    "OPERATOR-CONSOLE-SHELL-001",
+    "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001"
+  ]
+}

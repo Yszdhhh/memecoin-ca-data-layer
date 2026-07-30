@@ -1,0 +1,55 @@
+{
+  "taskId": "M0-CA-CLEANING-MAIN-INTEGRATION-001",
+  "repo": "https://github.com/Yszdhhh/memecoin-ca-data-layer.git",
+  "sourceBranch": "feature/sol-ca-real-data-cleaning-pilot-001",
+  "targetBranch": "main",
+  "pr": {
+    "number": 4,
+    "url": "https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/4",
+    "state": "MERGED",
+    "mergeMethod": "merge_commit"
+  },
+  "pins": {
+    "mainBaseBeforeMerge": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+    "auditedImplementation": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+    "auditArtifactDocs": "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998",
+    "mergeCommit": "2976316e3853e377eff112484f9817ac2e1eba57",
+    "featureTipAtMerge": "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998"
+  },
+  "mergeParents": {
+    "firstParent": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+    "secondParent": "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998"
+  },
+  "ancestryChecks": {
+    "a1d56da_is_ancestor_of_merge": true,
+    "f2b1ab1_is_ancestor_of_merge": true,
+    "method": "git merge-base --is-ancestor"
+  },
+  "linearFeatureHistoryPreserved": [
+    {
+      "sha": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+      "subject": "feat(solana): CA real-data holder cleaning pilot + system status handoff"
+    },
+    {
+      "sha": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+      "subject": "docs(harness): publish CA pilot audit and Repair-003 clean-rank replay"
+    },
+    {
+      "sha": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+      "subject": "fix(solana): repair mixed-owner cleaning and split concentration gates"
+    },
+    {
+      "sha": "f2b1ab1d7f3702d2b141d8a18f76b4902cf75998",
+      "subject": "docs(audit): record M0 CA cleaning audit green"
+    }
+  ],
+  "forbiddenOps": {
+    "squash": false,
+    "rebase": false,
+    "cherryPickImplementation": false,
+    "forcePush": false,
+    "historyRewrite": false
+  },
+  "mainAdvancedBeforeMerge": false,
+  "conflicts": "none"
+}
