@@ -23,7 +23,9 @@
     "console:build": "npm --prefix apps/operator-console run build",
     "console:test": "npm --prefix apps/operator-console run test",
     "console:check": "npm --prefix apps/operator-console run check",
-    "operator-api": "tsx src/cli/run-operator-api.ts"
+    "operator-api": "tsx src/cli/run-operator-api.ts",
+    "address:import-local": "tsx src/cli/import-local-address-pool.ts",
+    "security:scan": "node scripts/security-retention-scan.mjs"
   },
   "dependencies": {
     "gmgn-cli": "1.5.4",

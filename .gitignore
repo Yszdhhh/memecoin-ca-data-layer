@@ -17,3 +17,6 @@ harness/logs/*
 apps/operator-console/tsconfig.tsbuildinfo
 apps/operator-console/dist/
 
+
+.local-data/
+
