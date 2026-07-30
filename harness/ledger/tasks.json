@@ -1115,7 +1115,7 @@
     {
       "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001",
       "spec": "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
