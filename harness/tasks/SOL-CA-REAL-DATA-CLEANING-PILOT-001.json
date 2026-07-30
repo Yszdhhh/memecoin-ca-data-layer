@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+  "title": "Solana CA-first real holder data cleaning pilot",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Using the existing read-only Helius boundary only, run a fixed 5–10 public Solana CA pilot that advances from mint/metadata/token-account counts to full token-account enumeration, owner aggregation, cleaning classification, supply accounting, raw/cleaned universes, concentration metrics, CaScanResponseV1 mapping, and a real-data gap matrix. No new providers, no auto-discovery, no production DB, no SOL-E2E expansion.",
+  "dependencies": [
+    "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001",
+    "CA-SCAN-RESPONSE-V1-REPAIR-002"
+  ],
+  "inputs": [
+    "docs/LOCAL_WORKSPACE_PATHS.md",
+    "harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/input-manifest.json",
+    "src/domain/rules/holder-data-cleaning.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "src/application/live/solana-ca-real-data-cleaning-pilot.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/domain/contracts/ca-scan-response-v1.ts"
+  ],
+  "write_set": [
+    "docs/LOCAL_WORKSPACE_PATHS.md",
+    "harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-001.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**",
+    "src/domain/rules/holder-data-cleaning.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "src/application/live/solana-ca-real-data-cleaning-pilot.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "src/cli/run-solana-ca-real-data-cleaning-pilot.ts",
+    "scripts/run-solana-ca-real-data-cleaning-pilot.ps1",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not add DexScreener, GMGN, Birdeye, Rugcheck, or any non-Helius provider.",
+    "Do not fall back to public Solana RPC.",
+    "Do not auto-discover or dynamically add CAs beyond the fixed input manifest.",
+    "Do not enable cron, scheduler, queue, or background workers.",
+    "Do not write production PostgreSQL or Redis.",
+    "Do not trade, sign, or handle private keys.",
+    "Do not log or commit API keys, credential-bearing URLs, raw headers, cookies, or unscrubbed provider payloads.",
+    "Do not modify main, force-push, or rewrite history.",
+    "Do not implement Pump decode, creator history, Dev sell, funding clusters, or wallet PnL."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/batch-summary.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/gap-matrix.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/execution-manifest.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ]
+}

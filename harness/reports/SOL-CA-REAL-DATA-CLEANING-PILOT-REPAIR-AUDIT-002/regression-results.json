@@ -1,0 +1,216 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002",
+  "auditedPin": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "credentialReads": 0,
+  "dpapiReads": 0,
+  "heliusRequests": 0,
+  "gmgnRequests": 0,
+  "executedAt": "2026-07-30T evening local audit",
+  "note": "Numbers below were produced by this audit run; not copied from Repair-002 report as claimed results.",
+  "offlineGates": {
+    "harnessDoctor": { "command": "npm run harness:doctor", "result": "GREEN", "warnings": [] },
+    "typecheck": { "command": "npm run typecheck", "result": "PASS" },
+    "test": {
+      "command": "npm test",
+      "result": "PASS",
+      "tests": 408,
+      "pass": 407,
+      "fail": 0,
+      "skipped": 1,
+      "duration_ms": 3661.6993
+    },
+    "build": { "command": "npm run build", "result": "PASS" },
+    "targetedRepairSuite": {
+      "command": "npx tsx --test test/domain/rules/holder-data-cleaning.test.ts test/application/live/solana-ca-real-data-cleaning-pilot.test.ts",
+      "result": "PASS",
+      "tests": 34,
+      "pass": 34,
+      "fail": 0
+    },
+    "offlineRemap6Ca": {
+      "command": "npx tsx --test test/application/live/solana-ca-real-data-cleaning-pilot.test.ts (with SOL_CA_REPAIR_REMAP_OUT)",
+      "result": "PASS",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "artifact": "remap-diff-summary.json"
+    }
+  },
+  "mixedOwnerMatrix": [
+    {
+      "id": "1",
+      "name": "included positive + zero balance",
+      "result": "PASS",
+      "observed": "owner stays included_holder; included raw retains positive; zero sibling does not whole-owner exclude"
+    },
+    {
+      "id": "2",
+      "name": "included positive + closed zero",
+      "result": "PASS",
+      "observed": "owner stays included_holder; closed-zero sibling does not whole-owner exclude"
+    },
+    {
+      "id": "3",
+      "name": "included positive + closed positive",
+      "result": "PASS",
+      "observed": "owner unresolved_exclusion_candidate; full balance unresolved; manual review mixed_owner_positive_closed_balance"
+    },
+    {
+      "id": "4",
+      "name": "included positive + invalid raw amount",
+      "result": "PASS",
+      "observed": "owner unresolved; not silent exclude; mixed_owner_unparseable_sibling + manual review"
+    },
+    {
+      "id": "5",
+      "name": "included positive + unresolved path",
+      "result": "PASS",
+      "observed": "closed-positive path yields unresolved; full balance unresolved; manual review required"
+    },
+    {
+      "id": "6",
+      "name": "included positive + hard-evidence infrastructure",
+      "result": "PASS",
+      "observed": "owner-level known_program hard evidence → whole-owner infrastructure exclusion with evidence"
+    },
+    {
+      "id": "7",
+      "name": "pure zero owner",
+      "result": "PASS",
+      "observed": "cleaningClass=zero_balance"
+    },
+    {
+      "id": "8",
+      "name": "pure closed-zero owner",
+      "result": "PASS",
+      "observed": "cleaningClass=closed_or_inactive"
+    },
+    {
+      "id": "9",
+      "name": "multiple positive included token accounts",
+      "result": "PASS",
+      "observed": "owner sum merges all positives into cleaned universe"
+    },
+    {
+      "id": "10",
+      "name": "mixed owner positive balance not lost",
+      "result": "PASS",
+      "observed": "R11 unit test + probe R1/R2/R9 retain positive in included when only zero/closed-zero siblings"
+    },
+    {
+      "id": "11",
+      "name": "included/excluded/unresolved partitions mutually exclusive",
+      "result": "PASS",
+      "observed": "probe exclusive=true; partition owner count identity; unit R10"
+    },
+    {
+      "id": "12",
+      "name": "positive balance not double-counted",
+      "result": "PASS",
+      "observed": "owner aggregation sums ATAs once; identity enumerated = included + excluded + unresolved"
+    },
+    {
+      "id": "13",
+      "name": "owner and global amount accounting conservation",
+      "result": "PASS",
+      "observed": "accounting.identity constant on all probe cases; unit tests 9/R10"
+    },
+    {
+      "id": "14",
+      "name": "unresolved triggers manual review",
+      "result": "PASS",
+      "observed": "whetherManualReviewRequired=true for mixed invalid/closed-positive; concentrationEligible=false"
+    },
+    {
+      "id": "15",
+      "name": "identical replay deterministic",
+      "result": "PASS",
+      "observed": "stableSerialize double-run hash equal (probe ha=hb; unit R16 + test 12)"
+    }
+  ],
+  "mixedOwnerMatrixSummary": { "total": 15, "pass": 15, "fail": 0 },
+  "auditorProbeSummary": {
+    "source": "_probe.mjs / probe-output.json",
+    "cases": 10,
+    "pass": 10,
+    "fail": 0,
+    "deterministicHashEqual": true
+  },
+  "trustSplitChecks": {
+    "fieldsExistIndependently": [
+      "accountingEligible",
+      "exclusionCoverage",
+      "concentrationEligible"
+    ],
+    "judgmentEligibleIsLegacyAliasOfAccountingOnly": true,
+    "accountingConfirmedRequires": [
+      "paginationComplete",
+      "mint supply parseable",
+      "partition identity",
+      "residual == 0",
+      "no accounting blocking issues"
+    ],
+    "concentrationConfirmedRequires": [
+      "accountingEligible",
+      "exclusionCoverage == complete",
+      "no unresolved positive balance",
+      "no concentration blocking issues"
+    ],
+    "pilotExclusionCoverage": "partial",
+    "pilotConcentrationEligibleAlwaysFalseUnderPartialCoverage": true,
+    "mappingDoesNotConfirmTop10Top20WhenCoveragePartial": true,
+    "universeDefinitionNotCleanedInvestorWhenPartial": true,
+    "result": "PASS"
+  },
+  "sixCaOfflineRemap": {
+    "heliusRefetch": 0,
+    "historicalBatchUnchanged": "3 OK / 3 PARTIAL / 30 Helius historical requests",
+    "okCasAccounting": "confirmed",
+    "okCasConcentration": "unverified",
+    "partialCasAccounting": "unverified",
+    "partialCasConcentration": "unverified",
+    "top10Top20": {
+      "verificationStatus": "unverified",
+      "ratio": null,
+      "completenessNotOne": true,
+      "warningsInclude": [
+        "pool_exclusion_coverage_incomplete",
+        "concentration_partial_or_unconfirmed",
+        "not_cleaned_investor_concentration"
+      ]
+    },
+    "result": "PASS",
+    "detailArtifact": "remap-diff-summary.json"
+  },
+  "legacyAliasScan": {
+    "judgmentEligibleDefinition": "judgmentEligible = accountingEligible (holder-data-cleaning.ts)",
+    "callSites": [
+      "src/application/live/solana-ca-real-data-cleaning-pilot.ts — batch OK/PARTIAL accounting gate only",
+      "src/cli/run-solana-ca-real-data-cleaning-pilot.ts — summary export of same alias"
+    ],
+    "concentrationUsesJudgmentEligible": false,
+    "top10Top20ConfirmedViaJudgmentEligible": false,
+    "result": "PASS"
+  },
+  "leakScans": {
+    "forbiddenProviderSecretValuesInRepairWriteSet": "PASS",
+    "forbiddenCredentialSecretValuesInPilotReports": "PASS (documentation mentions of DPAPI path / HELIUS_API_KEY.dpapi requirement only; no secret material)",
+    "trackedRawProviderPayloadScan": "PASS",
+    "privateWalletDetailReadsThisAudit": 0
+  },
+  "gitDiffHygiene": {
+    "auditorDidNotModifyImplementation": true,
+    "mainAt": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+    "repairCommitWriteSetMatchesClaim": true
+  },
+  "positiveBalanceConservation": {
+    "result": "PASS",
+    "evidence": [
+      "unit R1-R5,R9-R11",
+      "auditor probe R1-R5,R9-R10",
+      "partition identity on all cases"
+    ]
+  }
+}

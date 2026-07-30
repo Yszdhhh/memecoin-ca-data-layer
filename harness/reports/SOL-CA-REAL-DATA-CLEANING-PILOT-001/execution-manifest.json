@@ -1,0 +1,45 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+  "version": "sol-ca-real-data-cleaning-pilot-v1",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "rpcEndpointMode": "gatekeeper_beta",
+  "readOnly": true,
+  "sequential": true,
+  "manualTrigger": true,
+  "sampleCount": 6,
+  "samples": [
+    {
+      "ca": "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump",
+      "selectionReason": "Public pump mint; multi-thousand holders with observed supply residual in pilot."
+    },
+    {
+      "ca": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+      "selectionReason": "Public pump mint; complete pagination and residual-zero accounting candidate."
+    },
+    {
+      "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "selectionReason": "Public pump mint; multi-owner aggregation with multi-account owners."
+    },
+    {
+      "ca": "BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump",
+      "selectionReason": "Public pump mint; mid-size holder set for concentration metrics."
+    },
+    {
+      "ca": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
+      "selectionReason": "Public pump mint from prior manual smoke freeze; diversity replacement for flaky endpoints."
+    },
+    {
+      "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "selectionReason": "Public pump mint from prior manual smoke freeze; additional complete-accounting probe."
+    }
+  ],
+  "status": "PARTIAL",
+  "okCount": 3,
+  "partialCount": 3,
+  "rejectedCount": 0,
+  "totalHeliusRequests": 30,
+  "judgmentEligibleCount": 3,
+  "localWorkspaceNote": "docs/LOCAL_WORKSPACE_PATHS.md",
+  "generatedAt": "2026-07-30T09:13:11.694Z"
+}

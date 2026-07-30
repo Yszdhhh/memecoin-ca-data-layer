@@ -1,0 +1,86 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002",
+  "title": "Independent zero-network audit of SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Independently audit Repair-002 at exact pin a1d56da: mixed-owner matrix, partition conservation, accountingEligible/exclusionCoverage/concentrationEligible separation, offline 6-CA remap, legacy judgmentEligible alias, write-set/lineage, zero-network leak gates. Verdict GREEN | REQUEST_CHANGES | BLOCKED only. No implementation changes; no merge/hotpath/Live.",
+  "dependencies": [
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001",
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+    "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/**",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/**",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**",
+    "src/domain/rules/holder-data-cleaning.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "src/application/live/solana-ca-real-data-cleaning-pilot.ts",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/**",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md",
+    "harness/CURRENT_WAVE.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation code or product tests (auditor read-only on domain/application).",
+    "Do not issue network, provider, Helius, GMGN, or RPC requests.",
+    "Do not read credentials, DPAPI secrets, proxy URLs, or private wallet detail tables.",
+    "Do not re-run Live pilot against Helius.",
+    "Do not merge, rebase, reset --hard, push, force-push, or modify main.",
+    "Do not open hotpath, new Live batches, Web live wiring, Portfolio spike, or wallet rule changes."
+  ],
+  "deliverables": [
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/findings.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/regression-results.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/lineage.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/exact-write-set.txt"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0,
+    "dpapi_reads": 0,
+    "private_wallet_detail_reads": 0,
+    "implementation_modifications_by_auditor": 0,
+    "main_modifications": 0,
+    "merge": 0,
+    "rebase": 0,
+    "push": 0,
+    "force_push": 0
+  },
+  "baseline": {
+    "branch": "feature/sol-ca-real-data-cleaning-pilot-001",
+    "auditExactPin": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+    "preRepairAuditPin": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+    "docsCommitBetween": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+    "mainBaseline": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+    "note": "Auditor must pin a1d56da; do not audit floating HEAD."
+  },
+  "verdict": "GREEN",
+  "next_gate": "Owner decision only: prepare CA pilot merge readiness; do not auto-start hotpath or Live batches"
+}

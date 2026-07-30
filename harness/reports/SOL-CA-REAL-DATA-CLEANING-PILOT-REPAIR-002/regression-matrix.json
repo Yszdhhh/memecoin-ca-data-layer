@@ -1,0 +1,116 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "auditPin": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+  "workspaceHead": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "cases": [
+    {
+      "id": "R1",
+      "name": "included positive + zero_balance",
+      "result": "PASS",
+      "assert": "owner stays included_holder; positive in cleaned; zero stays account-level zero_balance"
+    },
+    {
+      "id": "R2",
+      "name": "included positive + closed zero",
+      "result": "PASS",
+      "assert": "owner stays included_holder; closed sibling remains closed_or_inactive at account level"
+    },
+    {
+      "id": "R3",
+      "name": "included positive + closed positive",
+      "result": "PASS",
+      "assert": "owner unresolved_exclusion_candidate; full balance unresolved; manual review; issue mixed_owner_positive_closed_balance"
+    },
+    {
+      "id": "R4",
+      "name": "included positive + invalid raw amount",
+      "result": "PASS",
+      "assert": "owner unresolved; not excluded; issue mixed_owner_unparseable_sibling; manual review"
+    },
+    {
+      "id": "R5",
+      "name": "included positive + unresolved path",
+      "result": "PASS",
+      "assert": "owner unresolved; full balance unresolved; manual review required"
+    },
+    {
+      "id": "R6",
+      "name": "included positive + hard-evidence infrastructure",
+      "result": "PASS",
+      "assert": "whole-owner known_program_or_infrastructure exclusion with evidence"
+    },
+    {
+      "id": "R7",
+      "name": "pure zero owner",
+      "result": "PASS",
+      "assert": "cleaningClass=zero_balance"
+    },
+    {
+      "id": "R8",
+      "name": "pure closed-zero owner",
+      "result": "PASS",
+      "assert": "cleaningClass=closed_or_inactive"
+    },
+    {
+      "id": "R9",
+      "name": "multiple positive included token accounts",
+      "result": "PASS",
+      "assert": "owner sum and cleaned universe include all positives"
+    },
+    {
+      "id": "R10",
+      "name": "global included/excluded/unresolved conservation",
+      "result": "PASS",
+      "assert": "enumerated = included + excluded + unresolved"
+    },
+    {
+      "id": "R11",
+      "name": "mixed owner positive balance not lost",
+      "result": "PASS",
+      "assert": "includedOwnerBalanceRaw retains positive residual"
+    },
+    {
+      "id": "R12",
+      "name": "unresolved owner requires manual review",
+      "result": "PASS",
+      "assert": "whetherManualReviewRequired=true; concentrationEligible=false"
+    },
+    {
+      "id": "R13",
+      "name": "accounting complete + pool coverage partial",
+      "result": "PASS",
+      "assert": "accountingEligible=true; concentrationEligible=false; accounting judgment confirmed; Top10/Top20 unverified"
+    },
+    {
+      "id": "R14",
+      "name": "pagination partial",
+      "result": "PASS",
+      "assert": "accountingEligible=false; concentrationEligible=false"
+    },
+    {
+      "id": "R15",
+      "name": "supply residual",
+      "result": "PASS",
+      "assert": "accountingEligible=false; concentrationEligible=false; supply_mismatch issue"
+    },
+    {
+      "id": "R16",
+      "name": "identical input double-run hash",
+      "result": "PASS",
+      "assert": "stableSerialize and hashStable identical across two runs"
+    },
+    {
+      "id": "REMAP-6CA",
+      "name": "offline remap of 6 desensitized pilot CAs",
+      "result": "PASS",
+      "assert": "3 OK: accounting confirmed + concentration unverified; 3 PARTIAL: both unverified; Live history not rewritten"
+    }
+  ],
+  "summary": {
+    "total": 17,
+    "pass": 17,
+    "fail": 0
+  }
+}

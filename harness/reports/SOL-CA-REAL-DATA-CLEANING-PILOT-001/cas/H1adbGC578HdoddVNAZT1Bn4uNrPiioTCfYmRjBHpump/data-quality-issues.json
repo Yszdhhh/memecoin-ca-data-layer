@@ -1,0 +1,19 @@
+{
+  "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+  "issues": [
+    {
+      "code": "supply_mismatch",
+      "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "severity": "error",
+      "affectedRecordCount": 1,
+      "affectedBalance": "206512932970",
+      "evidence": [
+        "mintSupplyRaw=999969213669535",
+        "enumerated=999762700736565",
+        "paginationComplete=true"
+      ],
+      "whetherManualReviewRequired": true,
+      "suggestedFollowUp": "investigate_unindexed_accounts_or_burns"
+    }
+  ]
+}

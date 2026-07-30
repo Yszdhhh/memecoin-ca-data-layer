@@ -1,0 +1,10 @@
+{
+  "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+  "selectionReason": "Public pump mint from prior manual smoke freeze; additional complete-accounting probe.",
+  "queryTime": "2026-07-30T09:10:00.940Z",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "heliusRequestCount": 6,
+  "paginationComplete": false,
+  "sourceWatermark": "helius|436123641|partial|A7W3wDY3NesF7DjHPnKmd8L7f714y55vscQjfvikHLWm"
+}

@@ -1,0 +1,117 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002",
+  "auditedTaskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "verdict": "GREEN",
+  "auditExactPin": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+  "preRepairAuditPin": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+  "baseMain": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "heliusRequests": 0,
+  "gmgnRequests": 0,
+  "credentialReads": 0,
+  "dpapiReads": 0,
+  "privateWalletDetailReads": 0,
+  "implementationModificationsByAuditor": 0,
+  "mainModifications": 0,
+  "merge": 0,
+  "rebase": 0,
+  "push": 0,
+  "forcePush": 0,
+  "blockingFindings": [],
+  "requestChangesFindings": [],
+  "advisoryFindings": [
+    {
+      "id": "A-SUMMARY-SURFACE-001",
+      "severity": "advisory",
+      "title": "Per-CA cleaningSummary still exports judgmentEligible without the three-way trust split fields",
+      "evidence": [
+        "src/application/live/solana-ca-real-data-cleaning-pilot.ts cleaningSummary.judgmentEligible",
+        "Domain result already has accountingEligible/exclusionCoverage/concentrationEligible"
+      ],
+      "impact": "Does not reverse mapping gates; Operator Console consumers should read the three-way fields (or CaScan judgmentEvidence), not only legacy judgmentEligible.",
+      "requiredFix": "Optional follow-up after M0: extend cleaningSummary export with the three explicit fields. Not blocking merge of repair semantics."
+    },
+    {
+      "id": "A-DOMAIN-OBS-RATIO-001",
+      "severity": "advisory",
+      "title": "Domain concentration metrics re-attach observational ratios when completeness is partial",
+      "evidence": [
+        "holder-data-cleaning.ts concentration loop re-attaches ratio when completeness !== complete",
+        "map-holder-cleaning-to-ca-scan.ts forces CaScan RatioMetric ratio=null unless concentrationEligible (completeness===1)"
+      ],
+      "impact": "Domain observational ratios are fine; CaScan output correctly withholds confirmed concentration ratios. No confirmed Top10/Top20 leakage observed in offline 6-CA remap.",
+      "requiredFix": "None for GREEN. Document for console: treat domain ratios as observational only."
+    }
+  ],
+  "priorBlockingFindingsDisposition": [
+    {
+      "id": "F-MIXED-001",
+      "priorVerdict": "blocking on AUDIT-001",
+      "disposition": "FIXED",
+      "evidence": "resolveOwnerCleaningClass keeps included+zero / included+closed-zero as included; unit R1/R2 + auditor probe PASS"
+    },
+    {
+      "id": "F-MIXED-002",
+      "priorVerdict": "blocking on AUDIT-001",
+      "disposition": "FIXED",
+      "evidence": "included+invalid → unresolved_exclusion_candidate + mixed_owner_unparseable_sibling; unit R4 + probe PASS"
+    },
+    {
+      "id": "F-POOL-SCOPE-001",
+      "priorVerdict": "blocking on AUDIT-001",
+      "disposition": "FIXED",
+      "evidence": "accountingEligible independent of concentrationEligible; exclusionCoverage pilot partial; Top10/Top20 unverified with ratio null on 6-CA offline remap; unit R13"
+    }
+  ],
+  "passedChecks": [
+    {
+      "id": "P-LINEAGE",
+      "title": "Lineage and write-set prove repair scope",
+      "detail": "84b9a8d and e3c3405 are ancestors of a1d56da; repair reports first appear in a1d56da; diff e3c3405..a1d56da matches claimed write-set; no unrelated implementation churn"
+    },
+    {
+      "id": "P-MIXED-MATRIX",
+      "title": "All 15 forced mixed-owner / conservation scenarios PASS",
+      "detail": "Unit R1–R16 + auditor probe 10/10 + partition exclusivity + deterministic hash"
+    },
+    {
+      "id": "P-TRUST-SPLIT",
+      "title": "accounting / exclusionCoverage / concentration truly split",
+      "detail": "Independent fields and independent gates; judgmentEligible aliases accounting only; concentration requires exclusionCoverage=complete"
+    },
+    {
+      "id": "P-6CA-REMAP",
+      "title": "Offline 6 CA remap semantics correct without Helius",
+      "detail": "3 OK → accounting confirmed + concentration unverified; 3 PARTIAL → both unverified; Top10/Top20 ratio null; pool coverage warnings present"
+    },
+    {
+      "id": "P-LEGACY-ALIAS",
+      "title": "judgmentEligible not used for concentration confirmation",
+      "detail": "Pilot OK/PARTIAL uses alias for accounting batch status only; CaScan concentration uses concentrationEligible"
+    },
+    {
+      "id": "P-OFFLINE-GATES",
+      "title": "doctor / typecheck / test / build all green offline",
+      "detail": "doctor GREEN; typecheck PASS; tests 407 pass / 1 skipped / 0 fail; build PASS"
+    },
+    {
+      "id": "P-LEAK",
+      "title": "No credential or raw provider payload leakage in audited artifacts",
+      "detail": "Pattern scan PASS for secret values; raw payload scan PASS; no DPAPI/private table reads this audit"
+    },
+    {
+      "id": "P-BOUNDARY",
+      "title": "Zero network/provider/credential boundary held",
+      "detail": "All counts 0 as budgeted; main unchanged at 777e013"
+    }
+  ],
+  "ownerGatesStillBlockedUntilOwnerAction": [
+    "Merge CA pilot to main (requires Owner approve even after GREEN)",
+    "Open SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+    "Open CA stability Live batches",
+    "Open real CA Web Provider wiring",
+    "Open Portfolio / cumulative spike",
+    "Modify wallet clean-rank / Repair-003 rules"
+  ]
+}

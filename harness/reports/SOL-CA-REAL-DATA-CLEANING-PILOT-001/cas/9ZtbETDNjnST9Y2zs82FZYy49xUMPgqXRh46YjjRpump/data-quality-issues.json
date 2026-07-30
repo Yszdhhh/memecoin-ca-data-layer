@@ -1,0 +1,31 @@
+{
+  "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+  "issues": [
+    {
+      "code": "pagination_incomplete",
+      "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "severity": "warning",
+      "affectedRecordCount": 2000,
+      "affectedBalance": "521518199300547",
+      "evidence": [
+        "paginationComplete=false"
+      ],
+      "whetherManualReviewRequired": true,
+      "suggestedFollowUp": "increase_page_budget_or_accept_partial"
+    },
+    {
+      "code": "supply_mismatch",
+      "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "severity": "warning",
+      "affectedRecordCount": 1,
+      "affectedBalance": "478312624473524",
+      "evidence": [
+        "mintSupplyRaw=999830823774071",
+        "enumerated=521518199300547",
+        "paginationComplete=false"
+      ],
+      "whetherManualReviewRequired": true,
+      "suggestedFollowUp": "investigate_unindexed_accounts_or_burns"
+    }
+  ]
+}

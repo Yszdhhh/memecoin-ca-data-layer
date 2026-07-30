@@ -1,0 +1,60 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001",
+  "title": "Offline clean-rank replay of 1433 wallets under Repair-003 rules",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Deterministically replay the existing local 1,433-wallet 7d/30d GMGN normalized profiles through the current master-table builder (Repair-003 Alpha gates) with zero network. Publish desensitized counts, field coverage, warning histogram, score distribution, irreversible candidate fingerprints, input/output SHA, and determinism proof in Git. Keep full private detail only under chainfm_out.",
+  "dependencies": [
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003",
+    "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "docs/LOCAL_WORKSPACE_PATHS.md",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "src/application/wallet-intelligence/master-table-builder.ts",
+    "src/domain/rules/wallet-data-quality.ts",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/acceptance.md",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001/acceptance.md",
+    "harness/inputs/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001/manifest.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001.json",
+    "harness/inputs/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001/**",
+    "harness/reports/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not issue GMGN, Helius, RPC, or any internet requests.",
+    "Do not read credentials or private keys.",
+    "Do not relax MAPPED/completeness rules to preserve candidate counts.",
+    "Do not mark GMGN data confirmed.",
+    "Do not use smartMoneyConfirmed, verifiedAlpha, or similar language.",
+    "Do not commit plaintext private wallet addresses to Git.",
+    "Do not push, merge, or modify main."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001/acceptance.md",
+    "harness/reports/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001/summary-desensitized.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0
+  }
+}

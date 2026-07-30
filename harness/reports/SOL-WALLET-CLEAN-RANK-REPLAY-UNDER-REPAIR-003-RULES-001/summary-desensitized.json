@@ -1,0 +1,451 @@
+{
+  "taskId": "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001",
+  "generatedAt": "2026-07-30T10:12:13.461Z",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "inputShaMatch": true,
+  "inputHashes": {
+    "solAddressesTxt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "solLabels": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+    "gmgnProfiles": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+    "gmgnSummary": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D"
+  },
+  "expectedInputHashes": {
+    "solAddressesTxt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "solLabels": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+    "gmgnProfiles": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+    "gmgnSummary": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D"
+  },
+  "determinism": {
+    "run1OutputDir": "C:\\Users\\10639\\chainfm_out\\sol\\derived\\SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001",
+    "run2OutputDir": "C:\\Users\\10639\\chainfm_out\\sol\\derived\\SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001-rerun2",
+    "privateJsonlShaRun1": "BE5E81A3B13CC9197CF78C06E6C721FACFD3D109AAB9F11435A1AA2B9A2C73A0",
+    "privateJsonlShaRun2": "BE5E81A3B13CC9197CF78C06E6C721FACFD3D109AAB9F11435A1AA2B9A2C73A0",
+    "privateJsonlEqual": true,
+    "manifestOutputHashesEqual": true,
+    "run2Status": "SUCCESS"
+  },
+  "oldBaseline": {
+    "source": "wallet-intelligence-master-clean-rank-001",
+    "dataQuality": {
+      "ruleVersion": "wallet-data-quality-v1",
+      "totalWallets": 1433,
+      "dataQualityTierDistribution": {
+        "DQ-A": 1037,
+        "DQ-B": 280,
+        "DQ-C": 116,
+        "DQ-D": 0,
+        "DQ-U": 0
+      },
+      "averageDataQualityScore": 84.51,
+      "averageInternalConsistencyScore": 89.66,
+      "anomaliesCount": 1433,
+      "manualReviewRequiredCount": 382
+    },
+    "ranking": {
+      "totalWalletsEvaluated": 1433,
+      "candidateGroupsCount": {
+        "raw_gmgn_profit_top5": 5,
+        "quality_adjusted_top5": 5,
+        "active_consistent_top5": 5,
+        "high_win_rate_review_top5": 5,
+        "anomaly_verification_top5": 5,
+        "label_priority_top5": 5
+      },
+      "candidateUnionCount": 17,
+      "topLeadTierCounts": {
+        "TOP_LEAD": 4,
+        "STRONG_LEAD": 31,
+        "MODERATE_LEAD": 100,
+        "LOW_LEAD": 1218,
+        "UNQUALIFIED": 80
+      }
+    },
+    "candidateUnionCount": 17
+  },
+  "strictBuilderReplay": {
+    "ruleNote": "Current master-table-builder + Repair-003 alphaEligible; profiles lack top-level status → fail-closed UNAVAILABLE for all rows",
+    "dataQuality": {
+      "ruleVersion": "wallet-data-quality-v3",
+      "totalWallets": 1433,
+      "dataQualityTierDistribution": {
+        "DQ-A": 0,
+        "DQ-B": 0,
+        "DQ-C": 0,
+        "DQ-D": 0,
+        "DQ-U": 1433
+      },
+      "averageDataQualityScore": 0,
+      "averageInternalConsistencyScore": 100,
+      "walletsWithAnomaliesCount": 1433,
+      "anomalyFlagsTotalCount": 6634,
+      "manualReviewRequiredCount": 1433
+    },
+    "ranking": {
+      "totalWalletsEvaluated": 1433,
+      "alphaCandidateGroupsCount": {
+        "raw_gmgn_profit_top5": 0,
+        "quality_adjusted_top5": 0,
+        "active_consistent_top5": 0,
+        "high_win_rate_top5": 0,
+        "label_context_top5": 0
+      },
+      "reviewPriorityGroupsCount": {
+        "review_priority_top5": 5
+      },
+      "alphaCandidateRankedCount": 0,
+      "reviewPriorityRankedCount": 1433,
+      "candidateUnionCount": 0,
+      "reviewPriorityUnionCount": 5,
+      "topLeadTierCounts": {
+        "TOP_LEAD": 0,
+        "STRONG_LEAD": 0,
+        "MODERATE_LEAD": 0,
+        "LOW_LEAD": 0,
+        "UNQUALIFIED": 1433
+      }
+    },
+    "warningHistogram": {
+      "gmgn_wallet_stats_partial_fields": 2782,
+      "gmgn_wallet_stats_period_unverified": 2782,
+      "invalid_gmgn_period_status": 2866,
+      "gmgn_cli_network_unavailable": 7,
+      "gmgn_expected_metrics_unavailable": 77
+    },
+    "alphaCandidateCount": 0,
+    "reviewPriorityCount": 1433,
+    "candidateUnionCount": 0,
+    "insufficientDataNote": "All 1433 treated as UNAVAILABLE status by fail-closed parser",
+    "gates": {
+      "alphaReviewDisjoint": true,
+      "partialNotInAlpha": true,
+      "unavailableNotInAlpha": true,
+      "alphaStrict": 0,
+      "reviewStrict": 1433,
+      "intersect": 0
+    }
+  },
+  "derivedSemanticReplay": {
+    "ruleNote": "Offline analysis only: derive PARTIAL/UNAVAILABLE from profile warnings+completeness (never invent MAPPED). Then apply Repair-003 alpha gates unchanged.",
+    "derivedPeriodStatusCounts": {
+      "bothPartial": 1349,
+      "anyUnavailable": 84,
+      "bothUnavailable": 0,
+      "insufficientData": 0
+    },
+    "dataQualityTierDistribution": {
+      "DQ-A": 0,
+      "DQ-B": 0,
+      "DQ-C": 1433,
+      "DQ-D": 0,
+      "DQ-U": 0
+    },
+    "alphaCandidateCount": 0,
+    "reviewPriorityCount": 63,
+    "layers": {
+      "ALPHA": 0,
+      "TIER_B_RESEARCH": 1370,
+      "MANUAL_REVIEW": 63,
+      "UNAVAILABLE": 0
+    },
+    "fieldCoverageCounts": {
+      "realizedProfit7d": 1430,
+      "realizedProfit30d": 1352,
+      "winRate7d": 1430,
+      "winRate30d": 1352,
+      "periodPnl7d": 0,
+      "periodPnl30d": 0,
+      "tradeCount7d": 0,
+      "tradeCount30d": 0
+    },
+    "fieldCoverageRates": {
+      "realizedProfit7d": 0.9979,
+      "realizedProfit30d": 0.9435,
+      "winRate7d": 0.9979,
+      "winRate30d": 0.9435,
+      "periodPnl7d": 0,
+      "periodPnl30d": 0,
+      "tradeCount7d": 0,
+      "tradeCount30d": 0
+    },
+    "warningHistogram": {
+      "gmgn_wallet_stats_partial_fields": 2782,
+      "gmgn_wallet_stats_period_unverified": 2782,
+      "gmgn_cli_network_unavailable": 7,
+      "gmgn_expected_metrics_unavailable": 77
+    },
+    "scoreDistribution": {
+      "null": 1433,
+      "0-20": 0,
+      "20-40": 0,
+      "40-60": 0,
+      "60-80": 0,
+      "80-100": 0
+    },
+    "productLayers": {
+      "Alpha": {
+        "count": 0,
+        "requirement": "Repair-003: both periods MAPPED + completeness=1 + no partial_fields/period_unverified + DQ-A/B + composite + 30d profit",
+        "verificationStatus": "would_be_unverified_if_any_because_source_gmgn"
+      },
+      "TierB_Research_Candidate": {
+        "count": 1370,
+        "requirement": "PARTIAL allowed; always unverified; not Alpha",
+        "verificationStatus": "unverified"
+      },
+      "Manual_Review": {
+        "count": 63,
+        "requirement": "manualReviewRequired under DQ rules with partial recovery"
+      },
+      "Unavailable": {
+        "count": 0,
+        "requirement": "both periods UNAVAILABLE / no usable derived metrics"
+      }
+    }
+  },
+  "originalCandidateUnion17Destinies": [
+    {
+      "unionRank": 1,
+      "walletFingerprint": "b0368d733d9e0a590f9b668744c1e8415d1911ef432e870675ee588b4b032b37",
+      "oldComposite": 87.03,
+      "oldDq": "DQ-A",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 2,
+      "walletFingerprint": "9deefa80375023e7dd7ef901d0aca82b2680a87b064e51e27f4013d1d2365faa",
+      "oldComposite": 82.35,
+      "oldDq": "DQ-A",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 3,
+      "walletFingerprint": "3fc2999201f0bb0df09fb010d866aa1d5a1ae46d0009a060e77715b5637a5645",
+      "oldComposite": 81.2,
+      "oldDq": "DQ-A",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 4,
+      "walletFingerprint": "c420a2367d7d7ababf0cb70858359652eaebb3f05e34299438ccc5204a445cc3",
+      "oldComposite": 80.7,
+      "oldDq": "DQ-A",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 5,
+      "walletFingerprint": "64035b787e491189df24d724afffa8bfbf862cb23024ef44f1f88945d5db79e3",
+      "oldComposite": 78.16,
+      "oldDq": "DQ-A",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 6,
+      "walletFingerprint": "fcc226ada9093411e13736b81329379101c806a71823110df3a2cb26352d0f1e",
+      "oldComposite": 75.21,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 7,
+      "walletFingerprint": "80f6da6bfeac825f2fb8f55717c02cf4aa5b2e1c132b5a448b4bd169686c854c",
+      "oldComposite": 73.68,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 8,
+      "walletFingerprint": "08c847c247b686bd3e5224af10d8e26344e0dbb5ed218b02dec08b1d5ce50e7b",
+      "oldComposite": 69.34,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 9,
+      "walletFingerprint": "50e1e28f1932d7067f67ee3145cc0d8d6807ab71144907c3fe5306655c6a7157",
+      "oldComposite": 60.85,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 10,
+      "walletFingerprint": "d4fb6b1f86e38a13392f702db0a467e2fd3b7b9cae7bccfb42d6750f96f208db",
+      "oldComposite": 54.29,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 11,
+      "walletFingerprint": "f785e19d074a5c49ce2177a150212ec7f2fae2e74d037a5ce7b74551917a6f0a",
+      "oldComposite": 52.37,
+      "oldDq": "DQ-C",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 12,
+      "walletFingerprint": "253cfef4c5905eb317a86d7214fdab02e11988a7c4c347879053e59bfbe86a80",
+      "oldComposite": 50.02,
+      "oldDq": "DQ-B",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 13,
+      "walletFingerprint": "7f5bd70f2b0610687e9089662a255ed96f841cebb30ce27ddd90698df7c2290b",
+      "oldComposite": 41.28,
+      "oldDq": "DQ-B",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 14,
+      "walletFingerprint": "5b380bc4055ffe4f20533daa91d873a027dd33db4b75a59818dd4b2c0a67667a",
+      "oldComposite": 41.02,
+      "oldDq": "DQ-B",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 15,
+      "walletFingerprint": "1ec27b79741ee872c2944610f02670dd0cab74b4bd67e0d99b8d7f0a76b630f7",
+      "oldComposite": 39.88,
+      "oldDq": "DQ-B",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 16,
+      "walletFingerprint": "dd678722d3191ea99416522efa3908789968ed9c7b0840b53e0d406f54d7482d",
+      "oldComposite": 37.67,
+      "oldDq": "DQ-B",
+      "newLayer": "TIER_B_RESEARCH",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": false,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    },
+    {
+      "unionRank": 17,
+      "walletFingerprint": "46b6b83146815900f016b0079af83c1b4e6d1bacc0ea074d0921a5d2dd4a65b7",
+      "oldComposite": 36.77,
+      "oldDq": "DQ-C",
+      "newLayer": "MANUAL_REVIEW",
+      "newDq": "DQ-C",
+      "newStatus7d": "PARTIAL",
+      "newStatus30d": "PARTIAL",
+      "newComposite": null,
+      "newAlphaEligible": false,
+      "newManualReview": true,
+      "notes": "not_alpha_under_repair_003_partial_or_unverified"
+    }
+  ],
+  "forbiddenLanguageScan": {
+    "smartMoneyConfirmed": 0,
+    "verifiedAlpha": 0,
+    "note": "Analysis artifacts use only Alpha/Tier-B/Manual/Unavailable and unverified"
+  }
+}

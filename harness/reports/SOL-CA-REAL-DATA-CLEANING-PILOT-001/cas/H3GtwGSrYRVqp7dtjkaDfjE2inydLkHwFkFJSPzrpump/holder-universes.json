@@ -1,0 +1,966 @@
+{
+  "rawHolderUniverse": {
+    "ownerCount": 2265,
+    "tokenAccountCount": 2270,
+    "amountRaw": "966968333378029",
+    "amountNormalized": "966968333.378029",
+    "ratio": 1,
+    "completeness": "complete",
+    "universeDefinition": "holder-universe-v1:rawHolderUniverse",
+    "ruleVersion": "holder-cleaning-v1",
+    "evidenceRefs": [
+      "raw_token_accounts",
+      "owner_aggregated"
+    ],
+    "topOwners": [
+      {
+        "owner": "DEzRbg1HWUTJupoudSznJNaFBWxY66nwKQxoLGMtPZnp",
+        "ownerRawAmount": "315947465296453",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "BfnZ7WziqF8CyH8WM7fYqp4T8wDTFtL1EtujaQXVA8Qe",
+        "ownerRawAmount": "23915264528598",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4CRkYKSG6jWG2swKRMbQ5KziVWDcpnnmRxFT8EzDXH2g",
+        "ownerRawAmount": "22173872354641",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "G77BxGNAAVzRHzJTTardEcMefnHWg4FdWir4uH6NKeWw",
+        "ownerRawAmount": "20123737945089",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Eq8N43ziv1Q2k6PCZqM2L48neT3wEombjrvWuF7EowTT",
+        "ownerRawAmount": "18853163200984",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Esj9pSMe23QdeJpDxLeZVvZrDyaRScgZU8YNM9XGnLoY",
+        "ownerRawAmount": "13607857499780",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "3x7Z9ZvDrbs34GmtQPjGH8e5GnkyZ2uzjtUSRat3wbeG",
+        "ownerRawAmount": "13235524691474",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "88jvyHwUgtrk4B1XuiT2kUn86FoGr2avDWEMtXf8zt9w",
+        "ownerRawAmount": "12912156008271",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "DZ2SMy4zJ32ngbXftgvNQSiQfTMmoJFt4ZEXGaE6BmeQ",
+        "ownerRawAmount": "12455410128069",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "D3qASab8W2ScDPcL9nRYxAcKzHhFnHVfuwwNmhYxDb5y",
+        "ownerRawAmount": "10106564102205",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EfpxcEL5tSMHqgLnW6NdTwuXkkiarqjX2MeewX847uu6",
+        "ownerRawAmount": "10016493204939",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "FPKRbyunSXdH89nCZ4YLEgxu85nF546sBFFm1F7C31fs",
+        "ownerRawAmount": "9686516757340",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "wptZFgBeoM2Uab4rLzk9k2mb4NmgmCK2f8aVNwMJ2cU",
+        "ownerRawAmount": "9475004950108",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9gyLSHir6kWo2LTUgyycZdSQwjxufpQiqf74Ew6tMRB1",
+        "ownerRawAmount": "9258087823631",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "hnu5iBK8UoHb51UFsH1RYTUAYdrhjHvV5YMTf9T1CYN",
+        "ownerRawAmount": "9117982817264",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4R1dVFoFdJGaAryPJF1hc7E5kEMd5srGCPxUHe8MLo7J",
+        "ownerRawAmount": "9047862064781",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "B9fquNGSe6fHYfLrd1xuuSdLZAk87jJZQxQbd3JwnRHJ",
+        "ownerRawAmount": "9000578526588",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6Z5udwZJfVe9ikA8ob3bDbyhtWwQ2DBZG4PWxNdzp3UN",
+        "ownerRawAmount": "8052805205355",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "2dfU6zciHDBwWzckw9s69R9DRvD5p8fUX9MLAZDRFLfB",
+        "ownerRawAmount": "8000000000000",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "E5qBU3Q1etEtWHY1o5xyb5nVbfz5URkdPBBd676ygisi",
+        "ownerRawAmount": "7888505141540",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6UEe2w9RjgubKUZ3KDALWpwyQPJykcquwnnGHXEhoMeH",
+        "ownerRawAmount": "7522020265907",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4ghXpAFnQcx1QYb7v1MvRHVymScMme7j2aj1KVvGrMYB",
+        "ownerRawAmount": "7432585938838",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "BM9CcyErJcu2mjrFvUsRRrD3snGeHDDVirJLvL6EjvMN",
+        "ownerRawAmount": "7264618439805",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "C1p2gyLLEoBgyFAG1KrNWMxz2SqsS8MgmhAb1s3f3Pyg",
+        "ownerRawAmount": "7008911409383",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4yt5ahdVzA2CJLyiGPYCkoNBtoip43uT4eG9nzGf94PE",
+        "ownerRawAmount": "6665088206244",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "7XPPFnLfrEH5Rn6konzqNHWkQTnDWsKoQfYUMv9QF78f",
+        "ownerRawAmount": "6392738968398",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "GjoGNXhuKxCXBKJUjxSusY4A45M88M3ouiAdcLfui2kJ",
+        "ownerRawAmount": "6044968992313",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Di5y3yDJdaCGTW3U1SXLm7T9n67L5PJhLM23yeDJQ5WM",
+        "ownerRawAmount": "5743794302109",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "8gxePmZZHxFsN6V9p6uhzRqndLeVsk157iMejScZCjNC",
+        "ownerRawAmount": "5681690729122",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "8rPDDSgX8WtTyKqPj54jRAp17Tv3JvgECQ1gZAXErk6A",
+        "ownerRawAmount": "5591922177272",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "3aa5A8NCykYh9H4MLpqBZ8MGTYob62sZQKQxycRqhbLn",
+        "ownerRawAmount": "5479068352105",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9QqMfWVHr2qZPJS4ZSUbMA9ewwzoU88SGSder7BBKZNm",
+        "ownerRawAmount": "5281000000000",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "GmDsM3SYbBQwYR8WjtWqkEs8vCXQXuvHphyckFFuqosi",
+        "ownerRawAmount": "5188857975033",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "C6HBMQ2cqRZtS5vfeCnUfwC95xWaEZyTR6GcuihzzqXy",
+        "ownerRawAmount": "5041291202694",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Ga4izofY7yCMbNDLnuJ7ottQUAx8s31EevL7And37Tr3",
+        "ownerRawAmount": "4449963413735",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "CpdcExJRmSwBHH9AzrChWYo37Y9PGphGUngwzArXk9jF",
+        "ownerRawAmount": "4429283077635",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "DJcpibDbc71Ce3URoK5jY5QNd8cYaySnyzR1afyPYZdv",
+        "ownerRawAmount": "4371920671945",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "HBtZwQdcAiR3JnArXZWUdCbD1uP71B9CT5iwBC1NGbPw",
+        "ownerRawAmount": "4200396949165",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EvH1SyTAmibinuVWSZm2ZN6Fx5N5WyTZWerfpoWJCyF1",
+        "ownerRawAmount": "4114757377911",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "5fZwh4JcEodKJbeQ7GNRBe99BmcgWo7rafMPy39Y8TnG",
+        "ownerRawAmount": "3807484343679",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9nj7sr9G7koqnjFpRaWo85R7GVGbDCgqeZDkksJTZZex",
+        "ownerRawAmount": "3742033280674",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "F22mEUVBkateiQZCfn7G1T6D9V4LCkkgecikRCrf2X8",
+        "ownerRawAmount": "3733946757149",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EGeT1N9bzsu1ELcK2H5fc5yheSuDrzbpwvSCMBkuS8j7",
+        "ownerRawAmount": "3713540447923",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "29BvrUmdZhWA9MowDQBpbEnQWhGgLgUQYCxiW8ysQ6Et",
+        "ownerRawAmount": "3638464594911",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6aTRYPzGY1YBr7AKRHwazzyaeN89qnrJ9NGHFBoD1Nxo",
+        "ownerRawAmount": "3618667409067",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "26b966MheUKjyRTes8vLbpH1qV6pVY7cNzAiyZuyrB9W",
+        "ownerRawAmount": "3578317452610",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "APUnpSv4HDpNPfed4dPqAnz75REWYbM5vTHaTnApLe1P",
+        "ownerRawAmount": "3345785614948",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "1eveYYxZ2mDiAnmCh3fnAbJwjgErzokRA1b6UrRybSM",
+        "ownerRawAmount": "3325091540994",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "CjsqtEDJx8aij8oYSrar6BqCRrJGLdjiSCgDgmqPN8ya",
+        "ownerRawAmount": "3225152789681",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "78jQAqPBwfY53wJdFCVPaxuBtY7LZ6hrhPTqjJjNJb9B",
+        "ownerRawAmount": "3031581618543",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      }
+    ]
+  },
+  "cleanedHolderUniverse": {
+    "ownerCount": 2265,
+    "tokenAccountCount": 2270,
+    "amountRaw": "966968333378029",
+    "amountNormalized": "966968333.378029",
+    "ratio": 1,
+    "completeness": "complete",
+    "universeDefinition": "holder-universe-v1:cleanedHolderUniverse",
+    "ruleVersion": "holder-cleaning-v1",
+    "evidenceRefs": [
+      "included_holder_only"
+    ],
+    "topOwners": [
+      {
+        "owner": "DEzRbg1HWUTJupoudSznJNaFBWxY66nwKQxoLGMtPZnp",
+        "ownerRawAmount": "315947465296453",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "BfnZ7WziqF8CyH8WM7fYqp4T8wDTFtL1EtujaQXVA8Qe",
+        "ownerRawAmount": "23915264528598",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4CRkYKSG6jWG2swKRMbQ5KziVWDcpnnmRxFT8EzDXH2g",
+        "ownerRawAmount": "22173872354641",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "G77BxGNAAVzRHzJTTardEcMefnHWg4FdWir4uH6NKeWw",
+        "ownerRawAmount": "20123737945089",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Eq8N43ziv1Q2k6PCZqM2L48neT3wEombjrvWuF7EowTT",
+        "ownerRawAmount": "18853163200984",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Esj9pSMe23QdeJpDxLeZVvZrDyaRScgZU8YNM9XGnLoY",
+        "ownerRawAmount": "13607857499780",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "3x7Z9ZvDrbs34GmtQPjGH8e5GnkyZ2uzjtUSRat3wbeG",
+        "ownerRawAmount": "13235524691474",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "88jvyHwUgtrk4B1XuiT2kUn86FoGr2avDWEMtXf8zt9w",
+        "ownerRawAmount": "12912156008271",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "DZ2SMy4zJ32ngbXftgvNQSiQfTMmoJFt4ZEXGaE6BmeQ",
+        "ownerRawAmount": "12455410128069",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "D3qASab8W2ScDPcL9nRYxAcKzHhFnHVfuwwNmhYxDb5y",
+        "ownerRawAmount": "10106564102205",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EfpxcEL5tSMHqgLnW6NdTwuXkkiarqjX2MeewX847uu6",
+        "ownerRawAmount": "10016493204939",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "FPKRbyunSXdH89nCZ4YLEgxu85nF546sBFFm1F7C31fs",
+        "ownerRawAmount": "9686516757340",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "wptZFgBeoM2Uab4rLzk9k2mb4NmgmCK2f8aVNwMJ2cU",
+        "ownerRawAmount": "9475004950108",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9gyLSHir6kWo2LTUgyycZdSQwjxufpQiqf74Ew6tMRB1",
+        "ownerRawAmount": "9258087823631",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "hnu5iBK8UoHb51UFsH1RYTUAYdrhjHvV5YMTf9T1CYN",
+        "ownerRawAmount": "9117982817264",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4R1dVFoFdJGaAryPJF1hc7E5kEMd5srGCPxUHe8MLo7J",
+        "ownerRawAmount": "9047862064781",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "B9fquNGSe6fHYfLrd1xuuSdLZAk87jJZQxQbd3JwnRHJ",
+        "ownerRawAmount": "9000578526588",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6Z5udwZJfVe9ikA8ob3bDbyhtWwQ2DBZG4PWxNdzp3UN",
+        "ownerRawAmount": "8052805205355",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "2dfU6zciHDBwWzckw9s69R9DRvD5p8fUX9MLAZDRFLfB",
+        "ownerRawAmount": "8000000000000",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "E5qBU3Q1etEtWHY1o5xyb5nVbfz5URkdPBBd676ygisi",
+        "ownerRawAmount": "7888505141540",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6UEe2w9RjgubKUZ3KDALWpwyQPJykcquwnnGHXEhoMeH",
+        "ownerRawAmount": "7522020265907",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4ghXpAFnQcx1QYb7v1MvRHVymScMme7j2aj1KVvGrMYB",
+        "ownerRawAmount": "7432585938838",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "BM9CcyErJcu2mjrFvUsRRrD3snGeHDDVirJLvL6EjvMN",
+        "ownerRawAmount": "7264618439805",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "C1p2gyLLEoBgyFAG1KrNWMxz2SqsS8MgmhAb1s3f3Pyg",
+        "ownerRawAmount": "7008911409383",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "4yt5ahdVzA2CJLyiGPYCkoNBtoip43uT4eG9nzGf94PE",
+        "ownerRawAmount": "6665088206244",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "7XPPFnLfrEH5Rn6konzqNHWkQTnDWsKoQfYUMv9QF78f",
+        "ownerRawAmount": "6392738968398",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "GjoGNXhuKxCXBKJUjxSusY4A45M88M3ouiAdcLfui2kJ",
+        "ownerRawAmount": "6044968992313",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Di5y3yDJdaCGTW3U1SXLm7T9n67L5PJhLM23yeDJQ5WM",
+        "ownerRawAmount": "5743794302109",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "8gxePmZZHxFsN6V9p6uhzRqndLeVsk157iMejScZCjNC",
+        "ownerRawAmount": "5681690729122",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "8rPDDSgX8WtTyKqPj54jRAp17Tv3JvgECQ1gZAXErk6A",
+        "ownerRawAmount": "5591922177272",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "3aa5A8NCykYh9H4MLpqBZ8MGTYob62sZQKQxycRqhbLn",
+        "ownerRawAmount": "5479068352105",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9QqMfWVHr2qZPJS4ZSUbMA9ewwzoU88SGSder7BBKZNm",
+        "ownerRawAmount": "5281000000000",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "GmDsM3SYbBQwYR8WjtWqkEs8vCXQXuvHphyckFFuqosi",
+        "ownerRawAmount": "5188857975033",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "C6HBMQ2cqRZtS5vfeCnUfwC95xWaEZyTR6GcuihzzqXy",
+        "ownerRawAmount": "5041291202694",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "Ga4izofY7yCMbNDLnuJ7ottQUAx8s31EevL7And37Tr3",
+        "ownerRawAmount": "4449963413735",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "CpdcExJRmSwBHH9AzrChWYo37Y9PGphGUngwzArXk9jF",
+        "ownerRawAmount": "4429283077635",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "DJcpibDbc71Ce3URoK5jY5QNd8cYaySnyzR1afyPYZdv",
+        "ownerRawAmount": "4371920671945",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "HBtZwQdcAiR3JnArXZWUdCbD1uP71B9CT5iwBC1NGbPw",
+        "ownerRawAmount": "4200396949165",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EvH1SyTAmibinuVWSZm2ZN6Fx5N5WyTZWerfpoWJCyF1",
+        "ownerRawAmount": "4114757377911",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "5fZwh4JcEodKJbeQ7GNRBe99BmcgWo7rafMPy39Y8TnG",
+        "ownerRawAmount": "3807484343679",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "9nj7sr9G7koqnjFpRaWo85R7GVGbDCgqeZDkksJTZZex",
+        "ownerRawAmount": "3742033280674",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "F22mEUVBkateiQZCfn7G1T6D9V4LCkkgecikRCrf2X8",
+        "ownerRawAmount": "3733946757149",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "EGeT1N9bzsu1ELcK2H5fc5yheSuDrzbpwvSCMBkuS8j7",
+        "ownerRawAmount": "3713540447923",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "29BvrUmdZhWA9MowDQBpbEnQWhGgLgUQYCxiW8ysQ6Et",
+        "ownerRawAmount": "3638464594911",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "6aTRYPzGY1YBr7AKRHwazzyaeN89qnrJ9NGHFBoD1Nxo",
+        "ownerRawAmount": "3618667409067",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "26b966MheUKjyRTes8vLbpH1qV6pVY7cNzAiyZuyrB9W",
+        "ownerRawAmount": "3578317452610",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "APUnpSv4HDpNPfed4dPqAnz75REWYbM5vTHaTnApLe1P",
+        "ownerRawAmount": "3345785614948",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "1eveYYxZ2mDiAnmCh3fnAbJwjgErzokRA1b6UrRybSM",
+        "ownerRawAmount": "3325091540994",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "CjsqtEDJx8aij8oYSrar6BqCRrJGLdjiSCgDgmqPN8ya",
+        "ownerRawAmount": "3225152789681",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      },
+      {
+        "owner": "78jQAqPBwfY53wJdFCVPaxuBtY7LZ6hrhPTqjJjNJb9B",
+        "ownerRawAmount": "3031581618543",
+        "tokenAccountCount": 1,
+        "cleaningClass": "included_holder",
+        "evidence": [
+          "default_include_no_infra_evidence"
+        ]
+      }
+    ]
+  },
+  "excludedInfrastructureUniverse": {
+    "ownerCount": 0,
+    "tokenAccountCount": 0,
+    "amountRaw": "0",
+    "amountNormalized": "0",
+    "ratio": 0,
+    "completeness": "complete",
+    "universeDefinition": "holder-universe-v1:excludedInfrastructureUniverse",
+    "ruleVersion": "holder-cleaning-v1",
+    "evidenceRefs": [
+      "zero_balance",
+      "burn",
+      "known_program",
+      "closed",
+      "invalid",
+      "liquidity"
+    ],
+    "topOwners": []
+  },
+  "unresolvedUniverse": {
+    "ownerCount": 0,
+    "tokenAccountCount": 0,
+    "amountRaw": "0",
+    "amountNormalized": "0",
+    "ratio": 0,
+    "completeness": "complete",
+    "universeDefinition": "holder-universe-v1:unresolvedUniverse",
+    "ruleVersion": "holder-cleaning-v1",
+    "evidenceRefs": [
+      "unresolved_exclusion_candidate"
+    ],
+    "topOwners": []
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+  "metrics": [
+    {
+      "name": "top1",
+      "numerator": "800000000000000",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "top5",
+      "numerator": "881917968001775",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "top10",
+      "numerator": "901441745043773",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "top20",
+      "numerator": "922495730915525",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "top50",
+      "numerator": "955990667161764",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "top100",
+      "numerator": "978640002350904",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "largestOwnerShare",
+      "numerator": "800000000000000",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "unresolvedShare",
+      "numerator": "0",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    },
+    {
+      "name": "excludedShare",
+      "numerator": "0",
+      "denominator": "999969213669535",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "completeness": "partial",
+      "calculationVersion": "concentration-v1"
+    }
+  ]
+}

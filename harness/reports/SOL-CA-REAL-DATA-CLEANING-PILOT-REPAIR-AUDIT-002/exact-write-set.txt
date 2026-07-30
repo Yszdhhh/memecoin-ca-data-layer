@@ -1,0 +1,35 @@
+# SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002 exact write-set
+# Role: independent zero-network auditor
+# Audited pin: a1d56dade268d24a1205e010581b6f6c478ac1bb
+# Branch: feature/sol-ca-real-data-cleaning-pilot-001
+# Implementation code modifications by auditor: 0
+# main modifications: 0
+# Method: auditor-created deliverables only (plus orchestration status docs)
+
+## Auditor task + report deliverables
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/acceptance.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/findings.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/regression-results.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/lineage.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/exact-write-set.txt
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/remap-diff-summary.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/probe-output.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002/_probe.mjs
+
+## Orchestration status alignment (same evening control run; not implementation)
+docs/handoffs/STATUS_SYSTEM_20260730.md
+docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md
+harness/CURRENT_WAVE.md
+
+## Explicitly not modified by auditor
+src/domain/rules/holder-data-cleaning.ts
+src/domain/mapping/map-holder-cleaning-to-ca-scan.ts
+src/application/live/solana-ca-real-data-cleaning-pilot.ts
+src/domain/contracts/ca-scan-response-v1.ts
+test/domain/rules/holder-data-cleaning.test.ts
+test/application/live/solana-ca-real-data-cleaning-pilot.test.ts
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/**
+main
+wallet clean-rank rules

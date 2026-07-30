@@ -1,0 +1,74 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002",
+  "auditedTaskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "branch": "feature/sol-ca-real-data-cleaning-pilot-001",
+  "localRoot": "G:\\链上战壕",
+  "remote": "https://github.com/Yszdhhh/memecoin-ca-data-layer.git",
+  "exactAuditPin": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+  "workspaceHeadAtAuditStart": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+  "mainBaseline": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "mainUnchangedByThisRound": true,
+  "commits": [
+    {
+      "sha": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+      "date": "2026-07-30 17:39:25 +0800",
+      "subject": "feat(solana): CA real-data holder cleaning pilot + system status handoff",
+      "role": "PILOT-001 implementation + pre-repair audit pin"
+    },
+    {
+      "sha": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+      "date": "2026-07-30 18:20:34 +0800",
+      "subject": "docs(harness): publish CA pilot audit and Repair-003 clean-rank replay",
+      "role": "AUDIT-001 REQUEST_CHANGES + clean-rank replay (docs/harness only)"
+    },
+    {
+      "sha": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+      "date": "2026-07-30 20:30:32 +0800",
+      "subject": "fix(solana): repair mixed-owner cleaning and split concentration gates",
+      "role": "REPAIR-002 final implementation commit (audit target)"
+    }
+  ],
+  "ancestryChecks": {
+    "84b9a8d_is_ancestor_of_a1d56da": true,
+    "e3c3405_is_ancestor_of_a1d56da": true,
+    "main_777e013_is_ancestor_of_feature": true,
+    "method": "git merge-base --is-ancestor"
+  },
+  "e3c3405_relation_to_a1d56da": "e3c3405 is the immediate parent of a1d56da (linear history: 84b9a8d → e3c3405 → a1d56da).",
+  "repairReportVsFinalCommit": {
+    "repairReportPathsFirstAppearIn": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+    "conclusion": "Repair-002 acceptance/report artifacts were committed together with the implementation in the final repair commit a1d56da (not generated after a later undocumented code change).",
+    "method": "git log --diff-filter=A -- harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/acceptance.md"
+  },
+  "claimedWriteSetVsActualDiff": {
+    "diffBase": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+    "diffTip": "a1d56dade268d24a1205e010581b6f6c478ac1bb",
+    "actualPaths": [
+      "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/acceptance.md",
+      "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/exact-write-set.txt",
+      "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/regression-matrix.json",
+      "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/remap-diff-summary.json",
+      "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json",
+      "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+      "src/domain/rules/holder-data-cleaning.ts",
+      "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts",
+      "test/domain/rules/holder-data-cleaning.test.ts"
+    ],
+    "matchesTaskWriteSet": true,
+    "unrelatedImplementationChurn": false,
+    "note": "No wallet clean-rank rules, no CaScanResponseV1 base contract, no pilot runner application core rewrite outside mapping/rules/tests/reports."
+  },
+  "branchContainsRequiredTasks": {
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-001": true,
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001": true,
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002": true,
+    "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001": true
+  },
+  "forbiddenHistoryOpsThisRound": {
+    "merge": 0,
+    "rebase": 0,
+    "reset_hard": 0,
+    "force_push": 0,
+    "main_modification": 0
+  }
+}

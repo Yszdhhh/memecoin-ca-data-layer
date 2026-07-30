@@ -10,3 +10,6 @@ harness/logs/*
 !harness/logs/.gitkeep
 *.log
 *.tmp
+
+.DS_Store
+

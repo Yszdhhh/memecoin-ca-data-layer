@@ -1,0 +1,74 @@
+# Exact write-set comparison for SOL-CA-REAL-DATA-CLEANING-PILOT-001
+# Baseline: main@777e0131ec663178c6c4cc5cc0c4584e60be2381
+# Tip audited: feature/sol-ca-real-data-cleaning-pilot-001@84b9a8dd424b70e34220f9eb06db47e381838ee1
+# Method: git diff --name-only main...HEAD
+
+## Declared write_set (task JSON)
+
+docs/LOCAL_WORKSPACE_PATHS.md
+harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-001.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**
+src/domain/rules/holder-data-cleaning.ts
+src/domain/mapping/map-holder-cleaning-to-ca-scan.ts
+src/application/live/solana-ca-real-data-cleaning-pilot.ts
+src/application/live/solana-live-warning.ts
+src/infrastructure/solana/helius/live-helius-data-source.ts
+src/cli/run-solana-ca-real-data-cleaning-pilot.ts
+scripts/run-solana-ca-real-data-cleaning-pilot.ps1
+test/domain/rules/holder-data-cleaning.test.ts
+test/application/live/solana-ca-real-data-cleaning-pilot.test.ts
+package.json
+
+## Actual branch paths vs main (56 paths)
+
+.gitignore
+README.md
+docs/LOCAL_WORKSPACE_PATHS.md
+docs/handoffs/STATUS_SYSTEM_20260730.md
+harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/input-manifest.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/acceptance.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/batch-summary.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/execution-manifest.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/gap-matrix.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/cas/** (6 CA × 6 scrubbed artifacts)
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-001.json
+package.json
+scripts/run-solana-ca-real-data-cleaning-pilot.ps1
+src/application/live/solana-ca-real-data-cleaning-pilot.ts
+src/application/live/solana-live-warning.ts
+src/cli/run-solana-ca-real-data-cleaning-pilot.ts
+src/domain/mapping/map-holder-cleaning-to-ca-scan.ts
+src/domain/rules/holder-data-cleaning.ts
+src/infrastructure/solana/helius/live-helius-data-source.ts
+test/application/live/solana-ca-real-data-cleaning-pilot.test.ts
+test/domain/rules/holder-data-cleaning.test.ts
+
+## Write-set delta (present on branch, outside declared write_set)
+
+.gitignore
+README.md
+docs/handoffs/STATUS_SYSTEM_20260730.md
+
+## Verdict on write-set
+
+DECLARED_CORE_MATCH_WITH_ADVISORY_EXTRAS
+
+Core pilot implementation, tests, inputs, and scrubbed Live reports are present.
+Three documentation/hygiene paths sit outside the declared write_set (advisory only).
+
+## Minimal repair write-set (REQUEST_CHANGES — do not apply in this audit)
+
+src/domain/rules/holder-data-cleaning.ts
+test/domain/rules/holder-data-cleaning.test.ts
+src/domain/mapping/map-holder-cleaning-to-ca-scan.ts
+test/application/live/solana-ca-real-data-cleaning-pilot.test.ts
+harness/tasks/<future-repair-task>.json
+harness/reports/<future-repair-task>/**
+
+# Auditor write-set (this task only)
+
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/acceptance.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/findings.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/exact-write-set.txt

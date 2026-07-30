@@ -1,0 +1,1663 @@
+{
+  "schema": "ca-scan-response",
+  "version": "v1",
+  "generatedAt": "2026-07-30T09:10:00.940Z",
+  "tokenIdentity": {
+    "chain": "solana",
+    "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+    "name": "Brötchen",
+    "symbol": "Brötchen",
+    "decimals": 6,
+    "totalSupplyRaw": "999830823774071",
+    "launchpad": null,
+    "createdAt": null,
+    "creationTx": null,
+    "provenance": {
+      "source": "helius-mint",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-30T09:10:00.940Z",
+      "watermarkRef": "helius|436123641|partial|A7W3wDY3NesF7DjHPnKmd8L7f714y55vscQjfvikHLWm",
+      "ruleVersion": "sol-ca-real-data-cleaning-pilot-v1"
+    }
+  },
+  "marketSnapshot": null,
+  "authorityFacts": null,
+  "holderUniverses": {
+    "raw_top_holders": [
+      {
+        "address": "2UR4K9fmw78FBrM42LEXMDsA4fSPv5KkFHM2LxP6H48A",
+        "balanceRaw": "26751415119358",
+        "ownerAddress": "3drH9cM791WKacWAxXhdWLRbf9Jiy3txYvpdUtDD6NkX"
+      },
+      {
+        "address": "GKqP128CNK6FFBH5V4RqTeFJMqX31iwrm5DH6p4A6Up",
+        "balanceRaw": "18890986385913",
+        "ownerAddress": "DQ59UhSiyGpY1ebNUet9Bybobu293PCNtSWjruXC6GEh"
+      },
+      {
+        "address": "3VSdyVaiKAkVx6awrQBunSpK1kuMEUefLr58aFzgcdjV",
+        "balanceRaw": "18298749015010",
+        "ownerAddress": "8UK27CEzGcwkyiWFEb9ABauezJpJX4DGcGHbTbkRKvS9"
+      },
+      {
+        "address": "3LpHmKByddHfSAYzRD5HaZKTMP2W7oZXAVYrRB2hqSFP",
+        "balanceRaw": "10636064533037",
+        "ownerAddress": "AsdweR8ettxzzePCHgfM8qDbmbCZvu7gQRVt88DJ8Q9F"
+      },
+      {
+        "address": "31LtDj6exJrs2HASk577HiYo3KnyvLLQgWjmSipfiudm",
+        "balanceRaw": "10594416499772",
+        "ownerAddress": "88B6QzYDHPzcgCireD2zMQCHC5Fxwh877omtJBUALvg"
+      },
+      {
+        "address": "7vXRhLZw9DafADzi6PvoYxiju51r1YEbNvEnBWQckQfB",
+        "balanceRaw": "9587362946854",
+        "ownerAddress": "AGR4gsos88xAvXGceMK6A3Mqt3PJcUYvz6Hgm6hhHvkV"
+      },
+      {
+        "address": "7gaz5LrHhgqv3SwAxmd6p7wBeAAx4qGh9mtFsb3U8wJv",
+        "balanceRaw": "9041440064596",
+        "ownerAddress": "BkjyzCimDxpMGxQioLTmZQidCfP4EAzRPjWtKgKw4fPf"
+      },
+      {
+        "address": "9HJtioYRzJaif7dQEYJ4ngXZvcFJ2G1iK98V5v7xDTEo",
+        "balanceRaw": "8535023692886",
+        "ownerAddress": "AQaFpcYstCWgTERJzniuvuKStyzp2r6vTEJX3tk35Th6"
+      },
+      {
+        "address": "8JNo47DQ4WdJwxWz4As7KxiufLTWFE1vFWcurFwJASkh",
+        "balanceRaw": "7318561675621",
+        "ownerAddress": "EzZ4LBozs2bFY4jkN7YBjbhkCDFBbQya5BmQLwSnvNZs"
+      },
+      {
+        "address": "21r4fCBioCDTWLZ1GWYvcTCBP6DVDxANCRyNZKqKNMyM",
+        "balanceRaw": "7053390783964",
+        "ownerAddress": "DnL1KUY1dQ7h2PgytvRrmRbA7U6y11H68XTYwJBnwCQV"
+      },
+      {
+        "address": "8eEMWGXkeZ1NCT39tvD3ZnJhW2hgACEjDqvqv4ZC9F8b",
+        "balanceRaw": "6956530200919",
+        "ownerAddress": "HY4NUZtG2wLxojsveQjaZ8t5DJu4VjeCpt1PkPP4URpg"
+      },
+      {
+        "address": "4zvUef7WubjuXfgmLj5sK1M5wXPeGHjnU2QFHvU1uJ84",
+        "balanceRaw": "6713946645329",
+        "ownerAddress": "7Z3vocJgaTMLo8CNH9cXuUxNZ3bUevfxZnxpVbnFbTk"
+      },
+      {
+        "address": "3ndJfTxPfX3Lkk4h8uzcN5x17edCG1KRPzWHViDfeaCo",
+        "balanceRaw": "6462641839143",
+        "ownerAddress": "FTtKLYMPRuqrDuu5fv2gNLCuqkUP5kREw93GK2XPL27d"
+      },
+      {
+        "address": "4Ay44MJbhHDzqYmYmGMBfE7Ux4rWaj4e9L8uHqUjxpCk",
+        "balanceRaw": "5220797735727",
+        "ownerAddress": "UKAhwzGMRzunuEeAuVy4FmhJ19dwrmhDDzki5VuVJf4"
+      },
+      {
+        "address": "4kSx9uGoBfcbawu4QReptMMXXeNkSftPt3g1kBdGPUx2",
+        "balanceRaw": "5095676836836",
+        "ownerAddress": "6bjiyoLcsr3CBNzJnnne4CR55MtXPzVJLBzeRSNz2AXU"
+      },
+      {
+        "address": "RLWCj1WKfgKLLQZ2VCAJTk36g1vUqJ4RVa7my65df8d",
+        "balanceRaw": "5083417891776",
+        "ownerAddress": "2Vd1tVK2Dz9CwxuUSnny2i6zfYL2sLkWD8Dx8wJe87zE"
+      },
+      {
+        "address": "7iouV25j8UX14CxmYx5gftybJdhdbcwjsEJd5oeqggG4",
+        "balanceRaw": "4683069120420",
+        "ownerAddress": "DRNZ2x8mHDF2WHjctdb66dg7Ks2gyMjLS8gFsLaCKqvr"
+      },
+      {
+        "address": "7DYr5CrhTmTi2z6S1JZ47KoziS49ojLBK1eoPm84JYdX",
+        "balanceRaw": "4524110567010",
+        "ownerAddress": "C7tLCdCu756eazVZ5NWemvKuwyF1Xmyu65gpq6AkuQ67"
+      },
+      {
+        "address": "3S1hDgqYx1yXskrcd4p138eeV5JUszgxiByrS4LfxF9F",
+        "balanceRaw": "4424372996679",
+        "ownerAddress": "EMbYRVk58mcARNcgxTGQRHkgeSUyDsDZbHz4kZX3GD3E"
+      },
+      {
+        "address": "3sa2hcvkSRrwzDKFnHFjMqYxy2Nrc98Ard4RrX1dg4d3",
+        "balanceRaw": "4366436533285",
+        "ownerAddress": "HCqa9aQCCEaJfccuvvu2HxxtatPmD5BRN4noqWoAbpf1"
+      },
+      {
+        "address": "8f62ydPwhmshDKMAsPmoXzCy8dZier72pFuy39ry8p8B",
+        "balanceRaw": "3996666125804",
+        "ownerAddress": "FE8wKvYvroEKmHMGrhLbGn3xosRoXBeyMP4KaHZZiHRJ"
+      },
+      {
+        "address": "392RiDyNCy1Gz5qWVZvSzTZURxDTWvEc5r4sko48rED9",
+        "balanceRaw": "3958451048498",
+        "ownerAddress": "2GM8aDT1FmHXyuYovM9jEnxc9hufKPxpZykhTpJ6hsFg"
+      },
+      {
+        "address": "K7bDUeJqM6DU8xyyGHx4csakQMBDtBBEczhjUyaMrGU",
+        "balanceRaw": "3955666785451",
+        "ownerAddress": "3jtgoZ2mPMGgKvhPTGjrmYFpfWzFxei6Gz55JLkAMVDN"
+      },
+      {
+        "address": "2yjvTRESTHGPpSufqE8W1f8GfCjitTxzUXC3QUeiEwWz",
+        "balanceRaw": "3947174620023",
+        "ownerAddress": "H8gP5eLS75a2Tt68QDnPzZNxxHZwPyQ6g3PATRVnRGyj"
+      },
+      {
+        "address": "8Hpc2XTaVh2QHnYCnfEjDWVxw2ABDcJ65B3fdegAL4yD",
+        "balanceRaw": "3937808034359",
+        "ownerAddress": "DpPT3eBoEPyGVSETc2kDdiErUyPwgjZ9GgmyCULMy9Ng"
+      },
+      {
+        "address": "843wqnN4ugEqEkezx5LrFh51EbcQojtjNghdKSKUd6xw",
+        "balanceRaw": "3883543594892",
+        "ownerAddress": "BgSqAQcykvEbZncFRuFDZYkwi79onh7AodmqjjFZudBs"
+      },
+      {
+        "address": "9V6LkzrYNQuK9JCdxCoeUZxZfrC3DhLrP4D2sr98JUQy",
+        "balanceRaw": "3807133750997",
+        "ownerAddress": "3oRpD2QGF4RUanoBgXiZvrHCX5CEGGhNJ2N2uxUswqME"
+      },
+      {
+        "address": "4FzuRctngbD2stDKTKQXaTfywmtHixs4guTjWNF61XuP",
+        "balanceRaw": "3646168238050",
+        "ownerAddress": "q42p25B7rK4xrcJrxvxP5zi9uhEHikafTgM2kjtTeRy"
+      },
+      {
+        "address": "2snn7fHnhivexo12rYwTezYSACtV348MH2ug5iLAeAAJ",
+        "balanceRaw": "3499271088426",
+        "ownerAddress": "A9y61mXAUcRtgQidnmyqamCznfi5nsJwa5Xk5CxEffr7"
+      },
+      {
+        "address": "2eh7yrUnPou7mHWfEKbX4gXCcEyetscs6bnLAc4FSgjZ",
+        "balanceRaw": "3280611226158",
+        "ownerAddress": "7H7GN4P7MHqtsPamPpjKaBpFs21x7URdfnvtvbZvzCi2"
+      },
+      {
+        "address": "8d83xzJ7mKXMjFVy4kKLuRUtYCbxfaEriFK9R1nmqfCf",
+        "balanceRaw": "3220379291944",
+        "ownerAddress": "4XXSK7fxb1cCpwo52UbvDrNzGCwuSrRpQkVZTdXBbueE"
+      },
+      {
+        "address": "75dbmzeEtGXgzL6ELo1rdm7RYZEako1qm2qTXHq9FnFw",
+        "balanceRaw": "3061228397911",
+        "ownerAddress": "4uYQff7YiK3wun35VS6zjSH4Zc67ByWMbFTarDLNGtsh"
+      },
+      {
+        "address": "2U1HhGDUdSHPZbgvJHxuA8ikzaMCAzEkUEnUdLtmh8LN",
+        "balanceRaw": "3041707879210",
+        "ownerAddress": "7XtWe8MYoAQ1u8BX3d9g8orVt42yrRG5a7cAbf7B6SL1"
+      },
+      {
+        "address": "8g4vbPaEcJ9BjJCNeS6LyZpKro1VYBeg2EXdf4SJ5Rq6",
+        "balanceRaw": "3018441522910",
+        "ownerAddress": "HHVnsag46N2tgD9vKWL1JwNmrCDnYojAB9scFALHDz29"
+      },
+      {
+        "address": "77ynSiNSNyYLjQ3WqFS8nvEeEdV5iHWCRFLeRFmKjgDJ",
+        "balanceRaw": "3015179341711",
+        "ownerAddress": "4HUCZ388pUEGPWwu29ngCTEEz9n1CABPYbeGyLXKYcKc"
+      },
+      {
+        "address": "9GgFa3PForW69zKtzasekqKraQn5Ynw7KG2kVKcnatc3",
+        "balanceRaw": "3000557285598",
+        "ownerAddress": "H9a87A7WSXmGpbEAFTfgfkSoQrAD3dRSKBkevEFMi6Y4"
+      },
+      {
+        "address": "2roJWGwvJXGUtTdKcC7q8XhxhL2z62ruAJ1xkBqBTCuu",
+        "balanceRaw": "2961365250857",
+        "ownerAddress": "Fr4a9qwzkwxhMQhdBvZ52rRwbbN6RJjDzegDvhHnr24v"
+      },
+      {
+        "address": "8vxMpHHomSnmurFACUzz7oLDESeromwCfuq6nszjaP6J",
+        "balanceRaw": "2931624790030",
+        "ownerAddress": "CpHcP2jwKb7EsdgmpyU3hthh5cBXJGW66CjyAoGLKKiQ"
+      },
+      {
+        "address": "28a3FyVMqELt5d79WPYb9wjLe5B9zrzAdxmh2MF5mdW7",
+        "balanceRaw": "2900189495470",
+        "ownerAddress": "E9SvDj8gVCzBEwVr7GXtNKqLQEyXXxLXs4W7No5cB3Hz"
+      },
+      {
+        "address": "6uotpuw6BDWFbRzjH56wrDyHbvM5udCTpN6GqvVWtFW2",
+        "balanceRaw": "2897970001401",
+        "ownerAddress": "BusoWkvqRtUvQq2DX2Gz1etmPrcSVkmPPrgJSKVptYxu"
+      },
+      {
+        "address": "28jgyKmpob84PPcsfdxrxYkGZLx4JxHbSyT8xBqfyqfM",
+        "balanceRaw": "2884222136475",
+        "ownerAddress": "CZeGPQ3UGYWCxfy8F1nDQZWeKcEURF3NpJt3LCUpJujn"
+      },
+      {
+        "address": "71r47xqT72V1LktYtzzBrzHZv8v2QQcgqmqVC5sEFhUr",
+        "balanceRaw": "2858111902268",
+        "ownerAddress": "CDwhg6oqksRGZjs2q4Xsm687R47H6mvUv2KGmcKjHjHH"
+      },
+      {
+        "address": "3Qf1MueettSbZkPn13wfSswg7s6uhQqUY4Fvr2PynVzo",
+        "balanceRaw": "2686901571915",
+        "ownerAddress": "2w2R1VhaZxko2Rm1puV27UY4kHmrCaequZAf5gtk4HEw"
+      },
+      {
+        "address": "2sgPYaCHTNsvNN5U4XrM799PRgx4A9YmbGSN7FSARFwC",
+        "balanceRaw": "2645509710542",
+        "ownerAddress": "6u1tqpXAwd8JgBCRNfJWyWV7xS4mYMPJUjacNa5HX3vV"
+      },
+      {
+        "address": "7L4AcQnGP4HTWTZAyQRYPgXgtc6M8AhLfdcxSWr3KFPe",
+        "balanceRaw": "2597571955130",
+        "ownerAddress": "6jJQgZ8fXYnhAGT9DjR6WXSuAnYbB5dCkCdcWf2peeft"
+      },
+      {
+        "address": "4iVh2Hvi3sWMXBigpG3Voe6tQwA6hz7RSPLDy9sXBqR7",
+        "balanceRaw": "2505112564679",
+        "ownerAddress": "45wYwX1s2fv8Zhv7Wy2pRP7UXU8bT6KV71BKVochJGyh"
+      },
+      {
+        "address": "7VFve7Mtmj5FPK4mUbRiYYHm1qrhhZtJA2P6foJBaV5p",
+        "balanceRaw": "2500344288744",
+        "ownerAddress": "9gk9JSiBGSfj6Hn264tYjwG4DaD3WFatj7ibvSo3L5YQ"
+      },
+      {
+        "address": "3p6ziTPezyHrHoLTEf2Eoyfxkc58UScuoQFehmM9cFnz",
+        "balanceRaw": "2491741724034",
+        "ownerAddress": "724B2DQfmtKYxijhbn3SKWqBkGmoNAX5VS5kUanryNbK"
+      },
+      {
+        "address": "LEseQ2jRNo5tADaS4Cdt3VrisXDbfdHoMJzDSptAQLL",
+        "balanceRaw": "2467584996185",
+        "ownerAddress": "7bdExs3EmDiRi4WngwpKC4MiNMc2ZiremWasJTn4AQ4N"
+      },
+      {
+        "address": "7wV2bkyGLdxeipnHWo35HceP34VaXamH9p8QvWprv34Q",
+        "balanceRaw": "2373974429723",
+        "ownerAddress": "3Tnxf1qtPoDppL4LTCRszzZHJP2CLHUagh8n8uEEVfpV"
+      },
+      {
+        "address": "48ovC8w4mfLqRtanLUrESE334qT7ZCmfYWhCtyAMZnCJ",
+        "balanceRaw": "2340000000000",
+        "ownerAddress": "AxHVCGYFhFnAnHK6ve2XjTYjbXb1J9BM8dXDgoybBbXT"
+      },
+      {
+        "address": "4v4xDoiF5vKieCdqeMdY5q719iaQMYZdL3atugaKUK6Z",
+        "balanceRaw": "2274060259648",
+        "ownerAddress": "8HfJEcUenXWowkjgTcXftbSFs5hn85byqwHwumkc6416"
+      },
+      {
+        "address": "66PxnUo1EvYQDVZJRPe7coKem8mr6fa52aNW2XQCUyBe",
+        "balanceRaw": "2187965018852",
+        "ownerAddress": "482XHDcHAooUVt9zTd6H5ysKBN1y7SKsooBrT51Nn9zE"
+      },
+      {
+        "address": "7Qx1EMWxCgMZJXEMNDZ1Gtf2HWaTaUUUkRqFUumv2tUT",
+        "balanceRaw": "2175811139395",
+        "ownerAddress": "CVf4gjXVYZp9jaeu7K7zPy3RJPKz8uPBZdEkdR2xpfPD"
+      },
+      {
+        "address": "2fUd7sGrahaHDeRQLUxm3gaxKoTFqWeVrezew6ermswS",
+        "balanceRaw": "2134867003365",
+        "ownerAddress": "5pF2GRWxsqeesnyVJ94UstsbJF87zVJnCFkF1ey4sQvo"
+      },
+      {
+        "address": "9wGropWwV8SkDWRUX9XzTa6uPC1ipFANz9iWLJXLUvBS",
+        "balanceRaw": "2045828034465",
+        "ownerAddress": "554coZujWqy7BfyrswRdmnM7z4bKYRg6Q8t4o8UjQJy9"
+      },
+      {
+        "address": "3A932WTTE1jNbDLcKThJvBmDDkwXkxxdYvF7LB3CAj6o",
+        "balanceRaw": "1996507584342",
+        "ownerAddress": "62aohM6N4V9stqSmwZqr7dWx9rbZ5LgAZdqwnsfSvEfj"
+      },
+      {
+        "address": "92cY8vTcHPKCt4N4B8DVPX5QX9LqBZhdFbdrMrK2zuRd",
+        "balanceRaw": "1965088708009",
+        "ownerAddress": "GH5PLyDWF4LfRV7s4oawggxjvtKiiCY7Xnt3RRTHffMw"
+      },
+      {
+        "address": "4W6hW1Gv9Pv8FM7FELxz3U98nfegN99TSTKJcKvkiPpb",
+        "balanceRaw": "1957710582642",
+        "ownerAddress": "Evm1M3iXr2eVf2LDRFHodMPbpKfjamY2bASm6kjQ1uAa"
+      },
+      {
+        "address": "8VpXkdRhdh3d3BJcAiJjWpWdZ6XSmCbcKevwoGxW5uEH",
+        "balanceRaw": "1943933548726",
+        "ownerAddress": "2FKfS8SNXJ55B1KQKU8ioPFSfv3Whh1Qb7QafSTUdbhr"
+      },
+      {
+        "address": "7gUpwJD45AdWSrcpYroSFBBt6eQYa9inAMusSWtVx8zh",
+        "balanceRaw": "1896842926330",
+        "ownerAddress": "67Sp3nJYqLV3i7j68TWfd7J8RYnz8p6fRmxTiXxJk7PT"
+      },
+      {
+        "address": "3a2MqJQrY5LSwTt3TaUd2DijDbQAZgwX61GFYL6hdPV4",
+        "balanceRaw": "1872784520821",
+        "ownerAddress": "BQL21cbKMiLNTJoDZJrP6L9FfCVJRfEc96B5DoRvCkr6"
+      },
+      {
+        "address": "8FV8P7kBYZpG1JedveZoxr1Gx9kRK9cWsAV25D76obf8",
+        "balanceRaw": "1855990855748",
+        "ownerAddress": "Hw4iDX36WFahURgne4x3sRtMvZaqvpX833ffhhboQ7Dx"
+      },
+      {
+        "address": "7cC7tVZopkDTYW8bqgnDP5VnTYfRUK5Ni2q97VZ9uX5r",
+        "balanceRaw": "1824991807728",
+        "ownerAddress": "392aLQLEgFNt9R8BKpzVU7uLP3dFeDkh33sdq1qgDpAk"
+      },
+      {
+        "address": "4ZKTHUnBBeT4jA9P1TBsoarAwx7AXW7HZbTi9ajMbrKb",
+        "balanceRaw": "1818645964134",
+        "ownerAddress": "CxbUU5rcQsJ8zScUwCaJsjDnhQ2vEXLrdDMgwxBXrdSF"
+      },
+      {
+        "address": "4BQ3GkuDA6Vvfp8rpudZcaLs2J4upbV8eJEhsuq5YGMg",
+        "balanceRaw": "1795467515280",
+        "ownerAddress": "C5b7K9cgg45qcdrpC5YxvCuHR8Yak2wfCMfqMnfatzBT"
+      },
+      {
+        "address": "64zoRJev1nenZSQNnWqZsiEZRhqUvQeKeeKkwADiMsv2",
+        "balanceRaw": "1759515295620",
+        "ownerAddress": "3GNPLaEDX2qv8TX1tns9vo2dzJPshrEhdziroS45vEH3"
+      },
+      {
+        "address": "A5syyg9fi6LJ3zYB75wLh6VZAGgABBdq5HcXUMbeqk6e",
+        "balanceRaw": "1681550580831",
+        "ownerAddress": "AyNNDcdszLpvUckTH9UGP1wHuRakG1195TNBUBp5ZxGe"
+      },
+      {
+        "address": "2euMSV8cqoHFLQDeWJyBvq5BucuZMMsdCLE8Hd1JbeTh",
+        "balanceRaw": "1649298848088",
+        "ownerAddress": "H9xneUEYQRXFLcRRdyXRLTiwf2per4T1P2PBPGwXhVu9"
+      },
+      {
+        "address": "8oznygGNWs2JHYFt9kFkaXchWbNmzuWATF7hGUSDmJUK",
+        "balanceRaw": "1633323821032",
+        "ownerAddress": "5Qit4MyLfZhqA9Unwxhzvdrbzu564Su6Vk6t6ocH9bYZ"
+      },
+      {
+        "address": "EJ1wY1gnTUZoFQdqJtDtCfLBmS4C8pAzu9HxRr2Pfj7",
+        "balanceRaw": "1560885679679",
+        "ownerAddress": "BQimQz76obPDvsr7ViKHTYJFQLKjYXp4jEPpQS8ZhcrZ"
+      },
+      {
+        "address": "4bMRdBvvhqHjSKLtUVLnGxaUDchF6Xah52U1d7hVXskP",
+        "balanceRaw": "1500000000000",
+        "ownerAddress": "4fKvuTKTAee6GRv8mabH7j81m67R6V9cjv1qx6Ay15su"
+      },
+      {
+        "address": "5mGjhcoErfxtaThi7ngLdVaTNjWk68QBn8DQrdjuAUKC",
+        "balanceRaw": "1500000000000",
+        "ownerAddress": "BghxLfDCXA4KyeFV3fe3NnkTPEeePGAuWGrLdvjrz6o3"
+      },
+      {
+        "address": "8wSJoNBX4QWguTN11DszCvN5chLDrChUYRqWhGw52j9d",
+        "balanceRaw": "1460772988286",
+        "ownerAddress": "EoJ6KQPs6uwrUHRimWTrcUPHSmy8QDGFq4UKfaUgYfEM"
+      },
+      {
+        "address": "3tY9wwQEvaxptkAXtE8VhXPvg7Y1Z3Dpu5mFd8aHKbWi",
+        "balanceRaw": "1451572406838",
+        "ownerAddress": "7Q9bV8shabm5wTprQdXigY7tFHSHH7zdQq8jndSw9ezG"
+      },
+      {
+        "address": "9dNwiKZcqDb9mfjFNYJFW8wZZ2Cx5MBV8rUW5YgL9Cyn",
+        "balanceRaw": "1413584665683",
+        "ownerAddress": "6Ee9XTEjZYA5LPpUpFywM55RuU894zuFac7ihA8BzmxC"
+      },
+      {
+        "address": "hx3vcqZ4e8aRCwy3pEtCj7dAPwivRsDrg5v6Nt5GTFn",
+        "balanceRaw": "1402782207033",
+        "ownerAddress": "A6pEriDzqKXCUTVKov5hFe2fZU4b1p8RMxYfxyu69i25"
+      },
+      {
+        "address": "6Zor3y2PzsBZ3tGPQr4YTA1wfZ68rWY4rFe86giPgKwJ",
+        "balanceRaw": "1330991510354",
+        "ownerAddress": "5fMSdPkUc3ubSgKFsier5YrbzqVd8rG1f7ph8bagvMyp"
+      },
+      {
+        "address": "5SW8F8TrL8Yiko4r6BrFEihiSn1LKL9xh5CpzNoycARx",
+        "balanceRaw": "1320952698869",
+        "ownerAddress": "7bC2CnYjcmivqwRuE56mr1WitrSZ4FT6X7FGTeVsqd3j"
+      },
+      {
+        "address": "XvSVQNYUA4WeoXmHwEJSbAKeJ1WDqaGgiDXnfEX9VM1",
+        "balanceRaw": "1269125324251",
+        "ownerAddress": "FZkbEuAowfaBHkb3Ly3C1ojNKNVwXv4Lx7QQws5ccD7m"
+      },
+      {
+        "address": "9idUTCLf43GaqpCe9XXhpcNafxs2VA4dbe4CKEpebGFT",
+        "balanceRaw": "1250000008658",
+        "ownerAddress": "DcS752R12swQDZH1UGxFXeWiptfB5ddwnNgoW74NHdk7"
+      },
+      {
+        "address": "2PqaNatQQpujsCF6Hru1AzfVUzyEkSmf3tV2pUWY6Z4W",
+        "balanceRaw": "1242841203141",
+        "ownerAddress": "59DjpyqnjdUasjEo7BQon2c2gfXtC3r5WSPBkhqvvT2A"
+      },
+      {
+        "address": "4sStauWvhgbWcSsCRwR9ZvAouUoRStztVorwpBKpXdFq",
+        "balanceRaw": "1240196544972",
+        "ownerAddress": "6RCLnRrqiDLvGcQ8r1nPwqC2vVH7VeNu5stXWf7Aa9am"
+      },
+      {
+        "address": "8P1eE3EKZM4Wtoy3PscyNJnmRdWZonYRX9jWm7E9WQ2T",
+        "balanceRaw": "1225010618800",
+        "ownerAddress": "2bGGtMXPzmSEp9wqbcwGVfeRrDB2y82QdXXxinbmwf2S"
+      },
+      {
+        "address": "6gAeP5PksGTQDyfkn95kYh2J2Aixw8Estda8azUvBmxG",
+        "balanceRaw": "1205673088337",
+        "ownerAddress": "GZypRK4EHaPbVc247kmzcHr36xR7pifDSg8sFdJgLrFp"
+      },
+      {
+        "address": "6JjQNpM5sfWF7B5wnWHrY1axVqLg9W2nSQ9yqp8TE5UT",
+        "balanceRaw": "1193968649324",
+        "ownerAddress": "33dYF88CvSiKBs7FcVC75Ky2pST6B7WxyAcMPqQAkWbA"
+      },
+      {
+        "address": "qRThM3UjaYCb2DEpeAM8UePfvmQMCjj4Y2scDMEWV7U",
+        "balanceRaw": "1189000834910",
+        "ownerAddress": "D5rFiP2wwYcggSpqpUDjiSAtcwYRWLJiFL5dth2TKCu1"
+      },
+      {
+        "address": "UWwbCkGcL22nQYAGKtCP179U9vTJrvhKLHn4NeZERpd",
+        "balanceRaw": "1179513487538",
+        "ownerAddress": "GSn17E9yrG7iEdhZsVXFGg9r64dfK6s44AyQma5Ns5PB"
+      },
+      {
+        "address": "7C1fxzDXqHiTdFdPSvL8D9f57msQ3NGWgMPAS644FuiQ",
+        "balanceRaw": "1157841211836",
+        "ownerAddress": "7qnvudUhkReTxD4pmoXMchG1JpqvLh2eM2RYjUoaBbGt"
+      },
+      {
+        "address": "UV2nAe2hxNRNJDWFuJTfWm2zQMWCVumppStEcnwhNiL",
+        "balanceRaw": "1138565924119",
+        "ownerAddress": "DLm2JvKJm8EvfLncmuFj88SkBsLMnkhVW4UsyaHwypBE"
+      },
+      {
+        "address": "aiazdatJFb9S3R1Zu8Ud1igBMDxFMQJXBbjGRTbf29T",
+        "balanceRaw": "1130378741641",
+        "ownerAddress": "4JVLwhQsv8E8tYUz4eCPyn6czr5A6MeE6vgzmyyojvCs"
+      },
+      {
+        "address": "3cYKNSEAK91BHVoa3Uu5m1KjKVnJs4tmVApgPqMpqAq1",
+        "balanceRaw": "1129203344394",
+        "ownerAddress": "9oSRMVzes4Yc6dzJ93hTws4ziBCC6RF5wnnJmEszbgA8"
+      },
+      {
+        "address": "3wGpjBAssFyWbwW6VoBBLDiYsbxJjZSvVeGiEyNha1QK",
+        "balanceRaw": "1128533707271",
+        "ownerAddress": "7pVbJiLusbVadLpNQCHbuyGnFLW1UxvUNYURA5vS3FX3"
+      },
+      {
+        "address": "8EPoW5JdJqfhqg39XNFwEpyqEznw4NJkgqV6293Sa2Aq",
+        "balanceRaw": "1124591563691",
+        "ownerAddress": "Hx1dAqPZZgaxvs3hf53sBMQXL8MGTn1XXCDdNAUCL3vM"
+      },
+      {
+        "address": "4yhVMq2nwWoEPBUPyygARMq23Uj3XFsBR1rgWjBmTDrh",
+        "balanceRaw": "1110148871787",
+        "ownerAddress": "27ZJR5vEW4FqGbq8KexyY2tyBnLCAYBAKDcm4YkM1AFA"
+      },
+      {
+        "address": "2EP4ggbCQ2z9ddhTW7zP8GVZNKpqDED7vWWzjyv4JxAF",
+        "balanceRaw": "1105282380428",
+        "ownerAddress": "6k51HEtgcrLZqPjrmVTWzAwTepertrAK8zUPZqftFJMk"
+      },
+      {
+        "address": "8sjM1WM1rWyyYKYNokDjLky9wu2bBFRfbWWNmnTpr3h6",
+        "balanceRaw": "1095272131871",
+        "ownerAddress": "zPCYkYVGT2XLKYEx9RJuYMdKW76qdCcApX62MBNe6ed"
+      },
+      {
+        "address": "88PtCj8nm9U2Pi8jBz74LdnhXC9mXE3ZeZ7H3SynAgUU",
+        "balanceRaw": "1093636920784",
+        "ownerAddress": "4HpA7wA8MGmhZiWizgam5gjqo8vSvqtrRPMuC5CGC16M"
+      },
+      {
+        "address": "4PpSWxz5mwf8xGZ6Za1cSdwKNCY83hqe4KNPXr2SnvhE",
+        "balanceRaw": "1092677528683",
+        "ownerAddress": "6PFY7coUA6sdszL2QxikaDheY4BBJMX5juBSC33SJxE8"
+      },
+      {
+        "address": "4abYxBnK8tBnHa17D26NS6r7ZQrNMFQ42j3ho6WUo98v",
+        "balanceRaw": "1092510322072",
+        "ownerAddress": "8spBhs1fgrtYbLD3ATdp6gru4jCVKnahTBxmjtjuiPon"
+      }
+    ],
+    "owner_aggregated_holders": [
+      {
+        "address": "3drH9cM791WKacWAxXhdWLRbf9Jiy3txYvpdUtDD6NkX",
+        "balanceRaw": "26751415119358",
+        "rank": 1
+      },
+      {
+        "address": "DQ59UhSiyGpY1ebNUet9Bybobu293PCNtSWjruXC6GEh",
+        "balanceRaw": "18890986385913",
+        "rank": 2
+      },
+      {
+        "address": "8UK27CEzGcwkyiWFEb9ABauezJpJX4DGcGHbTbkRKvS9",
+        "balanceRaw": "18298749015010",
+        "rank": 3
+      },
+      {
+        "address": "AsdweR8ettxzzePCHgfM8qDbmbCZvu7gQRVt88DJ8Q9F",
+        "balanceRaw": "10636064533037",
+        "rank": 4
+      },
+      {
+        "address": "88B6QzYDHPzcgCireD2zMQCHC5Fxwh877omtJBUALvg",
+        "balanceRaw": "10594416499772",
+        "rank": 5
+      },
+      {
+        "address": "AGR4gsos88xAvXGceMK6A3Mqt3PJcUYvz6Hgm6hhHvkV",
+        "balanceRaw": "9587362946854",
+        "rank": 6
+      },
+      {
+        "address": "BkjyzCimDxpMGxQioLTmZQidCfP4EAzRPjWtKgKw4fPf",
+        "balanceRaw": "9041440064596",
+        "rank": 7
+      },
+      {
+        "address": "AQaFpcYstCWgTERJzniuvuKStyzp2r6vTEJX3tk35Th6",
+        "balanceRaw": "8535023692886",
+        "rank": 8
+      },
+      {
+        "address": "EzZ4LBozs2bFY4jkN7YBjbhkCDFBbQya5BmQLwSnvNZs",
+        "balanceRaw": "7318561675621",
+        "rank": 9
+      },
+      {
+        "address": "DnL1KUY1dQ7h2PgytvRrmRbA7U6y11H68XTYwJBnwCQV",
+        "balanceRaw": "7053390783964",
+        "rank": 10
+      },
+      {
+        "address": "HY4NUZtG2wLxojsveQjaZ8t5DJu4VjeCpt1PkPP4URpg",
+        "balanceRaw": "6956530200919",
+        "rank": 11
+      },
+      {
+        "address": "7Z3vocJgaTMLo8CNH9cXuUxNZ3bUevfxZnxpVbnFbTk",
+        "balanceRaw": "6713946645329",
+        "rank": 12
+      },
+      {
+        "address": "FTtKLYMPRuqrDuu5fv2gNLCuqkUP5kREw93GK2XPL27d",
+        "balanceRaw": "6462641839143",
+        "rank": 13
+      },
+      {
+        "address": "UKAhwzGMRzunuEeAuVy4FmhJ19dwrmhDDzki5VuVJf4",
+        "balanceRaw": "5220797735727",
+        "rank": 14
+      },
+      {
+        "address": "6bjiyoLcsr3CBNzJnnne4CR55MtXPzVJLBzeRSNz2AXU",
+        "balanceRaw": "5095676836836",
+        "rank": 15
+      },
+      {
+        "address": "2Vd1tVK2Dz9CwxuUSnny2i6zfYL2sLkWD8Dx8wJe87zE",
+        "balanceRaw": "5083417891776",
+        "rank": 16
+      },
+      {
+        "address": "DRNZ2x8mHDF2WHjctdb66dg7Ks2gyMjLS8gFsLaCKqvr",
+        "balanceRaw": "4683069120420",
+        "rank": 17
+      },
+      {
+        "address": "C7tLCdCu756eazVZ5NWemvKuwyF1Xmyu65gpq6AkuQ67",
+        "balanceRaw": "4524110567010",
+        "rank": 18
+      },
+      {
+        "address": "EMbYRVk58mcARNcgxTGQRHkgeSUyDsDZbHz4kZX3GD3E",
+        "balanceRaw": "4424372996679",
+        "rank": 19
+      },
+      {
+        "address": "HCqa9aQCCEaJfccuvvu2HxxtatPmD5BRN4noqWoAbpf1",
+        "balanceRaw": "4366436533285",
+        "rank": 20
+      },
+      {
+        "address": "FE8wKvYvroEKmHMGrhLbGn3xosRoXBeyMP4KaHZZiHRJ",
+        "balanceRaw": "3996666125804",
+        "rank": 21
+      },
+      {
+        "address": "2GM8aDT1FmHXyuYovM9jEnxc9hufKPxpZykhTpJ6hsFg",
+        "balanceRaw": "3958451048498",
+        "rank": 22
+      },
+      {
+        "address": "3jtgoZ2mPMGgKvhPTGjrmYFpfWzFxei6Gz55JLkAMVDN",
+        "balanceRaw": "3955666785451",
+        "rank": 23
+      },
+      {
+        "address": "H8gP5eLS75a2Tt68QDnPzZNxxHZwPyQ6g3PATRVnRGyj",
+        "balanceRaw": "3947174620023",
+        "rank": 24
+      },
+      {
+        "address": "DpPT3eBoEPyGVSETc2kDdiErUyPwgjZ9GgmyCULMy9Ng",
+        "balanceRaw": "3937808034359",
+        "rank": 25
+      },
+      {
+        "address": "BgSqAQcykvEbZncFRuFDZYkwi79onh7AodmqjjFZudBs",
+        "balanceRaw": "3883543594892",
+        "rank": 26
+      },
+      {
+        "address": "3oRpD2QGF4RUanoBgXiZvrHCX5CEGGhNJ2N2uxUswqME",
+        "balanceRaw": "3807133750997",
+        "rank": 27
+      },
+      {
+        "address": "q42p25B7rK4xrcJrxvxP5zi9uhEHikafTgM2kjtTeRy",
+        "balanceRaw": "3646168238050",
+        "rank": 28
+      },
+      {
+        "address": "A9y61mXAUcRtgQidnmyqamCznfi5nsJwa5Xk5CxEffr7",
+        "balanceRaw": "3499271088426",
+        "rank": 29
+      },
+      {
+        "address": "7H7GN4P7MHqtsPamPpjKaBpFs21x7URdfnvtvbZvzCi2",
+        "balanceRaw": "3280611226158",
+        "rank": 30
+      },
+      {
+        "address": "4XXSK7fxb1cCpwo52UbvDrNzGCwuSrRpQkVZTdXBbueE",
+        "balanceRaw": "3220379291944",
+        "rank": 31
+      },
+      {
+        "address": "4uYQff7YiK3wun35VS6zjSH4Zc67ByWMbFTarDLNGtsh",
+        "balanceRaw": "3061228397911",
+        "rank": 32
+      },
+      {
+        "address": "7XtWe8MYoAQ1u8BX3d9g8orVt42yrRG5a7cAbf7B6SL1",
+        "balanceRaw": "3041707879210",
+        "rank": 33
+      },
+      {
+        "address": "HHVnsag46N2tgD9vKWL1JwNmrCDnYojAB9scFALHDz29",
+        "balanceRaw": "3018441522910",
+        "rank": 34
+      },
+      {
+        "address": "4HUCZ388pUEGPWwu29ngCTEEz9n1CABPYbeGyLXKYcKc",
+        "balanceRaw": "3015179341711",
+        "rank": 35
+      },
+      {
+        "address": "H9a87A7WSXmGpbEAFTfgfkSoQrAD3dRSKBkevEFMi6Y4",
+        "balanceRaw": "3000557285598",
+        "rank": 36
+      },
+      {
+        "address": "Fr4a9qwzkwxhMQhdBvZ52rRwbbN6RJjDzegDvhHnr24v",
+        "balanceRaw": "2961365250857",
+        "rank": 37
+      },
+      {
+        "address": "CpHcP2jwKb7EsdgmpyU3hthh5cBXJGW66CjyAoGLKKiQ",
+        "balanceRaw": "2931624790030",
+        "rank": 38
+      },
+      {
+        "address": "E9SvDj8gVCzBEwVr7GXtNKqLQEyXXxLXs4W7No5cB3Hz",
+        "balanceRaw": "2900189495470",
+        "rank": 39
+      },
+      {
+        "address": "BusoWkvqRtUvQq2DX2Gz1etmPrcSVkmPPrgJSKVptYxu",
+        "balanceRaw": "2897970001401",
+        "rank": 40
+      },
+      {
+        "address": "CZeGPQ3UGYWCxfy8F1nDQZWeKcEURF3NpJt3LCUpJujn",
+        "balanceRaw": "2884222136475",
+        "rank": 41
+      },
+      {
+        "address": "CDwhg6oqksRGZjs2q4Xsm687R47H6mvUv2KGmcKjHjHH",
+        "balanceRaw": "2858111902268",
+        "rank": 42
+      },
+      {
+        "address": "2w2R1VhaZxko2Rm1puV27UY4kHmrCaequZAf5gtk4HEw",
+        "balanceRaw": "2686901571915",
+        "rank": 43
+      },
+      {
+        "address": "6u1tqpXAwd8JgBCRNfJWyWV7xS4mYMPJUjacNa5HX3vV",
+        "balanceRaw": "2645509710542",
+        "rank": 44
+      },
+      {
+        "address": "6jJQgZ8fXYnhAGT9DjR6WXSuAnYbB5dCkCdcWf2peeft",
+        "balanceRaw": "2597571955130",
+        "rank": 45
+      },
+      {
+        "address": "45wYwX1s2fv8Zhv7Wy2pRP7UXU8bT6KV71BKVochJGyh",
+        "balanceRaw": "2505112564679",
+        "rank": 46
+      },
+      {
+        "address": "9gk9JSiBGSfj6Hn264tYjwG4DaD3WFatj7ibvSo3L5YQ",
+        "balanceRaw": "2500344288744",
+        "rank": 47
+      },
+      {
+        "address": "724B2DQfmtKYxijhbn3SKWqBkGmoNAX5VS5kUanryNbK",
+        "balanceRaw": "2491741724034",
+        "rank": 48
+      },
+      {
+        "address": "7bdExs3EmDiRi4WngwpKC4MiNMc2ZiremWasJTn4AQ4N",
+        "balanceRaw": "2467584996185",
+        "rank": 49
+      },
+      {
+        "address": "3Tnxf1qtPoDppL4LTCRszzZHJP2CLHUagh8n8uEEVfpV",
+        "balanceRaw": "2373974429723",
+        "rank": 50
+      },
+      {
+        "address": "AxHVCGYFhFnAnHK6ve2XjTYjbXb1J9BM8dXDgoybBbXT",
+        "balanceRaw": "2340000000000",
+        "rank": 51
+      },
+      {
+        "address": "8HfJEcUenXWowkjgTcXftbSFs5hn85byqwHwumkc6416",
+        "balanceRaw": "2274060259648",
+        "rank": 52
+      },
+      {
+        "address": "482XHDcHAooUVt9zTd6H5ysKBN1y7SKsooBrT51Nn9zE",
+        "balanceRaw": "2187965018852",
+        "rank": 53
+      },
+      {
+        "address": "CVf4gjXVYZp9jaeu7K7zPy3RJPKz8uPBZdEkdR2xpfPD",
+        "balanceRaw": "2175811139395",
+        "rank": 54
+      },
+      {
+        "address": "5pF2GRWxsqeesnyVJ94UstsbJF87zVJnCFkF1ey4sQvo",
+        "balanceRaw": "2134867003365",
+        "rank": 55
+      },
+      {
+        "address": "554coZujWqy7BfyrswRdmnM7z4bKYRg6Q8t4o8UjQJy9",
+        "balanceRaw": "2045828034465",
+        "rank": 56
+      },
+      {
+        "address": "62aohM6N4V9stqSmwZqr7dWx9rbZ5LgAZdqwnsfSvEfj",
+        "balanceRaw": "1996507584342",
+        "rank": 57
+      },
+      {
+        "address": "GH5PLyDWF4LfRV7s4oawggxjvtKiiCY7Xnt3RRTHffMw",
+        "balanceRaw": "1965088708009",
+        "rank": 58
+      },
+      {
+        "address": "Evm1M3iXr2eVf2LDRFHodMPbpKfjamY2bASm6kjQ1uAa",
+        "balanceRaw": "1957710582642",
+        "rank": 59
+      },
+      {
+        "address": "2FKfS8SNXJ55B1KQKU8ioPFSfv3Whh1Qb7QafSTUdbhr",
+        "balanceRaw": "1943933548726",
+        "rank": 60
+      },
+      {
+        "address": "67Sp3nJYqLV3i7j68TWfd7J8RYnz8p6fRmxTiXxJk7PT",
+        "balanceRaw": "1896842926330",
+        "rank": 61
+      },
+      {
+        "address": "BQL21cbKMiLNTJoDZJrP6L9FfCVJRfEc96B5DoRvCkr6",
+        "balanceRaw": "1872784520821",
+        "rank": 62
+      },
+      {
+        "address": "Hw4iDX36WFahURgne4x3sRtMvZaqvpX833ffhhboQ7Dx",
+        "balanceRaw": "1855990855748",
+        "rank": 63
+      },
+      {
+        "address": "392aLQLEgFNt9R8BKpzVU7uLP3dFeDkh33sdq1qgDpAk",
+        "balanceRaw": "1824991807728",
+        "rank": 64
+      },
+      {
+        "address": "CxbUU5rcQsJ8zScUwCaJsjDnhQ2vEXLrdDMgwxBXrdSF",
+        "balanceRaw": "1818645964134",
+        "rank": 65
+      },
+      {
+        "address": "C5b7K9cgg45qcdrpC5YxvCuHR8Yak2wfCMfqMnfatzBT",
+        "balanceRaw": "1795467515280",
+        "rank": 66
+      },
+      {
+        "address": "3GNPLaEDX2qv8TX1tns9vo2dzJPshrEhdziroS45vEH3",
+        "balanceRaw": "1759515295620",
+        "rank": 67
+      },
+      {
+        "address": "AyNNDcdszLpvUckTH9UGP1wHuRakG1195TNBUBp5ZxGe",
+        "balanceRaw": "1681550580831",
+        "rank": 68
+      },
+      {
+        "address": "H9xneUEYQRXFLcRRdyXRLTiwf2per4T1P2PBPGwXhVu9",
+        "balanceRaw": "1649298848088",
+        "rank": 69
+      },
+      {
+        "address": "5Qit4MyLfZhqA9Unwxhzvdrbzu564Su6Vk6t6ocH9bYZ",
+        "balanceRaw": "1633323821032",
+        "rank": 70
+      },
+      {
+        "address": "BQimQz76obPDvsr7ViKHTYJFQLKjYXp4jEPpQS8ZhcrZ",
+        "balanceRaw": "1560885679679",
+        "rank": 71
+      },
+      {
+        "address": "4fKvuTKTAee6GRv8mabH7j81m67R6V9cjv1qx6Ay15su",
+        "balanceRaw": "1500000000000",
+        "rank": 72
+      },
+      {
+        "address": "BghxLfDCXA4KyeFV3fe3NnkTPEeePGAuWGrLdvjrz6o3",
+        "balanceRaw": "1500000000000",
+        "rank": 73
+      },
+      {
+        "address": "EoJ6KQPs6uwrUHRimWTrcUPHSmy8QDGFq4UKfaUgYfEM",
+        "balanceRaw": "1460772988286",
+        "rank": 74
+      },
+      {
+        "address": "7Q9bV8shabm5wTprQdXigY7tFHSHH7zdQq8jndSw9ezG",
+        "balanceRaw": "1451572406838",
+        "rank": 75
+      },
+      {
+        "address": "6Ee9XTEjZYA5LPpUpFywM55RuU894zuFac7ihA8BzmxC",
+        "balanceRaw": "1413584665683",
+        "rank": 76
+      },
+      {
+        "address": "A6pEriDzqKXCUTVKov5hFe2fZU4b1p8RMxYfxyu69i25",
+        "balanceRaw": "1402782207033",
+        "rank": 77
+      },
+      {
+        "address": "5fMSdPkUc3ubSgKFsier5YrbzqVd8rG1f7ph8bagvMyp",
+        "balanceRaw": "1330991510354",
+        "rank": 78
+      },
+      {
+        "address": "7bC2CnYjcmivqwRuE56mr1WitrSZ4FT6X7FGTeVsqd3j",
+        "balanceRaw": "1320952698869",
+        "rank": 79
+      },
+      {
+        "address": "FZkbEuAowfaBHkb3Ly3C1ojNKNVwXv4Lx7QQws5ccD7m",
+        "balanceRaw": "1269125324251",
+        "rank": 80
+      },
+      {
+        "address": "DcS752R12swQDZH1UGxFXeWiptfB5ddwnNgoW74NHdk7",
+        "balanceRaw": "1250000008658",
+        "rank": 81
+      },
+      {
+        "address": "59DjpyqnjdUasjEo7BQon2c2gfXtC3r5WSPBkhqvvT2A",
+        "balanceRaw": "1242841203141",
+        "rank": 82
+      },
+      {
+        "address": "6RCLnRrqiDLvGcQ8r1nPwqC2vVH7VeNu5stXWf7Aa9am",
+        "balanceRaw": "1240196544972",
+        "rank": 83
+      },
+      {
+        "address": "2bGGtMXPzmSEp9wqbcwGVfeRrDB2y82QdXXxinbmwf2S",
+        "balanceRaw": "1225010618800",
+        "rank": 84
+      },
+      {
+        "address": "GZypRK4EHaPbVc247kmzcHr36xR7pifDSg8sFdJgLrFp",
+        "balanceRaw": "1205673088337",
+        "rank": 85
+      },
+      {
+        "address": "33dYF88CvSiKBs7FcVC75Ky2pST6B7WxyAcMPqQAkWbA",
+        "balanceRaw": "1193968649324",
+        "rank": 86
+      },
+      {
+        "address": "D5rFiP2wwYcggSpqpUDjiSAtcwYRWLJiFL5dth2TKCu1",
+        "balanceRaw": "1189000834910",
+        "rank": 87
+      },
+      {
+        "address": "GSn17E9yrG7iEdhZsVXFGg9r64dfK6s44AyQma5Ns5PB",
+        "balanceRaw": "1179513487538",
+        "rank": 88
+      },
+      {
+        "address": "7qnvudUhkReTxD4pmoXMchG1JpqvLh2eM2RYjUoaBbGt",
+        "balanceRaw": "1157841211836",
+        "rank": 89
+      },
+      {
+        "address": "DLm2JvKJm8EvfLncmuFj88SkBsLMnkhVW4UsyaHwypBE",
+        "balanceRaw": "1138565924119",
+        "rank": 90
+      },
+      {
+        "address": "4JVLwhQsv8E8tYUz4eCPyn6czr5A6MeE6vgzmyyojvCs",
+        "balanceRaw": "1130378741641",
+        "rank": 91
+      },
+      {
+        "address": "9oSRMVzes4Yc6dzJ93hTws4ziBCC6RF5wnnJmEszbgA8",
+        "balanceRaw": "1129203344394",
+        "rank": 92
+      },
+      {
+        "address": "7pVbJiLusbVadLpNQCHbuyGnFLW1UxvUNYURA5vS3FX3",
+        "balanceRaw": "1128533707271",
+        "rank": 93
+      },
+      {
+        "address": "Hx1dAqPZZgaxvs3hf53sBMQXL8MGTn1XXCDdNAUCL3vM",
+        "balanceRaw": "1124591563691",
+        "rank": 94
+      },
+      {
+        "address": "27ZJR5vEW4FqGbq8KexyY2tyBnLCAYBAKDcm4YkM1AFA",
+        "balanceRaw": "1110148871787",
+        "rank": 95
+      },
+      {
+        "address": "6k51HEtgcrLZqPjrmVTWzAwTepertrAK8zUPZqftFJMk",
+        "balanceRaw": "1105282380428",
+        "rank": 96
+      },
+      {
+        "address": "zPCYkYVGT2XLKYEx9RJuYMdKW76qdCcApX62MBNe6ed",
+        "balanceRaw": "1095272131871",
+        "rank": 97
+      },
+      {
+        "address": "4HpA7wA8MGmhZiWizgam5gjqo8vSvqtrRPMuC5CGC16M",
+        "balanceRaw": "1093636920784",
+        "rank": 98
+      },
+      {
+        "address": "6PFY7coUA6sdszL2QxikaDheY4BBJMX5juBSC33SJxE8",
+        "balanceRaw": "1092677528683",
+        "rank": 99
+      },
+      {
+        "address": "8spBhs1fgrtYbLD3ATdp6gru4jCVKnahTBxmjtjuiPon",
+        "balanceRaw": "1092510322072",
+        "rank": 100
+      }
+    ],
+    "cleaned_top_holders": [
+      {
+        "address": "3drH9cM791WKacWAxXhdWLRbf9Jiy3txYvpdUtDD6NkX",
+        "balanceRaw": "26751415119358",
+        "rank": 1
+      },
+      {
+        "address": "DQ59UhSiyGpY1ebNUet9Bybobu293PCNtSWjruXC6GEh",
+        "balanceRaw": "18890986385913",
+        "rank": 2
+      },
+      {
+        "address": "8UK27CEzGcwkyiWFEb9ABauezJpJX4DGcGHbTbkRKvS9",
+        "balanceRaw": "18298749015010",
+        "rank": 3
+      },
+      {
+        "address": "AsdweR8ettxzzePCHgfM8qDbmbCZvu7gQRVt88DJ8Q9F",
+        "balanceRaw": "10636064533037",
+        "rank": 4
+      },
+      {
+        "address": "88B6QzYDHPzcgCireD2zMQCHC5Fxwh877omtJBUALvg",
+        "balanceRaw": "10594416499772",
+        "rank": 5
+      },
+      {
+        "address": "AGR4gsos88xAvXGceMK6A3Mqt3PJcUYvz6Hgm6hhHvkV",
+        "balanceRaw": "9587362946854",
+        "rank": 6
+      },
+      {
+        "address": "BkjyzCimDxpMGxQioLTmZQidCfP4EAzRPjWtKgKw4fPf",
+        "balanceRaw": "9041440064596",
+        "rank": 7
+      },
+      {
+        "address": "AQaFpcYstCWgTERJzniuvuKStyzp2r6vTEJX3tk35Th6",
+        "balanceRaw": "8535023692886",
+        "rank": 8
+      },
+      {
+        "address": "EzZ4LBozs2bFY4jkN7YBjbhkCDFBbQya5BmQLwSnvNZs",
+        "balanceRaw": "7318561675621",
+        "rank": 9
+      },
+      {
+        "address": "DnL1KUY1dQ7h2PgytvRrmRbA7U6y11H68XTYwJBnwCQV",
+        "balanceRaw": "7053390783964",
+        "rank": 10
+      },
+      {
+        "address": "HY4NUZtG2wLxojsveQjaZ8t5DJu4VjeCpt1PkPP4URpg",
+        "balanceRaw": "6956530200919",
+        "rank": 11
+      },
+      {
+        "address": "7Z3vocJgaTMLo8CNH9cXuUxNZ3bUevfxZnxpVbnFbTk",
+        "balanceRaw": "6713946645329",
+        "rank": 12
+      },
+      {
+        "address": "FTtKLYMPRuqrDuu5fv2gNLCuqkUP5kREw93GK2XPL27d",
+        "balanceRaw": "6462641839143",
+        "rank": 13
+      },
+      {
+        "address": "UKAhwzGMRzunuEeAuVy4FmhJ19dwrmhDDzki5VuVJf4",
+        "balanceRaw": "5220797735727",
+        "rank": 14
+      },
+      {
+        "address": "6bjiyoLcsr3CBNzJnnne4CR55MtXPzVJLBzeRSNz2AXU",
+        "balanceRaw": "5095676836836",
+        "rank": 15
+      },
+      {
+        "address": "2Vd1tVK2Dz9CwxuUSnny2i6zfYL2sLkWD8Dx8wJe87zE",
+        "balanceRaw": "5083417891776",
+        "rank": 16
+      },
+      {
+        "address": "DRNZ2x8mHDF2WHjctdb66dg7Ks2gyMjLS8gFsLaCKqvr",
+        "balanceRaw": "4683069120420",
+        "rank": 17
+      },
+      {
+        "address": "C7tLCdCu756eazVZ5NWemvKuwyF1Xmyu65gpq6AkuQ67",
+        "balanceRaw": "4524110567010",
+        "rank": 18
+      },
+      {
+        "address": "EMbYRVk58mcARNcgxTGQRHkgeSUyDsDZbHz4kZX3GD3E",
+        "balanceRaw": "4424372996679",
+        "rank": 19
+      },
+      {
+        "address": "HCqa9aQCCEaJfccuvvu2HxxtatPmD5BRN4noqWoAbpf1",
+        "balanceRaw": "4366436533285",
+        "rank": 20
+      },
+      {
+        "address": "FE8wKvYvroEKmHMGrhLbGn3xosRoXBeyMP4KaHZZiHRJ",
+        "balanceRaw": "3996666125804",
+        "rank": 21
+      },
+      {
+        "address": "2GM8aDT1FmHXyuYovM9jEnxc9hufKPxpZykhTpJ6hsFg",
+        "balanceRaw": "3958451048498",
+        "rank": 22
+      },
+      {
+        "address": "3jtgoZ2mPMGgKvhPTGjrmYFpfWzFxei6Gz55JLkAMVDN",
+        "balanceRaw": "3955666785451",
+        "rank": 23
+      },
+      {
+        "address": "H8gP5eLS75a2Tt68QDnPzZNxxHZwPyQ6g3PATRVnRGyj",
+        "balanceRaw": "3947174620023",
+        "rank": 24
+      },
+      {
+        "address": "DpPT3eBoEPyGVSETc2kDdiErUyPwgjZ9GgmyCULMy9Ng",
+        "balanceRaw": "3937808034359",
+        "rank": 25
+      },
+      {
+        "address": "BgSqAQcykvEbZncFRuFDZYkwi79onh7AodmqjjFZudBs",
+        "balanceRaw": "3883543594892",
+        "rank": 26
+      },
+      {
+        "address": "3oRpD2QGF4RUanoBgXiZvrHCX5CEGGhNJ2N2uxUswqME",
+        "balanceRaw": "3807133750997",
+        "rank": 27
+      },
+      {
+        "address": "q42p25B7rK4xrcJrxvxP5zi9uhEHikafTgM2kjtTeRy",
+        "balanceRaw": "3646168238050",
+        "rank": 28
+      },
+      {
+        "address": "A9y61mXAUcRtgQidnmyqamCznfi5nsJwa5Xk5CxEffr7",
+        "balanceRaw": "3499271088426",
+        "rank": 29
+      },
+      {
+        "address": "7H7GN4P7MHqtsPamPpjKaBpFs21x7URdfnvtvbZvzCi2",
+        "balanceRaw": "3280611226158",
+        "rank": 30
+      },
+      {
+        "address": "4XXSK7fxb1cCpwo52UbvDrNzGCwuSrRpQkVZTdXBbueE",
+        "balanceRaw": "3220379291944",
+        "rank": 31
+      },
+      {
+        "address": "4uYQff7YiK3wun35VS6zjSH4Zc67ByWMbFTarDLNGtsh",
+        "balanceRaw": "3061228397911",
+        "rank": 32
+      },
+      {
+        "address": "7XtWe8MYoAQ1u8BX3d9g8orVt42yrRG5a7cAbf7B6SL1",
+        "balanceRaw": "3041707879210",
+        "rank": 33
+      },
+      {
+        "address": "HHVnsag46N2tgD9vKWL1JwNmrCDnYojAB9scFALHDz29",
+        "balanceRaw": "3018441522910",
+        "rank": 34
+      },
+      {
+        "address": "4HUCZ388pUEGPWwu29ngCTEEz9n1CABPYbeGyLXKYcKc",
+        "balanceRaw": "3015179341711",
+        "rank": 35
+      },
+      {
+        "address": "H9a87A7WSXmGpbEAFTfgfkSoQrAD3dRSKBkevEFMi6Y4",
+        "balanceRaw": "3000557285598",
+        "rank": 36
+      },
+      {
+        "address": "Fr4a9qwzkwxhMQhdBvZ52rRwbbN6RJjDzegDvhHnr24v",
+        "balanceRaw": "2961365250857",
+        "rank": 37
+      },
+      {
+        "address": "CpHcP2jwKb7EsdgmpyU3hthh5cBXJGW66CjyAoGLKKiQ",
+        "balanceRaw": "2931624790030",
+        "rank": 38
+      },
+      {
+        "address": "E9SvDj8gVCzBEwVr7GXtNKqLQEyXXxLXs4W7No5cB3Hz",
+        "balanceRaw": "2900189495470",
+        "rank": 39
+      },
+      {
+        "address": "BusoWkvqRtUvQq2DX2Gz1etmPrcSVkmPPrgJSKVptYxu",
+        "balanceRaw": "2897970001401",
+        "rank": 40
+      },
+      {
+        "address": "CZeGPQ3UGYWCxfy8F1nDQZWeKcEURF3NpJt3LCUpJujn",
+        "balanceRaw": "2884222136475",
+        "rank": 41
+      },
+      {
+        "address": "CDwhg6oqksRGZjs2q4Xsm687R47H6mvUv2KGmcKjHjHH",
+        "balanceRaw": "2858111902268",
+        "rank": 42
+      },
+      {
+        "address": "2w2R1VhaZxko2Rm1puV27UY4kHmrCaequZAf5gtk4HEw",
+        "balanceRaw": "2686901571915",
+        "rank": 43
+      },
+      {
+        "address": "6u1tqpXAwd8JgBCRNfJWyWV7xS4mYMPJUjacNa5HX3vV",
+        "balanceRaw": "2645509710542",
+        "rank": 44
+      },
+      {
+        "address": "6jJQgZ8fXYnhAGT9DjR6WXSuAnYbB5dCkCdcWf2peeft",
+        "balanceRaw": "2597571955130",
+        "rank": 45
+      },
+      {
+        "address": "45wYwX1s2fv8Zhv7Wy2pRP7UXU8bT6KV71BKVochJGyh",
+        "balanceRaw": "2505112564679",
+        "rank": 46
+      },
+      {
+        "address": "9gk9JSiBGSfj6Hn264tYjwG4DaD3WFatj7ibvSo3L5YQ",
+        "balanceRaw": "2500344288744",
+        "rank": 47
+      },
+      {
+        "address": "724B2DQfmtKYxijhbn3SKWqBkGmoNAX5VS5kUanryNbK",
+        "balanceRaw": "2491741724034",
+        "rank": 48
+      },
+      {
+        "address": "7bdExs3EmDiRi4WngwpKC4MiNMc2ZiremWasJTn4AQ4N",
+        "balanceRaw": "2467584996185",
+        "rank": 49
+      },
+      {
+        "address": "3Tnxf1qtPoDppL4LTCRszzZHJP2CLHUagh8n8uEEVfpV",
+        "balanceRaw": "2373974429723",
+        "rank": 50
+      },
+      {
+        "address": "AxHVCGYFhFnAnHK6ve2XjTYjbXb1J9BM8dXDgoybBbXT",
+        "balanceRaw": "2340000000000",
+        "rank": 51
+      },
+      {
+        "address": "8HfJEcUenXWowkjgTcXftbSFs5hn85byqwHwumkc6416",
+        "balanceRaw": "2274060259648",
+        "rank": 52
+      },
+      {
+        "address": "482XHDcHAooUVt9zTd6H5ysKBN1y7SKsooBrT51Nn9zE",
+        "balanceRaw": "2187965018852",
+        "rank": 53
+      },
+      {
+        "address": "CVf4gjXVYZp9jaeu7K7zPy3RJPKz8uPBZdEkdR2xpfPD",
+        "balanceRaw": "2175811139395",
+        "rank": 54
+      },
+      {
+        "address": "5pF2GRWxsqeesnyVJ94UstsbJF87zVJnCFkF1ey4sQvo",
+        "balanceRaw": "2134867003365",
+        "rank": 55
+      },
+      {
+        "address": "554coZujWqy7BfyrswRdmnM7z4bKYRg6Q8t4o8UjQJy9",
+        "balanceRaw": "2045828034465",
+        "rank": 56
+      },
+      {
+        "address": "62aohM6N4V9stqSmwZqr7dWx9rbZ5LgAZdqwnsfSvEfj",
+        "balanceRaw": "1996507584342",
+        "rank": 57
+      },
+      {
+        "address": "GH5PLyDWF4LfRV7s4oawggxjvtKiiCY7Xnt3RRTHffMw",
+        "balanceRaw": "1965088708009",
+        "rank": 58
+      },
+      {
+        "address": "Evm1M3iXr2eVf2LDRFHodMPbpKfjamY2bASm6kjQ1uAa",
+        "balanceRaw": "1957710582642",
+        "rank": 59
+      },
+      {
+        "address": "2FKfS8SNXJ55B1KQKU8ioPFSfv3Whh1Qb7QafSTUdbhr",
+        "balanceRaw": "1943933548726",
+        "rank": 60
+      },
+      {
+        "address": "67Sp3nJYqLV3i7j68TWfd7J8RYnz8p6fRmxTiXxJk7PT",
+        "balanceRaw": "1896842926330",
+        "rank": 61
+      },
+      {
+        "address": "BQL21cbKMiLNTJoDZJrP6L9FfCVJRfEc96B5DoRvCkr6",
+        "balanceRaw": "1872784520821",
+        "rank": 62
+      },
+      {
+        "address": "Hw4iDX36WFahURgne4x3sRtMvZaqvpX833ffhhboQ7Dx",
+        "balanceRaw": "1855990855748",
+        "rank": 63
+      },
+      {
+        "address": "392aLQLEgFNt9R8BKpzVU7uLP3dFeDkh33sdq1qgDpAk",
+        "balanceRaw": "1824991807728",
+        "rank": 64
+      },
+      {
+        "address": "CxbUU5rcQsJ8zScUwCaJsjDnhQ2vEXLrdDMgwxBXrdSF",
+        "balanceRaw": "1818645964134",
+        "rank": 65
+      },
+      {
+        "address": "C5b7K9cgg45qcdrpC5YxvCuHR8Yak2wfCMfqMnfatzBT",
+        "balanceRaw": "1795467515280",
+        "rank": 66
+      },
+      {
+        "address": "3GNPLaEDX2qv8TX1tns9vo2dzJPshrEhdziroS45vEH3",
+        "balanceRaw": "1759515295620",
+        "rank": 67
+      },
+      {
+        "address": "AyNNDcdszLpvUckTH9UGP1wHuRakG1195TNBUBp5ZxGe",
+        "balanceRaw": "1681550580831",
+        "rank": 68
+      },
+      {
+        "address": "H9xneUEYQRXFLcRRdyXRLTiwf2per4T1P2PBPGwXhVu9",
+        "balanceRaw": "1649298848088",
+        "rank": 69
+      },
+      {
+        "address": "5Qit4MyLfZhqA9Unwxhzvdrbzu564Su6Vk6t6ocH9bYZ",
+        "balanceRaw": "1633323821032",
+        "rank": 70
+      },
+      {
+        "address": "BQimQz76obPDvsr7ViKHTYJFQLKjYXp4jEPpQS8ZhcrZ",
+        "balanceRaw": "1560885679679",
+        "rank": 71
+      },
+      {
+        "address": "4fKvuTKTAee6GRv8mabH7j81m67R6V9cjv1qx6Ay15su",
+        "balanceRaw": "1500000000000",
+        "rank": 72
+      },
+      {
+        "address": "BghxLfDCXA4KyeFV3fe3NnkTPEeePGAuWGrLdvjrz6o3",
+        "balanceRaw": "1500000000000",
+        "rank": 73
+      },
+      {
+        "address": "EoJ6KQPs6uwrUHRimWTrcUPHSmy8QDGFq4UKfaUgYfEM",
+        "balanceRaw": "1460772988286",
+        "rank": 74
+      },
+      {
+        "address": "7Q9bV8shabm5wTprQdXigY7tFHSHH7zdQq8jndSw9ezG",
+        "balanceRaw": "1451572406838",
+        "rank": 75
+      },
+      {
+        "address": "6Ee9XTEjZYA5LPpUpFywM55RuU894zuFac7ihA8BzmxC",
+        "balanceRaw": "1413584665683",
+        "rank": 76
+      },
+      {
+        "address": "A6pEriDzqKXCUTVKov5hFe2fZU4b1p8RMxYfxyu69i25",
+        "balanceRaw": "1402782207033",
+        "rank": 77
+      },
+      {
+        "address": "5fMSdPkUc3ubSgKFsier5YrbzqVd8rG1f7ph8bagvMyp",
+        "balanceRaw": "1330991510354",
+        "rank": 78
+      },
+      {
+        "address": "7bC2CnYjcmivqwRuE56mr1WitrSZ4FT6X7FGTeVsqd3j",
+        "balanceRaw": "1320952698869",
+        "rank": 79
+      },
+      {
+        "address": "FZkbEuAowfaBHkb3Ly3C1ojNKNVwXv4Lx7QQws5ccD7m",
+        "balanceRaw": "1269125324251",
+        "rank": 80
+      },
+      {
+        "address": "DcS752R12swQDZH1UGxFXeWiptfB5ddwnNgoW74NHdk7",
+        "balanceRaw": "1250000008658",
+        "rank": 81
+      },
+      {
+        "address": "59DjpyqnjdUasjEo7BQon2c2gfXtC3r5WSPBkhqvvT2A",
+        "balanceRaw": "1242841203141",
+        "rank": 82
+      },
+      {
+        "address": "6RCLnRrqiDLvGcQ8r1nPwqC2vVH7VeNu5stXWf7Aa9am",
+        "balanceRaw": "1240196544972",
+        "rank": 83
+      },
+      {
+        "address": "2bGGtMXPzmSEp9wqbcwGVfeRrDB2y82QdXXxinbmwf2S",
+        "balanceRaw": "1225010618800",
+        "rank": 84
+      },
+      {
+        "address": "GZypRK4EHaPbVc247kmzcHr36xR7pifDSg8sFdJgLrFp",
+        "balanceRaw": "1205673088337",
+        "rank": 85
+      },
+      {
+        "address": "33dYF88CvSiKBs7FcVC75Ky2pST6B7WxyAcMPqQAkWbA",
+        "balanceRaw": "1193968649324",
+        "rank": 86
+      },
+      {
+        "address": "D5rFiP2wwYcggSpqpUDjiSAtcwYRWLJiFL5dth2TKCu1",
+        "balanceRaw": "1189000834910",
+        "rank": 87
+      },
+      {
+        "address": "GSn17E9yrG7iEdhZsVXFGg9r64dfK6s44AyQma5Ns5PB",
+        "balanceRaw": "1179513487538",
+        "rank": 88
+      },
+      {
+        "address": "7qnvudUhkReTxD4pmoXMchG1JpqvLh2eM2RYjUoaBbGt",
+        "balanceRaw": "1157841211836",
+        "rank": 89
+      },
+      {
+        "address": "DLm2JvKJm8EvfLncmuFj88SkBsLMnkhVW4UsyaHwypBE",
+        "balanceRaw": "1138565924119",
+        "rank": 90
+      },
+      {
+        "address": "4JVLwhQsv8E8tYUz4eCPyn6czr5A6MeE6vgzmyyojvCs",
+        "balanceRaw": "1130378741641",
+        "rank": 91
+      },
+      {
+        "address": "9oSRMVzes4Yc6dzJ93hTws4ziBCC6RF5wnnJmEszbgA8",
+        "balanceRaw": "1129203344394",
+        "rank": 92
+      },
+      {
+        "address": "7pVbJiLusbVadLpNQCHbuyGnFLW1UxvUNYURA5vS3FX3",
+        "balanceRaw": "1128533707271",
+        "rank": 93
+      },
+      {
+        "address": "Hx1dAqPZZgaxvs3hf53sBMQXL8MGTn1XXCDdNAUCL3vM",
+        "balanceRaw": "1124591563691",
+        "rank": 94
+      },
+      {
+        "address": "27ZJR5vEW4FqGbq8KexyY2tyBnLCAYBAKDcm4YkM1AFA",
+        "balanceRaw": "1110148871787",
+        "rank": 95
+      },
+      {
+        "address": "6k51HEtgcrLZqPjrmVTWzAwTepertrAK8zUPZqftFJMk",
+        "balanceRaw": "1105282380428",
+        "rank": 96
+      },
+      {
+        "address": "zPCYkYVGT2XLKYEx9RJuYMdKW76qdCcApX62MBNe6ed",
+        "balanceRaw": "1095272131871",
+        "rank": 97
+      },
+      {
+        "address": "4HpA7wA8MGmhZiWizgam5gjqo8vSvqtrRPMuC5CGC16M",
+        "balanceRaw": "1093636920784",
+        "rank": 98
+      },
+      {
+        "address": "6PFY7coUA6sdszL2QxikaDheY4BBJMX5juBSC33SJxE8",
+        "balanceRaw": "1092677528683",
+        "rank": 99
+      },
+      {
+        "address": "8spBhs1fgrtYbLD3ATdp6gru4jCVKnahTBxmjtjuiPon",
+        "balanceRaw": "1092510322072",
+        "rank": 100
+      }
+    ],
+    "excluded_infrastructure": [],
+    "excluded_pools": [],
+    "excluded_burn_addresses": [],
+    "ruleVersion": "holder-cleaning-v1",
+    "completeness": "partial",
+    "provenance": {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-30T09:10:00.940Z",
+      "watermarkRef": "pagination_partial",
+      "ruleVersion": "holder-cleaning-v1"
+    },
+    "warnings": [
+      "holder_judgment_not_confirmed"
+    ]
+  },
+  "cohortMetrics": {
+    "top10Concentration": {
+      "numerator": "126707410717011",
+      "denominator": "999830823774071",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "ruleVersion": "concentration-v1",
+      "completeness": 0,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-30T09:10:00.940Z",
+        "watermarkRef": "pagination_partial",
+        "ruleVersion": "holder-cleaning-v1"
+      }
+    },
+    "top20Concentration": {
+      "numerator": "180238411084135",
+      "denominator": "999830823774071",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "ruleVersion": "concentration-v1",
+      "completeness": 0,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-30T09:10:00.940Z",
+        "watermarkRef": "pagination_partial",
+        "ruleVersion": "holder-cleaning-v1"
+      }
+    },
+    "eligibleHolderCount": 1993,
+    "excludedShare": {
+      "numerator": "0",
+      "denominator": "999830823774071",
+      "ratio": null,
+      "universeDefinition": "holder-universe-v1:cleaned_included_owners_vs_mint_supply",
+      "ruleVersion": "concentration-v1",
+      "completeness": 0,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-30T09:10:00.940Z",
+        "watermarkRef": "pagination_partial",
+        "ruleVersion": "holder-cleaning-v1"
+      }
+    },
+    "ruleVersion": "holder-cleaning-v1",
+    "completeness": "partial",
+    "warnings": [
+      "concentration_partial_or_unconfirmed"
+    ]
+  },
+  "walletTokenSignals": [],
+  "clusterSummaries": [],
+  "devBehavior": null,
+  "crossTokenMatches": [],
+  "judgmentEvidence": [
+    {
+      "judgmentCode": "holder_universe_partial_or_unresolved",
+      "humanReadableSummary": "Holder universes available but pagination/accounting prevents confirmed judgment.",
+      "evidenceRefs": [
+        "supply_accounting",
+        "pagination_incomplete",
+        "mint_gt_enumerated"
+      ],
+      "confidence": 0.4,
+      "ruleVersion": "holder-cleaning-v1",
+      "sourceTier": "A",
+      "completeness": "partial",
+      "warnings": [
+        "not_confirmed"
+      ],
+      "status": "unverified"
+    }
+  ],
+  "sourceProvenance": [
+    {
+      "source": "helius-mint",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-30T09:10:00.940Z",
+      "watermarkRef": "helius|436123641|partial|A7W3wDY3NesF7DjHPnKmd8L7f714y55vscQjfvikHLWm",
+      "ruleVersion": "sol-ca-real-data-cleaning-pilot-v1"
+    },
+    {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-30T09:10:00.940Z",
+      "watermarkRef": "pagination_partial",
+      "ruleVersion": "holder-cleaning-v1"
+    }
+  ],
+  "completeness": {
+    "overall": "partial",
+    "ratio": 0.5,
+    "sections": {
+      "tokenIdentity": "complete",
+      "holderUniverses": "partial",
+      "cohortMetrics": "partial",
+      "marketSnapshot": "unavailable",
+      "authorityFacts": "unavailable",
+      "devBehavior": "unavailable"
+    }
+  },
+  "warnings": [
+    "pagination_incomplete",
+    "supply_mismatch"
+  ]
+}

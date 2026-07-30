@@ -1,0 +1,65 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001",
+  "title": "Independent zero-network audit of SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Independently audit the Solana CA real-data holder cleaning pilot offline: code, tests, scrubbed Live evidence, write-set, supply accounting, confirmed gate, credential isolation, and forced mixed-owner classification cases. Issue REQUEST_CHANGES with a minimal repair write-set if mixed-owner silent exclusion is confirmed. Do not modify implementation code.",
+  "dependencies": [
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "docs/LOCAL_WORKSPACE_PATHS.md",
+    "docs/handoffs/STATUS_SYSTEM_20260730.md",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-001.json",
+    "harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/input-manifest.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**",
+    "src/domain/rules/holder-data-cleaning.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "src/application/live/solana-ca-real-data-cleaning-pilot.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/findings.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/exact-write-set.txt"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation code or tests.",
+    "Do not issue network, provider, RPC, Helius, GMGN, or third-party requests.",
+    "Do not read credentials, DPAPI secrets, proxy URLs, private wallet tables, or raw provider payloads.",
+    "Do not push, merge, force-push, or modify main.",
+    "Do not re-run Live pilot against Helius."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/findings.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/exact-write-set.txt"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

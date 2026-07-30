@@ -9,8 +9,10 @@ const SAFE_LIVE_WARNING_CODES = new Set([
   "helius_runtime_credential_unavailable",
   "helius_timeout",
   "helius_token_account_malformed",
+  "helius_token_account_duplicate",
   "helius_token_accounts_malformed",
   "helius_token_accounts_truncated",
+  "helius_token_accounts_cursor_stuck",
   "helius_transport_unavailable",
 ]);
 

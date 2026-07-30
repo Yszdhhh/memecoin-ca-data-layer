@@ -1,0 +1,97 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+  "version": "sol-ca-real-data-cleaning-pilot-v1",
+  "status": "PARTIAL",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "sampleCount": 6,
+  "okCount": 3,
+  "partialCount": 3,
+  "rejectedCount": 0,
+  "totalHeliusRequests": 30,
+  "judgmentEligibleCount": 3,
+  "issueCodes": [
+    "supply_mismatch",
+    "pagination_incomplete"
+  ],
+  "perCa": [
+    {
+      "ca": "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump",
+      "status": "OK",
+      "heliusRequestCount": 6,
+      "paginationComplete": true,
+      "judgmentEligible": true,
+      "accountingCompleteness": "complete",
+      "residualRaw": "0",
+      "ownerCount": 2265,
+      "cleanedOwnerCount": 2265,
+      "issueCount": 0,
+      "warnings": []
+    },
+    {
+      "ca": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+      "status": "OK",
+      "heliusRequestCount": 4,
+      "paginationComplete": true,
+      "judgmentEligible": true,
+      "accountingCompleteness": "complete",
+      "residualRaw": "0",
+      "ownerCount": 653,
+      "cleanedOwnerCount": 653,
+      "issueCount": 0,
+      "warnings": []
+    },
+    {
+      "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "status": "PARTIAL",
+      "heliusRequestCount": 5,
+      "paginationComplete": true,
+      "judgmentEligible": false,
+      "accountingCompleteness": "partial",
+      "residualRaw": "206512932970",
+      "ownerCount": 1846,
+      "cleanedOwnerCount": 1846,
+      "issueCount": 1,
+      "warnings": []
+    },
+    {
+      "ca": "BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump",
+      "status": "OK",
+      "heliusRequestCount": 4,
+      "paginationComplete": true,
+      "judgmentEligible": true,
+      "accountingCompleteness": "complete",
+      "residualRaw": "0",
+      "ownerCount": 571,
+      "cleanedOwnerCount": 571,
+      "issueCount": 0,
+      "warnings": []
+    },
+    {
+      "ca": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
+      "status": "PARTIAL",
+      "heliusRequestCount": 5,
+      "paginationComplete": false,
+      "judgmentEligible": false,
+      "accountingCompleteness": "partial",
+      "residualRaw": "952077963349589",
+      "ownerCount": 996,
+      "cleanedOwnerCount": 996,
+      "issueCount": 2,
+      "warnings": []
+    },
+    {
+      "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "status": "PARTIAL",
+      "heliusRequestCount": 6,
+      "paginationComplete": false,
+      "judgmentEligible": false,
+      "accountingCompleteness": "partial",
+      "residualRaw": "478312624473524",
+      "ownerCount": 1993,
+      "cleanedOwnerCount": 1993,
+      "issueCount": 2,
+      "warnings": []
+    }
+  ],
+  "note": "Two CAs re-fetched manually after flaky first-page transport/malformed responses; same fixed manifest, Helius-only sequential reads."
+}
