@@ -1,12 +1,13 @@
-﻿# Acceptance: SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001
+# Acceptance: SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001
 
 ## Verdict
 
 **READY_FOR_INDEPENDENT_AUDIT (implementer gates GREEN)**
 
-Date: 2026-07-30  
-Baseline SHA: `f561ab5b7f67f271e2697dafbb7181c7f09085cb`  
+Date: 2026-07-30
+Baseline SHA: `f561ab5b7f67f271e2697dafbb7181c7f09085cb`
 Branch: `codex/solana-daily-new-token-analysis`
+Implementation commit: `8a5e303`
 
 This repair stayed inside the declared write set. It did not read credentials or private wallet inputs, issue network/provider requests, invoke GMGN/Helius/RPC, or rerun the external 1,433-wallet product.
 
@@ -60,4 +61,3 @@ One synthetic row is deliberately manual-review-only. Acceptance asserts it rece
 ## Seal status
 
 Implementation is sealed for an independent T2 auditor. This implementer report is not the final milestone verdict.
-
