@@ -1,0 +1,10 @@
+{
+  "ca": "BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump",
+  "selectionReason": "retry fill for flaky first-page provider errors",
+  "queryTime": "2026-07-30T09:12:28.305Z",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "heliusRequestCount": 4,
+  "paginationComplete": true,
+  "sourceWatermark": "helius|436123963|complete|JCwFryhNiMcKMQHc8A8mqqCvDXaMc49L9BQeXmi4UGPJ"
+}

@@ -1,0 +1,10 @@
+{
+  "ca": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+  "selectionReason": "Public pump mint; complete pagination and residual-zero accounting candidate.",
+  "queryTime": "2026-07-30T09:07:46.831Z",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "heliusRequestCount": 4,
+  "paginationComplete": true,
+  "sourceWatermark": "helius|436123318|complete|JDnCNiaJJfsuxzuQ26hQSi5RfSMy58qXFvmE3uJEbr51"
+}

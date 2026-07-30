@@ -1,0 +1,10 @@
+{
+  "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+  "selectionReason": "Public pump mint; multi-owner aggregation with multi-account owners.",
+  "queryTime": "2026-07-30T09:08:01.806Z",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "heliusRequestCount": 5,
+  "paginationComplete": true,
+  "sourceWatermark": "helius|436123380|complete|JEBps6J3J1915q5wTq5ipJJgAszevtJQysTkJ24XWL59"
+}

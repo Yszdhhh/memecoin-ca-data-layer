@@ -24,6 +24,16 @@ export interface LiveHeliusDataSourceOptions {
   timeoutMs?: number;
 }
 
+export interface TokenAccountEnumerationResult {
+  accounts: RpcTokenAccount[];
+  pageCount: number;
+  paginationComplete: boolean;
+  watermark: SourceWatermark;
+  pageSlots: string[];
+  /** Rows skipped because a single account shape could not be normalized. */
+  skippedMalformedCount: number;
+}
+
 const RPC_ENDPOINTS: Record<HeliusRpcEndpointMode, string> = {
   mainnet: "https://mainnet.helius-rpc.com/",
   gatekeeper_beta: "https://beta.helius-rpc.com/",
@@ -122,6 +132,126 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     return this.response(accounts, indexedSlot(row));
   }
 
+  /**
+   * Full token-account enumeration with cursor pagination.
+   * Does not fall back to public RPC. Stops at maxPages and reports partial.
+   */
+  async enumerateTokenAccounts(
+    ca: string,
+    options: { maxPages?: number; pageSize?: number; showZeroBalance?: boolean } = {},
+  ): Promise<TokenAccountEnumerationResult> {
+    const mint = requiredAddress(ca);
+    const maxPages = positiveInteger(options.maxPages ?? 50, "max pages");
+    const pageSize = positiveInteger(options.pageSize ?? 1_000, "page size");
+    const showZeroBalance = options.showZeroBalance === true;
+    const accounts: RpcTokenAccount[] = [];
+    const seen = new Set<string>();
+    const pageSlots: string[] = [];
+    let cursor: string | undefined;
+    let pageCount = 0;
+    let paginationComplete = true;
+    let lastSlot: bigint | undefined;
+    let skippedMalformedCount = 0;
+
+    for (;;) {
+      if (pageCount >= maxPages) {
+        paginationComplete = false;
+        break;
+      }
+      const params: Record<string, unknown> = {
+        mint,
+        limit: pageSize,
+        options: { showZeroBalance },
+      };
+      if (cursor !== undefined) params.cursor = cursor;
+      let result: unknown;
+      try {
+        result = await this.rpc("getTokenAccounts", params);
+      } catch (error) {
+        // If later pages fail, return accounts already collected as partial rather than wiping the CA.
+        if (accounts.length > 0) {
+          paginationComplete = false;
+          break;
+        }
+        throw error;
+      }
+      const row = record(result);
+      const tokenAccounts = row.token_accounts;
+      if (!Array.isArray(tokenAccounts)) {
+        if (accounts.length > 0) {
+          paginationComplete = false;
+          break;
+        }
+        throw new SourceDataUnavailableError("helius_token_accounts_malformed");
+      }
+      const slot = indexedSlot(row);
+      if (slot !== undefined) {
+        lastSlot = slot;
+        pageSlots.push(slot.toString());
+      }
+      for (const entry of tokenAccounts) {
+        try {
+          const parsed = tokenAccount(entry);
+          if (seen.has(parsed.tokenAccount)) {
+            // Identical re-delivery across pages is treated as a provider drift signal but not fatal.
+            skippedMalformedCount += 1;
+            continue;
+          }
+          seen.add(parsed.tokenAccount);
+          accounts.push(parsed);
+        } catch (error) {
+          if (error instanceof SourceDataUnavailableError && error.message === "helius_token_account_malformed") {
+            skippedMalformedCount += 1;
+            continue;
+          }
+          throw error;
+        }
+      }
+      pageCount += 1;
+      const nextCursor = typeof row.cursor === "string" && row.cursor.length > 0 ? row.cursor : undefined;
+      const total = row.total;
+      if (total !== undefined && (typeof total !== "number" || !Number.isInteger(total) || total < 0)) {
+        if (accounts.length > 0) {
+          paginationComplete = false;
+          break;
+        }
+        throw new SourceDataUnavailableError("helius_token_accounts_malformed");
+      }
+      if (nextCursor === undefined) {
+        // Compare against successfully parsed accounts only; skipped rows may leave total > length.
+        if (typeof total === "number" && total > accounts.length + skippedMalformedCount) paginationComplete = false;
+        break;
+      }
+      if (cursor !== undefined && nextCursor === cursor) {
+        if (accounts.length > 0) {
+          paginationComplete = false;
+          break;
+        }
+        throw new SourceDataUnavailableError("helius_token_accounts_cursor_stuck");
+      }
+      cursor = nextCursor;
+    }
+
+    return {
+      accounts,
+      pageCount,
+      paginationComplete,
+      watermark: {
+        source: "helius",
+        observedAt: new Date(this.now()),
+        completeness: paginationComplete ? "complete" : "partial",
+        ...(lastSlot === undefined ? {} : { finalizedSlot: lastSlot }),
+        ...(cursor === undefined ? {} : { cursor }),
+      },
+      pageSlots,
+      skippedMalformedCount,
+    };
+  }
+
+  getRequestCount(): number {
+    return this.requestCount;
+  }
+
   async getTokenMetadata(ca: string): Promise<SourceResponse<HeliusTokenMetadata | null>> {
     const result = await this.rpc("getAsset", { id: requiredAddress(ca) });
     if (result === null) return this.response(null);
@@ -181,32 +311,72 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   }
 
   private async request(url: URL, body?: unknown): Promise<unknown> {
-    await this.reserveRequest();
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
-    try {
-      const init: RequestInit = body === undefined
-        ? { method: "GET", cache: "no-store", signal: controller.signal }
-        : {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(body),
-          cache: "no-store",
-          signal: controller.signal,
-        };
-      const response = await this.fetchImpl(url, init);
-      if (!response.ok) throw new SourceDataUnavailableError(`helius_http_${response.status}`);
+    const maxAttempts = 2;
+    let lastError: SourceDataUnavailableError | undefined;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      await this.reserveRequest();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
       try {
-        return await response.json();
-      } catch {
-        throw new SourceDataUnavailableError("helius_response_malformed");
+        const init: RequestInit = body === undefined
+          ? { method: "GET", cache: "no-store", signal: controller.signal }
+          : {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(body),
+            cache: "no-store",
+            signal: controller.signal,
+          };
+        const response = await this.fetchImpl(url, init);
+        if (!response.ok) {
+          const code = `helius_http_${response.status}`;
+          // Retry rate-limit / transient 5xx once or twice without retaining bodies.
+          if ((response.status === 429 || response.status >= 500) && attempt < maxAttempts) {
+            lastError = new SourceDataUnavailableError(code);
+            await delay(300 * attempt);
+            continue;
+          }
+          throw new SourceDataUnavailableError(code);
+        }
+        try {
+          return await response.json();
+        } catch {
+          if (attempt < maxAttempts) {
+            lastError = new SourceDataUnavailableError("helius_response_malformed");
+            await delay(300 * attempt);
+            continue;
+          }
+          throw new SourceDataUnavailableError("helius_response_malformed");
+        }
+      } catch (error) {
+        if (error instanceof SourceDataUnavailableError) {
+          if (
+            attempt < maxAttempts
+            && (error.message === "helius_response_malformed"
+              || error.message === "helius_transport_unavailable"
+              || error.message === "helius_timeout"
+              || /^helius_http_(429|5\d\d)$/.test(error.message))
+          ) {
+            lastError = error;
+            await delay(300 * attempt);
+            continue;
+          }
+          throw error;
+        }
+        const mapped = new SourceDataUnavailableError(
+          controller.signal.aborted ? "helius_timeout" : "helius_transport_unavailable",
+        );
+        if (attempt < maxAttempts) {
+          lastError = mapped;
+          await delay(300 * attempt);
+          continue;
+        }
+        throw mapped;
+      } finally {
+        clearTimeout(timeout);
       }
-    } catch (error) {
-      if (error instanceof SourceDataUnavailableError) throw error;
-      throw new SourceDataUnavailableError(controller.signal.aborted ? "helius_timeout" : "helius_transport_unavailable");
-    } finally {
-      clearTimeout(timeout);
     }
+    throw lastError ?? new SourceDataUnavailableError("helius_transport_unavailable");
   }
 
   private async reserveRequest(): Promise<void> {
@@ -298,10 +468,28 @@ function slotFrom(value: unknown): bigint | undefined {
 function tokenAccount(value: unknown): RpcTokenAccount {
   const row = record(value);
   const ownership = optionalRecord(row.ownership);
-  const tokenInfo = optionalRecord(row.token_info);
-  const tokenAccount = optionalString(row.address);
-  const owner = optionalString(row.owner) ?? optionalString(ownership?.owner);
-  const amountRaw = rawIntegerString(row.amount) ?? rawIntegerString(tokenInfo?.balance);
+  const tokenInfo = optionalRecord(row.token_info) ?? optionalRecord(row.tokenInfo);
+  const account = optionalRecord(row.account);
+  const data = optionalRecord(account?.data);
+  const parsed = optionalRecord(data?.parsed);
+  const info = optionalRecord(parsed?.info);
+  const tokenAmount = optionalRecord(info?.tokenAmount) ?? optionalRecord(tokenInfo?.token_amount);
+
+  const tokenAccount =
+    optionalString(row.address)
+    ?? optionalString(row.pubkey)
+    ?? optionalString(row.tokenAccount);
+  const owner =
+    optionalString(row.owner)
+    ?? optionalString(ownership?.owner)
+    ?? optionalString(info?.owner);
+  const amountRaw =
+    rawIntegerString(row.amount)
+    ?? rawIntegerString(tokenInfo?.balance)
+    ?? rawIntegerString(tokenInfo?.amount)
+    ?? rawIntegerString(tokenAmount?.amount)
+    ?? rawIntegerString(info?.tokenAmount);
+
   if (!tokenAccount || !owner || !amountRaw) {
     throw new SourceDataUnavailableError("helius_token_account_malformed");
   }
@@ -311,6 +499,7 @@ function tokenAccount(value: unknown): RpcTokenAccount {
 function rawIntegerString(value: unknown): string | undefined {
   if (typeof value === "string" && /^\d+$/.test(value)) return value;
   if (typeof value === "number" && Number.isSafeInteger(value) && value >= 0) return String(value);
+  if (typeof value === "bigint" && value >= 0n) return value.toString();
   return undefined;
 }
 

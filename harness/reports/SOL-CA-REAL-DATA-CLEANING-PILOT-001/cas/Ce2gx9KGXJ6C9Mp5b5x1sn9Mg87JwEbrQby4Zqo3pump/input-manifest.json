@@ -1,0 +1,10 @@
+{
+  "ca": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
+  "selectionReason": "Public pump mint from prior manual smoke freeze; diversity replacement for flaky endpoints.",
+  "queryTime": "2026-07-30T09:09:10.246Z",
+  "baseCommit": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "dataSource": "helius",
+  "heliusRequestCount": 5,
+  "paginationComplete": false,
+  "sourceWatermark": "helius|436123501|partial|rHqrDnCVJKRGezK1oMdXDUfAEADuM4vDPKijPJfYA4y"
+}

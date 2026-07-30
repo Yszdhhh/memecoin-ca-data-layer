@@ -25,6 +25,12 @@ npm run check
 当前任务波次见 `harness/CURRENT_WAVE.md`，运行产物使用带 Git 基线、输入/输出
 SHA-256、规则版本、source watermark 和验收日志的 manifest。
 
+## 本地路径（Windows 操作机）
+
+云端 Agent **看不到** 本机盘符。固定说明见
+[`docs/LOCAL_WORKSPACE_PATHS.md`](docs/LOCAL_WORKSPACE_PATHS.md)
+（主克隆：`G:\链上战壕`）。
+
 ## 本地验证
 
 ```bash
@@ -32,6 +38,15 @@ npm install
 npm run typecheck
 npm test
 ```
+
+### Solana 真实持仓清洗试点（手工 / Helius only）
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run-solana-ca-real-data-cleaning-pilot.ps1
+```
+
+固定样本：`harness/inputs/SOL-CA-REAL-DATA-CLEANING-PILOT-001/input-manifest.json`。
+缺 `HELIUS_API_KEY` 时 fail-closed，不得用 fixture 冒充 live。
 
 数据库初始化：按顺序执行 `db/migrations` 下的 SQL。接入生产前，需要实现
 `ChainDataAdapter`（第一优先是 Helius + Solana RPC）与 `MarketDataProvider`

@@ -1,0 +1,23 @@
+{
+  "ca": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+  "ruleVersion": "holder-cleaning-v1",
+  "judgmentEligible": true,
+  "accounting": {
+    "mintSupplyRaw": "963545584098470",
+    "enumeratedTokenAccountBalanceRaw": "963545584098470",
+    "includedOwnerBalanceRaw": "963545584098470",
+    "excludedBalanceRaw": "0",
+    "unresolvedBalanceRaw": "0",
+    "accountingResidualRaw": "0",
+    "accountingResidualRatio": 0,
+    "completeness": "complete",
+    "paginationComplete": true,
+    "residualReasons": [],
+    "identity": "enumerated = included + excluded + unresolved"
+  },
+  "ownerCount": 653,
+  "tokenAccountCount": 654,
+  "includedOwnerCount": 653,
+  "excludedOwnerCount": 0,
+  "unresolvedOwnerCount": 0
+}
