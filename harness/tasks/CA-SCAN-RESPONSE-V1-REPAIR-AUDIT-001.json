@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "judgment_layer",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that repair 001 closes all known CaScanResponse v1 blockers: complete fail-closed runtime structure validation, required nullable-key presence, ISO timestamp validity, bounded/no-fake-precision ratios, Harness doctor cleanliness, regression coverage, provider-neutral boundaries, and exact write-set compliance.",
   "dependencies": [
     "CA-SCAN-RESPONSE-V1-REPAIR-001"
