@@ -62,6 +62,13 @@ export interface CaScanViewModel extends CaScanListItem {
   concentrationWarnings: string[];
   issues: DataQualityIssueView[];
   universeDefinition: string;
+  /** Extended analysis card when offline composer is wired */
+  analysis?: Record<string, unknown> | null;
+  dev?: Record<string, unknown> | null;
+  earlyBuyers?: Record<string, unknown> | null;
+  clusters?: unknown[] | null;
+  judgment?: Record<string, unknown> | null;
+  crossCa?: Record<string, unknown> | null;
 }
 
 export interface WalletListItem {
@@ -81,6 +88,9 @@ export interface WalletViewModel extends WalletListItem {
   caHitsPlaceholder: string;
   labels: Array<{ label: string; source: string; confidence: number; verificationStatus: string }>;
   note: string;
+  ledger?: Record<string, unknown> | null;
+  performance?: Record<string, unknown> | null;
+  crossCa?: Record<string, unknown> | null;
 }
 
 export interface WalletPoolSummary {
@@ -126,6 +136,29 @@ export interface TaskViewModel {
   failureReason: string | null;
 }
 
+export interface LiquidityViewModel {
+  observedAt: string;
+  freshness: string;
+  source: string;
+  ruleVersion: string;
+  metrics: Record<string, number | null>;
+  percentiles: Record<string, number | null>;
+  warnings: string[];
+  briefMarkdown: string;
+}
+
+export interface JobViewModel {
+  jobId: string;
+  type: string;
+  state: string;
+  attempt: number;
+  budget: number;
+  requestsUsed: number;
+  outputRef: string | null;
+  error: string | null;
+  createdAt: string;
+}
+
 export interface OperatorConsoleDataSource {
   listCaScans(): Promise<CaScanListItem[]>;
   getCaScan(mint: string): Promise<CaScanViewModel | null>;
@@ -137,4 +170,7 @@ export interface OperatorConsoleDataSource {
   getTask(taskId: string): Promise<TaskViewModel | null>;
   createLocalDemoTask(mint: string): Promise<TaskViewModel>;
   getDataSourceMeta(): { mode: "fixture" | "http"; live: boolean; note: string };
+  getLiquidityLatest(): Promise<LiquidityViewModel>;
+  listJobs(): Promise<JobViewModel[]>;
+  getReplayCalibration(): Promise<Record<string, unknown>>;
 }

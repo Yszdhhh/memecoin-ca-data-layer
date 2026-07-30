@@ -7,9 +7,13 @@ import {
   toPublicTaskSummary,
 } from "../../../src/application/operator-api/ca-holder-task-service.js";
 import { createOperatorApiServer, listenOperatorApi } from "../../../src/application/operator-api/http-server.js";
+import { OfflineBackend } from "../../../src/application/operator-api/offline-backend.js";
 import type { PilotTokenAccountSource } from "../../../src/application/live/solana-ca-real-data-cleaning-pilot.js";
 import { SourceDataUnavailableError } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
 import type { RpcTokenAccount } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const FIXED = "2026-07-30T16:00:00.000Z";
 // Valid 32-byte base58-looking public mint from pilot
@@ -187,7 +191,9 @@ test("HTTP server health and validation", async () => {
     sourceFactory: () => fixtureSource(),
     now: () => new Date(FIXED),
   });
-  const server = createOperatorApiServer({ service, host: "127.0.0.1" });
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "opapi-"));
+  const offline = new OfflineBackend({ dataDir: dir });
+  const server = createOperatorApiServer({ service, offline, host: "127.0.0.1" });
   await listenOperatorApi(server, 0);
   const addr = server.address();
   assert.ok(addr && typeof addr === "object");
@@ -211,6 +217,7 @@ test("HTTP server health and validation", async () => {
   assert.equal((result.body as { concentrationEligible: boolean }).concentrationEligible, false);
 
   await new Promise<void>((resolve) => server.close(() => resolve()));
+  fs.rmSync(dir, { recursive: true, force: true });
 });
 
 async function fetchJson(

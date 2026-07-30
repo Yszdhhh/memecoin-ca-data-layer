@@ -213,6 +213,86 @@ export function CaDetailPage() {
         )}
       </div>
 
+      {scan.analysis && (
+        <div className="panel">
+          <h2>CA Analysis V2（composer）</h2>
+          <div className="kv">
+            <div className="k">market trust</div>
+            <div>{String((scan.analysis as { market?: { trust?: string } }).market?.trust ?? "—")}</div>
+            <div className="k">price / liq</div>
+            <div className="mono">
+              {String((scan.analysis as { market?: { priceUsd?: number | null; liquidityUsd?: number | null } }).market?.priceUsd ?? "—")}
+              {" / "}
+              {String((scan.analysis as { market?: { liquidityUsd?: number | null } }).market?.liquidityUsd ?? "—")}
+            </div>
+            <div className="k">research priority</div>
+            <div>
+              {((scan.analysis as { researchPriority?: Array<{ dimension: string; summary: string }> }).researchPriority ?? []).map(
+                (p) => (
+                  <div key={p.dimension} className="muted">
+                    <strong>{p.dimension}</strong>: {p.summary}
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {scan.dev && (
+        <div className="panel">
+          <h2>Dev / Creator facts</h2>
+          <div className="kv">
+            <div className="k">creator</div>
+            <div className="mono">{String((scan.dev as { creator?: string | null }).creator ?? "—")}</div>
+            <div className="k">verification</div>
+            <div>{String((scan.dev as { verificationStatus?: string }).verificationStatus ?? "—")}</div>
+            <div className="k">warnings</div>
+            <div className="mono muted">
+              {((scan.dev as { warnings?: string[] }).warnings ?? []).join(", ") || "—"}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {scan.judgment && (
+        <div className="panel">
+          <h2>Judgment（非交易建议）</h2>
+          <div className="kv">
+            <div className="k">overall</div>
+            <div>
+              <TrustBadge label={String((scan.judgment as { overall?: string }).overall ?? "unknown").toUpperCase()} />
+            </div>
+            <div className="k">dimensions</div>
+            <div>
+              {((scan.judgment as { dimensions?: Array<{ dimension: string; verdict: string; summary: string }> }).dimensions ?? []).map(
+                (d) => (
+                  <div key={d.dimension} className="muted">
+                    {d.dimension}: {d.verdict} — {d.summary}
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {scan.crossCa && (
+        <div className="panel">
+          <h2>Cross-CA archive hits</h2>
+          <pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>
+            {JSON.stringify(
+              {
+                tokenToWallets: (scan.crossCa as { tokenToWallets?: unknown }).tokenToWallets,
+                repeatWinners: (scan.crossCa as { repeatWinners?: unknown }).repeatWinners,
+              },
+              null,
+              2,
+            )}
+          </pre>
+        </div>
+      )}
+
       <div className="muted mono">short: {shortMint(scan.mint, 8)}</div>
     </div>
   );

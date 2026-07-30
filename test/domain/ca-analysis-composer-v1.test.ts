@@ -21,6 +21,8 @@ import {
   calibrateBinaryThreshold,
   filterLabelsAsOf,
 } from "../../src/domain/rules/replay-asof-v1.js";
+import { assembleDevBehaviorV1 } from "../../src/domain/rules/creator-dev-facts-v1.js";
+import { CrossCaArchive } from "../../src/domain/rules/cross-ca-archive-v1.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -334,6 +336,59 @@ test("replay as-of rejects future labels and withholds calibration without sampl
   const cal = calibrateBinaryThreshold([{ score: 1, positive: true }]);
   assert.equal(cal.threshold, null);
   assert.ok(cal.warnings.includes("insufficient_samples_for_calibration"));
+});
+
+test("creator-dev requires signature evidence", () => {
+  const noSig = assembleDevBehaviorV1({
+    mint: "M",
+    creatorCandidate: "C1",
+    creatorEvidence: null,
+    events: [],
+  });
+  assert.equal(noSig.creator, null);
+  assert.ok(noSig.warnings.includes("creator_without_signature_evidence"));
+
+  const ok = assembleDevBehaviorV1({
+    mint: "M",
+    creatorCandidate: "Creator1111111111111111111111111111111",
+    creatorEvidence: { signature: "Sig111", account: "Creator1111111111111111111111111111111" },
+    events: [
+      {
+        kind: "allocation",
+        signature: "A1",
+        account: "Creator1111111111111111111111111111111",
+        slot: 1,
+        blockTime: null,
+        amountRaw: "10",
+        counterparty: null,
+      },
+    ],
+  });
+  assert.equal(ok.creator, "Creator1111111111111111111111111111111");
+  assert.equal(ok.verificationStatus, "confirmed");
+});
+
+test("cross-ca archive is local-only reverse index", () => {
+  const a = new CrossCaArchive();
+  a.addHit({
+    wallet: "W1",
+    mint: "M1",
+    role: "holder",
+    observedAt: "2026-01-01T00:00:00.000Z",
+    result: "profit",
+    evidenceRef: "e1",
+  });
+  a.addHit({
+    wallet: "W1",
+    mint: "M2",
+    role: "early_buyer",
+    observedAt: "2026-02-01T00:00:00.000Z",
+    result: "profit",
+    evidenceRef: "e2",
+  });
+  const q = a.queryByWallet("W1");
+  assert.equal(q.walletToTokens[0]?.mints.length, 2);
+  assert.equal(q.repeatWinners[0]?.profitHits, 2);
 });
 
 test("address store import is Tier-B unverified and hit is local set intersection", () => {
