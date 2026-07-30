@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Apply provider completeness and warning isolation symmetrically to both 7d and 30d Alpha eligibility, and add the remaining non-vacuous builder regressions for duplicate 30d records, 7d incomplete/PARTIAL/partial-fields rows, and non-empty disjoint Alpha/review unions.",
   "dependencies": [
     "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-002"
