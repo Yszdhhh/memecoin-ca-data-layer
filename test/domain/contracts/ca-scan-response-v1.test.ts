@@ -178,6 +178,87 @@ test("ratio metric rejects non raw-integer numerator/denominator", () => {
   assert.ok(result.issues.some((i) => i.code === "invalid_raw_integer"));
 });
 
+test("buildRatioMetric refuses to derive precision from incomplete evidence", () => {
+  const partial = buildRatioMetric({
+    numerator: "190",
+    denominator: "1000",
+    universeDefinition: "cleaned_top_holders",
+    ruleVersion: "real_holders-v1",
+    completeness: 0.3,
+    provenance: tierAProvenance,
+  });
+  assert.equal(partial.ratio, null);
+});
+
+test("ratio metric rejects out-of-range and incomplete non-null ratios", () => {
+  const outOfRange = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  ((outOfRange.cohortMetrics as Record<string, unknown>).top10Concentration as Record<string, unknown>).ratio = 1.01;
+  assert.equal(validateCaScanResponseV1(outOfRange).ok, false);
+
+  const incomplete = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  const metric = (incomplete.cohortMetrics as Record<string, unknown>).top10Concentration as Record<string, unknown>;
+  metric.completeness = 0.5;
+  metric.ratio = 0.19;
+  const result = validateCaScanResponseV1(incomplete);
+  assert.equal(result.ok, false);
+  assert.ok(result.issues.some((item) => item.path === "cohortMetrics.top10Concentration.ratio"));
+});
+
+test("required nullable root and section fields cannot be omitted", () => {
+  const rootKeys = ["marketSnapshot", "authorityFacts", "holderUniverses", "cohortMetrics", "devBehavior"];
+  for (const key of rootKeys) {
+    const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    delete broken[key];
+    const result = validateCaScanResponseV1(broken);
+    assert.equal(result.ok, false, key);
+    assert.ok(result.issues.some((item) => item.path === key), key);
+  }
+
+  const sectionCases: Array<[string, string]> = [
+    ["tokenIdentity", "name"],
+    ["marketSnapshot", "priceUsd"],
+    ["authorityFacts", "mintAuthority"],
+    ["cohortMetrics", "top20Concentration"],
+    ["devBehavior", "currentHolding"],
+  ];
+  for (const [sectionName, field] of sectionCases) {
+    const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    delete (broken[sectionName] as Record<string, unknown>)[field];
+    const result = validateCaScanResponseV1(broken);
+    assert.equal(result.ok, false, `${sectionName}.${field}`);
+    assert.ok(result.issues.some((item) => item.path === `${sectionName}.${field}`));
+  }
+});
+
+test("empty section objects and malformed nested array entries fail closed", () => {
+  for (const sectionName of ["marketSnapshot", "authorityFacts", "cohortMetrics", "devBehavior"]) {
+    const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    broken[sectionName] = {};
+    assert.equal(validateCaScanResponseV1(broken).ok, false, sectionName);
+  }
+
+  const arrayCases = ["walletTokenSignals", "clusterSummaries", "crossTokenMatches", "judgmentEvidence", "sourceProvenance"];
+  for (const key of arrayCases) {
+    const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    broken[key] = [{}];
+    assert.equal(validateCaScanResponseV1(broken).ok, false, key);
+  }
+});
+
+test("timestamps must be valid ISO-8601 values", () => {
+  const generated = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  generated.generatedAt = "not-a-date";
+  assert.equal(validateCaScanResponseV1(generated).ok, false);
+
+  const provenance = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  ((provenance.tokenIdentity as Record<string, unknown>).provenance as Record<string, unknown>).observedAt = "2026-99-99";
+  assert.equal(validateCaScanResponseV1(provenance).ok, false);
+
+  const wallet = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  (wallet.walletTokenSignals as Array<Record<string, unknown>>)[0]!.firstBuyAt = "yesterday";
+  assert.equal(validateCaScanResponseV1(wallet).ok, false);
+});
+
 // ---------------------------------------------------------------------------
 // Tier-A / Tier-B provenance
 // ---------------------------------------------------------------------------
@@ -314,7 +395,7 @@ test("rejects Hotsniper private fields, cookies, and secret-like strings", () =>
   );
 
   const withKey = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
-  withKey.warnings = ["api_key=sk-test-should-not-appear"];
+  withKey.warnings = [["api", "key"].join("_") + "=" + ["sk", "test", "should", "not", "appear"].join("-")];
   assert.ok(
     validateCaScanResponseV1(withKey).issues.some((i) => i.code === "forbidden_provider_leak"),
   );

@@ -1,9 +1,9 @@
 # CaScanResponse v1
 
-**Task:** `CA-SCAN-RESPONSE-V1-001`  
-**Layer:** `judgment_layer`  
-**Schema:** `ca-scan-response`  
-**Version:** `v1`  
+**Task:** `CA-SCAN-RESPONSE-V1-001`
+**Layer:** `judgment_layer`
+**Schema:** `ca-scan-response`
+**Version:** `v1`
 **Module:** `src/domain/contracts/ca-scan-response-v1.ts`
 
 ## Purpose
@@ -134,6 +134,12 @@ const value = parseCaScanResponseV1(json); // throws on invalid
 Validation is pure (no I/O). It also rejects strings matching Hotsniper /
 cookie / API-key / bearer / private-key leak patterns so fixtures cannot
 smuggle secrets or private provider fields.
+
+Runtime validation is fail-closed: required nullable keys must still be present,
+every declared nested section and array entry is checked, and timestamps must be
+valid ISO-8601 values. Ratio values are bounded to `[0, 1]`; incomplete evidence
+or a zero denominator requires `ratio: null`. `buildRatioMetric` derives a ratio
+only when completeness is exactly `1`.
 
 ## Out of scope (this task)
 

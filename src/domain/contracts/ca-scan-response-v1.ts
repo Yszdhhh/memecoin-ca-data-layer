@@ -1,15 +1,15 @@
 /**
- * CaScanResponse v1 — provider-neutral, versioned, fixture-driven domain
+ * CaScanResponse v1 鈥?provider-neutral, versioned, fixture-driven domain
  * output contract for the judgment layer.
  *
- * Layer: judgment_layer (PROJECT_ARCHITECTURE.md §2).
+ * Layer: judgment_layer (PROJECT_ARCHITECTURE.md 搂2).
  * This contract only composes already-normalized data and judgment evidence.
  * It does not fetch live data, implement providers, or import infrastructure.
  *
  * JSON-safe: chain amounts are decimal-digit strings; timestamps are ISO-8601
  * strings. Partial data lowers completeness and emits warnings; it never
  * fabricates precision (constitution #8). Tier-B (borrowed) fields remain
- * features, never confirmed conclusions (architecture §3).
+ * features, never confirmed conclusions (architecture 搂3).
  */
 
 // ---------------------------------------------------------------------------
@@ -32,7 +32,7 @@ export type RawIntegerString = string;
 /** ISO-8601 timestamp string (JSON-safe). */
 export type IsoTimestamp = string;
 
-/** Data trust tier (PROJECT_ARCHITECTURE.md §3). */
+/** Data trust tier (PROJECT_ARCHITECTURE.md 搂3). */
 export type SourceTier = "A" | "B";
 
 /**
@@ -74,7 +74,7 @@ export interface RatioMetric {
   denominator: RawIntegerString;
   /**
    * Derived ratio in [0, 1] when both sides are known and denominator > 0.
-   * `null` when incomplete or denominator is zero — never invent a precise value.
+   * `null` when incomplete or denominator is zero 鈥?never invent a precise value.
    */
   ratio: number | null;
   /**
@@ -89,7 +89,7 @@ export interface RatioMetric {
 
 export interface CompletenessReport {
   overall: CompletenessState;
-  /** Optional 0–1 coverage score when more granular than the state enum. */
+  /** Optional 0鈥? coverage score when more granular than the state enum. */
   ratio?: CompletenessRatio;
   sections: Record<string, CompletenessState>;
 }
@@ -181,14 +181,14 @@ export interface CohortMetrics {
 }
 
 /**
- * Wallet–token edge signals. External platform labels (if ever present) must
+ * Wallet鈥搕oken edge signals. External platform labels (if ever present) must
  * carry sourceTier B + verificationStatus unverified and must not be treated
  * as confirmed conclusions.
  */
 export interface WalletTokenSignal {
   walletAddress: string;
   labels: string[];
-  /** Feature labels only — never a confirmed judgment by themselves. */
+  /** Feature labels only 鈥?never a confirmed judgment by themselves. */
   labelSourceTier: SourceTier;
   labelVerificationStatus: VerificationStatus;
   firstBuyAt: IsoTimestamp | null;
@@ -205,7 +205,7 @@ export interface ClusterSummary {
   memberCount: number;
   aggregateBalanceRaw: RawIntegerString | null;
   confidence: number;
-  /** Risk labels such as "cluster" | "insider_suspected" — always versioned. */
+  /** Risk labels such as "cluster" | "insider_suspected" 鈥?always versioned. */
   riskLabels: string[];
   /** True only when Tier-A evidence crossed the confirmed threshold. */
   confirmed: boolean;
@@ -322,6 +322,7 @@ export interface ValidationResult {
 }
 
 const RAW_INTEGER_PATTERN = /^\d+$/;
+const ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
 const HOLDER_UNIVERSE_KEYS = [
   "raw_top_holders",
   "owner_aggregated_holders",
@@ -345,8 +346,58 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function hasOwn(value: Record<string, unknown>, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(value, key);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
+function isStringOrNull(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
 function isRawIntegerString(value: unknown): value is string {
   return typeof value === "string" && RAW_INTEGER_PATTERN.test(value);
+}
+
+function isRawIntegerOrNull(value: unknown): value is string | null {
+  return value === null || isRawIntegerString(value);
+}
+
+function isIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const match = ISO_TIMESTAMP_PATTERN.exec(value);
+  if (!match || Number.isNaN(Date.parse(value))) return false;
+  const [datePart, timeAndZone] = value.split("T");
+  if (!datePart || !timeAndZone) return false;
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute, second] = timeAndZone.slice(0, 8).split(":").map(Number);
+  if ([year, month, day, hour, minute, second].some((part) => part === undefined)) return false;
+  if ((hour as number) > 23 || (minute as number) > 59 || (second as number) > 59) return false;
+  const calendar = new Date(Date.UTC(year as number, (month as number) - 1, day as number));
+  return calendar.getUTCFullYear() === year && calendar.getUTCMonth() === (month as number) - 1 && calendar.getUTCDate() === day;
+}
+
+function isIsoTimestampOrNull(value: unknown): value is string | null {
+  return value === null || isIsoTimestamp(value);
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isFiniteNumberOrNull(value: unknown): value is number | null {
+  return value === null || isFiniteNumber(value);
+}
+
+function isNonNegativeIntegerOrNull(value: unknown): value is number | null {
+  return value === null || (Number.isInteger(value) && (value as number) >= 0);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 function isCompletenessState(value: unknown): value is CompletenessState {
@@ -362,28 +413,56 @@ function isVerificationStatus(value: unknown): value is VerificationStatus {
 }
 
 function isCompletenessRatio(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1;
+  return isFiniteNumber(value) && value >= 0 && value <= 1;
 }
 
-function issue(
-  code: ValidationIssueCode,
-  path: string,
-  message: string,
-): ValidationIssue {
+function isConfidence(value: unknown): value is number {
+  return isCompletenessRatio(value);
+}
+
+function issue(code: ValidationIssueCode, path: string, message: string): ValidationIssue {
   return { code, path, message };
+}
+
+function childPath(path: string, key: string): string {
+  return path ? `${path}.${key}` : key;
+}
+
+function requireField(
+  value: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: ValidationIssue[],
+): boolean {
+  if (!hasOwn(value, key) || value[key] === undefined) {
+    issues.push(issue("missing_field", childPath(path, key), `${key} is required`));
+    return false;
+  }
+  return true;
+}
+
+function validateRequired(
+  value: Record<string, unknown>,
+  key: string,
+  path: string,
+  issues: ValidationIssue[],
+  predicate: (candidate: unknown) => boolean,
+  message: string,
+  code: ValidationIssueCode = "invalid_type",
+): boolean {
+  if (!requireField(value, key, path, issues)) return false;
+  if (!predicate(value[key])) {
+    issues.push(issue(code, childPath(path, key), message));
+    return false;
+  }
+  return true;
 }
 
 function scanForbiddenLeaks(value: unknown, path: string, issues: ValidationIssue[]): void {
   if (typeof value === "string") {
     for (const { pattern, label } of FORBIDDEN_LEAK_PATTERNS) {
       if (pattern.test(value)) {
-        issues.push(
-          issue(
-            "forbidden_provider_leak",
-            path,
-            `Forbidden secret/provider leak pattern matched (${label})`,
-          ),
-        );
+        issues.push(issue("forbidden_provider_leak", path, `Forbidden secret/provider leak pattern matched (${label})`));
       }
     }
     return;
@@ -399,161 +478,100 @@ function scanForbiddenLeaks(value: unknown, path: string, issues: ValidationIssu
   }
 }
 
-function validateProvenance(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): value is SourceProvenance {
+function validateProvenance(value: unknown, path: string, issues: ValidationIssue[]): value is SourceProvenance {
   if (!isObject(value)) {
     issues.push(issue("invalid_type", path, "expected SourceProvenance object"));
     return false;
   }
   let ok = true;
-  if (typeof value.source !== "string" || value.source.length === 0) {
-    issues.push(issue("missing_field", `${path}.source`, "source is required"));
-    ok = false;
+  ok = validateRequired(value, "source", path, issues, isNonEmptyString, "source must be a non-empty string") && ok;
+  ok = validateRequired(value, "sourceTier", path, issues, isSourceTier, 'sourceTier must be "A" or "B"', "invalid_source_tier") && ok;
+  ok = validateRequired(value, "verificationStatus", path, issues, isVerificationStatus, 'verificationStatus must be "unverified" or "confirmed"', "invalid_verification_status") && ok;
+  ok = validateRequired(value, "observedAt", path, issues, isIsoTimestamp, "observedAt must be an ISO-8601 timestamp") && ok;
+  for (const key of ["watermarkRef", "evidenceRef", "ruleVersion"] as const) {
+    if (hasOwn(value, key) && value[key] !== undefined && typeof value[key] !== "string") {
+      issues.push(issue("invalid_type", `${path}.${key}`, `${key} must be a string when present`));
+      ok = false;
+    }
   }
-  if (!isSourceTier(value.sourceTier)) {
-    issues.push(issue("invalid_source_tier", `${path}.sourceTier`, 'sourceTier must be "A" or "B"'));
-    ok = false;
-  }
-  if (!isVerificationStatus(value.verificationStatus)) {
-    issues.push(
-      issue(
-        "invalid_verification_status",
-        `${path}.verificationStatus`,
-        'verificationStatus must be "unverified" or "confirmed"',
-      ),
-    );
-    ok = false;
-  }
-  if (typeof value.observedAt !== "string") {
-    issues.push(issue("missing_field", `${path}.observedAt`, "observedAt ISO timestamp required"));
-    ok = false;
-  }
-  // Tier-B may never be marked confirmed at the provenance level.
   if (value.sourceTier === "B" && value.verificationStatus === "confirmed") {
-    issues.push(
-      issue(
-        "tier_b_confirmed_conclusion",
-        path,
-        "Tier-B provenance cannot have verificationStatus=confirmed",
-      ),
-    );
+    issues.push(issue("tier_b_confirmed_conclusion", path, "Tier-B provenance cannot have verificationStatus=confirmed"));
     ok = false;
   }
   return ok;
 }
 
-function validateRatioMetric(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): value is RatioMetric {
-  if (value === null) {
-    return true;
-  }
+function validateRatioMetric(value: unknown, path: string, issues: ValidationIssue[]): value is RatioMetric {
+  if (value === null) return true;
   if (!isObject(value)) {
     issues.push(issue("invalid_type", path, "expected RatioMetric object or null"));
     return false;
   }
   let ok = true;
-  const required: Array<keyof RatioMetric> = [
-    "numerator",
-    "denominator",
-    "universeDefinition",
-    "ruleVersion",
-    "completeness",
-    "provenance",
-  ];
-  for (const key of required) {
-    if (!(key in value) || value[key] === undefined) {
-      issues.push(
-        issue(
-          "missing_ratio_metric_fields",
-          `${path}.${key}`,
-          `RatioMetric.${key} is required (numerator, denominator, universeDefinition, ruleVersion, completeness, provenance)`,
-        ),
-      );
+  for (const key of ["numerator", "denominator", "ratio", "universeDefinition", "ruleVersion", "completeness", "provenance"] as const) {
+    if (!hasOwn(value, key) || value[key] === undefined) {
+      issues.push(issue("missing_ratio_metric_fields", `${path}.${key}`, `RatioMetric.${key} is required`));
       ok = false;
     }
   }
-  if ("numerator" in value && value.numerator !== undefined && !isRawIntegerString(value.numerator)) {
+  if (hasOwn(value, "numerator") && !isRawIntegerString(value.numerator)) {
     issues.push(issue("invalid_raw_integer", `${path}.numerator`, "numerator must be a raw integer string"));
     ok = false;
   }
-  if (
-    "denominator" in value &&
-    value.denominator !== undefined &&
-    !isRawIntegerString(value.denominator)
-  ) {
-    issues.push(
-      issue("invalid_raw_integer", `${path}.denominator`, "denominator must be a raw integer string"),
-    );
+  if (hasOwn(value, "denominator") && !isRawIntegerString(value.denominator)) {
+    issues.push(issue("invalid_raw_integer", `${path}.denominator`, "denominator must be a raw integer string"));
     ok = false;
   }
-  if ("universeDefinition" in value && typeof value.universeDefinition !== "string") {
-    issues.push(
-      issue("invalid_type", `${path}.universeDefinition`, "universeDefinition must be a string"),
-    );
+  if (hasOwn(value, "ratio") && value.ratio !== null && !isCompletenessRatio(value.ratio)) {
+    issues.push(issue("invalid_type", `${path}.ratio`, "ratio must be null or a finite number in [0, 1]"));
     ok = false;
   }
-  if ("universeDefinition" in value && value.universeDefinition === "") {
-    issues.push(
-      issue("missing_field", `${path}.universeDefinition`, "universeDefinition must be non-empty"),
-    );
+  if (!isNonEmptyString(value.universeDefinition)) {
+    issues.push(issue("missing_ratio_metric_fields", `${path}.universeDefinition`, "universeDefinition must be non-empty"));
     ok = false;
   }
-  if ("ruleVersion" in value && typeof value.ruleVersion !== "string") {
-    issues.push(issue("invalid_type", `${path}.ruleVersion`, "ruleVersion must be a string"));
+  if (!isNonEmptyString(value.ruleVersion)) {
+    issues.push(issue("missing_ratio_metric_fields", `${path}.ruleVersion`, "ruleVersion must be non-empty"));
     ok = false;
   }
-  if ("completeness" in value && !isCompletenessRatio(value.completeness)) {
-    issues.push(
-      issue("invalid_completeness", `${path}.completeness`, "completeness must be a number in [0, 1]"),
-    );
+  if (!isCompletenessRatio(value.completeness)) {
+    issues.push(issue("invalid_completeness", `${path}.completeness`, "completeness must be in [0, 1]"));
     ok = false;
   }
-  if ("ratio" in value) {
-    const ratio = value.ratio;
-    if (ratio !== null && (typeof ratio !== "number" || !Number.isFinite(ratio))) {
-      issues.push(issue("invalid_type", `${path}.ratio`, "ratio must be number | null"));
-      ok = false;
-    }
-  } else {
-    issues.push(issue("missing_field", `${path}.ratio`, "ratio (number | null) is required"));
+  if (value.ratio !== null && (value.completeness !== 1 || value.denominator === "0")) {
+    issues.push(issue("invalid_completeness", `${path}.ratio`, "ratio must be null unless evidence is complete and denominator is positive"));
     ok = false;
   }
-  if ("provenance" in value) {
-    if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) {
-      ok = false;
-    }
-  }
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
   return ok;
 }
 
 function validateHolderEntry(value: unknown, path: string, issues: ValidationIssue[]): boolean {
   if (!isObject(value)) {
-    issues.push(issue("invalid_type", path, "expected HolderEntry object"));
+    issues.push(issue("invalid_type", path, "expected holder entry object"));
     return false;
   }
   let ok = true;
-  if (typeof value.address !== "string") {
-    issues.push(issue("missing_field", `${path}.address`, "address required"));
+  ok = validateRequired(value, "address", path, issues, isNonEmptyString, "address must be non-empty") && ok;
+  ok = validateRequired(value, "balanceRaw", path, issues, isRawIntegerString, "balanceRaw must be a raw integer string", "invalid_raw_integer") && ok;
+  if (hasOwn(value, "rank") && value.rank !== undefined && (!Number.isInteger(value.rank) || (value.rank as number) < 1)) {
+    issues.push(issue("invalid_type", `${path}.rank`, "rank must be a positive integer when present"));
     ok = false;
   }
-  if (!isRawIntegerString(value.balanceRaw)) {
-    issues.push(issue("invalid_raw_integer", `${path}.balanceRaw`, "balanceRaw must be raw integer string"));
+  for (const key of ["ownerAddress", "exclusionReason", "clusterId", "ruleVersion"] as const) {
+    if (hasOwn(value, key) && value[key] !== undefined && typeof value[key] !== "string") {
+      issues.push(issue("invalid_type", `${path}.${key}`, `${key} must be a string when present`));
+      ok = false;
+    }
+  }
+  if (hasOwn(value, "confidence") && value.confidence !== undefined && !isConfidence(value.confidence)) {
+    issues.push(issue("invalid_type", `${path}.confidence`, "confidence must be in [0, 1] when present"));
     ok = false;
   }
   return ok;
 }
 
-function validateHolderUniverses(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): boolean {
+function validateHolderUniverses(value: unknown, path: string, issues: ValidationIssue[]): boolean {
   if (value === null) return true;
   if (!isObject(value)) {
     issues.push(issue("invalid_type", path, "expected HolderUniverses object or null"));
@@ -561,173 +579,231 @@ function validateHolderUniverses(
   }
   let ok = true;
   for (const key of HOLDER_UNIVERSE_KEYS) {
-    if (!(key in value)) {
-      issues.push(
-        issue(
-          "missing_holder_universe_key",
-          `${path}.${key}`,
-          `HolderUniverses must include ${key}`,
-        ),
-      );
+    if (!hasOwn(value, key) || !Array.isArray(value[key])) {
+      issues.push(issue("missing_holder_universe_key", `${path}.${key}`, `${key} array is required`));
       ok = false;
       continue;
     }
-    const list = value[key];
-    if (!Array.isArray(list)) {
-      issues.push(issue("invalid_type", `${path}.${key}`, "expected array of HolderEntry"));
-      ok = false;
-      continue;
-    }
-    list.forEach((entry, index) => {
-      if (!validateHolderEntry(entry, `${path}.${key}[${index}]`, issues)) {
-        ok = false;
-      }
+    (value[key] as unknown[]).forEach((entry, index) => {
+      if (!validateHolderEntry(entry, `${path}.${key}[${index}]`, issues)) ok = false;
     });
   }
-  if (typeof value.ruleVersion !== "string") {
-    issues.push(issue("missing_field", `${path}.ruleVersion`, "ruleVersion required"));
-    ok = false;
-  }
-  if (!isCompletenessState(value.completeness)) {
-    issues.push(issue("invalid_completeness", `${path}.completeness`, "invalid completeness state"));
-    ok = false;
-  }
-  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) {
-    ok = false;
-  }
-  if (!Array.isArray(value.warnings)) {
-    issues.push(issue("invalid_type", `${path}.warnings`, "warnings must be an array"));
-    ok = false;
-  }
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
   return ok;
 }
 
-function validateJudgmentEvidence(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): boolean {
+function validateJudgmentEvidence(value: unknown, path: string, issues: ValidationIssue[]): boolean {
   if (!isObject(value)) {
     issues.push(issue("invalid_type", path, "expected JudgmentEvidence object"));
     return false;
   }
   let ok = true;
-  const requiredString = [
-    "judgmentCode",
-    "humanReadableSummary",
-    "ruleVersion",
-  ] as const;
-  for (const key of requiredString) {
-    if (typeof value[key] !== "string" || value[key] === "") {
-      issues.push(issue("missing_field", `${path}.${key}`, `${key} is required`));
-      ok = false;
-    }
-  }
-  if (!Array.isArray(value.evidenceRefs)) {
-    issues.push(issue("missing_field", `${path}.evidenceRefs`, "evidenceRefs array required"));
+  ok = validateRequired(value, "judgmentCode", path, issues, isNonEmptyString, "judgmentCode must be non-empty") && ok;
+  ok = validateRequired(value, "humanReadableSummary", path, issues, isNonEmptyString, "humanReadableSummary must be non-empty") && ok;
+  ok = validateRequired(value, "evidenceRefs", path, issues, isStringArray, "evidenceRefs must be a string array") && ok;
+  ok = validateRequired(value, "confidence", path, issues, isConfidence, "confidence must be in [0, 1]") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "sourceTier", path, issues, isSourceTier, 'sourceTier must be "A" or "B"', "invalid_source_tier") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  if (hasOwn(value, "status") && value.status !== undefined && !isVerificationStatus(value.status)) {
+    issues.push(issue("invalid_verification_status", `${path}.status`, "invalid verification status"));
     ok = false;
   }
-  if (typeof value.confidence !== "number" || !Number.isFinite(value.confidence)) {
-    issues.push(issue("invalid_type", `${path}.confidence`, "confidence must be a finite number"));
-    ok = false;
-  }
-  if (!isSourceTier(value.sourceTier)) {
-    issues.push(issue("invalid_source_tier", `${path}.sourceTier`, 'sourceTier must be "A" or "B"'));
-    ok = false;
-  }
-  if (!isCompletenessState(value.completeness)) {
-    issues.push(issue("invalid_completeness", `${path}.completeness`, "invalid completeness state"));
-    ok = false;
-  }
-  if (!Array.isArray(value.warnings)) {
-    issues.push(issue("missing_field", `${path}.warnings`, "warnings array required"));
-    ok = false;
-  }
-  if (value.status !== undefined && !isVerificationStatus(value.status)) {
-    issues.push(
-      issue(
-        "invalid_verification_status",
-        `${path}.status`,
-        'status must be "unverified" or "confirmed" when present',
-      ),
-    );
-    ok = false;
-  }
-  // Binding: Tier-B labels/features must never become confirmed conclusions.
   if (value.sourceTier === "B" && value.status === "confirmed") {
-    issues.push(
-      issue(
-        "tier_b_confirmed_conclusion",
-        path,
-        "JudgmentEvidence with sourceTier=B cannot have status=confirmed",
-      ),
-    );
+    issues.push(issue("tier_b_confirmed_conclusion", path, "JudgmentEvidence with sourceTier=B cannot have status=confirmed"));
     ok = false;
   }
   return ok;
 }
 
-function validateTokenIdentity(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): boolean {
+function validateTokenIdentity(value: unknown, path: string, issues: ValidationIssue[]): boolean {
   if (!isObject(value)) {
     issues.push(issue("missing_field", path, "tokenIdentity is required"));
     return false;
   }
   let ok = true;
-  if (value.chain !== "solana") {
-    issues.push(issue("invalid_type", `${path}.chain`, 'chain must be "solana" in active stage'));
-    ok = false;
+  ok = validateRequired(value, "chain", path, issues, (candidate) => candidate === "solana", 'chain must be "solana"') && ok;
+  ok = validateRequired(value, "ca", path, issues, isNonEmptyString, "ca must be non-empty") && ok;
+  for (const key of ["name", "symbol", "launchpad", "creationTx"] as const) {
+    ok = validateRequired(value, key, path, issues, isStringOrNull, `${key} must be string or null`) && ok;
   }
-  if (typeof value.ca !== "string" || value.ca.length === 0) {
-    issues.push(issue("missing_field", `${path}.ca`, "ca is required"));
-    ok = false;
+  ok = validateRequired(value, "decimals", path, issues, (candidate) => candidate === null || (Number.isInteger(candidate) && (candidate as number) >= 0), "decimals must be a non-negative integer or null") && ok;
+  ok = validateRequired(value, "totalSupplyRaw", path, issues, isRawIntegerOrNull, "totalSupplyRaw must be raw integer string or null", "invalid_raw_integer") && ok;
+  ok = validateRequired(value, "createdAt", path, issues, isIsoTimestampOrNull, "createdAt must be an ISO-8601 timestamp or null") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  return ok;
+}
+
+function validateMarketSnapshot(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (value === null) return true;
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected MarketSnapshotSection object or null"));
+    return false;
   }
-  if (value.totalSupplyRaw !== null && !isRawIntegerString(value.totalSupplyRaw)) {
-    issues.push(
-      issue(
-        "invalid_raw_integer",
-        `${path}.totalSupplyRaw`,
-        "totalSupplyRaw must be raw integer string or null",
-      ),
-    );
-    ok = false;
+  let ok = true;
+  for (const key of ["priceUsd", "fdvUsd", "liquidityUsd", "marketCapUsd", "volume24hUsd"] as const) {
+    ok = validateRequired(value, key, path, issues, isFiniteNumberOrNull, `${key} must be a finite number or null`) && ok;
   }
-  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) {
+  ok = validateRequired(value, "pairAddress", path, issues, isStringOrNull, "pairAddress must be string or null") && ok;
+  ok = validateRequired(value, "observedAt", path, issues, isIsoTimestampOrNull, "observedAt must be an ISO-8601 timestamp or null") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  return ok;
+}
+
+function validateAuthorityFacts(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (value === null) return true;
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected AuthorityFacts object or null"));
+    return false;
+  }
+  let ok = true;
+  for (const key of ["mintAuthority", "freezeAuthority", "creatorAddress"] as const) {
+    ok = validateRequired(value, key, path, issues, isStringOrNull, `${key} must be string or null`) && ok;
+  }
+  for (const key of ["mintAuthorityRenounced", "freezeAuthorityRenounced"] as const) {
+    ok = validateRequired(value, key, path, issues, (candidate) => candidate === null || typeof candidate === "boolean", `${key} must be boolean or null`) && ok;
+  }
+  if (requireField(value, "creatorProvenance", path, issues) && value.creatorProvenance !== null && !validateProvenance(value.creatorProvenance, `${path}.creatorProvenance`, issues)) ok = false;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  return ok;
+}
+
+function validateCohortMetrics(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (value === null) return true;
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected CohortMetrics object or null"));
+    return false;
+  }
+  let ok = true;
+  for (const key of ["top10Concentration", "top20Concentration", "excludedShare"] as const) {
+    if (!requireField(value, key, path, issues) || !validateRatioMetric(value[key], `${path}.${key}`, issues)) ok = false;
+  }
+  ok = validateRequired(value, "eligibleHolderCount", path, issues, isNonNegativeIntegerOrNull, "eligibleHolderCount must be a non-negative integer or null") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  return ok;
+}
+
+function validateWalletTokenSignal(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected WalletTokenSignal object"));
+    return false;
+  }
+  let ok = true;
+  ok = validateRequired(value, "walletAddress", path, issues, isNonEmptyString, "walletAddress must be non-empty") && ok;
+  ok = validateRequired(value, "labels", path, issues, isStringArray, "labels must be a string array") && ok;
+  ok = validateRequired(value, "labelSourceTier", path, issues, isSourceTier, 'labelSourceTier must be "A" or "B"', "invalid_source_tier") && ok;
+  ok = validateRequired(value, "labelVerificationStatus", path, issues, isVerificationStatus, "invalid verification status", "invalid_verification_status") && ok;
+  for (const key of ["firstBuyAt", "lastActivityAt"] as const) {
+    ok = validateRequired(value, key, path, issues, isIsoTimestampOrNull, `${key} must be an ISO-8601 timestamp or null`) && ok;
+  }
+  ok = validateRequired(value, "balanceRaw", path, issues, isRawIntegerOrNull, "balanceRaw must be raw integer string or null", "invalid_raw_integer") && ok;
+  ok = validateRequired(value, "confidence", path, issues, isConfidence, "confidence must be in [0, 1]") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  if (value.labelSourceTier === "B" && value.labelVerificationStatus === "confirmed") {
+    issues.push(issue("tier_b_confirmed_conclusion", path, "Tier-B wallet labels cannot be confirmed conclusions"));
     ok = false;
   }
   return ok;
 }
 
-function validateCompletenessReport(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-): boolean {
+function validateClusterSummary(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected ClusterSummary object"));
+    return false;
+  }
+  let ok = true;
+  ok = validateRequired(value, "clusterId", path, issues, isNonEmptyString, "clusterId must be non-empty") && ok;
+  ok = validateRequired(value, "memberCount", path, issues, (candidate) => Number.isInteger(candidate) && (candidate as number) >= 0, "memberCount must be a non-negative integer") && ok;
+  ok = validateRequired(value, "aggregateBalanceRaw", path, issues, isRawIntegerOrNull, "aggregateBalanceRaw must be raw integer string or null", "invalid_raw_integer") && ok;
+  ok = validateRequired(value, "confidence", path, issues, isConfidence, "confidence must be in [0, 1]") && ok;
+  ok = validateRequired(value, "riskLabels", path, issues, isStringArray, "riskLabels must be a string array") && ok;
+  ok = validateRequired(value, "confirmed", path, issues, (candidate) => typeof candidate === "boolean", "confirmed must be boolean") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "sourceTier", path, issues, isSourceTier, 'sourceTier must be "A" or "B"', "invalid_source_tier") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  ok = validateRequired(value, "evidenceRefs", path, issues, isStringArray, "evidenceRefs must be a string array") && ok;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  if (value.confirmed === true && value.sourceTier === "B") {
+    issues.push(issue("tier_b_confirmed_conclusion", path, "cluster cannot be confirmed from Tier-B alone"));
+    ok = false;
+  }
+  return ok;
+}
+
+function validateDevBehavior(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (value === null) return true;
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected DevBehaviorSection object or null"));
+    return false;
+  }
+  let ok = true;
+  ok = validateRequired(value, "creatorAddress", path, issues, isStringOrNull, "creatorAddress must be string or null") && ok;
+  for (const key of ["currentHolding", "relatedHolding", "grossBought", "grossSold", "netDisposed", "soldOfAcquired"] as const) {
+    if (!requireField(value, key, path, issues) || !validateRatioMetric(value[key], `${path}.${key}`, issues)) ok = false;
+  }
+  ok = validateRequired(value, "directSellCount", path, issues, isNonNegativeIntegerOrNull, "directSellCount must be a non-negative integer or null") && ok;
+  ok = validateRequired(value, "relatedAddresses", path, issues, isStringArray, "relatedAddresses must be a string array") && ok;
+  ok = validateRequired(value, "calculatedAt", path, issues, isIsoTimestampOrNull, "calculatedAt must be an ISO-8601 timestamp or null") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  return ok;
+}
+
+function validateCrossTokenMatch(value: unknown, path: string, issues: ValidationIssue[]): boolean {
+  if (!isObject(value)) {
+    issues.push(issue("invalid_type", path, "expected CrossTokenMatch object"));
+    return false;
+  }
+  let ok = true;
+  ok = validateRequired(value, "relatedTokenCa", path, issues, isNonEmptyString, "relatedTokenCa must be non-empty") && ok;
+  ok = validateRequired(value, "matchKind", path, issues, isNonEmptyString, "matchKind must be non-empty") && ok;
+  ok = validateRequired(value, "sharedWallets", path, issues, isStringArray, "sharedWallets must be a string array") && ok;
+  ok = validateRequired(value, "confidence", path, issues, isConfidence, "confidence must be in [0, 1]") && ok;
+  ok = validateRequired(value, "ruleVersion", path, issues, isNonEmptyString, "ruleVersion must be non-empty") && ok;
+  ok = validateRequired(value, "sourceTier", path, issues, isSourceTier, 'sourceTier must be "A" or "B"', "invalid_source_tier") && ok;
+  ok = validateRequired(value, "verificationStatus", path, issues, isVerificationStatus, "invalid verification status", "invalid_verification_status") && ok;
+  ok = validateRequired(value, "evidenceRefs", path, issues, isStringArray, "evidenceRefs must be a string array") && ok;
+  ok = validateRequired(value, "completeness", path, issues, isCompletenessState, "invalid completeness state", "invalid_completeness") && ok;
+  ok = validateRequired(value, "warnings", path, issues, isStringArray, "warnings must be a string array") && ok;
+  if (value.sourceTier === "B" && value.verificationStatus === "confirmed") {
+    issues.push(issue("tier_b_confirmed_conclusion", path, "cross-token match cannot be confirmed from Tier-B alone"));
+    ok = false;
+  }
+  return ok;
+}
+
+function validateCompletenessReport(value: unknown, path: string, issues: ValidationIssue[]): boolean {
   if (!isObject(value)) {
     issues.push(issue("missing_field", path, "completeness report is required"));
     return false;
   }
   let ok = true;
-  if (!isCompletenessState(value.overall)) {
-    issues.push(issue("invalid_completeness", `${path}.overall`, "invalid overall completeness"));
-    ok = false;
-  }
-  if (value.ratio !== undefined && !isCompletenessRatio(value.ratio)) {
+  ok = validateRequired(value, "overall", path, issues, isCompletenessState, "invalid overall completeness", "invalid_completeness") && ok;
+  if (hasOwn(value, "ratio") && value.ratio !== undefined && !isCompletenessRatio(value.ratio)) {
     issues.push(issue("invalid_completeness", `${path}.ratio`, "ratio must be in [0, 1] when present"));
     ok = false;
   }
-  if (!isObject(value.sections)) {
-    issues.push(issue("missing_field", `${path}.sections`, "sections map is required"));
+  if (!requireField(value, "sections", path, issues) || !isObject(value.sections)) {
+    if (hasOwn(value, "sections")) issues.push(issue("invalid_type", `${path}.sections`, "sections must be an object"));
     ok = false;
   } else {
     for (const [key, state] of Object.entries(value.sections)) {
       if (!isCompletenessState(state)) {
-        issues.push(
-          issue("invalid_completeness", `${path}.sections.${key}`, "invalid section completeness"),
-        );
+        issues.push(issue("invalid_completeness", `${path}.sections.${key}`, "invalid section completeness"));
         ok = false;
       }
     }
@@ -735,215 +811,48 @@ function validateCompletenessReport(
   return ok;
 }
 
-function validateOptionalSection(
-  value: unknown,
-  path: string,
-  issues: ValidationIssue[],
-  ratioPaths: string[],
-): boolean {
-  if (value === null || value === undefined) return true;
-  if (!isObject(value)) {
-    issues.push(issue("invalid_type", path, "expected object or null"));
-    return false;
-  }
-  let ok = true;
-  for (const rel of ratioPaths) {
-    const parts = rel.split(".");
-    let cursor: unknown = value;
-    let full = path;
-    for (const part of parts) {
-      if (!isObject(cursor) || !(part in cursor)) {
-        cursor = undefined;
-        break;
-      }
-      cursor = cursor[part];
-      full = `${full}.${part}`;
-    }
-    if (cursor !== undefined && !validateRatioMetric(cursor, full, issues)) {
-      ok = false;
-    }
-  }
-  if ("provenance" in value && value.provenance !== null && value.provenance !== undefined) {
-    if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) {
-      ok = false;
-    }
-  }
-  if ("completeness" in value && !isCompletenessState(value.completeness)) {
-    issues.push(issue("invalid_completeness", `${path}.completeness`, "invalid completeness state"));
-    ok = false;
-  }
-  return ok;
-}
-
-/**
- * Structural + invariant validation for a CaScanResponse v1 value.
- * Pure function: no I/O, no network, no provider imports.
- */
+/** Structural + invariant validation for a CaScanResponse v1 value. Pure and offline. */
 export function validateCaScanResponseV1(input: unknown): ValidationResult {
   const issues: ValidationIssue[] = [];
   scanForbiddenLeaks(input, "", issues);
-
   if (!isObject(input)) {
-    return {
-      ok: false,
-      issues: [issue("invalid_type", "", "root must be an object"), ...issues],
-    };
+    issues.push(issue("invalid_type", "", "CaScanResponse v1 must be an object"));
+    return { ok: false, issues };
   }
 
-  if (!("schema" in input)) {
-    issues.push(issue("missing_schema", "schema", "schema field is required"));
-  } else if (input.schema !== CA_SCAN_RESPONSE_SCHEMA) {
-    issues.push(
-      issue(
-        "invalid_schema",
-        "schema",
-        `schema must be "${CA_SCAN_RESPONSE_SCHEMA}", got ${JSON.stringify(input.schema)}`,
-      ),
-    );
+  if (!hasOwn(input, "schema")) issues.push(issue("missing_schema", "schema", "schema field is required"));
+  else if (input.schema !== CA_SCAN_RESPONSE_SCHEMA) issues.push(issue("invalid_schema", "schema", `schema must be "${CA_SCAN_RESPONSE_SCHEMA}"`));
+  if (!hasOwn(input, "version")) issues.push(issue("missing_version", "version", "version field is required"));
+  else if (input.version !== CA_SCAN_RESPONSE_VERSION) issues.push(issue("invalid_version", "version", `version must be "${CA_SCAN_RESPONSE_VERSION}"`));
+  validateRequired(input, "generatedAt", "", issues, isIsoTimestamp, "generatedAt must be an ISO-8601 timestamp");
+
+  if (requireField(input, "tokenIdentity", "", issues)) validateTokenIdentity(input.tokenIdentity, "tokenIdentity", issues);
+  if (requireField(input, "marketSnapshot", "", issues)) validateMarketSnapshot(input.marketSnapshot, "marketSnapshot", issues);
+  if (requireField(input, "authorityFacts", "", issues)) validateAuthorityFacts(input.authorityFacts, "authorityFacts", issues);
+  if (requireField(input, "holderUniverses", "", issues)) validateHolderUniverses(input.holderUniverses, "holderUniverses", issues);
+  if (requireField(input, "cohortMetrics", "", issues)) validateCohortMetrics(input.cohortMetrics, "cohortMetrics", issues);
+  if (requireField(input, "devBehavior", "", issues)) validateDevBehavior(input.devBehavior, "devBehavior", issues);
+  if (requireField(input, "completeness", "", issues)) validateCompletenessReport(input.completeness, "completeness", issues);
+
+  const arrayValidators: ReadonlyArray<[string, (item: unknown, path: string, issues: ValidationIssue[]) => boolean]> = [
+    ["walletTokenSignals", validateWalletTokenSignal],
+    ["clusterSummaries", validateClusterSummary],
+    ["crossTokenMatches", validateCrossTokenMatch],
+    ["judgmentEvidence", validateJudgmentEvidence],
+    ["sourceProvenance", validateProvenance],
+  ];
+  for (const [key, validator] of arrayValidators) {
+    if (!requireField(input, key, "", issues)) continue;
+    const value = input[key];
+    if (!Array.isArray(value)) {
+      issues.push(issue("invalid_type", key, `${key} must be an array`));
+      continue;
+    }
+    value.forEach((item, index) => validator(item, `${key}[${index}]`, issues));
   }
+  validateRequired(input, "warnings", "", issues, isStringArray, "warnings must be a string array");
 
-  if (!("version" in input)) {
-    issues.push(issue("missing_version", "version", "version field is required"));
-  } else if (input.version !== CA_SCAN_RESPONSE_VERSION) {
-    issues.push(
-      issue(
-        "invalid_version",
-        "version",
-        `version must be "${CA_SCAN_RESPONSE_VERSION}", got ${JSON.stringify(input.version)}`,
-      ),
-    );
-  }
-
-  if (typeof input.generatedAt !== "string") {
-    issues.push(issue("missing_field", "generatedAt", "generatedAt ISO timestamp required"));
-  }
-
-  validateTokenIdentity(input.tokenIdentity, "tokenIdentity", issues);
-  validateCompletenessReport(input.completeness, "completeness", issues);
-
-  if (!Array.isArray(input.warnings)) {
-    issues.push(issue("missing_field", "warnings", "warnings array required"));
-  }
-
-  if (!Array.isArray(input.sourceProvenance)) {
-    issues.push(issue("missing_field", "sourceProvenance", "sourceProvenance array required"));
-  } else {
-    input.sourceProvenance.forEach((p, i) => {
-      validateProvenance(p, `sourceProvenance[${i}]`, issues);
-    });
-  }
-
-  validateOptionalSection(input.marketSnapshot, "marketSnapshot", issues, []);
-  validateOptionalSection(input.authorityFacts, "authorityFacts", issues, []);
-  validateHolderUniverses(input.holderUniverses, "holderUniverses", issues);
-  validateOptionalSection(input.cohortMetrics, "cohortMetrics", issues, [
-    "top10Concentration",
-    "top20Concentration",
-    "excludedShare",
-  ]);
-  validateOptionalSection(input.devBehavior, "devBehavior", issues, [
-    "currentHolding",
-    "relatedHolding",
-    "grossBought",
-    "grossSold",
-    "netDisposed",
-    "soldOfAcquired",
-  ]);
-
-  if (!Array.isArray(input.walletTokenSignals)) {
-    issues.push(issue("missing_field", "walletTokenSignals", "walletTokenSignals array required"));
-  } else {
-    input.walletTokenSignals.forEach((signal, i) => {
-      if (!isObject(signal)) {
-        issues.push(issue("invalid_type", `walletTokenSignals[${i}]`, "expected object"));
-        return;
-      }
-      if (!isSourceTier(signal.labelSourceTier)) {
-        issues.push(
-          issue(
-            "invalid_source_tier",
-            `walletTokenSignals[${i}].labelSourceTier`,
-            'labelSourceTier must be "A" or "B"',
-          ),
-        );
-      }
-      if (!isVerificationStatus(signal.labelVerificationStatus)) {
-        issues.push(
-          issue(
-            "invalid_verification_status",
-            `walletTokenSignals[${i}].labelVerificationStatus`,
-            "invalid verification status",
-          ),
-        );
-      }
-      if (
-        signal.labelSourceTier === "B" &&
-        signal.labelVerificationStatus === "confirmed"
-      ) {
-        issues.push(
-          issue(
-            "tier_b_confirmed_conclusion",
-            `walletTokenSignals[${i}]`,
-            "Tier-B wallet labels cannot be confirmed conclusions",
-          ),
-        );
-      }
-      if ("provenance" in signal) {
-        validateProvenance(signal.provenance, `walletTokenSignals[${i}].provenance`, issues);
-      }
-    });
-  }
-
-  if (!Array.isArray(input.clusterSummaries)) {
-    issues.push(issue("missing_field", "clusterSummaries", "clusterSummaries array required"));
-  } else {
-    input.clusterSummaries.forEach((cluster, i) => {
-      if (!isObject(cluster)) {
-        issues.push(issue("invalid_type", `clusterSummaries[${i}]`, "expected object"));
-        return;
-      }
-      if (cluster.confirmed === true && cluster.sourceTier === "B") {
-        issues.push(
-          issue(
-            "tier_b_confirmed_conclusion",
-            `clusterSummaries[${i}]`,
-            "cluster cannot be confirmed from Tier-B alone",
-          ),
-        );
-      }
-    });
-  }
-
-  if (!Array.isArray(input.crossTokenMatches)) {
-    issues.push(issue("missing_field", "crossTokenMatches", "crossTokenMatches array required"));
-  } else {
-    input.crossTokenMatches.forEach((match, i) => {
-      if (!isObject(match)) {
-        issues.push(issue("invalid_type", `crossTokenMatches[${i}]`, "expected object"));
-        return;
-      }
-      if (match.verificationStatus === "confirmed" && match.sourceTier === "B") {
-        issues.push(
-          issue(
-            "tier_b_confirmed_conclusion",
-            `crossTokenMatches[${i}]`,
-            "cross-token match cannot be confirmed from Tier-B alone",
-          ),
-        );
-      }
-    });
-  }
-
-  if (!Array.isArray(input.judgmentEvidence)) {
-    issues.push(issue("missing_field", "judgmentEvidence", "judgmentEvidence array required"));
-  } else {
-    input.judgmentEvidence.forEach((je, i) => {
-      validateJudgmentEvidence(je, `judgmentEvidence[${i}]`, issues);
-    });
-  }
-
-  const ok = issues.length === 0;
-  return ok
+  return issues.length === 0
     ? { ok: true, issues: [], value: input as unknown as CaScanResponseV1 }
     : { ok: false, issues };
 }
@@ -972,20 +881,20 @@ export function buildRatioMetric(input: {
   /** When omitted, derived as numerator/denominator when both valid and denom > 0. */
   ratio?: number | null;
 }): RatioMetric {
-  let ratio: number | null;
-  if (input.ratio !== undefined) {
-    ratio = input.ratio;
-  } else if (
+  let ratio: number | null = null;
+  if (
+    input.completeness === 1 &&
     isRawIntegerString(input.numerator) &&
     isRawIntegerString(input.denominator) &&
-    input.denominator !== "0" &&
-    input.completeness > 0
+    input.denominator !== "0"
   ) {
-    const n = BigInt(input.numerator);
-    const d = BigInt(input.denominator);
-    ratio = Number((n * 1_000_000n) / d) / 1_000_000;
-  } else {
-    ratio = null;
+    if (input.ratio !== undefined) {
+      ratio = input.ratio === null || isCompletenessRatio(input.ratio) ? input.ratio : null;
+    } else {
+      const n = BigInt(input.numerator);
+      const d = BigInt(input.denominator);
+      ratio = n <= d ? Number((n * 1_000_000n) / d) / 1_000_000 : null;
+    }
   }
 
   return {
