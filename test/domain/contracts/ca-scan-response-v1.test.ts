@@ -204,6 +204,39 @@ test("ratio metric rejects out-of-range and incomplete non-null ratios", () => {
   assert.ok(result.issues.some((item) => item.path === "cohortMetrics.top10Concentration.ratio"));
 });
 
+test("alternate zero denominators cannot carry or derive ratio precision", () => {
+  for (const denominator of ["00", "000"]) {
+    const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    const metric = (broken.cohortMetrics as Record<string, unknown>).top10Concentration as Record<string, unknown>;
+    metric.denominator = denominator;
+    metric.ratio = 0.5;
+    const result = validateCaScanResponseV1(broken);
+    assert.equal(result.ok, false, denominator);
+    assert.ok(result.issues.some((item) => item.path === "cohortMetrics.top10Concentration.ratio"));
+
+    const explicit = buildRatioMetric({
+      numerator: "1",
+      denominator,
+      universeDefinition: "cleaned_top_holders",
+      ruleVersion: "real_holders-v1",
+      completeness: 1,
+      provenance: tierAProvenance,
+      ratio: 0.5,
+    });
+    assert.equal(explicit.ratio, null);
+
+    const derived = buildRatioMetric({
+      numerator: "0",
+      denominator,
+      universeDefinition: "cleaned_top_holders",
+      ruleVersion: "real_holders-v1",
+      completeness: 1,
+      provenance: tierAProvenance,
+    });
+    assert.equal(derived.ratio, null);
+  }
+});
+
 test("required nullable root and section fields cannot be omitted", () => {
   const rootKeys = ["marketSnapshot", "authorityFacts", "holderUniverses", "cohortMetrics", "devBehavior"];
   for (const key of rootKeys) {

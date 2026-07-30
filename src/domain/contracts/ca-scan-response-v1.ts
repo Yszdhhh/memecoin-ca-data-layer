@@ -362,6 +362,10 @@ function isRawIntegerString(value: unknown): value is string {
   return typeof value === "string" && RAW_INTEGER_PATTERN.test(value);
 }
 
+function isPositiveRawIntegerString(value: unknown): value is string {
+  return isRawIntegerString(value) && BigInt(value) > 0n;
+}
+
 function isRawIntegerOrNull(value: unknown): value is string | null {
   return value === null || isRawIntegerString(value);
 }
@@ -538,7 +542,7 @@ function validateRatioMetric(value: unknown, path: string, issues: ValidationIss
     issues.push(issue("invalid_completeness", `${path}.completeness`, "completeness must be in [0, 1]"));
     ok = false;
   }
-  if (value.ratio !== null && (value.completeness !== 1 || value.denominator === "0")) {
+  if (value.ratio !== null && (value.completeness !== 1 || !isPositiveRawIntegerString(value.denominator))) {
     issues.push(issue("invalid_completeness", `${path}.ratio`, "ratio must be null unless evidence is complete and denominator is positive"));
     ok = false;
   }
@@ -885,15 +889,16 @@ export function buildRatioMetric(input: {
   if (
     input.completeness === 1 &&
     isRawIntegerString(input.numerator) &&
-    isRawIntegerString(input.denominator) &&
-    input.denominator !== "0"
+    isPositiveRawIntegerString(input.denominator)
   ) {
+    const denominator = BigInt(input.denominator);
     if (input.ratio !== undefined) {
       ratio = input.ratio === null || isCompletenessRatio(input.ratio) ? input.ratio : null;
     } else {
-      const n = BigInt(input.numerator);
-      const d = BigInt(input.denominator);
-      ratio = n <= d ? Number((n * 1_000_000n) / d) / 1_000_000 : null;
+      const numerator = BigInt(input.numerator);
+      ratio = numerator <= denominator
+        ? Number((numerator * 1_000_000n) / denominator) / 1_000_000
+        : null;
     }
   }
 
