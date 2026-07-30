@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "CA-SCAN-RESPONSE-V1-001",
+  "title": "Provider-neutral CaScanResponse v1 domain output contract",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "judgment_layer",
+  "status": "IN_PROGRESS",
+  "objective": "Design and implement a provider-neutral, versioned, fixture-driven CaScanResponse v1 domain output contract. The contract only composes already-normalized data and judgment evidence; it does not fetch live data, implement providers, or change the current Helius-only provider boundary.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "src/domain/types.ts",
+    "src/domain/observation/observation-record.ts"
+  ],
+  "write_set": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "fixtures/ca-scan-response/v1/minimal-complete.json",
+    "fixtures/ca-scan-response/v1/degraded-partial.json",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md",
+    "harness/tasks/CA-SCAN-RESPONSE-V1-001.json",
+    "harness/dispatches/CA-SCAN-RESPONSE-V1-001.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Hotsniper API or any network endpoint.",
+    "Do not add DexScreener, Birdeye, GMGN, Rugcheck, or any new provider.",
+    "Do not implement LLM judgment.",
+    "Do not promote Tier-B labels to confirmed conclusions.",
+    "Do not modify wallet scoring, GMGN parser, wallet master-table builder, or the parallel repair write set (wallet-data-quality.ts, master-table-builder.ts, their tests).",
+    "Do not migrate the whole repository directory layout.",
+    "Do not introduce new dependencies or modify package.json.",
+    "Do not create API server, worker, database migration, or UI.",
+    "Do not merge, push, or commit to main without Owner authorization.",
+    "Do not modify the existing codex/solana-daily-new-token-analysis worktree."
+  ],
+  "deliverables": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "fixtures/ca-scan-response/v1/minimal-complete.json",
+    "fixtures/ca-scan-response/v1/degraded-partial.json",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,265 @@
+{
+  "schema": "ca-scan-response",
+  "version": "v1",
+  "generatedAt": "2026-07-28T12:05:00.000Z",
+  "tokenIdentity": {
+    "chain": "solana",
+    "ca": "DegradedMint3333333333333333333333333333333",
+    "name": "Degraded Fixture",
+    "symbol": "DEG",
+    "decimals": 6,
+    "totalSupplyRaw": "1000000000000000",
+    "launchpad": "pump_fun",
+    "createdAt": "2026-07-21T10:00:00.000Z",
+    "creationTx": null,
+    "provenance": {
+      "source": "normalized-mint-metadata",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T12:04:00.000Z",
+      "watermarkRef": "slot:312010000",
+      "ruleVersion": "token-identity-v1"
+    }
+  },
+  "marketSnapshot": {
+    "priceUsd": null,
+    "fdvUsd": null,
+    "liquidityUsd": null,
+    "marketCapUsd": null,
+    "pairAddress": null,
+    "volume24hUsd": null,
+    "observedAt": null,
+    "completeness": "unavailable",
+    "provenance": {
+      "source": "market-observation-select-v1",
+      "sourceTier": "B",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:04:00.000Z",
+      "ruleVersion": "market-select-v1"
+    },
+    "warnings": ["market_observation_missing", "no_fake_price_fabricated"]
+  },
+  "authorityFacts": {
+    "mintAuthority": null,
+    "mintAuthorityRenounced": null,
+    "freezeAuthority": null,
+    "freezeAuthorityRenounced": null,
+    "creatorAddress": null,
+    "creatorProvenance": null,
+    "completeness": "partial",
+    "provenance": {
+      "source": "normalized-mint-authorities",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:04:00.000Z",
+      "ruleVersion": "authority-facts-v1"
+    },
+    "warnings": ["mint_authority_not_resolved", "creator_not_resolved"]
+  },
+  "holderUniverses": {
+    "raw_top_holders": [
+      {
+        "address": "PartialAta111111111111111111111111111111111",
+        "ownerAddress": "PartialOwner111111111111111111111111111111",
+        "balanceRaw": "100000000000000",
+        "rank": 1
+      }
+    ],
+    "owner_aggregated_holders": [
+      {
+        "address": "PartialOwner111111111111111111111111111111",
+        "balanceRaw": "100000000000000",
+        "rank": 1
+      }
+    ],
+    "cleaned_top_holders": [
+      {
+        "address": "PartialOwner111111111111111111111111111111",
+        "balanceRaw": "100000000000000",
+        "rank": 1
+      }
+    ],
+    "excluded_infrastructure": [],
+    "excluded_pools": [],
+    "excluded_burn_addresses": [],
+    "ruleVersion": "real_holders-v1",
+    "completeness": "partial",
+    "provenance": {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:04:30.000Z",
+      "watermarkRef": "cursor:partial-top-page-1",
+      "ruleVersion": "real_holders-v1"
+    },
+    "warnings": [
+      "holder_snapshot_partial",
+      "enumeration_incomplete_beyond_page_cap",
+      "exclusion_rebuild_skipped_due_to_partial_snapshot"
+    ]
+  },
+  "cohortMetrics": {
+    "top10Concentration": {
+      "numerator": "100000000000000",
+      "denominator": "1000000000000000",
+      "ratio": null,
+      "universeDefinition": "cleaned_top_holders",
+      "ruleVersion": "real_holders-v1",
+      "completeness": 0.35,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-28T12:04:30.000Z",
+        "ruleVersion": "real_holders-v1"
+      }
+    },
+    "top20Concentration": null,
+    "eligibleHolderCount": 1,
+    "excludedShare": {
+      "numerator": "0",
+      "denominator": "1000000000000000",
+      "ratio": null,
+      "universeDefinition": "owner_aggregated_holders",
+      "ruleVersion": "real_holders-v1",
+      "completeness": 0.35,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-28T12:04:30.000Z",
+        "ruleVersion": "real_holders-v1"
+      }
+    },
+    "ruleVersion": "real_holders-v1",
+    "completeness": "partial",
+    "warnings": [
+      "concentration_ratio_null_under_partial_universe",
+      "do_not_treat_partial_top10_as_precise"
+    ]
+  },
+  "walletTokenSignals": [
+    {
+      "walletAddress": "PartialOwner111111111111111111111111111111",
+      "labels": ["bundler_hint"],
+      "labelSourceTier": "B",
+      "labelVerificationStatus": "unverified",
+      "firstBuyAt": null,
+      "lastActivityAt": null,
+      "balanceRaw": "100000000000000",
+      "confidence": 0.3,
+      "ruleVersion": "wallet-token-signal-v1",
+      "provenance": {
+        "source": "platform-label-observation",
+        "sourceTier": "B",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-28T12:03:00.000Z",
+        "ruleVersion": "wallet-token-signal-v1"
+      },
+      "warnings": ["tier_b_label_feature_only", "activity_window_unavailable"]
+    }
+  ],
+  "clusterSummaries": [],
+  "devBehavior": {
+    "creatorAddress": null,
+    "currentHolding": null,
+    "relatedHolding": null,
+    "grossBought": null,
+    "grossSold": null,
+    "netDisposed": null,
+    "soldOfAcquired": null,
+    "directSellCount": null,
+    "relatedAddresses": [],
+    "calculatedAt": null,
+    "ruleVersion": "dev_behavior-v1",
+    "completeness": "unavailable",
+    "provenance": {
+      "source": "normalized-swaps",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:04:00.000Z",
+      "ruleVersion": "dev_behavior-v1"
+    },
+    "warnings": [
+      "creator_unknown",
+      "dev_history_coverage_incomplete",
+      "no_fake_dev_sell_pct"
+    ]
+  },
+  "crossTokenMatches": [],
+  "judgmentEvidence": [
+    {
+      "judgmentCode": "data_degraded_partial_holders",
+      "humanReadableSummary": "Holder enumeration is partial; concentration metrics retain numerator/denominator but ratio is null to avoid fake precision.",
+      "evidenceRefs": [
+        "holderUniverses",
+        "cohortMetrics.top10Concentration"
+      ],
+      "confidence": 0.5,
+      "ruleVersion": "real_holders-v1",
+      "sourceTier": "A",
+      "completeness": "partial",
+      "warnings": ["partial_snapshot"],
+      "status": "unverified"
+    },
+    {
+      "judgmentCode": "platform_bundler_hint",
+      "humanReadableSummary": "Borrowed bundler label present as a feature only; not promoted to a confirmed sniper/bundler conclusion.",
+      "evidenceRefs": ["walletTokenSignals[0]"],
+      "confidence": 0.25,
+      "ruleVersion": "wallet-token-signal-v1",
+      "sourceTier": "B",
+      "completeness": "partial",
+      "warnings": ["tier_b_feature_not_conclusion"],
+      "status": "unverified"
+    }
+  ],
+  "sourceProvenance": [
+    {
+      "source": "normalized-mint-metadata",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T12:04:00.000Z",
+      "watermarkRef": "slot:312010000",
+      "ruleVersion": "token-identity-v1"
+    },
+    {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:04:30.000Z",
+      "watermarkRef": "cursor:partial-top-page-1",
+      "ruleVersion": "real_holders-v1"
+    },
+    {
+      "source": "platform-label-observation",
+      "sourceTier": "B",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T12:03:00.000Z",
+      "ruleVersion": "wallet-token-signal-v1"
+    }
+  ],
+  "completeness": {
+    "overall": "partial",
+    "ratio": 0.42,
+    "sections": {
+      "tokenIdentity": "complete",
+      "marketSnapshot": "unavailable",
+      "authorityFacts": "partial",
+      "holderUniverses": "partial",
+      "cohortMetrics": "partial",
+      "walletTokenSignals": "partial",
+      "clusterSummaries": "unavailable",
+      "devBehavior": "unavailable",
+      "crossTokenMatches": "unavailable",
+      "judgmentEvidence": "partial"
+    }
+  },
+  "warnings": [
+    "degraded_response",
+    "market_unavailable",
+    "holder_snapshot_partial",
+    "dev_behavior_unavailable",
+    "no_fake_precision"
+  ]
+}
