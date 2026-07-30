@@ -8,7 +8,8 @@
 - **Worktree:** `G:\链上战壕-codex-ca-scan-response-v1-001`
 - **Branch:** `codex/ca-scan-response-v1-001`
 - **Baseline SHA:** `f561ab5b7f67f271e2697dafbb7181c7f09085cb`
-- **UTC (report draft):** 2026-07-30
+- **Feature commit:** `8691f4a5ebc425e716d9253a6f46d6bcaac7cac6` (local branch only; not pushed)
+- **UTC:** 2026-07-30
 - **Network:** none (offline)
 
 ## Scope delivered
