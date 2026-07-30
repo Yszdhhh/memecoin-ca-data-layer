@@ -209,3 +209,86 @@ Pump 解码、Creator/Dev sell、funding cluster、钱包 PnL、自动选币、�
 
 推送到 GitHub 的分支包含：**CA 持仓清洗试点代码 + 脱敏报告 + 本系统现状文档 + 本地路径说明**。  
 **不包含** chainfm_out 下 1433/排序明细文件与任何密钥。云端审核数据下一阶段时，以本文件 §6–§7 为决策输入即可。
+
+---
+
+## 10. 2026-07-30 晚间执行对齐
+
+**对齐时间**：2026-07-30 晚间  
+**本地主路径**：`G:\链上战壕`  
+**实现分支**：`feature/sol-ca-real-data-cleaning-pilot-001`  
+**CA Repair 最终提交 Pin**：`a1d56dade268d24a1205e010581b6f6c478ac1bb`  
+**Repair 前独立审计 Pin**：`84b9a8dd424b70e34220f9eb06db47e381838ee1`（已确认是 `a1d56da` 的祖先）  
+**中间 docs 提交**：`e3c3405009fb86c27c25a827f8edea39a6c5ae2d`（AUDIT-001 + Clean-rank Repair-003 重放；亦是 `a1d56da` 祖先）  
+**主干基线**：`main@777e0131ec663178c6c4cc5cc0c4584e60be2381`（本轮 **未修改** main）
+
+分支已包含任务：
+
+| 任务 | 状态 |
+| --- | --- |
+| `SOL-CA-REAL-DATA-CLEANING-PILOT-001` | DONE（实现 + 脱敏 Live 证据） |
+| `SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001` | DONE / **REQUEST_CHANGES**（`e3c3405`） |
+| `SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002` | DONE（`a1d56da`，待独立审计） |
+| `SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001` | DONE / GREEN（离线重放） |
+| `SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002` | **DONE / GREEN**（本轮已完成；Owner Gate 停止） |
+
+权威下一阶段计划：**仅**维护  
+`docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md`  
+（不要再复制多份状态/计划文档）。
+
+### 10.1 钱包情报链路（当前事实）
+
+| 项 | 值 / 口径 |
+| --- | --- |
+| 唯一钱包 | 1,433 |
+| 周期记录 | 2,866（7d + 30d） |
+| MAPPED | **0** |
+| PARTIAL | **约 97%**（2782 周期） |
+| 至少一个周期 UNAVAILABLE | **84** 个钱包 |
+| Repair-003 严格重放 Alpha | **0** |
+| Tier-B usable pool | **约 1,370**（仅可称此名；**不得**全部称为聪明钱候选） |
+| Manual Review | **约 63** |
+| 原 17 候选去向 | **8** → Tier-B shortlist；**9** → Manual Review；**0** → Alpha |
+| Tier-B shortlist | 仅上述 **8** 个可称 shortlist |
+| 累计盈利 / 全历史成本 / 链上 wallet ledger | **尚未打通** |
+
+**禁止措辞**：Alpha、confirmed smart money、verified winner（在未经链上复核前）。  
+**暂停**：全量重抓 1,433；全量累计 PnL。
+
+### 10.2 CA 持仓链路（当前事实）
+
+| 项 | 值 / 口径 |
+| --- | --- |
+| 试点 | Helius-only，6 个公开 CA |
+| Helius 只读请求（历史 Live） | 30（**不得**在审计期重打） |
+| 原始批次 | 3 OK / 3 PARTIAL / 0 REJECTED |
+| Repair-002 | mixed-owner 正余额不再被 zero/closed-zero sibling 整体排除；included+invalid/closed-positive → unresolved；`accountingEligible` / `exclusionCoverage` / `concentrationEligible` 分离 |
+| 语义（Repair 后） | 3 个 OK：**accounting 可 confirmed**；**全部 6 CA：concentration 仍 unverified** |
+| 原因 | pool / bonding curve / LP / 程序基础设施排除覆盖仍为 **partial** |
+| AUDIT-002 | 独立零网络审计；**GREEN 前禁止** merge main、接 hotpath、开新 Live 批次 |
+
+### 10.3 地址库与自动化
+
+- 地址领域模型与 PostgreSQL adapter **已存在**（离线契约）。
+- **没有**正式运行中的地址库运营闭环。
+- 地址明细与 clean-rank 私密数据仍在本地 `chainfm_out`。
+- DPAPI 密钥 **仅本地**。
+- 现有：CLI、Runner、Harness、手工批处理。
+- **尚无**：正式任务队列、调度器、cron、Web 操作台、生产数据库。
+
+### 10.4 Web 与流动性
+
+- **不存在**正式 Web Console。
+- 仓库主体：数据层、CLI、领域规则、Provider adapter。
+- 流动性：已有数据结构、SQL、日报骨架；**尚未**稳定刷新、历史水位、任务调度与 Web 看板。
+
+### 10.5 资源原则（晚间对齐后）
+
+```text
+60%：CA 可用闭环与 Web 操作
+25%：地址库和少量钱包链上复核
+15%：流动性模块
+```
+
+禁止再把大部分资源投入 GMGN 字段适配或全量钱包重复抓取。  
+里程碑与 Owner Gate 细节见 `NEXT_STAGE_EXECUTION_PLAN_20260730.md`。

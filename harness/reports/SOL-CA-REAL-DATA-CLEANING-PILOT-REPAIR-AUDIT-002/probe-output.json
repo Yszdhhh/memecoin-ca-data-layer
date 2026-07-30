@@ -1,0 +1,192 @@
+{
+  "matrix": [
+    {
+      "id": "R1_pos_zero",
+      "pass": true,
+      "primaryClass": "included_holder",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "100",
+      "excluded": "0",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R2_pos_closed0",
+      "pass": true,
+      "primaryClass": "included_holder",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "150",
+      "excluded": "0",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R3_pos_closedPos",
+      "pass": true,
+      "primaryClass": "unresolved_exclusion_candidate",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "0",
+      "unresolved": "150",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": [
+        "mixed_owner_positive_closed_balance"
+      ]
+    },
+    {
+      "id": "R4_pos_invalid",
+      "pass": true,
+      "primaryClass": "unresolved_exclusion_candidate",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "0",
+      "unresolved": "100",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": [
+        "invalid_raw_amount",
+        "mixed_owner_unparseable_sibling"
+      ]
+    },
+    {
+      "id": "R5_pos_unresolved_via_closedPos",
+      "pass": true,
+      "primaryClass": "unresolved_exclusion_candidate",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "0",
+      "unresolved": "300",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": [
+        "mixed_owner_positive_closed_balance"
+      ]
+    },
+    {
+      "id": "R6_hard_infra",
+      "pass": true,
+      "primaryClass": "known_program_or_infrastructure",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "100",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R7_pure_zero",
+      "pass": true,
+      "primaryClass": "zero_balance",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "0",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R8_pure_closed0",
+      "pass": true,
+      "primaryClass": "closed_or_inactive",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "0",
+      "excluded": "0",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R9_multi_pos",
+      "pass": true,
+      "primaryClass": "included_holder",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "100",
+      "excluded": "0",
+      "unresolved": "0",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": []
+    },
+    {
+      "id": "R10_global_mix",
+      "pass": true,
+      "primaryClass": "included_holder",
+      "identity": "enumerated = included + excluded + unresolved",
+      "exclusive": true,
+      "included": "500",
+      "excluded": "0",
+      "unresolved": "400",
+      "accountingEligible": true,
+      "concentrationEligible": false,
+      "exclusionCoverage": "partial",
+      "jeEqAe": true,
+      "manualReviewCodes": [
+        "invalid_raw_amount",
+        "mixed_owner_unparseable_sibling",
+        "mixed_owner_positive_closed_balance"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "pass": 10,
+    "fail": 0
+  },
+  "deterministic": {
+    "hashEqual": true,
+    "ha": "2a2277d1d347f6ba7bd84bd3e85499a0698437c2f58236ac6594fe741d2f7baf",
+    "hb": "2a2277d1d347f6ba7bd84bd3e85499a0698437c2f58236ac6594fe741d2f7baf"
+  },
+  "trustSplit": {
+    "accountingEligible": true,
+    "exclusionCoverage": "partial",
+    "concentrationEligible": false,
+    "judgmentEligibleAliasOfAccounting": true,
+    "mappingAccountingConfirmed": true,
+    "mappingConcentrationUnverified": true,
+    "top10Verification": "unverified",
+    "top10RatioNull": true,
+    "top10CompletenessNotOne": true,
+    "universeDef": "owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete",
+    "warnings": [
+      "concentration_partial_or_unconfirmed",
+      "pool_exclusion_coverage_incomplete",
+      "not_cleaned_investor_concentration"
+    ]
+  }
+}

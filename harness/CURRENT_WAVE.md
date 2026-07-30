@@ -1,61 +1,88 @@
-﻿# Current wave
+# Current wave
 
 ## Objective
 
-Complete the Solana/Pump.fun CA-analysis path offline before opening any live
-provider or multichain gate. Borrowed data may accelerate the first screen, but
-it must remain unverified until first-hand evidence confirms it.
+Close the CA real-data cleaning Repair gate under independent zero-network
+audit, then shift delivery toward an operable Operator Console and bounded CA
+holder hotpath. Wallet GMGN full re-fetch and cumulative PnL remain parked.
 
-## Status as of 2026-07-28
+## Status as of 2026-07-30 (evening alignment)
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
-| Wave A: observation schema, four harness suites, Alpha Score, detectors | DONE | Offline deterministic acceptance complete. |
-| Wave B: Helius/Pump fixture adapters and address-library sedimentation | DONE, AUDITED GREEN_WITH_ADVISORY | Offline trust boundaries and fixture behavior passed independent re-audit. No live HTTP. |
-| Wave C: free borrowed layer and CA first-screen hotpath | DONE, AUDITED GREEN_WITH_ADVISORY | Deep-dive is queued into `AnalysisService`; borrowed fields remain unverified. |
-| Wave D: token-profit leaderboard and daily/weekly address-mining loop | DONE, AUDITED GREEN_WITH_ADVISORY | Fixture-only pipeline, explicit first-hand quota, verified-only promotion. |
-| Harness audit-evidence enforcement repair | DONE, AUDITED GREEN | Auditor completion requires valid independent passing run evidence. |
-| Harness historical-run verification repair | DONE, AUDITED GREEN | Completed run verification is read-only and checks recorded outputs/logs fail-closed. |
-| Durable PostgreSQL address-library adapter | DONE, AUDITED GREEN | Offline-only adapter and database trust constraints independently accepted; no database has been connected or deployed. |
-| Durable PostgreSQL growth-loop report storage | DONE, AUDITED GREEN | Offline-only run summaries independently accepted; no database, Redis, scheduler, or live provider has been connected. |
-| Manual/offline daily and weekly mining runner | DONE, AUDITED GREEN | Base scheduler and the robustness follow-up are independently accepted. No cron, timer, background worker, or live trigger is active. |
-| Limited read-only Helius source + public-CA smoke | DONE, GREEN | Owner-authorized, Solana-only, Helius-only, runtime-key-only smoke passed. Raw payloads and credential-bearing URLs were not retained. |
-| Manual CA-first single lookup | DONE, AUDITED GREEN | Bounded mint, metadata and token-account summary only. No AnalysisService, persistence, queue, cache or discovery path. |
-| Manual 1–10 CA batch | DONE, AUDITED GREEN | Operator-supplied distinct CAs only; manual trigger, sequential bounded sources, no discovery or storage. |
-| Full Pump/creator/Dev/address-library live E2E (`SOL-E2E-001`) | PARK | The bounded Helius smoke is not the constitution-level full Solana E2E gate. |
-| BSC (`BSC-STAGE-001`) | BLOCKED_STAGE | Remains blocked until Solana E2E is GREEN and Owner activates it. |
+| Historical Waves A–D (offline schema, fixtures, harness, PG adapters, mining runners) | DONE, prior audits GREEN / GREEN_WITH_ADVISORY | Not reopened this wave. |
+| Wallet 1433 GMGN 7d/30d full pull | DONE | 2866 period rows; MAPPED=0; ~97% PARTIAL; local `chainfm_out` only. |
+| Clean-rank + Repair-003 offline replay | DONE | Alpha=0; Tier-B usable pool ~1370; Manual Review ~63; original 17 → 8 shortlist + 9 review. |
+| SOL-CA-REAL-DATA-CLEANING-PILOT-001 | DONE | 6 public CA, 30 Helius historical requests, 3 OK / 3 PARTIAL scrubbed evidence. |
+| SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001 | DONE / REQUEST_CHANGES | Pin `84b9a8d`; blocking mixed-owner + pool-scope findings. |
+| SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002 | DONE (implementer) | Pin `a1d56da`; mixed-owner + accounting/concentration split. |
+| **SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002** | **DONE / GREEN** | Independent zero-network auditor; exact pin `a1d56da`. Stopped at Owner gate. |
 
-## Independent audit queue
+## ACTIVE (primary task)
 
-No current-wave independent audit is pending. Wave B/C, Wave D, the Harness
-evidence repairs, and the durable PostgreSQL address-library adapter have valid
-independent audit records.
+```text
+None — REPAIR-AUDIT-002 complete (GREEN). Awaiting Owner decision.
+```
 
-## Owner decisions already applied
+Completed this evening:
 
-- Current Wave B/C/D work is fixture/offline only.
-- Codex will select public Solana CA samples when the live E2E gate opens.
-- Raw payload retention is 7 days.
-- Structured observations, evidence indexes, and cleaned replay artifacts are
-  retained long term.
-- The current live runtime uses Helius only; no provider or fallback may be
-  added without a new Owner decision.
-- Daily attention is limited to 5–10 manually selected CAs. Selection and
-  execution remain manual; no automatic discovery or schedule is active.
-- BSC stays inactive.
+```text
+SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002  →  GREEN
+```
+
+- Role: Independent zero-network auditor  
+- Branch: `feature/sol-ca-real-data-cleaning-pilot-001`  
+- Exact pin: `a1d56dade268d24a1205e010581b6f6c478ac1bb`  
+- Runtime network / Helius / GMGN / RPC / credential / DPAPI reads: **0**  
+- Implementation code modifications by auditor: **0**  
+- main / merge / rebase / push / force-push: **0**
+
+## BLOCKED_BY_M0
+
+M0 audit is GREEN, but merge/hotpath/Live still require **Owner open**. Until Owner approves:
+
+* CA pilot merge to main  
+* `SOL-CA-HOLDER-HOTPATH-INTEGRATION-001`  
+* CA stability batches (`SOL-CA-HOLDER-STABILITY-BATCH-001` … `003`)  
+* 真实 CA Web 接入（live Provider wiring into console）
+
+## PLANNED_AFTER_M0
+
+* `OPERATOR-CONSOLE-MVP-001`  
+* `ADDRESS-INTELLIGENCE-LOCAL-STORE-MVP-001`
+
+(Also planned later, after M0 and product order: research task orchestrator,
+liquidity dashboard — see `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md`.)
+
+## PARKED
+
+* 全量 1,433 重抓  
+* 全量累计 PnL  
+* GMGN signed holdings 私有路径  
+* BSC  
+* 完整 SOL-E2E  
+* 自动发现和 cron  
+* 为产生 Alpha 数量放宽 Repair-003  
+* 无限新增 Harness 微任务  
+
+## Owner gates already applied
+
+- Helius-only for CA holder live path until a new Owner decision.  
+- Manual CA selection only; no automatic discovery.  
+- DPAPI secrets and private wallet tables stay local.  
+- Do not brand Tier-B usable pool as smart money / Alpha / verified winners.  
+- Concentration remains unverified while exclusion coverage is partial.
 
 ## Next execution gate
 
-The limited live Helius gate is open only for explicit, manually dispatched
-Solana CA-first work. The next permitted work is boundary hardening and
-published-evidence repair under exact task specs. A manual 5–10 CA test may run
-only after those repairs are independently GREEN and a runtime credential is
-available. Keep automation, persistence, additional providers, BSC and other
-chains blocked.
+1. Finish **REPAIR-AUDIT-002** (GREEN / REQUEST_CHANGES / BLOCKED only).  
+2. On GREEN: stop; Owner decides merge readiness.  
+3. Do **not** auto-start hotpath, Live batches, or Web live Provider wiring.
 
-## Current blockers
+## Authority docs
 
-No ordinary technical decision is blocking the limited CA-first repairs.
-Full Pump/creator/Dev live analysis, automatic daily discovery, production
-persistence, additional providers and future-chain activation remain outside
-the current gate.
+| Doc | Path |
+| --- | --- |
+| System status | `docs/handoffs/STATUS_SYSTEM_20260730.md` |
+| Next-stage plan (unique) | `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
+| Local paths | `docs/LOCAL_WORKSPACE_PATHS.md` |
