@@ -1,0 +1,59 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "CA-SCAN-RESPONSE-V1-REPAIR-002",
+  "title": "Close alternate-zero denominator ratio gap",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "judgment_layer",
+  "status": "DONE",
+  "objective": "Close the single P1 blocker from CaScanResponse repair audit 001 by treating every decimal representation of zero as a zero denominator in both validation and buildRatioMetric, preventing fake precision and division-by-zero, with direct leading-zero regressions.",
+  "dependencies": [
+    "CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001/acceptance.md",
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts"
+  ],
+  "write_set": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-002.json",
+    "harness/dispatches/CA-SCAN-RESPONSE-V1-REPAIR-002.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-002/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify any other contract behavior or schema.",
+    "Do not call network/providers or read credentials/private data.",
+    "Do not modify fixtures, docs, package files, providers, databases, CI, wallet scoring, or wallet master-table files.",
+    "Do not modify files outside this exact write set.",
+    "Do not push, merge, or modify main."
+  ],
+  "deliverables": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-002/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-002.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check 320a259ae514a1047e22fa8c1087a7f78d0f1e18..HEAD",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "credential_reads": 0,
+    "private_data_reads": 0
+  }
+}

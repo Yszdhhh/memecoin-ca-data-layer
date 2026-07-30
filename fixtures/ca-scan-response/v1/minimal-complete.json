@@ -1,0 +1,483 @@
+{
+  "schema": "ca-scan-response",
+  "version": "v1",
+  "generatedAt": "2026-07-28T12:00:00.000Z",
+  "tokenIdentity": {
+    "chain": "solana",
+    "ca": "So11111111111111111111111111111111111111112",
+    "name": "Fixture Token",
+    "symbol": "FIX",
+    "decimals": 6,
+    "totalSupplyRaw": "1000000000000000",
+    "launchpad": "pump_fun",
+    "createdAt": "2026-07-20T08:00:00.000Z",
+    "creationTx": "5FixtureCreateSignature111111111111111111111111111111111111111",
+    "provenance": {
+      "source": "normalized-mint-metadata",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:00.000Z",
+      "watermarkRef": "slot:312000000",
+      "ruleVersion": "token-identity-v1"
+    }
+  },
+  "marketSnapshot": {
+    "priceUsd": 0.00001234,
+    "fdvUsd": 12340,
+    "liquidityUsd": 45000,
+    "marketCapUsd": 12000,
+    "pairAddress": "PairFixture111111111111111111111111111111111",
+    "volume24hUsd": 89000,
+    "observedAt": "2026-07-28T11:58:00.000Z",
+    "completeness": "complete",
+    "provenance": {
+      "source": "market-observation-select-v1",
+      "sourceTier": "B",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T11:58:00.000Z",
+      "ruleVersion": "market-select-v1"
+    },
+    "warnings": []
+  },
+  "authorityFacts": {
+    "mintAuthority": null,
+    "mintAuthorityRenounced": true,
+    "freezeAuthority": null,
+    "freezeAuthorityRenounced": true,
+    "creatorAddress": "DevWalletFixture1111111111111111111111111111",
+    "creatorProvenance": {
+      "source": "pump_create.creator",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-20T08:00:01.000Z",
+      "watermarkRef": "slot:311900100",
+      "evidenceRef": "fixtures/pump/create-creator.evidence.json",
+      "ruleVersion": "pump-create-v1"
+    },
+    "completeness": "complete",
+    "provenance": {
+      "source": "normalized-mint-authorities",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:00.000Z",
+      "ruleVersion": "authority-facts-v1"
+    },
+    "warnings": []
+  },
+  "holderUniverses": {
+    "raw_top_holders": [
+      {
+        "address": "TokenAccountRaw1111111111111111111111111111",
+        "ownerAddress": "OwnerAlpha11111111111111111111111111111111",
+        "balanceRaw": "120000000000000",
+        "rank": 1
+      },
+      {
+        "address": "TokenAccountRaw2222222222222222222222222222",
+        "ownerAddress": "OwnerAlpha11111111111111111111111111111111",
+        "balanceRaw": "30000000000000",
+        "rank": 2
+      },
+      {
+        "address": "PoolVault1111111111111111111111111111111111",
+        "ownerAddress": "PoolVault1111111111111111111111111111111111",
+        "balanceRaw": "200000000000000",
+        "rank": 3
+      },
+      {
+        "address": "BurnAddr11111111111111111111111111111111111",
+        "ownerAddress": "BurnAddr11111111111111111111111111111111111",
+        "balanceRaw": "50000000000000",
+        "rank": 4
+      },
+      {
+        "address": "InfraCurve111111111111111111111111111111111",
+        "ownerAddress": "InfraCurve111111111111111111111111111111111",
+        "balanceRaw": "80000000000000",
+        "rank": 5
+      }
+    ],
+    "owner_aggregated_holders": [
+      {
+        "address": "OwnerAlpha11111111111111111111111111111111",
+        "balanceRaw": "150000000000000",
+        "rank": 1
+      },
+      {
+        "address": "PoolVault1111111111111111111111111111111111",
+        "balanceRaw": "200000000000000",
+        "rank": 2
+      },
+      {
+        "address": "BurnAddr11111111111111111111111111111111111",
+        "balanceRaw": "50000000000000",
+        "rank": 3
+      },
+      {
+        "address": "InfraCurve111111111111111111111111111111111",
+        "balanceRaw": "80000000000000",
+        "rank": 4
+      },
+      {
+        "address": "OwnerBeta222222222222222222222222222222222",
+        "balanceRaw": "40000000000000",
+        "rank": 5
+      }
+    ],
+    "cleaned_top_holders": [
+      {
+        "address": "OwnerAlpha11111111111111111111111111111111",
+        "balanceRaw": "150000000000000",
+        "rank": 1
+      },
+      {
+        "address": "OwnerBeta222222222222222222222222222222222",
+        "balanceRaw": "40000000000000",
+        "rank": 2
+      }
+    ],
+    "excluded_infrastructure": [
+      {
+        "address": "InfraCurve111111111111111111111111111111111",
+        "balanceRaw": "80000000000000",
+        "exclusionReason": "bonding_curve",
+        "confidence": 0.99,
+        "ruleVersion": "real_holders-v1"
+      }
+    ],
+    "excluded_pools": [
+      {
+        "address": "PoolVault1111111111111111111111111111111111",
+        "balanceRaw": "200000000000000",
+        "exclusionReason": "liquidity_pool",
+        "confidence": 0.95,
+        "ruleVersion": "real_holders-v1"
+      }
+    ],
+    "excluded_burn_addresses": [
+      {
+        "address": "BurnAddr11111111111111111111111111111111111",
+        "balanceRaw": "50000000000000",
+        "exclusionReason": "burn",
+        "confidence": 1.0,
+        "ruleVersion": "real_holders-v1"
+      }
+    ],
+    "ruleVersion": "real_holders-v1",
+    "completeness": "complete",
+    "provenance": {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:30.000Z",
+      "watermarkRef": "slot:312000050",
+      "ruleVersion": "real_holders-v1"
+    },
+    "warnings": []
+  },
+  "cohortMetrics": {
+    "top10Concentration": {
+      "numerator": "190000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.19,
+      "universeDefinition": "cleaned_top_holders",
+      "ruleVersion": "real_holders-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:30.000Z",
+        "ruleVersion": "real_holders-v1"
+      }
+    },
+    "top20Concentration": {
+      "numerator": "190000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.19,
+      "universeDefinition": "cleaned_top_holders",
+      "ruleVersion": "real_holders-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:30.000Z",
+        "ruleVersion": "real_holders-v1"
+      }
+    },
+    "eligibleHolderCount": 2,
+    "excludedShare": {
+      "numerator": "330000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.33,
+      "universeDefinition": "owner_aggregated_holders",
+      "ruleVersion": "real_holders-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:30.000Z",
+        "ruleVersion": "real_holders-v1"
+      }
+    },
+    "ruleVersion": "real_holders-v1",
+    "completeness": "complete",
+    "warnings": []
+  },
+  "walletTokenSignals": [
+    {
+      "walletAddress": "OwnerAlpha11111111111111111111111111111111",
+      "labels": ["early_buyer"],
+      "labelSourceTier": "A",
+      "labelVerificationStatus": "confirmed",
+      "firstBuyAt": "2026-07-20T08:00:30.000Z",
+      "lastActivityAt": "2026-07-27T10:00:00.000Z",
+      "balanceRaw": "150000000000000",
+      "confidence": 0.92,
+      "ruleVersion": "wallet-token-signal-v1",
+      "provenance": {
+        "source": "normalized-swaps",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:40.000Z",
+        "ruleVersion": "wallet-token-signal-v1"
+      },
+      "warnings": []
+    },
+    {
+      "walletAddress": "OwnerBeta222222222222222222222222222222222",
+      "labels": ["smart_money_hint"],
+      "labelSourceTier": "B",
+      "labelVerificationStatus": "unverified",
+      "firstBuyAt": "2026-07-20T08:05:00.000Z",
+      "lastActivityAt": "2026-07-26T09:00:00.000Z",
+      "balanceRaw": "40000000000000",
+      "confidence": 0.55,
+      "ruleVersion": "wallet-token-signal-v1",
+      "provenance": {
+        "source": "platform-label-observation",
+        "sourceTier": "B",
+        "verificationStatus": "unverified",
+        "observedAt": "2026-07-28T11:50:00.000Z",
+        "ruleVersion": "wallet-token-signal-v1"
+      },
+      "warnings": ["tier_b_label_feature_only"]
+    }
+  ],
+  "clusterSummaries": [
+    {
+      "clusterId": "cluster-fixture-001",
+      "memberCount": 2,
+      "aggregateBalanceRaw": "25000000000000",
+      "confidence": 0.88,
+      "riskLabels": ["cluster"],
+      "confirmed": true,
+      "ruleVersion": "funding-clusters-v1",
+      "sourceTier": "A",
+      "completeness": "complete",
+      "evidenceRefs": [
+        "evidence/funding-edges/cluster-fixture-001.json",
+        "evidence/first-sol-funder/cluster-fixture-001.json"
+      ],
+      "warnings": []
+    }
+  ],
+  "devBehavior": {
+    "creatorAddress": "DevWalletFixture1111111111111111111111111111",
+    "currentHolding": {
+      "numerator": "10000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.01,
+      "universeDefinition": "token_supply",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:30.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "relatedHolding": {
+      "numerator": "5000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.005,
+      "universeDefinition": "token_supply",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-holder-snapshot",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:30.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "grossBought": {
+      "numerator": "50000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.05,
+      "universeDefinition": "token_supply",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-swaps",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:40.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "grossSold": {
+      "numerator": "35000000000000",
+      "denominator": "1000000000000000",
+      "ratio": 0.035,
+      "universeDefinition": "token_supply",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-swaps",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:40.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "netDisposed": {
+      "numerator": "0",
+      "denominator": "1000000000000000",
+      "ratio": 0,
+      "universeDefinition": "token_supply",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-swaps",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:40.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "soldOfAcquired": {
+      "numerator": "35000000000000",
+      "denominator": "50000000000000",
+      "ratio": 0.7,
+      "universeDefinition": "dev_acquired_inventory",
+      "ruleVersion": "dev_behavior-v1",
+      "completeness": 1,
+      "provenance": {
+        "source": "normalized-swaps",
+        "sourceTier": "A",
+        "verificationStatus": "confirmed",
+        "observedAt": "2026-07-28T11:59:40.000Z",
+        "ruleVersion": "dev_behavior-v1"
+      }
+    },
+    "directSellCount": 3,
+    "relatedAddresses": ["RelatedDev11111111111111111111111111111111"],
+    "calculatedAt": "2026-07-28T12:00:00.000Z",
+    "ruleVersion": "dev_behavior-v1",
+    "completeness": "complete",
+    "provenance": {
+      "source": "normalized-swaps",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:40.000Z",
+      "ruleVersion": "dev_behavior-v1"
+    },
+    "warnings": []
+  },
+  "crossTokenMatches": [
+    {
+      "relatedTokenCa": "RelatedMint2222222222222222222222222222222",
+      "matchKind": "shared_early_buyers",
+      "sharedWallets": ["OwnerAlpha11111111111111111111111111111111"],
+      "confidence": 0.81,
+      "ruleVersion": "cross-token-match-v1",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "evidenceRefs": ["evidence/cross-token/shared-early-buyers-001.json"],
+      "completeness": "complete",
+      "warnings": []
+    }
+  ],
+  "judgmentEvidence": [
+    {
+      "judgmentCode": "holder_concentration_elevated",
+      "humanReadableSummary": "Cleaned top-10 holders control 19% of supply after owner aggregation and infrastructure exclusions.",
+      "evidenceRefs": [
+        "cohortMetrics.top10Concentration",
+        "holderUniverses.cleaned_top_holders"
+      ],
+      "confidence": 0.9,
+      "ruleVersion": "real_holders-v1",
+      "sourceTier": "A",
+      "completeness": "complete",
+      "warnings": [],
+      "status": "confirmed"
+    },
+    {
+      "judgmentCode": "platform_smart_money_hint",
+      "humanReadableSummary": "A borrowed platform label hints smart-money activity on one holder; treated as a feature only, not a confirmed conclusion.",
+      "evidenceRefs": ["walletTokenSignals[1]"],
+      "confidence": 0.4,
+      "ruleVersion": "wallet-token-signal-v1",
+      "sourceTier": "B",
+      "completeness": "partial",
+      "warnings": ["tier_b_feature_not_conclusion"],
+      "status": "unverified"
+    }
+  ],
+  "sourceProvenance": [
+    {
+      "source": "normalized-mint-metadata",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:00.000Z",
+      "watermarkRef": "slot:312000000",
+      "ruleVersion": "token-identity-v1"
+    },
+    {
+      "source": "market-observation-select-v1",
+      "sourceTier": "B",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T11:58:00.000Z",
+      "ruleVersion": "market-select-v1"
+    },
+    {
+      "source": "normalized-holder-snapshot",
+      "sourceTier": "A",
+      "verificationStatus": "confirmed",
+      "observedAt": "2026-07-28T11:59:30.000Z",
+      "watermarkRef": "slot:312000050",
+      "ruleVersion": "real_holders-v1"
+    },
+    {
+      "source": "platform-label-observation",
+      "sourceTier": "B",
+      "verificationStatus": "unverified",
+      "observedAt": "2026-07-28T11:50:00.000Z",
+      "ruleVersion": "wallet-token-signal-v1"
+    }
+  ],
+  "completeness": {
+    "overall": "complete",
+    "ratio": 1,
+    "sections": {
+      "tokenIdentity": "complete",
+      "marketSnapshot": "complete",
+      "authorityFacts": "complete",
+      "holderUniverses": "complete",
+      "cohortMetrics": "complete",
+      "walletTokenSignals": "complete",
+      "clusterSummaries": "complete",
+      "devBehavior": "complete",
+      "crossTokenMatches": "complete",
+      "judgmentEvidence": "complete"
+    }
+  },
+  "warnings": []
+}

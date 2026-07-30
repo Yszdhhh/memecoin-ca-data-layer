@@ -1,0 +1,66 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "CA-SCAN-RESPONSE-V1-REPAIR-001",
+  "title": "Harden CaScanResponse v1 runtime validation and no-fake-precision rules",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "judgment_layer",
+  "status": "DONE",
+  "objective": "Repair the independent-review blockers in CaScanResponse v1: make runtime validation structurally sound for every declared section and required nullable field, enforce ISO timestamps and bounded ratios, prevent derived ratios from incomplete evidence, remove the secret-like test literal that breaks Harness doctor, and clean documented whitespace defects without expanding provider or runtime scope.",
+  "dependencies": [
+    "CA-SCAN-RESPONSE-V1-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/tasks/CA-SCAN-RESPONSE-V1-001.json",
+    "harness/reports/CA-SCAN-RESPONSE-V1-001/acceptance.md",
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md"
+  ],
+  "write_set": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md",
+    "harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-001.json",
+    "harness/dispatches/CA-SCAN-RESPONSE-V1-REPAIR-001.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call any network endpoint or provider.",
+    "Do not add or modify providers, adapters, API servers, workers, databases, migrations, CI, wallet scoring, or wallet master-table code.",
+    "Do not add dependencies or modify package.json/lockfiles.",
+    "Do not read credentials, private keys, proxy URLs, live payloads, or private wallet data.",
+    "Do not modify fixtures unless a validator defect cannot be tested with in-memory mutations; prefer in-memory synthetic mutations.",
+    "Do not modify files outside this exact write set.",
+    "Do not push, merge, or modify main."
+  ],
+  "deliverables": [
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check 5a76fb3dfcbb973a624594d055561beb18f3c4ea..HEAD",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "credential_reads": 0,
+    "private_data_reads": 0
+  }
+}

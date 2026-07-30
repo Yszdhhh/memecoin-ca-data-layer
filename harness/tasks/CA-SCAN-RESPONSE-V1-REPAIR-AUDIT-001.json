@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001",
+  "title": "Independent audit of CaScanResponse v1 repair 001",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "judgment_layer",
+  "status": "DONE",
+  "objective": "Independently verify that repair 001 closes all known CaScanResponse v1 blockers: complete fail-closed runtime structure validation, required nullable-key presence, ISO timestamp validity, bounded/no-fake-precision ratios, Harness doctor cleanliness, regression coverage, provider-neutral boundaries, and exact write-set compliance.",
+  "dependencies": [
+    "CA-SCAN-RESPONSE-V1-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-001.json",
+    "harness/dispatches/CA-SCAN-RESPONSE-V1-REPAIR-001.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-001/acceptance.md",
+    "src/domain/contracts/ca-scan-response-v1.ts",
+    "test/domain/contracts/ca-scan-response-v1.test.ts",
+    "docs/contracts/CA_SCAN_RESPONSE_V1.md"
+  ],
+  "write_set": [
+    "harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001.json",
+    "harness/dispatches/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation, tests, fixtures, or documentation.",
+    "Do not issue network/provider/RPC/GMGN/Helius/third-party requests.",
+    "Do not read credentials, private keys, proxy URLs, live payloads, or private wallet data.",
+    "Do not add dependencies or modify package files.",
+    "Do not push, merge, or modify main."
+  ],
+  "deliverables": [
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check 5a76fb3dfcbb973a624594d055561beb18f3c4ea..5a9a6e9f3b9323dfa8494c2208df02af670dae69"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "credential_reads": 0,
+    "private_data_reads": 0
+  }
+}
