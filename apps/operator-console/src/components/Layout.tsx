@@ -43,6 +43,15 @@ export function Layout() {
           <NavLink to="/liquidity" className={({ isActive }) => (isActive ? "active" : "")}>
             流动性水位
           </NavLink>
+          <NavLink to="/watchlist" className={({ isActive }) => (isActive ? "active" : "")}>
+            Watchlist
+          </NavLink>
+          <NavLink to="/schedules" className={({ isActive }) => (isActive ? "active" : "")}>
+            计划
+          </NavLink>
+          <NavLink to="/replay" className={({ isActive }) => (isActive ? "active" : "")}>
+            Replay
+          </NavLink>
         </nav>
       </aside>
       <div className="main">

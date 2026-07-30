@@ -1,15 +1,18 @@
 import type {
   AddressLabelViewModel,
+  AlertView,
   CaScanListItem,
   CaScanViewModel,
   JobViewModel,
   LiquidityViewModel,
   LocalDemoLabelInput,
   OperatorConsoleDataSource,
+  ScheduleView,
   TaskViewModel,
   WalletListItem,
   WalletPoolSummary,
   WalletViewModel,
+  WatchlistItemView,
 } from "./types";
 
 /**
@@ -219,6 +222,50 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
 
   async getReplayCalibration(): Promise<Record<string, unknown>> {
     return this.getJson("/api/v1/replay/calibration");
+  }
+
+  async listWatchlist(): Promise<WatchlistItemView[]> {
+    const { items } = await this.getJson<{ items: WatchlistItemView[] }>("/api/v1/watchlist");
+    return items;
+  }
+
+  async addWatch(input: { kind: "ca" | "address"; subject: string; label?: string }): Promise<WatchlistItemView> {
+    return this.postJson("/api/v1/watchlist", input);
+  }
+
+  async listAlerts(unreadOnly = false): Promise<{ items: AlertView[]; unreadCount: number }> {
+    return this.getJson(`/api/v1/alerts${unreadOnly ? "?unread=1" : ""}`);
+  }
+
+  async markAlertRead(alertId: string): Promise<void> {
+    await this.postJson(`/api/v1/alerts/${encodeURIComponent(alertId)}/read`, {});
+  }
+
+  async markAllAlertsRead(): Promise<void> {
+    await this.postJson("/api/v1/alerts/read-all", {});
+  }
+
+  async listSchedules(): Promise<ScheduleView[]> {
+    const { schedules } = await this.getJson<{ schedules: ScheduleView[] }>("/api/v1/schedules");
+    return schedules;
+  }
+
+  async createSchedule(input: {
+    type: string;
+    subjects: string[];
+    intervalHours: number;
+    budgetPerRun: number;
+    enabled?: boolean;
+  }): Promise<ScheduleView> {
+    return this.postJson("/api/v1/schedules", input);
+  }
+
+  async setScheduleEnabled(scheduleId: string, enabled: boolean): Promise<ScheduleView | null> {
+    try {
+      return await this.postJson(`/api/v1/schedules/${encodeURIComponent(scheduleId)}/enabled`, { enabled });
+    } catch {
+      return null;
+    }
   }
 }
 

@@ -173,4 +173,52 @@ export interface OperatorConsoleDataSource {
   getLiquidityLatest(): Promise<LiquidityViewModel>;
   listJobs(): Promise<JobViewModel[]>;
   getReplayCalibration(): Promise<Record<string, unknown>>;
+  listWatchlist(): Promise<WatchlistItemView[]>;
+  addWatch(input: { kind: "ca" | "address"; subject: string; label?: string }): Promise<WatchlistItemView>;
+  listAlerts(unreadOnly?: boolean): Promise<{ items: AlertView[]; unreadCount: number }>;
+  markAlertRead(alertId: string): Promise<void>;
+  markAllAlertsRead(): Promise<void>;
+  listSchedules(): Promise<ScheduleView[]>;
+  createSchedule(input: {
+    type: string;
+    subjects: string[];
+    intervalHours: number;
+    budgetPerRun: number;
+    enabled?: boolean;
+  }): Promise<ScheduleView>;
+  setScheduleEnabled(scheduleId: string, enabled: boolean): Promise<ScheduleView | null>;
+}
+
+export interface WatchlistItemView {
+  watchId: string;
+  kind: "ca" | "address";
+  subject: string;
+  label: string | null;
+  enabled: boolean;
+  createdAt: string;
+  cooldownMinutes: number;
+}
+
+export interface AlertView {
+  alertId: string;
+  watchId: string;
+  kind: string;
+  subject: string;
+  summary: string;
+  evidenceRefs: string[];
+  evidenceLink: string | null;
+  createdAt: string;
+  read: boolean;
+  disclaimer: string;
+}
+
+export interface ScheduleView {
+  scheduleId: string;
+  type: string;
+  subjects: string[];
+  enabled: boolean;
+  intervalHours: number;
+  nextRunAt: string;
+  budgetPerRun: number;
+  createdAt: string;
 }

@@ -6,6 +6,7 @@ import {
   type PerCaPilotArtifacts,
 } from "../live/solana-ca-real-data-cleaning-pilot.js";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
+import { createBudgetedSourceFactory } from "../provider-executor/budgeted-pilot-source.js";
 
 export type CaHolderTaskStatus = "queued" | "running" | "completed" | "partial" | "failed";
 
@@ -26,6 +27,9 @@ export interface CaHolderTaskRecord {
   paginationComplete: boolean | null;
   resultStatus: "OK" | "PARTIAL" | "REJECTED" | null;
   scrubbedOutputSha: string | null;
+  /** ProviderExecutor request accounting (budgeted Live path). */
+  providerCalls: number;
+  providerBudgetExhausted: boolean;
   /** In-memory only; not persisted. */
   result: PerCaPilotArtifacts | null;
 }
@@ -148,6 +152,8 @@ export class CaHolderTaskService {
       paginationComplete: null,
       resultStatus: null,
       scrubbedOutputSha: null,
+      providerCalls: 0,
+      providerBudgetExhausted: false,
       result: null,
     };
     this.tasks.set(taskId, task);
@@ -175,6 +181,12 @@ export class CaHolderTaskService {
     task.startedAt = this.now().toISOString();
 
     try {
+      // All Live provider I/O goes through ProviderExecutor (budget + circuit + scrubbed logs).
+      const { source, executor } = createBudgetedSourceFactory(this.sourceFactory, {
+        taskId: `operator-api:${taskId}`,
+        budget: this.requestBudget,
+      });
+
       const batch = await runSolanaCaRealDataCleaningPilot(
         {
           taskId: `operator-api:${taskId}`,
@@ -183,7 +195,7 @@ export class CaHolderTaskService {
           selectedAt: task.startedAt,
           samples: [{ ca: task.mint, selectionReason: "operator_api_manual" }],
         },
-        this.sourceFactory,
+        () => source,
         {
           maxPagesPerCa: this.maxPages,
           pageSize: 1_000,
@@ -191,6 +203,12 @@ export class CaHolderTaskService {
           now: this.now,
         },
       );
+
+      task.providerCalls = executor.requestsUsed;
+      task.providerBudgetExhausted = executor.budgetExhausted;
+      if (executor.budgetExhausted) {
+        task.warnings.push("request_budget_exhausted");
+      }
 
       if (batch.status === RUNTIME_CREDENTIAL_UNAVAILABLE) {
         task.status = "failed";
@@ -201,7 +219,11 @@ export class CaHolderTaskService {
       }
 
       const result = batch.results[0] ?? null;
-      task.requestsUsed = Number(batch.batchSummary.totalHeliusRequests ?? result?.heliusRequestCount ?? 0);
+      // Prefer executor accounting; fall back to pilot counters.
+      task.requestsUsed = Math.max(
+        executor.requestsUsed,
+        Number(batch.batchSummary.totalHeliusRequests ?? result?.heliusRequestCount ?? 0),
+      );
       if (task.requestsUsed > task.requestBudget) {
         task.warnings.push("request_budget_exhausted");
       }
@@ -259,6 +281,8 @@ export function toPublicTaskSummary(task: CaHolderTaskRecord): Record<string, un
     status: task.status,
     requestBudget: task.requestBudget,
     requestsUsed: task.requestsUsed,
+    providerCalls: task.providerCalls,
+    providerBudgetExhausted: task.providerBudgetExhausted,
     startedAt: task.startedAt,
     endedAt: task.endedAt,
     warnings: task.warnings,
