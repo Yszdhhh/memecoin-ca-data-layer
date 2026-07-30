@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001",
+  "title": "Independent zero-network audit of Solana Wallet Intelligence Master Table Clean & Rank",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently audit Wallet Intelligence Master Table generation, offline input integrity, deterministic fingerprint association, data quality scoring, candidate shortlist generation, and non-disclosure of plaintext addresses in git artifacts.",
+  "dependencies": [
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.json",
+    "harness/dispatches/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.md",
+    "harness/inputs/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/manifest.json",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network, provider, or RPC requests.",
+    "Do not read credentials or API keys.",
+    "Do not modify application code, tests, implementer report, or external outputs.",
+    "Do not publish plaintext wallet addresses or labels in git artifacts."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

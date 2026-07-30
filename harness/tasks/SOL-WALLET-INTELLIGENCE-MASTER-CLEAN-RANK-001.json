@@ -1,0 +1,73 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001",
+  "title": "Solana Wallet Intelligence Master Table Clean & Rank",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Perform pure offline cleaning, merging, quality evaluation, anomaly identification, and candidate tiering on 1,433 Solana wallets with GMGN 7d/30d normalized stats, address order, labels, and notes to generate the Wallet Intelligence Master Table.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "src/domain/types.ts",
+    "src/domain/rules/wallet-quality.ts",
+    "src/domain/rules/alpha-score.ts",
+    "src/domain/rules/funding-clusters.ts",
+    "src/application/sedimentation/address-library.ts",
+    "src/infrastructure/postgres/postgres-address-library.ts",
+    "src/application/chainfm/clean-solana-address-directory.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/inputs/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/manifest.json"
+  ],
+  "write_set": [
+    "src/domain/rules/wallet-data-quality.ts",
+    "src/application/wallet-intelligence/master-table-builder.ts",
+    "src/cli/run-sol-wallet-intelligence-master-clean-rank-001.ts",
+    "test/application/wallet-intelligence/master-table-builder.test.ts",
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.json",
+    "harness/dispatches/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.md",
+    "harness/inputs/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/manifest.json",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue live network requests to GMGN, Helius, Solana RPC, Chain.fm, Fomo, Dune, Birdeye, Dexscreener, SolanaTracker, or any third party.",
+    "Do not read credentials or API keys.",
+    "Do not upgrade GMGN borrowed metrics into verified chain PnL or produce formal Alpha Tiers (UR/SSR/SR/R/N).",
+    "Do not print or commit plaintext wallet addresses or labels into Git or Harness acceptance reports.",
+    "Do not write to databases, Redis, queues, or production environments."
+  ],
+  "deliverables": [
+    "src/domain/rules/wallet-data-quality.ts",
+    "src/application/wallet-intelligence/master-table-builder.ts",
+    "src/cli/run-sol-wallet-intelligence-master-clean-rank-001.ts",
+    "test/application/wallet-intelligence/master-table-builder.test.ts",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001/acceptance.md",
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.json",
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0,
+    "address_processing": 1433
+  }
+}
