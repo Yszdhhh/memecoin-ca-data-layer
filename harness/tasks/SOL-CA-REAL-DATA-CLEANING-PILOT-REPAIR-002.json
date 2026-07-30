@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "title": "Repair mixed-owner classification and split accounting vs concentration confirmation",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "hot_path",
+  "status": "DONE",
+  "objective": "Repair SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001 blocking findings F-MIXED-001, F-MIXED-002, and F-POOL-SCOPE-001: explicit mixed-owner classification, owner partition conservation, and independent accountingEligible / exclusionCoverage / concentrationEligible with CaScan mapping that never confirms cleaned investor concentration when pool exclusion coverage is incomplete. Offline tests and desensitized 6-CA remap only; zero network/provider.",
+  "dependencies": [
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+    "SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001",
+    "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/findings.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**",
+    "src/domain/rules/holder-data-cleaning.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts"
+  ],
+  "write_set": [
+    "src/domain/rules/holder-data-cleaning.ts",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/**"
+  ],
+  "forbidden_actions": [
+    "Do not issue network, provider, Helius, GMGN, or RPC requests.",
+    "Do not read credentials or DPAPI secrets.",
+    "Do not re-fetch or regenerate Live 6-CA evidence.",
+    "Do not modify main, push, force-push, or rewrite history.",
+    "Do not open hotpath integration or multi-batch Live runs.",
+    "Do not modify wallet clean-rank rules.",
+    "Do not expand CaScanResponseV1 base contract unless PARK."
+  ],
+  "deliverables": [
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/acceptance.md",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/regression-matrix.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/remap-diff-summary.json",
+    "harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/exact-write-set.txt"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build"
+  ],
+  "baseline": {
+    "branch": "feature/sol-ca-real-data-cleaning-pilot-001",
+    "auditPin": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+    "workspaceHeadAtStart": "e3c3405009fb86c27c25a827f8edea39a6c5ae2d",
+    "note": "HEAD is one docs commit after audit pin; pin is ancestor; lineage includes PILOT-001, AUDIT-001, and REPAIR-003 clean-rank replay."
+  },
+  "next_gate": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-AUDIT-002"
+}

@@ -31,7 +31,12 @@ export type DataQualityIssueCode =
   | "provider_shape_drift"
   | "provider_timeout"
   | "provider_rate_limited"
-  | "credential_unavailable";
+  | "credential_unavailable"
+  | "mixed_owner_classification_conflict"
+  | "mixed_owner_positive_closed_balance"
+  | "mixed_owner_unparseable_sibling"
+  | "pool_exclusion_coverage_incomplete"
+  | "owner_partition_identity_failed";
 
 export type IssueSeverity = "info" | "warning" | "error" | "blocking";
 
@@ -133,6 +138,9 @@ export interface HolderCleaningInput {
   sourceWatermark?: string | null;
 }
 
+/** Pool / liquidity first-hand exclusion coverage (independent of supply accounting). */
+export type ExclusionCoverage = CompletenessLabel;
+
 export interface HolderCleaningResult {
   ca: string;
   ruleVersion: typeof HOLDER_CLEANING_RULE_VERSION;
@@ -149,6 +157,26 @@ export interface HolderCleaningResult {
   };
   concentration: ConcentrationMetric[];
   issues: DataQualityIssue[];
+  /**
+   * Supply accounting eligibility only: pagination + mint parse + partition
+   * identity + residual 0 + no accounting-blocking issues.
+   * Does NOT imply cleaned investor concentration is trustworthy.
+   */
+  accountingEligible: boolean;
+  /**
+   * First-hand pool/liquidity exclusion coverage.
+   * Pilot default is never `complete` (no full pool identification yet).
+   */
+  exclusionCoverage: ExclusionCoverage;
+  /**
+   * True only when accountingEligible, exclusionCoverage=complete,
+   * no unresolved positive balance, and no concentration-blocking issues.
+   */
+  concentrationEligible: boolean;
+  /**
+   * Legacy alias of accountingEligible (batch OK/PARTIAL accounting gate).
+   * Prefer accountingEligible / concentrationEligible for new consumers.
+   */
   judgmentEligible: boolean;
 }
 
@@ -315,24 +343,6 @@ function issue(
   };
 }
 
-function ownerClassFromAccounts(classes: CleaningClass[]): CleaningClass {
-  // Prefer most restrictive exclusion when any account is excluded.
-  const priority: CleaningClass[] = [
-    "invalid_or_unparseable",
-    "burn_or_dead_address",
-    "known_program_or_infrastructure",
-    "liquidity_or_pool_account",
-    "closed_or_inactive",
-    "unresolved_exclusion_candidate",
-    "zero_balance",
-    "included_holder",
-  ];
-  for (const p of priority) {
-    if (classes.includes(p)) return p;
-  }
-  return "included_holder";
-}
-
 function isExcludedClass(c: CleaningClass): boolean {
   return (
     c === "zero_balance"
@@ -352,9 +362,213 @@ function isIncludedClass(c: CleaningClass): boolean {
   return c === "included_holder";
 }
 
+function isHardEvidenceExclusionClass(c: CleaningClass): boolean {
+  return (
+    c === "burn_or_dead_address"
+    || c === "known_program_or_infrastructure"
+    || c === "liquidity_or_pool_account"
+  );
+}
+
+/**
+ * Pilot pool/liquidity exclusion coverage. Never claims `complete` until
+ * first-hand pool enumeration lands in a later task.
+ */
+function resolvePilotExclusionCoverage(tokenAccountCount: number): ExclusionCoverage {
+  if (tokenAccountCount === 0) return "unavailable";
+  return "partial";
+}
+
+function isExclusionCoverageComplete(coverage: ExclusionCoverage): boolean {
+  return coverage === "complete";
+}
+
+interface OwnerResolution {
+  cleaningClass: CleaningClass;
+  evidence: string[];
+  issueHints: Array<{
+    code: DataQualityIssueCode;
+    severity: IssueSeverity;
+    affectedBalance: string;
+    evidence: string[];
+    whetherManualReviewRequired: boolean;
+    suggestedFollowUp: string;
+  }>;
+}
+
+/**
+ * Explicit mixed-owner resolution. Never "pick one strictest class and dump
+ * the whole owner balance into that class" for zero/closed/invalid siblings.
+ */
+function resolveOwnerCleaningClass(
+  owner: string,
+  list: ClassifiedTokenAccount[],
+  sum: bigint,
+): OwnerResolution {
+  const classes = list.map((r) => r.cleaningClass);
+  const evidence = new Set<string>();
+  for (const row of list) {
+    for (const e of row.evidence) evidence.add(e);
+  }
+
+  const hasInclude = classes.some(isIncludedClass);
+  const hasZero = classes.includes("zero_balance");
+  const hasClosed = classes.includes("closed_or_inactive");
+  const hasInvalid = classes.includes("invalid_or_unparseable");
+  const hasUnresolved = classes.some(isUnresolvedClass);
+  const hasHard = classes.some(isHardEvidenceExclusionClass);
+
+  const positiveIncluded = list.filter(
+    (r) => isIncludedClass(r.cleaningClass) && (parseRawAmount(r.rawAmount) ?? 0n) > 0n,
+  );
+  const hasPositiveIncluded = positiveIncluded.length > 0;
+  const positiveIncludedSum = positiveIncluded.reduce(
+    (s, r) => s + (parseRawAmount(r.rawAmount) ?? 0n),
+    0n,
+  );
+
+  const closedPositive = list.filter((r) => {
+    if (r.cleaningClass !== "closed_or_inactive") return false;
+    return (parseRawAmount(r.rawAmount) ?? 0n) > 0n;
+  });
+
+  // 5. Hard-evidence whole-owner exclusion (owner-level first-hand static evidence only).
+  // Must not be triggered by zero/closed/invalid siblings alone.
+  if (hasHard && !hasPositiveIncluded) {
+    const hardClass = classes.find(isHardEvidenceExclusionClass)!;
+    evidence.add(`owner_hard_evidence=${hardClass}`);
+    return { cleaningClass: hardClass, evidence: [...evidence], issueHints: [] };
+  }
+  if (hasHard && hasPositiveIncluded) {
+    // Owner address itself carries hard evidence on every ATA classification path.
+    const hardClass = classes.find(isHardEvidenceExclusionClass)!;
+    evidence.add(`owner_hard_evidence=${hardClass}`);
+    evidence.add("whole_owner_hard_evidence_exclusion");
+    return { cleaningClass: hardClass, evidence: [...evidence], issueHints: [] };
+  }
+
+  // 6. Pure zero or pure closed-zero: no positive included, all parseable sum is 0.
+  if (!hasPositiveIncluded && sum === 0n && classes.every((c) => c === "zero_balance" || c === "closed_or_inactive")) {
+    const pure = classes.includes("closed_or_inactive") ? "closed_or_inactive" as const : "zero_balance" as const;
+    evidence.add(`pure_owner_class=${pure}`);
+    return { cleaningClass: pure, evidence: [...evidence], issueHints: [] };
+  }
+
+  // Positive included present — apply explicit mixed-owner rules.
+  if (hasPositiveIncluded) {
+    // 3. included + invalid_or_unparseable → unresolved (invalid amount cannot prove zero).
+    if (hasInvalid) {
+      evidence.add("mixed_owner=included+invalid_or_unparseable");
+      evidence.add(`positive_included_raw=${positiveIncludedSum.toString()}`);
+      return {
+        cleaningClass: "unresolved_exclusion_candidate",
+        evidence: [...evidence],
+        issueHints: [{
+          code: "mixed_owner_unparseable_sibling",
+          severity: "error",
+          affectedBalance: sum.toString(),
+          evidence: [`owner=${owner}`, "included+invalid_or_unparseable", ...[...evidence].slice(0, 8)],
+          whetherManualReviewRequired: true,
+          suggestedFollowUp: "reparse_invalid_sibling_or_manual_review",
+        }],
+      };
+    }
+
+    // 4. included + unresolved → unresolved, full balance, manual review.
+    if (hasUnresolved) {
+      evidence.add("mixed_owner=included+unresolved");
+      return {
+        cleaningClass: "unresolved_exclusion_candidate",
+        evidence: [...evidence],
+        issueHints: [{
+          code: "mixed_owner_classification_conflict",
+          severity: "warning",
+          affectedBalance: sum.toString(),
+          evidence: [`owner=${owner}`, "included+unresolved"],
+          whetherManualReviewRequired: true,
+          suggestedFollowUp: "resolve_unresolved_sibling_with_first_hand_evidence",
+        }],
+      };
+    }
+
+    // 2. included + closed_or_inactive
+    if (hasClosed) {
+      if (closedPositive.length > 0) {
+        const closedPosSum = closedPositive.reduce(
+          (s, r) => s + (parseRawAmount(r.rawAmount) ?? 0n),
+          0n,
+        );
+        evidence.add("mixed_owner=included+closed_positive");
+        evidence.add(`closed_positive_raw=${closedPosSum.toString()}`);
+        return {
+          cleaningClass: "unresolved_exclusion_candidate",
+          evidence: [...evidence],
+          issueHints: [{
+            code: "mixed_owner_positive_closed_balance",
+            severity: "error",
+            affectedBalance: sum.toString(),
+            evidence: [`owner=${owner}`, `closed_positive_raw=${closedPosSum.toString()}`],
+            whetherManualReviewRequired: true,
+            suggestedFollowUp: "inspect_closed_account_with_positive_raw_amount",
+          }],
+        };
+      }
+      // closed siblings all raw=0 → keep included; zeros stay account-level only.
+      evidence.add("mixed_owner=included+closed_zero");
+      evidence.add("owner_kept_included_closed_siblings_zero");
+      return { cleaningClass: "included_holder", evidence: [...evidence], issueHints: [] };
+    }
+
+    // 1. included + zero_balance → keep included; zeros do not exclude positives.
+    if (hasZero) {
+      evidence.add("mixed_owner=included+zero_balance");
+      evidence.add("owner_kept_included_zero_siblings");
+      return { cleaningClass: "included_holder", evidence: [...evidence], issueHints: [] };
+    }
+
+    // Pure included (possibly multiple positive ATAs).
+    if (classes.every(isIncludedClass)) {
+      evidence.add("owner_all_included");
+      return { cleaningClass: "included_holder", evidence: [...evidence], issueHints: [] };
+    }
+
+    // Any other mixed conflict with positive include: fail closed to unresolved.
+    evidence.add("mixed_owner=included+other_conflict");
+    return {
+      cleaningClass: "unresolved_exclusion_candidate",
+      evidence: [...evidence],
+      issueHints: [{
+        code: "mixed_owner_classification_conflict",
+        severity: "warning",
+        affectedBalance: sum.toString(),
+        evidence: [`owner=${owner}`, `classes=${[...new Set(classes)].sort().join(",")}`],
+        whetherManualReviewRequired: true,
+        suggestedFollowUp: "manual_review_mixed_owner_accounts",
+      }],
+    };
+  }
+
+  // No positive included: pure exclusion classes by most specific account class.
+  if (hasUnresolved) {
+    return { cleaningClass: "unresolved_exclusion_candidate", evidence: [...evidence], issueHints: [] };
+  }
+  if (hasInvalid) {
+    return { cleaningClass: "invalid_or_unparseable", evidence: [...evidence], issueHints: [] };
+  }
+  if (hasClosed) {
+    return { cleaningClass: "closed_or_inactive", evidence: [...evidence], issueHints: [] };
+  }
+  if (hasZero) {
+    return { cleaningClass: "zero_balance", evidence: [...evidence], issueHints: [] };
+  }
+  return { cleaningClass: "included_holder", evidence: [...evidence], issueHints: [] };
+}
+
 function aggregateOwners(
   accounts: ClassifiedTokenAccount[],
   observedSupply: bigint,
+  ca: string,
+  issues: DataQualityIssue[],
 ): AggregatedOwner[] {
   const byOwner = new Map<string, ClassifiedTokenAccount[]>();
   for (const account of accounts) {
@@ -367,33 +581,26 @@ function aggregateOwners(
   const owners: AggregatedOwner[] = [];
   for (const [owner, list] of byOwner) {
     let sum = 0n;
-    const classes: CleaningClass[] = [];
-    const evidence = new Set<string>();
     const tokenAccounts: string[] = [];
     let decimals = list[0]?.decimals ?? 0;
     for (const row of list) {
       const amount = parseRawAmount(row.rawAmount) ?? 0n;
       sum += amount;
-      classes.push(row.cleaningClass);
-      for (const e of row.evidence) evidence.add(e);
       tokenAccounts.push(row.tokenAccount);
       decimals = row.decimals;
     }
-    const cleaningClass = ownerClassFromAccounts(classes);
-    // Mixed included + excluded accounts on same owner: if any positive included amount remains
-    // after exclusions, re-evaluate — task requires no silent drop; mixed → unresolved if conflicting.
-    const hasInclude = classes.some(isIncludedClass);
-    const hasExclude = classes.some(isExcludedClass);
-    const hasUnresolved = classes.some(isUnresolvedClass);
-    let finalClass = cleaningClass;
-    if (hasUnresolved || (hasInclude && hasExclude && sum > 0n && cleaningClass !== "burn_or_dead_address" && cleaningClass !== "known_program_or_infrastructure")) {
-      if (hasUnresolved || (hasInclude && hasExclude && !isExcludedClass(cleaningClass))) {
-        finalClass = hasExclude && !hasInclude ? cleaningClass : hasInclude && hasExclude ? "unresolved_exclusion_candidate" : cleaningClass;
-      }
-    }
-    // Pure zero-balance owners stay zero_balance.
-    if (sum === 0n && classes.every((c) => c === "zero_balance" || c === "closed_or_inactive")) {
-      finalClass = classes.includes("closed_or_inactive") ? "closed_or_inactive" : "zero_balance";
+    const resolved = resolveOwnerCleaningClass(owner, list, sum);
+    for (const hint of resolved.issueHints) {
+      issues.push(issue(
+        hint.code,
+        ca,
+        hint.severity,
+        1,
+        hint.affectedBalance,
+        hint.evidence,
+        hint.whetherManualReviewRequired,
+        hint.suggestedFollowUp,
+      ));
     }
     owners.push({
       owner,
@@ -401,8 +608,8 @@ function aggregateOwners(
       ownerNormalizedAmount: normalizeAmount(sum, decimals),
       tokenAccountCount: list.length,
       shareOfObservedSupply: ratioFromRaw(sum, observedSupply),
-      cleaningClass: finalClass,
-      evidence: [...evidence],
+      cleaningClass: resolved.cleaningClass,
+      evidence: resolved.evidence,
       tokenAccounts,
     });
   }
@@ -520,21 +727,35 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
   const normalizedInput = uniqueAccounts.map((a) => ({ ...a, decimals: input.decimals }));
   const rawTokenAccounts = normalizedInput.map((a) => classifyTokenAccount(a, ca, issues));
   const enumerated = sumAccountAmount(rawTokenAccounts);
-  const owners = aggregateOwners(rawTokenAccounts, enumerated > 0n ? enumerated : mintSupply ?? 0n);
+  const owners = aggregateOwners(
+    rawTokenAccounts,
+    enumerated > 0n ? enumerated : mintSupply ?? 0n,
+    ca,
+    issues,
+  );
 
-  // Flag unresolved that still lack evidence of exclusion path.
+  // Unresolved owners always require manual review; never silent whole-owner exclude.
   for (const owner of owners) {
     if (owner.cleaningClass === "unresolved_exclusion_candidate") {
-      issues.push(issue(
-        "unresolved_infrastructure_account",
-        ca,
-        "warning",
-        1,
-        owner.ownerRawAmount,
-        [`owner=${owner.owner}`, ...owner.evidence],
-        true,
-        "add_first_hand_pool_or_program_evidence",
-      ));
+      const alreadyMixed = issues.some(
+        (i) =>
+          (i.code === "mixed_owner_classification_conflict"
+            || i.code === "mixed_owner_positive_closed_balance"
+            || i.code === "mixed_owner_unparseable_sibling")
+          && i.evidence.some((e) => e === `owner=${owner.owner}` || e.startsWith("owner=")),
+      );
+      if (!alreadyMixed) {
+        issues.push(issue(
+          "unresolved_infrastructure_account",
+          ca,
+          "warning",
+          1,
+          owner.ownerRawAmount,
+          [`owner=${owner.owner}`, ...owner.evidence],
+          true,
+          "add_first_hand_pool_or_program_evidence",
+        ));
+      }
       if (owner.evidence.length === 0) {
         issues.push(issue(
           "exclusion_evidence_missing",
@@ -547,12 +768,41 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
           "attach_evidence_or_keep_included",
         ));
       }
+      if (BigInt(owner.ownerRawAmount) > 0n && !issues.some(
+        (i) => i.whetherManualReviewRequired && i.evidence.some((e) => e.includes(owner.owner)),
+      )) {
+        issues.push(issue(
+          "unresolved_infrastructure_account",
+          ca,
+          "warning",
+          1,
+          owner.ownerRawAmount,
+          [`owner=${owner.owner}`, "unresolved_positive_balance"],
+          true,
+          "manual_review_unresolved_positive_balance",
+        ));
+      }
     }
   }
 
   const includedOwners = owners.filter((o) => isIncludedClass(o.cleaningClass));
   const excludedOwners = owners.filter((o) => isExcludedClass(o.cleaningClass));
   const unresolvedOwners = owners.filter((o) => isUnresolvedClass(o.cleaningClass));
+
+  // Partition conservation: every owner lands in exactly one of the three sets.
+  const partitionedOwnerCount = includedOwners.length + excludedOwners.length + unresolvedOwners.length;
+  if (partitionedOwnerCount !== owners.length) {
+    issues.push(issue(
+      "owner_partition_identity_failed",
+      ca,
+      "blocking",
+      owners.length - partitionedOwnerCount,
+      "0",
+      ["owner_not_in_exactly_one_partition"],
+      true,
+      "fail_closed_reclassify_owners",
+    ));
+  }
 
   const includedRaw = sumOwnerAmount(includedOwners, () => true);
   const excludedRaw = sumOwnerAmount(excludedOwners, () => true);
@@ -561,7 +811,24 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
   const identityOk = partsSum === enumerated;
 
   const residualReasons: string[] = [];
-  if (!identityOk) residualReasons.push("owner_partition_sum_ne_enumerated");
+  if (!identityOk) {
+    residualReasons.push("owner_partition_sum_ne_enumerated");
+    issues.push(issue(
+      "owner_partition_identity_failed",
+      ca,
+      "blocking",
+      1,
+      (partsSum > enumerated ? partsSum - enumerated : enumerated - partsSum).toString(),
+      [
+        `enumerated=${enumerated.toString()}`,
+        `included=${includedRaw.toString()}`,
+        `excluded=${excludedRaw.toString()}`,
+        `unresolved=${unresolvedRaw.toString()}`,
+      ],
+      true,
+      "fail_closed_partition_recompute",
+    ));
+  }
   if (!input.paginationComplete) {
     residualReasons.push("pagination_incomplete");
     issues.push(issue(
@@ -603,11 +870,55 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
       ? "complete"
       : "partial";
 
-  // Concentration only when denominator complete and > 0.
+  // Pilot has no complete first-hand pool/liquidity exclusion capability.
+  // Typed as ExclusionCoverage so future first-hand pool evidence can return "complete".
+  const exclusionCoverage: ExclusionCoverage = resolvePilotExclusionCoverage(rawTokenAccounts.length);
+  if (exclusionCoverage === "partial" || exclusionCoverage === "unavailable") {
+    issues.push(issue(
+      "pool_exclusion_coverage_incomplete",
+      ca,
+      "warning",
+      0,
+      "0",
+      [`exclusionCoverage=${exclusionCoverage}`, "no_first_hand_pool_liquidity_enumeration"],
+      false,
+      "add_first_hand_pool_liquidity_exclusion_before_concentration_confirm",
+    ));
+  }
+
+  const accountingBlocking = issues.some(
+    (i) =>
+      i.severity === "blocking"
+      && (i.code === "owner_partition_identity_failed"
+        || i.code === "inconsistent_ratio"
+        || i.code === "invalid_raw_amount" && i.evidence.includes("mint_supply_unparseable")),
+  );
+  const accountingEligible =
+    input.paginationComplete
+    && mintSupply !== null
+    && identityOk
+    && residual === 0n
+    && accountingComplete === "complete"
+    && !accountingBlocking;
+
+  const unresolvedPositive = unresolvedRaw > 0n;
+  const concentrationBlocking = issues.some(
+    (i) => i.severity === "blocking" || i.code === "inconsistent_ratio",
+  );
+  const poolCoverageComplete = isExclusionCoverageComplete(exclusionCoverage);
+  const concentrationEligible =
+    accountingEligible
+    && poolCoverageComplete
+    && !unresolvedPositive
+    && !concentrationBlocking;
+
+  // Observational concentration numerators always available; completeness stays
+  // partial until concentrationEligible. Ratios may be present as observations.
   const denomForConcentration = mint;
-  const concentrationAllowed = accountingComplete === "complete" && denomForConcentration > 0n && input.paginationComplete;
-  const concCompleteness: CompletenessLabel = concentrationAllowed ? "complete" : "partial";
-  const universeDef = `${UNIVERSE_DEFINITION_VERSION}:cleaned_included_owners_vs_mint_supply`;
+  const concCompleteness: CompletenessLabel = concentrationEligible ? "complete" : "partial";
+  const universeDef = concentrationEligible
+    ? `${UNIVERSE_DEFINITION_VERSION}:cleaned_investor_owners_vs_mint_supply`
+    : `${UNIVERSE_DEFINITION_VERSION}:owner_aggregated_observational_vs_mint_supply_pool_exclusion_incomplete`;
 
   const concentration: ConcentrationMetric[] = [
     topNMetric("top1", includedOwners, denomForConcentration, 1, concCompleteness, universeDef),
@@ -620,7 +931,7 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
       name: "largestOwnerShare",
       numerator: (includedOwners[0] ? includedOwners[0].ownerRawAmount : "0"),
       denominator: denomForConcentration.toString(),
-      ratio: concentrationAllowed && includedOwners[0]
+      ratio: denomForConcentration > 0n && includedOwners[0]
         ? ratioFromRaw(BigInt(includedOwners[0].ownerRawAmount), denomForConcentration)
         : null,
       universeDefinition: universeDef,
@@ -631,7 +942,7 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
       name: "unresolvedShare",
       numerator: unresolvedRaw.toString(),
       denominator: denomForConcentration.toString(),
-      ratio: concentrationAllowed ? ratioFromRaw(unresolvedRaw, denomForConcentration) : null,
+      ratio: denomForConcentration > 0n ? ratioFromRaw(unresolvedRaw, denomForConcentration) : null,
       universeDefinition: universeDef,
       completeness: concCompleteness,
       calculationVersion: CONCENTRATION_CALCULATION_VERSION,
@@ -640,14 +951,20 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
       name: "excludedShare",
       numerator: excludedRaw.toString(),
       denominator: denomForConcentration.toString(),
-      ratio: concentrationAllowed ? ratioFromRaw(excludedRaw, denomForConcentration) : null,
+      ratio: denomForConcentration > 0n ? ratioFromRaw(excludedRaw, denomForConcentration) : null,
       universeDefinition: universeDef,
       completeness: concCompleteness,
       calculationVersion: CONCENTRATION_CALCULATION_VERSION,
     },
   ];
 
+  // topNMetric nulls ratio when completeness !== complete; re-attach observational
+  // ratios when denom > 0 so numerators remain interpretable without claiming complete.
   for (const metric of concentration) {
+    if (metric.ratio === null && denomForConcentration > 0n && metric.completeness !== "complete") {
+      const n = parseRawAmount(metric.numerator);
+      if (n !== null) metric.ratio = ratioFromRaw(n, denomForConcentration);
+    }
     if (metric.ratio !== null && !assertRatioConsistent(metric.numerator, metric.denominator, metric.ratio)) {
       issues.push(issue(
         "inconsistent_ratio",
@@ -663,16 +980,13 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
     }
   }
 
-  const judgmentEligible =
-    input.paginationComplete
-    && accountingComplete === "complete"
-    && mintSupply !== null
-    && residual === 0n
-    && identityOk
-    && !issues.some((i) => i.severity === "blocking");
+  // Legacy alias: accounting eligibility only (not concentration confirmation).
+  const judgmentEligible = accountingEligible;
 
   const denomForUniverse = enumerated > 0n ? enumerated : mint;
   const universeCompleteness: CompletenessLabel = input.paginationComplete ? accountingComplete : "partial";
+  // Cleaned investor universe is partial until pool exclusion coverage is complete.
+  const cleanedUniverseCompleteness: CompletenessLabel = concentrationEligible ? "complete" : "partial";
 
   const includedAccounts = rawTokenAccounts.filter((a) => {
     const owner = owners.find((o) => o.tokenAccounts.includes(a.tokenAccount));
@@ -721,8 +1035,10 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
         includedOwners,
         includedAccounts,
         denomForUniverse,
-        universeCompleteness,
-        ["included_holder_only"],
+        cleanedUniverseCompleteness,
+        concentrationEligible
+          ? ["included_holder_only", "pool_exclusion_complete"]
+          : ["included_holder_only", "pool_exclusion_incomplete_not_cleaned_investor_universe"],
       ),
       excludedInfrastructureUniverse: buildUniverse(
         "excludedInfrastructureUniverse",
@@ -743,6 +1059,9 @@ export function cleanHolderUniverse(input: HolderCleaningInput): HolderCleaningR
     },
     concentration,
     issues,
+    accountingEligible,
+    exclusionCoverage,
+    concentrationEligible,
     judgmentEligible,
   };
 }

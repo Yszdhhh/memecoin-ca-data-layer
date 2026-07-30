@@ -1,0 +1,26 @@
+# SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002 exact write-set
+# Method: git diff --name-only + untracked deliverables vs HEAD e3c3405
+# Audit pin (ancestor): 84b9a8dd424b70e34220f9eb06db47e381838ee1
+# Branch: feature/sol-ca-real-data-cleaning-pilot-001
+# No main modification, no push.
+
+## Core implementation + tests (allowed)
+src/domain/rules/holder-data-cleaning.ts
+src/domain/mapping/map-holder-cleaning-to-ca-scan.ts
+test/domain/rules/holder-data-cleaning.test.ts
+test/application/live/solana-ca-real-data-cleaning-pilot.test.ts
+
+## Task + report deliverables (allowed)
+harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/acceptance.md
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/regression-matrix.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/remap-diff-summary.json
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002/exact-write-set.txt
+
+## Explicitly not modified
+src/domain/contracts/ca-scan-response-v1.ts
+src/application/live/solana-ca-real-data-cleaning-pilot.ts
+src/cli/run-solana-ca-real-data-cleaning-pilot.ts
+harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**
+main
+wallet clean-rank rules

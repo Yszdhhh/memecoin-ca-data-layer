@@ -1,0 +1,170 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "note": "Offline remap only; Live 6 CA / 30 Helius request history unchanged.",
+  "diffs": [
+    {
+      "ca": "9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump",
+      "historicalStatus": "PARTIAL",
+      "historical": {
+        "judgmentConfirmed": false,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null
+      },
+      "remapped": {
+        "accountingEligible": false,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": false,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "126707410717011",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    },
+    {
+      "ca": "BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump",
+      "historicalStatus": "OK",
+      "historical": {
+        "judgmentConfirmed": true,
+        "top10Verification": "confirmed",
+        "top10Completeness": 1,
+        "top10Ratio": 0.199019
+      },
+      "remapped": {
+        "accountingEligible": true,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": true,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "197935664771608",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    },
+    {
+      "ca": "Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump",
+      "historicalStatus": "PARTIAL",
+      "historical": {
+        "judgmentConfirmed": false,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null
+      },
+      "remapped": {
+        "accountingEligible": false,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": false,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "31066854272265",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    },
+    {
+      "ca": "EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump",
+      "historicalStatus": "OK",
+      "historical": {
+        "judgmentConfirmed": true,
+        "top10Verification": "confirmed",
+        "top10Completeness": 1,
+        "top10Ratio": 0.943154
+      },
+      "remapped": {
+        "accountingEligible": true,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": true,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "908772783529188",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    },
+    {
+      "ca": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "historicalStatus": "PARTIAL",
+      "historical": {
+        "judgmentConfirmed": false,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null
+      },
+      "remapped": {
+        "accountingEligible": false,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": false,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "901441745043773",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    },
+    {
+      "ca": "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump",
+      "historicalStatus": "OK",
+      "historical": {
+        "judgmentConfirmed": true,
+        "top10Verification": "confirmed",
+        "top10Completeness": 1,
+        "top10Ratio": 0.479158
+      },
+      "remapped": {
+        "accountingEligible": true,
+        "exclusionCoverage": "partial",
+        "concentrationEligible": false,
+        "accountingJudgmentConfirmed": true,
+        "concentrationJudgmentUnverified": true,
+        "top10Verification": "unverified",
+        "top10Completeness": 0,
+        "top10Ratio": null,
+        "top10Numerator": "463331015755564",
+        "warnings": [
+          "concentration_partial_or_unconfirmed",
+          "pool_exclusion_coverage_incomplete",
+          "not_cleaned_investor_concentration"
+        ]
+      },
+      "heliusRequestCountUnchanged": true
+    }
+  ]
+}
