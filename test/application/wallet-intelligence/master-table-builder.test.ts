@@ -368,7 +368,7 @@ test("7. Full synthetic master table builder execution", async () => {
         status: "MAPPED",
         source: "gmgn",
         verificationStatus: "unverified",
-        completeness: 1.0,
+        completeness: i === 7 ? 0.5 : i === 8 ? 0.8 : 1.0,
         aggregates: {
           periodPnl: 0.1,
           realizedProfit: i * 10,
@@ -382,11 +382,12 @@ test("7. Full synthetic master table builder execution", async () => {
           lastActiveTimestamp: 1700000000,
           tokenNum: 2,
         },
-        warningCodes: [],
+        warningCodes: i === 9 ? ["gmgn_wallet_stats_partial_fields"] : [],
         requestBudgetUsed: 1,
         sourceInputFingerprint: fp,
         fetchedAt: new Date().toISOString(),
       });
+      if (i === 8) gmgnProfilesObj[gmgnProfilesObj.length - 1].status = "PARTIAL";
       gmgnProfilesObj.push({
         period: "30d",
         status: "MAPPED",
@@ -436,6 +437,17 @@ test("7. Full synthetic master table builder execution", async () => {
         expectedHashes: { solAddressesTxtHash: expectedTxtHash, solAddressLabelsJsonHash: expectedJsonHash },
       }),
       /Duplicate 7d record/
+    );
+    const duplicate30dProfiles = [...gmgnProfilesObj, { ...gmgnProfilesObj[1] }];
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"), JSON.stringify(duplicate30dProfiles, null, 2), "utf8");
+    await assert.rejects(
+      buildWalletIntelligenceMasterTable({
+        inputDir: fix.inputDir,
+        gmgnOutputDir: fix.gmgnOutputDir,
+        outputDir: fix.outputDir,
+        expectedHashes: { solAddressesTxtHash: expectedTxtHash, solAddressLabelsJsonHash: expectedJsonHash },
+      }),
+      /Duplicate 30d record/
     );
     fs.writeFileSync(path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"), JSON.stringify(gmgnProfilesObj, null, 2), "utf8");
 
@@ -514,10 +526,16 @@ test("7. Full synthetic master table builder execution", async () => {
     const partial = masterRows.find((row) => row.walletAddress === addrs[6]);
     assert.notEqual(partial.borrowedCompositeLeadScore, null);
     assert.equal(partial.alphaCandidateRank, null);
+    for (const index of [7, 8, 9]) {
+      const incomplete7d = masterRows.find((row) => row.walletAddress === addrs[index]);
+      assert.equal(incomplete7d.alphaCandidateRank, null);
+    }
 
     const shortlist = JSON.parse(fs.readFileSync(path.join(fix.outputDir, "candidate_shortlist.json"), "utf8"));
     assert.ok(shortlist.candidate_union.every((row: any) => row.shortlistType === "ALPHA_CANDIDATE"));
     assert.ok(shortlist.review_priority_union.every((row: any) => row.shortlistType === "REVIEW_PRIORITY"));
+    assert.ok(shortlist.candidate_union.length > 0);
+    assert.ok(shortlist.review_priority_union.length > 0);
     const alphaAddresses = new Set(shortlist.candidate_union.map((row: any) => row.walletAddress));
     assert.ok(shortlist.review_priority_union.every((row: any) => !alphaAddresses.has(row.walletAddress)));
   } finally {

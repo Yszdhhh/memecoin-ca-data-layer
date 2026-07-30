@@ -601,14 +601,22 @@ export async function buildWalletIntelligenceMasterTable(
     });
   }
 
+  const periodIsAlphaEligible = (
+    status: WalletMasterRecord["gmgn7dStatus"],
+    completeness: number | null,
+    warningCodes: string[]
+  ): boolean =>
+    status === "MAPPED" &&
+    completeness === 1 &&
+    !warningCodes.some((code) => code.includes("period_unverified") || code.includes("partial_fields"));
+
   const alphaEligible = (record: WalletMasterRecord): boolean =>
     !record.manualReviewRequired &&
-    record.gmgn30dStatus === "MAPPED" &&
+    periodIsAlphaEligible(record.gmgn7dStatus, record.gmgn7dCompleteness, record.gmgn7dWarningCodes) &&
+    periodIsAlphaEligible(record.gmgn30dStatus, record.gmgn30dCompleteness, record.gmgn30dWarningCodes) &&
     record.gmgn30dRealizedProfit !== null &&
     record.borrowedCompositeLeadScore !== null &&
-    (record.dataQualityTier === "DQ-A" || record.dataQualityTier === "DQ-B") &&
-    record.gmgn30dCompleteness === 1 &&
-    !record.gmgn30dWarningCodes.some((code) => code.includes("period_unverified") || code.includes("partial_fields"));
+    (record.dataQualityTier === "DQ-A" || record.dataQualityTier === "DQ-B");
 
   const alphaRanked = records.filter(alphaEligible).sort((a, b) => {
     const scoreDelta = (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity);
