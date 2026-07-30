@@ -1,0 +1,120 @@
+{
+  "taskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-AUDIT-001",
+  "auditedTaskId": "SOL-CA-REAL-DATA-CLEANING-PILOT-001",
+  "verdict": "REQUEST_CHANGES",
+  "auditTip": "84b9a8dd424b70e34220f9eb06db47e381838ee1",
+  "baseMain": "777e0131ec663178c6c4cc5cc0c4584e60be2381",
+  "networkRequests": 0,
+  "providerRequests": 0,
+  "credentialReads": 0,
+  "implementationModificationsByAuditor": 0,
+  "findings": [
+    {
+      "id": "F-MIXED-001",
+      "severity": "blocking",
+      "title": "Same-owner positive included balances are wholly excluded by zero_balance / closed / invalid sibling ATAs",
+      "evidence": [
+        "src/domain/rules/holder-data-cleaning.ts ownerClassFromAccounts prioritizes exclusion classes over included_holder",
+        "aggregateOwners mixed re-eval only upgrades to unresolved when cleaningClass is NOT already an excluded class — which never happens when hasExclude is true",
+        "Offline probe (auditor, no network): pos+zero → owner class=zero_balance with raw=100 excluded; pos+closed → closed_or_inactive raw=150 excluded; pos+invalid → invalid_or_unparseable raw=100 excluded"
+      ],
+      "forcedCases": {
+        "positive_included_plus_zero_balance": "FAIL — positive owner wholly excluded",
+        "positive_included_plus_closed": "FAIL — positive owner wholly excluded",
+        "positive_included_plus_invalid": "FAIL — positive owner wholly excluded (also not unresolved)",
+        "positive_included_plus_unresolved": "N/A at account level (no account-level unresolved classifier); mixed path does not produce unresolved for include+exclude",
+        "positive_included_plus_hard_evidence_infrastructure": "PASS for owner==known_program (entire owner correctly infra)"
+      },
+      "impact": "Zero-balance or closed ATAs for a normal wallet can drop that owner from cleanedHolderUniverse and concentration numerators despite positive remaining balance.",
+      "requiredFix": "When an owner has any positive included_holder ATA: (a) keep owner included with sum of positive included amounts only, OR (b) mark owner unresolved_exclusion_candidate with manual-review issue — never silent whole-owner exclude for zero/closed/invalid siblings."
+    },
+    {
+      "id": "F-MIXED-002",
+      "severity": "blocking",
+      "title": "Unparseable mixed owners are silently excluded instead of unresolved/manual review",
+      "evidence": [
+        "pos+invalid probe: mixed-owner cleaningClass=invalid_or_unparseable, unresolvedUniverse.ownerCount=0",
+        "No issue path forces unresolved_exclusion_candidate for include+invalid mix"
+      ],
+      "impact": "Violates fail-closed manual-review requirement for unparseable mixed owners.",
+      "requiredFix": "include + invalid_or_unparseable on same owner → unresolved_exclusion_candidate + whetherManualReviewRequired=true; do not place positive residual solely in excludedInfrastructureUniverse."
+    },
+    {
+      "id": "F-POOL-SCOPE-001",
+      "severity": "blocking",
+      "title": "Incomplete pool/liquidity exclusion coverage still confirms holder concentration as judgment-eligible",
+      "evidence": [
+        "gap-matrix.md: almost no infrastructure exclusions on live OK CAs; pool accounts stay included by design",
+        "OK CA H3Gtw…: judgmentEligible=true, holderUniverses.provenance.verificationStatus=confirmed, top10Concentration ratio=0.479158 completeness=1",
+        "judgmentEligible only gates pagination+supply residual+identity; no pool-exclusion-coverage signal"
+      ],
+      "impact": "Owner aggregation and supply accounting may be complete, but Top10/Top20 can be read as cleaned investor concentration without pool exclusion evidence.",
+      "requiredFix": "Split states: accounting verification may remain complete when residual=0 and pages complete; holder-risk / concentration verificationStatus must stay unverified or explicitly scoped (e.g. accounting_only_no_pool_exclusion) until pool/liquidity exclusion coverage is first-hand complete."
+    },
+    {
+      "id": "F-WRITESET-001",
+      "severity": "advisory",
+      "title": "Branch contains paths outside declared pilot write_set",
+      "evidence": [
+        ".gitignore",
+        "README.md",
+        "docs/handoffs/STATUS_SYSTEM_20260730.md"
+      ],
+      "impact": "Does not break cleaning semantics; reduces write-set exactness.",
+      "requiredFix": "Optional: amend task write_set or move handoff docs to a separate docs task."
+    },
+    {
+      "id": "F-TEST-GAP-001",
+      "severity": "advisory",
+      "title": "Offline tests do not cover forced mixed-owner cases",
+      "evidence": [
+        "test/domain/rules/holder-data-cleaning.test.ts has 12 cases; none assert include+zero / include+closed / include+invalid on same owner"
+      ],
+      "impact": "Regression risk for F-MIXED-001/002 remains open until tests added in repair.",
+      "requiredFix": "Add the five forced mixed-owner cases as non-vacuous regressions in repair."
+    }
+  ],
+  "passedChecks": [
+    {
+      "id": "P-PARTIAL-GATE",
+      "title": "PARTIAL CAs are not promoted to confirmed holder judgment",
+      "detail": "H1adb / Ce2 / 9Ztb: verificationStatus=unverified, top10 ratio null or completeness 0, judgmentEvidence status=unverified"
+    },
+    {
+      "id": "P-LIVE-COUNTS",
+      "title": "Scrubbed Live batch matches 6 CA / 3 OK / 3 PARTIAL / 30 Helius requests",
+      "detail": "batch-summary.json okCount=3 partialCount=3 rejectedCount=0 totalHeliusRequests=30"
+    },
+    {
+      "id": "P-LEAK-SCAN",
+      "title": "No credential, full endpoint with key, raw header, or raw payload leakage in tracked pilot reports",
+      "detail": "Pattern scan PASS on harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/**; public CA/holder addresses expected for public pilot"
+    },
+    {
+      "id": "P-ACCOUNTING-IDENTITY",
+      "title": "Enumerated = included + excluded + unresolved identity covered offline",
+      "detail": "cleanHolderUniverse accounting.identity and unit test 9"
+    },
+    {
+      "id": "P-REPLAY-HASH",
+      "title": "Deterministic offline replay hash for identical scrubbed input",
+      "detail": "test 12 replayCleaningHash / hashStable"
+    },
+    {
+      "id": "P-OFFLINE-GATES",
+      "title": "typecheck / tests / build pass offline",
+      "detail": "tsc --noEmit PASS; tests 389 pass / 1 skipped / 0 fail; build PASS"
+    }
+  ],
+  "minimalRepairWriteSet": [
+    "src/domain/rules/holder-data-cleaning.ts",
+    "test/domain/rules/holder-data-cleaning.test.ts",
+    "src/domain/mapping/map-holder-cleaning-to-ca-scan.ts",
+    "test/application/live/solana-ca-real-data-cleaning-pilot.test.ts"
+  ],
+  "ownerGatesBlockedUntilRepairGreen": [
+    "Merge CA pilot to main",
+    "Open SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+    "Open consecutive three batches of 5–10 manual CAs for stability validation"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001",
+  "external_inputs": [
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_addresses.txt",
+      "sha256": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+      "handling": "read only offline; plaintext never committed"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_address_labels.json",
+      "sha256": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+      "handling": "read only offline; plaintext never committed"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-full-1433-live-rerun-002/normalized_wallet_profiles.json",
+      "sha256": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+      "handling": "immutable rerun-002 normalized profiles; offline replay only"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-full-1433-live-rerun-002/summary.json",
+      "sha256": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D",
+      "handling": "immutable rerun-002 summary; offline replay only"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/derived/wallet-intelligence-master-clean-rank-001/candidate_shortlist.json",
+      "sha256": "2E7CF4371983B6F10822A9D192F669A9E6DEA34D021A666159CA03C4742A011D",
+      "handling": "prior candidate union for destiny mapping; private local only"
+    }
+  ],
+  "selection": {
+    "rule": "all 1433 valid unique Solana addresses in original sol_addresses.txt order",
+    "count": 1433
+  },
+  "output_directory": "C:/Users/10639/chainfm_out/sol/derived/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001",
+  "secondary_output_directory": "C:/Users/10639/chainfm_out/sol/derived/SOL-WALLET-CLEAN-RANK-REPLAY-UNDER-REPAIR-003-RULES-001-rerun2"
+}
