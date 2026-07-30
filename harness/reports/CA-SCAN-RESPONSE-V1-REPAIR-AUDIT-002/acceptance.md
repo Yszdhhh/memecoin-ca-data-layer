@@ -4,9 +4,9 @@
 
 **GREEN**
 
-Date: 2026-07-30  
-Role: independent offline auditor  
-Failed-audit baseline: `320a259ae514a1047e22fa8c1087a7f78d0f1e18`  
+Date: 2026-07-30
+Role: independent offline auditor
+Failed-audit baseline: `320a259ae514a1047e22fa8c1087a7f78d0f1e18`
 Sealed repair tip: `aced6461fbe571a84dceeda6cd15fffb4c0e2028`
 
 Repair 002 closes the sole P1 blocker from audit 001 without regressing the previously GREEN CaScanResponse v1 findings.

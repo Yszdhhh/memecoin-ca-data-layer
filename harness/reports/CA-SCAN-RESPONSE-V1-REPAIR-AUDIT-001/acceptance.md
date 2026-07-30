@@ -4,9 +4,9 @@
 
 **FAIL**
 
-Date: 2026-07-30  
-Role: independent auditor  
-Sealed range: `5a76fb3dfcbb973a624594d055561beb18f3c4ea..5a9a6e9f3b9323dfa8494c2208df02af670dae69`  
+Date: 2026-07-30
+Role: independent auditor
+Sealed range: `5a76fb3dfcbb973a624594d055561beb18f3c4ea..5a9a6e9f3b9323dfa8494c2208df02af670dae69`
 Audit worktree: `G:\链上战壕-codex-ca-scan-response-v1-001`
 
 The repair closes the previously reported shallow-structure, required nullable-key, malformed-array, timestamp, Tier-B confirmation, provider-boundary, Harness-doctor, and whitespace defects. It does **not** fully close the zero-denominator/no-fake-precision requirement, so the sealed repair cannot be accepted as GREEN.

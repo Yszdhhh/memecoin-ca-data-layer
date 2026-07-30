@@ -13,7 +13,7 @@
 | Workspace State | Clean |
 | Final Audit Verdict | **`GREEN`** (Completion Evidence Repair audit passed) |
 
-> **Audit Scope Notice:**  
+> **Audit Scope Notice:**
 > **`GREEN`** indicates exclusively that the Post-Delivery Evidence Repair audit for completion evidence and SHA role accounting passed all Harness compliance checks. It does **NOT** indicate parser repair, Signed Holdings recovery, full cursor pagination recovery, cumulative PnL recovery, or authorization for 100/1,433 batch re-runs.
 
 ---
@@ -104,5 +104,5 @@ This audit task modified **only** its allowlisted write set:
 
 ## 6. Audit Verdict
 
-Final Audit Verdict: **`GREEN`**  
+Final Audit Verdict: **`GREEN`**
 The Completion Evidence Repair task `HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001` passed all audit compliance checks.

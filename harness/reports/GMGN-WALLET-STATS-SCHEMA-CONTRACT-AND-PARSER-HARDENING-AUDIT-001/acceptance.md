@@ -1,10 +1,10 @@
 # Independent Read-Only Audit Acceptance Report
 
-**Task ID:** `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001`  
-**Harness Agent ID:** `auditor-gmgn-wallet-stats-schema-contract-and-parser-hardening-001`  
-**Takeover Baseline SHA:** `55ffe8d77733683bda81f0d190d27a1431830631`  
-**Audited Implementation SHA:** `55ffe8d77733683bda81f0d190d27a1431830631`  
-**Audit Role:** Independent Read-Only Auditor  
+**Task ID:** `GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001`
+**Harness Agent ID:** `auditor-gmgn-wallet-stats-schema-contract-and-parser-hardening-001`
+**Takeover Baseline SHA:** `55ffe8d77733683bda81f0d190d27a1431830631`
+**Audited Implementation SHA:** `55ffe8d77733683bda81f0d190d27a1431830631`
+**Audit Role:** Independent Read-Only Auditor
 
 ---
 

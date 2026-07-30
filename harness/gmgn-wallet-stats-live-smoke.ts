@@ -114,5 +114,3 @@ function escapeCell(value: string): string {
 }
 
 void main();
-
-

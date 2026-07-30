@@ -4,9 +4,9 @@
 
 **GREEN**
 
-Date: 2026-07-30  
-Audit baseline: `5d8e1ef`  
-Sealed repair tip: `ccaff1c576c5fd5e612369cc1ee77956ea58f0d1`  
+Date: 2026-07-30
+Audit baseline: `5d8e1ef`
+Sealed repair tip: `ccaff1c576c5fd5e612369cc1ee77956ea58f0d1`
 Repair implementation commit: `2b9cbdc`
 
 Repair 003 closes every blocking finding recorded by `SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-002`. The audit reviewed the implementation semantics and synthetic regression coverage in the sealed range, then ran the declared acceptance commands strictly offline.
