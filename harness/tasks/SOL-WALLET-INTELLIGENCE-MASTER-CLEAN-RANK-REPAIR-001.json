@@ -1,0 +1,66 @@
+﻿{
+    "schema_version":  "task-v1",
+    "task_id":  "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001",
+    "title":  "Repair audited wallet intelligence data quality and ranking defects",
+    "tier":  "T2",
+    "role":  "implementer",
+    "chain":  "solana",
+    "layer":  "cold_path",
+    "status":  "DONE",
+    "objective":  "Repair every code-level blocking defect aligned by the independent SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001 review: explicit win-rate percent semantics, strict 7d/30d period isolation, four-way profit availability counts, quality-tier caps for incomplete provider data, separate review and alpha-candidate ranks and shortlists, deterministic replay evidence, redacted validation diagnostics, and generated acceptance metrics. Remain pure offline and do not perform the separately gated architecture reorganization.",
+    "dependencies":  [
+                         "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001"
+                     ],
+    "inputs":  [
+                   "PROJECT_REQUIRED_READING.md",
+                   "PROJECT_CONSTITUTION.md",
+                   "PROJECT_ARCHITECTURE.md",
+                   "PROJECT_OPERATING_PLAYBOOK.md",
+                   "KNOWN_LIMITATIONS.md",
+                   "OWNER_DECISIONS_NEEDED.md",
+                   "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001/acceptance.md",
+                   "src/domain/rules/wallet-data-quality.ts",
+                   "src/application/wallet-intelligence/master-table-builder.ts",
+                   "test/application/wallet-intelligence/master-table-builder.test.ts"
+               ],
+    "write_set":  [
+                      "src/domain/rules/wallet-data-quality.ts",
+                      "src/application/wallet-intelligence/master-table-builder.ts",
+                      "test/domain/rules/wallet-data-quality.test.ts",
+                      "test/application/wallet-intelligence/master-table-builder.test.ts",
+                      "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001.json",
+                      "harness/dispatches/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001.md",
+                      "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001/acceptance.md"
+                  ],
+    "forbidden_actions":  [
+                              "Do not issue network, provider, RPC, GMGN CLI, Helius, or other third-party requests.",
+                              "Do not read credentials, private keys, proxy URLs, plaintext wallet labels, or live provider payloads.",
+                              "Do not rerun the private 1,433-wallet batch or modify its external output directory.",
+                              "Do not promote borrowed GMGN metrics into verified chain PnL, confirmed smart money, or formal Alpha tiers.",
+                              "Do not perform the separately gated repository/package architecture migration, provider additions, database changes, CI setup, or jobs/experiments extraction.",
+                              "Do not modify files outside this task write_set."
+                          ],
+    "deliverables":  [
+                         "src/domain/rules/wallet-data-quality.ts",
+                         "src/application/wallet-intelligence/master-table-builder.ts",
+                         "test/domain/rules/wallet-data-quality.test.ts",
+                         "test/application/wallet-intelligence/master-table-builder.test.ts",
+                         "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001/acceptance.md"
+                     ],
+    "acceptance_commands":  [
+                                "npm run harness:task -- validate harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-001.json",
+                                "npm run harness:doctor",
+                                "npm run typecheck",
+                                "npm test",
+                                "npm run build",
+                                "git diff --check"
+                            ],
+    "budget":  {
+                   "network_requests":  0,
+                   "provider_requests":  0,
+                   "gmgn_cli_invocations":  0,
+                   "helius_requests":  0,
+                   "credential_reads":  0,
+                   "address_processing":  0
+               }
+}

@@ -135,7 +135,7 @@ test("3. Missing values stay null, explicit 0 preserved as 0, div zero returns n
   assert.equal(cand.borrowedLeadTier, "UNQUALIFIED");
 });
 
-test("4. Accounting residual calculation and anomaly detection", () => {
+test("4. Accounting residual is observational and partial data cannot be DQ-A", () => {
   const s7d: GmgnPeriodStatsInput = {
     status: "PARTIAL",
     completeness: 0.8,
@@ -166,8 +166,9 @@ test("4. Accounting residual calculation and anomaly detection", () => {
   };
 
   const dq = evaluateWalletDataQuality(s7d, s30d);
-  assert.ok(dq.anomalyFlags.some((a) => a.code.includes("ACCOUNTING_RESIDUAL_MISMATCH")));
-  assert.ok(dq.internalConsistencyScore < 100);
+  assert.ok(dq.anomalyFlags.some((a) => a.code.includes("ACCOUNTING_RESIDUAL_OBSERVED")));
+  assert.equal(dq.internalConsistencyScore, 100);
+  assert.notEqual(dq.dataQualityTier, "DQ-A");
 });
 
 test("5. Small sample high win-rate demotion and candidate tiering", () => {
@@ -284,14 +285,14 @@ test("7. Full synthetic master table builder execution", async () => {
         completeness: 1.0,
         aggregates: {
           periodPnl: 0.2,
-          realizedProfit: i * 50,
+          realizedProfit: i === 0 ? null : i === 1 ? 1000 : i * 50,
           realizedProfitPnl: 0.2,
           winRate: 65,
           tradeCount: 40,
           buyCount: 20,
           sellCount: 20,
           boughtCost: 400,
-          soldIncome: 450,
+          soldIncome: i === 1 ? 0 : 450,
           lastActiveTimestamp: 1700000000,
           tokenNum: 5,
         },
@@ -328,6 +329,11 @@ test("7. Full synthetic master table builder execution", async () => {
     assert.equal(result.metrics.matched7dCount, 1433);
     assert.equal(result.metrics.matched30dCount, 1433);
     assert.ok(result.metrics.candidateUnionCount <= 20);
+    assert.equal(result.metrics.unavailableProfitCount30d, 1);
+    assert.equal(
+      result.metrics.positiveProfitCount30d + result.metrics.zeroProfitCount30d + result.metrics.negativeProfitCount30d + result.metrics.unavailableProfitCount30d,
+      1433
+    );
 
     // Verify output files exist
     assert.ok(fs.existsSync(path.join(fix.outputDir, "wallet_master_private.csv")));
@@ -354,6 +360,53 @@ test("7. Full synthetic master table builder execution", async () => {
 
     assert.equal(result.outputHashes.wallet_master_private_csv, result2.outputHashes.wallet_master_private_csv);
     assert.equal(result.outputHashes.candidate_shortlist_csv, result2.outputHashes.candidate_shortlist_csv);
+    assert.equal(result.outputHashes.replay_manifest_json, result2.outputHashes.replay_manifest_json);
+
+    const masterRows = fs.readFileSync(path.join(fix.outputDir, "wallet_master_private.jsonl"), "utf8").trim().split("\n").map((line) => JSON.parse(line));
+    const unavailable = masterRows.find((row) => row.gmgn30dRealizedProfit === null);
+    assert.equal(unavailable.borrowedCompositeLeadScore, null);
+    assert.equal(unavailable.alphaCandidateRank, null);
+    const review = masterRows.find((row) => row.manualReviewRequired);
+    assert.ok(review.reviewPriorityRank !== null);
+    assert.equal(review.alphaCandidateRank, null);
+
+    const shortlist = JSON.parse(fs.readFileSync(path.join(fix.outputDir, "candidate_shortlist.json"), "utf8"));
+    assert.ok(shortlist.candidate_union.every((row: any) => row.shortlistType === "ALPHA_CANDIDATE"));
+    assert.ok(shortlist.review_priority_union.every((row: any) => row.shortlistType === "REVIEW_PRIORITY"));
+  } finally {
+    fix.cleanup();
+  }
+});
+
+
+test("8. Invalid-address diagnostics redact the raw input", async () => {
+  const fix = makeSyntheticFixtureDir();
+  try {
+    const secretInvalidValue = "not-a-solana-address-secret";
+    const txtContent = `${secretInvalidValue}\n`;
+    const jsonContent = "[]";
+    fs.writeFileSync(path.join(fix.inputDir, "sol_addresses.txt"), txtContent, "utf8");
+    fs.writeFileSync(path.join(fix.inputDir, "sol_address_labels.json"), jsonContent, "utf8");
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"), "[]", "utf8");
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "summary.json"), "{}", "utf8");
+
+    await assert.rejects(
+      buildWalletIntelligenceMasterTable({
+        inputDir: fix.inputDir,
+        gmgnOutputDir: fix.gmgnOutputDir,
+        outputDir: fix.outputDir,
+        expectedHashes: {
+          solAddressesTxtHash: computeSha256(txtContent),
+          solAddressLabelsJsonHash: computeSha256(jsonContent),
+        },
+      }),
+      (error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        assert.match(message, /raw value redacted/);
+        assert.equal(message.includes(secretInvalidValue), false);
+        return true;
+      }
+    );
   } finally {
     fix.cleanup();
   }

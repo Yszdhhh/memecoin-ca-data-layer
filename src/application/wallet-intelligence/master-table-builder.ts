@@ -114,6 +114,8 @@ export interface WalletMasterRecord {
   borrowedDataQualityScore: number;
   borrowedCompositeLeadScore: number | null;
   borrowedLeadRank: number | null;
+  alphaCandidateRank: number | null;
+  reviewPriorityRank: number | null;
   borrowedLeadTier: BorrowedCandidateScores["borrowedLeadTier"];
 
   // G. First-Hand Verification Placeholders (ALL NULL)
@@ -151,6 +153,7 @@ export interface WalletMasterRecord {
 }
 
 export interface CandidateShortlistEntry {
+  shortlistType: "ALPHA_CANDIDATE" | "REVIEW_PRIORITY";
   candidateGroup: string;
   groupRank: number;
   walletAddress: string;
@@ -194,7 +197,9 @@ export interface MasterTableBuilderResult {
     positiveProfitCount30d: number;
     zeroProfitCount30d: number;
     negativeProfitCount30d: number;
+    unavailableProfitCount30d: number;
     candidateUnionCount: number;
+    reviewPriorityUnionCount: number;
   };
   outputFiles: Record<string, string>;
   outputHashes: Record<string, string>;
@@ -211,7 +216,7 @@ export function computeFingerprint(addr: string): string {
 export async function buildWalletIntelligenceMasterTable(
   options: MasterTableBuilderOptions
 ): Promise<MasterTableBuilderResult> {
-  const { inputDir, gmgnOutputDir, outputDir, evalTimeMs = Date.now(), expectedHashes } = options;
+  const { inputDir, gmgnOutputDir, outputDir, evalTimeMs: requestedEvalTimeMs, expectedHashes } = options;
 
   const txtPath = path.join(inputDir, "sol_addresses.txt");
   const jsonPath = path.join(inputDir, "sol_address_labels.json");
@@ -248,7 +253,7 @@ export async function buildWalletIntelligenceMasterTable(
   for (const line of txtLines) {
     const norm = normalizeSolanaAddress(line);
     if (!norm) {
-      throw new Error(`Invalid Base58 Solana address in input: ${line}`);
+      throw new Error(`Invalid Base58 Solana address at non-empty input line ${validUniqueAddresses.length + 1}; raw value redacted`);
     }
     if (!seenAddresses.has(norm)) {
       seenAddresses.add(norm);
@@ -286,6 +291,12 @@ export async function buildWalletIntelligenceMasterTable(
   if (!Array.isArray(rawProfiles)) {
     throw new Error("normalized_wallet_profiles.json must contain an array");
   }
+
+  const deterministicInputTimeMs = rawProfiles.reduce((latest: number, record: any) => {
+    const parsed = typeof record?.fetchedAt === "string" ? Date.parse(record.fetchedAt) : Number.NaN;
+    return Number.isFinite(parsed) ? Math.max(latest, parsed) : latest;
+  }, 0);
+  const evalTimeMs = requestedEvalTimeMs ?? deterministicInputTimeMs;
 
   const profiles7d = new Map<string, any>();
   const profiles30d = new Map<string, any>();
@@ -387,7 +398,7 @@ export async function buildWalletIntelligenceMasterTable(
 
     // Evaluate Quality & Candidates
     const dq = evaluateWalletDataQuality(s7d, s30d, evalTimeMs);
-    const profitPct30d = getPercentile(s30d.realizedProfit ?? s7d.realizedProfit);
+    const profitPct30d = getPercentile(s30d.realizedProfit);
     const candScores = calculateBorrowedCandidateScores(s7d, s30d, dq, profitPct30d);
 
     // Derived metrics (strictly checking zero denominators / missing)
@@ -438,18 +449,21 @@ export async function buildWalletIntelligenceMasterTable(
     }
 
     const fetchedAtStr = rec30d?.fetchedAt ?? rec7d?.fetchedAt ?? null;
-    const dataAgeHours = fetchedAtStr ? Math.round(((evalTimeMs - new Date(fetchedAtStr).getTime()) / 3600000) * 10) / 10 : null;
+    const fetchedAtMs = typeof fetchedAtStr === "string" ? Date.parse(fetchedAtStr) : Number.NaN;
+    const dataAgeHours = Number.isFinite(fetchedAtMs)
+      ? Math.round(((evalTimeMs - fetchedAtMs) / 3_600_000) * 10) / 10
+      : null;
 
     // Candidate Tags & Analyst Note
     const candidateTags: string[] = [];
     if (s30d.realizedProfit !== null && s30d.realizedProfit > 5000) candidateTags.push("high_profit_candidate");
-    if (s30d.winRate !== null && s30d.winRate >= 70 && (act30 ?? 0) >= 5) candidateTags.push("high_win_rate_candidate");
-    if ((act30 ?? 0) >= 50) candidateTags.push("active_trader_candidate");
+    if (s30d.winRate !== null && s30d.winRate >= 70 && (act30 ?? 0) >= 20) candidateTags.push("high_win_rate_candidate");
+    if ((act30 ?? 0) >= 20 && (act30 ?? 0) <= 300) candidateTags.push("bounded_activity_candidate");
     if ((profitablePeriodCount ?? 0) === 2) candidateTags.push("persistent_profit_candidate");
     if ((s30d.realizedProfit ?? 0) > 10000 && (act30 ?? 0) < 5) candidateTags.push("low_activity_high_profit_outlier");
-    if ((act30 ?? 0) > 500) candidateTags.push("high_frequency_candidate");
-    if (dq.anomalyFlags.some((a) => a.code.includes("ACCOUNTING_RESIDUAL_MISMATCH") || a.code.includes("ZERO_INCOME"))) {
-      candidateTags.push("accounting_mismatch_candidate");
+    if ((act30 ?? 0) > 500) candidateTags.push("high_frequency_review");
+    if (dq.anomalyFlags.some((a) => a.code.includes("ZERO_INCOME"))) {
+      candidateTags.push("provider_semantics_review");
     }
     if (s7d.status === "PARTIAL" || s30d.status === "PARTIAL") candidateTags.push("provider_data_incomplete");
     candidateTags.push("first_hand_verification_required");
@@ -542,7 +556,9 @@ export async function buildWalletIntelligenceMasterTable(
       borrowedConsistencyLeadScore: candScores.borrowedConsistencyLeadScore,
       borrowedDataQualityScore: candScores.borrowedDataQualityScore,
       borrowedCompositeLeadScore: candScores.borrowedCompositeLeadScore,
-      borrowedLeadRank: null, // assigned after sorting
+      borrowedLeadRank: null, // compatibility alias of alphaCandidateRank
+      alphaCandidateRank: null,
+      reviewPriorityRank: null,
       borrowedLeadTier: candScores.borrowedLeadTier,
 
       firstHandVerificationStatus: null,
@@ -578,146 +594,125 @@ export async function buildWalletIntelligenceMasterTable(
     });
   }
 
-  // Sort Master Table by Section XI Default Order:
-  // 1. manualReviewRequired DESC
-  // 2. borrowedCompositeLeadScore DESC (nulls last)
-  // 3. gmgn30dRealizedProfit DESC (nulls last)
-  // 4. walletFingerprint ASC
-  records.sort((a, b) => {
-    if (a.manualReviewRequired !== b.manualReviewRequired) {
-      return a.manualReviewRequired ? -1 : 1;
-    }
-    const scoreA = a.borrowedCompositeLeadScore ?? -Infinity;
-    const scoreB = b.borrowedCompositeLeadScore ?? -Infinity;
-    if (scoreA !== scoreB) return scoreB - scoreA;
+  const alphaEligible = (record: WalletMasterRecord): boolean =>
+    !record.manualReviewRequired &&
+    record.gmgn30dStatus === "MAPPED" &&
+    record.gmgn30dRealizedProfit !== null &&
+    record.borrowedCompositeLeadScore !== null &&
+    (record.dataQualityTier === "DQ-A" || record.dataQualityTier === "DQ-B") &&
+    !record.gmgn30dWarningCodes.some((code) => code.includes("period_unverified"));
 
-    const profA = a.gmgn30dRealizedProfit ?? -Infinity;
-    const profB = b.gmgn30dRealizedProfit ?? -Infinity;
-    if (profA !== profB) return profB - profA;
-
-    return a.walletFingerprint.localeCompare(b.walletFingerprint);
+  const alphaRanked = records.filter(alphaEligible).sort((a, b) => {
+    const scoreDelta = (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity);
+    if (scoreDelta !== 0) return scoreDelta;
+    const profitDelta = (b.gmgn30dRealizedProfit ?? -Infinity) - (a.gmgn30dRealizedProfit ?? -Infinity);
+    return profitDelta !== 0 ? profitDelta : a.walletFingerprint.localeCompare(b.walletFingerprint);
+  });
+  alphaRanked.forEach((record, index) => {
+    record.alphaCandidateRank = index + 1;
+    record.borrowedLeadRank = index + 1;
   });
 
-  // Assign borrowedLeadRank after sorting
-  for (let idx = 0; idx < records.length; idx++) {
-    records[idx]!.borrowedLeadRank = idx + 1;
-  }
+  const reviewRanked = records.filter((record) => record.manualReviewRequired).sort((a, b) => {
+    const severity = (record: WalletMasterRecord): number =>
+      record.anomalyFlags.reduce((score, code) => score + (code.includes("UNAVAILABLE") || code.includes("ZERO_INCOME") ? 3 : 1), 0);
+    const severityDelta = severity(b) - severity(a);
+    if (severityDelta !== 0) return severityDelta;
+    const qualityDelta = a.dataQualityScore - b.dataQualityScore;
+    return qualityDelta !== 0 ? qualityDelta : a.walletFingerprint.localeCompare(b.walletFingerprint);
+  });
+  reviewRanked.forEach((record, index) => { record.reviewPriorityRank = index + 1; });
 
-  // Generate Candidate Shortlist Groups
-  const rawProfitTop5 = [...records]
+  // Preserve source order in the master export. Ranking semantics live only in the two explicit rank columns.
+  records.sort((a, b) => a.sourceOrder - b.sourceOrder);
+
+  const rawProfitTop5 = alphaRanked
+    .slice()
     .sort((a, b) => (b.gmgn30dRealizedProfit ?? -Infinity) - (a.gmgn30dRealizedProfit ?? -Infinity))
     .slice(0, 5);
-
-  const qualityAdjustedTop5 = [...records]
-    .sort((a, b) => (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity))
+  const qualityAdjustedTop5 = alphaRanked.slice(0, 5);
+  const activeConsistentTop5 = alphaRanked
+    .filter((record) => (record.activityCount30d ?? 0) >= 20 && (record.activityCount30d ?? 0) <= 300)
+    .sort((a, b) => b.internalConsistencyScore - a.internalConsistencyScore || (a.alphaCandidateRank ?? Infinity) - (b.alphaCandidateRank ?? Infinity))
     .slice(0, 5);
-
-  const activeConsistentTop5 = [...records]
-    .filter((r) => r.activityCount30d !== null && r.activityCount30d >= 20)
-    .sort((a, b) => (b.internalConsistencyScore * (b.activityCount30d ?? 0)) - (a.internalConsistencyScore * (a.activityCount30d ?? 0)))
+  const highWinRateTop5 = alphaRanked
+    .filter((record) => (record.activityCount30d ?? 0) >= 20 && record.gmgn30dWinRate !== null)
+    .sort((a, b) => (b.gmgn30dWinRate ?? 0) - (a.gmgn30dWinRate ?? 0) || (a.alphaCandidateRank ?? Infinity) - (b.alphaCandidateRank ?? Infinity))
     .slice(0, 5);
-
-  const highWinRateTop5 = [...records]
-    .filter((r) => (r.activityCount30d ?? 0) >= 5 && r.gmgn30dWinRate !== null)
-    .sort((a, b) => (b.gmgn30dWinRate ?? 0) - (a.gmgn30dWinRate ?? 0))
+  const labelContextTop5 = alphaRanked
+    .filter((record) => record.existingLabels.length > 0 || record.existingNote.length > 0)
     .slice(0, 5);
-
-  const anomalyVerificationTop5 = [...records]
-    .filter((r) => r.anomalyFlags.length > 0 && (r.gmgn30dRealizedProfit ?? 0) > 1000)
-    .sort((a, b) => (b.gmgn30dRealizedProfit ?? 0) - (a.gmgn30dRealizedProfit ?? 0))
-    .slice(0, 5);
-
-  const labelPriorityTop5 = [...records]
-    .filter((r) => r.existingLabels.length > 0 || r.existingNote.length > 0)
-    .sort((a, b) => (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity))
-    .slice(0, 5);
+  const reviewPriorityTop5 = reviewRanked.slice(0, 5);
 
   const shortlistEntries: CandidateShortlistEntry[] = [];
-
-  const addShortlistGroup = (groupName: string, groupList: WalletMasterRecord[]) => {
-    for (let rIdx = 0; rIdx < groupList.length; rIdx++) {
-      const r = groupList[rIdx]!;
+  const addShortlistGroup = (
+    shortlistType: CandidateShortlistEntry["shortlistType"],
+    groupName: string,
+    groupList: WalletMasterRecord[]
+  ): void => {
+    groupList.forEach((record, index) => {
       shortlistEntries.push({
+        shortlistType,
         candidateGroup: groupName,
-        groupRank: rIdx + 1,
-        walletAddress: r.walletAddress,
-        walletFingerprint: r.walletFingerprint,
-        existingLabels: r.existingLabels,
-        existingNote: r.existingNote,
-        candidateTags: r.candidateTags,
-        gmgn7dRealizedProfit: r.gmgn7dRealizedProfit,
-        gmgn30dRealizedProfit: r.gmgn30dRealizedProfit,
-        gmgn7dWinRate: r.gmgn7dWinRate,
-        gmgn30dWinRate: r.gmgn30dWinRate,
-        activityCount7d: r.activityCount7d,
-        activityCount30d: r.activityCount30d,
-        gmgn7dTokenNum: r.gmgn7dTokenNum,
-        gmgn30dTokenNum: r.gmgn30dTokenNum,
-        pairCoverage: r.pairCoverage,
-        dataQualityScore: r.dataQualityScore,
-        dataQualityTier: r.dataQualityTier,
-        internalConsistencyScore: r.internalConsistencyScore,
-        borrowedCompositeLeadScore: r.borrowedCompositeLeadScore,
-        anomalyFlags: r.anomalyFlags,
-        candidateReasonCodes: [groupName, ...r.candidateTags],
+        groupRank: index + 1,
+        walletAddress: record.walletAddress,
+        walletFingerprint: record.walletFingerprint,
+        existingLabels: record.existingLabels,
+        existingNote: record.existingNote,
+        candidateTags: record.candidateTags,
+        gmgn7dRealizedProfit: record.gmgn7dRealizedProfit,
+        gmgn30dRealizedProfit: record.gmgn30dRealizedProfit,
+        gmgn7dWinRate: record.gmgn7dWinRate,
+        gmgn30dWinRate: record.gmgn30dWinRate,
+        activityCount7d: record.activityCount7d,
+        activityCount30d: record.activityCount30d,
+        gmgn7dTokenNum: record.gmgn7dTokenNum,
+        gmgn30dTokenNum: record.gmgn30dTokenNum,
+        pairCoverage: record.pairCoverage,
+        dataQualityScore: record.dataQualityScore,
+        dataQualityTier: record.dataQualityTier,
+        internalConsistencyScore: record.internalConsistencyScore,
+        borrowedCompositeLeadScore: record.borrowedCompositeLeadScore,
+        anomalyFlags: record.anomalyFlags,
+        candidateReasonCodes: [groupName, ...record.candidateTags],
         firstHandVerificationStatus: null,
-        analystNote: r.analystNote,
+        analystNote: record.analystNote,
       });
-    }
+    });
   };
 
-  addShortlistGroup("raw_gmgn_profit_top5", rawProfitTop5);
-  addShortlistGroup("quality_adjusted_top5", qualityAdjustedTop5);
-  addShortlistGroup("active_consistent_top5", activeConsistentTop5);
-  addShortlistGroup("high_win_rate_review_top5", highWinRateTop5);
-  addShortlistGroup("anomaly_verification_top5", anomalyVerificationTop5);
-  addShortlistGroup("label_priority_top5", labelPriorityTop5);
+  addShortlistGroup("ALPHA_CANDIDATE", "raw_gmgn_profit_top5", rawProfitTop5);
+  addShortlistGroup("ALPHA_CANDIDATE", "quality_adjusted_top5", qualityAdjustedTop5);
+  addShortlistGroup("ALPHA_CANDIDATE", "active_consistent_top5", activeConsistentTop5);
+  addShortlistGroup("ALPHA_CANDIDATE", "high_win_rate_top5", highWinRateTop5);
+  addShortlistGroup("ALPHA_CANDIDATE", "label_context_top5", labelContextTop5);
+  addShortlistGroup("REVIEW_PRIORITY", "review_priority_top5", reviewPriorityTop5);
 
-  // candidate_union (deduplicated across groups, max 20)
-  const unionMap = new Map<string, CandidateShortlistEntry>();
-  for (const entry of shortlistEntries) {
-    if (!unionMap.has(entry.walletAddress)) {
-      unionMap.set(entry.walletAddress, {
-        candidateGroup: "candidate_union",
-        groupRank: unionMap.size + 1,
-        walletAddress: entry.walletAddress,
-        walletFingerprint: entry.walletFingerprint,
-        existingLabels: entry.existingLabels,
-        existingNote: entry.existingNote,
-        candidateTags: entry.candidateTags,
-        gmgn7dRealizedProfit: entry.gmgn7dRealizedProfit,
-        gmgn30dRealizedProfit: entry.gmgn30dRealizedProfit,
-        gmgn7dWinRate: entry.gmgn7dWinRate,
-        gmgn30dWinRate: entry.gmgn30dWinRate,
-        activityCount7d: entry.activityCount7d,
-        activityCount30d: entry.activityCount30d,
-        gmgn7dTokenNum: entry.gmgn7dTokenNum,
-        gmgn30dTokenNum: entry.gmgn30dTokenNum,
-        pairCoverage: entry.pairCoverage,
-        dataQualityScore: entry.dataQualityScore,
-        dataQualityTier: entry.dataQualityTier,
-        internalConsistencyScore: entry.internalConsistencyScore,
-        borrowedCompositeLeadScore: entry.borrowedCompositeLeadScore,
-        anomalyFlags: entry.anomalyFlags,
-        candidateReasonCodes: [entry.candidateGroup, ...entry.candidateTags],
-        firstHandVerificationStatus: null,
-        analystNote: entry.analystNote,
-      });
-    } else {
-      const existing = unionMap.get(entry.walletAddress)!;
-      if (!existing.candidateReasonCodes.includes(entry.candidateGroup)) {
-        existing.candidateReasonCodes.push(entry.candidateGroup);
+  const buildUnion = (
+    shortlistType: CandidateShortlistEntry["shortlistType"],
+    unionName: string,
+    maxSize: number
+  ): CandidateShortlistEntry[] => {
+    const union = new Map<string, CandidateShortlistEntry>();
+    for (const entry of shortlistEntries.filter((item) => item.shortlistType === shortlistType)) {
+      const existing = union.get(entry.walletAddress);
+      if (existing) {
+        if (!existing.candidateReasonCodes.includes(entry.candidateGroup)) existing.candidateReasonCodes.push(entry.candidateGroup);
+        continue;
       }
+      union.set(entry.walletAddress, { ...entry, candidateGroup: unionName, groupRank: union.size + 1, candidateReasonCodes: [entry.candidateGroup, ...entry.candidateTags] });
     }
-  }
+    const values = Array.from(union.values()).sort((a, b) =>
+      shortlistType === "ALPHA_CANDIDATE"
+        ? (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity)
+        : a.groupRank - b.groupRank
+    ).slice(0, maxSize);
+    values.forEach((entry, index) => { entry.groupRank = index + 1; });
+    return values;
+  };
 
-  const candidateUnionList = Array.from(unionMap.values())
-    .sort((a, b) => (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity))
-    .slice(0, 20);
-
-  for (let idx = 0; idx < candidateUnionList.length; idx++) {
-    candidateUnionList[idx]!.groupRank = idx + 1;
-  }
+  const candidateUnionList = buildUnion("ALPHA_CANDIDATE", "candidate_union", 20);
+  const reviewPriorityUnionList = buildUnion("REVIEW_PRIORITY", "review_priority_union", 20);
 
   // Write outputs to target outputDir
   fs.mkdirSync(outputDir, { recursive: true });
@@ -770,27 +765,30 @@ export async function buildWalletIntelligenceMasterTable(
 
   // Write candidate_shortlist.json
   const shortlistOutputJson = {
-    groups: {
+    alpha_candidate_groups: {
       raw_gmgn_profit_top5: rawProfitTop5.map((r) => r.walletAddress),
       quality_adjusted_top5: qualityAdjustedTop5.map((r) => r.walletAddress),
       active_consistent_top5: activeConsistentTop5.map((r) => r.walletAddress),
-      high_win_rate_review_top5: highWinRateTop5.map((r) => r.walletAddress),
-      anomaly_verification_top5: anomalyVerificationTop5.map((r) => r.walletAddress),
-      label_priority_top5: labelPriorityTop5.map((r) => r.walletAddress),
+      high_win_rate_top5: highWinRateTop5.map((r) => r.walletAddress),
+      label_context_top5: labelContextTop5.map((r) => r.walletAddress),
+    },
+    review_priority_groups: {
+      review_priority_top5: reviewPriorityTop5.map((r) => r.walletAddress),
     },
     candidate_union: candidateUnionList,
+    review_priority_union: reviewPriorityUnionList,
   };
   fs.writeFileSync(pShortlistJson, JSON.stringify(shortlistOutputJson, null, 2), "utf8");
 
   // Write candidate_shortlist.csv
   const shortlistCsvHeaders = [
-    "candidateGroup", "groupRank", "walletAddress", "walletFingerprint", "existingLabels", "existingNote",
+    "shortlistType", "candidateGroup", "groupRank", "walletAddress", "walletFingerprint", "existingLabels", "existingNote",
     "candidateTags", "gmgn7dRealizedProfit", "gmgn30dRealizedProfit", "gmgn7dWinRate", "gmgn30dWinRate",
     "activityCount7d", "activityCount30d", "gmgn7dTokenNum", "gmgn30dTokenNum", "pairCoverage",
     "dataQualityScore", "dataQualityTier", "internalConsistencyScore", "borrowedCompositeLeadScore",
     "anomalyFlags", "candidateReasonCodes", "firstHandVerificationStatus", "analystNote"
   ];
-  const allShortlistRows = [...shortlistEntries, ...candidateUnionList];
+  const allShortlistRows = [...shortlistEntries, ...candidateUnionList, ...reviewPriorityUnionList];
   const shortlistCsvLines = [
     shortlistCsvHeaders.join(","),
     ...allShortlistRows.map((r) => shortlistCsvHeaders.map((h) => csvEscape((r as any)[h])).join(",")),
@@ -808,7 +806,8 @@ export async function buildWalletIntelligenceMasterTable(
     dataQualityTierDistribution: tierCounts,
     averageDataQualityScore: Math.round((records.reduce((sum, r) => sum + r.dataQualityScore, 0) / records.length) * 100) / 100,
     averageInternalConsistencyScore: Math.round((records.reduce((sum, r) => sum + r.internalConsistencyScore, 0) / records.length) * 100) / 100,
-    anomaliesCount: records.filter((r) => r.anomalyFlags.length > 0).length,
+    walletsWithAnomaliesCount: records.filter((r) => r.anomalyFlags.length > 0).length,
+    anomalyFlagsTotalCount: records.reduce((sum, r) => sum + r.anomalyFlags.length, 0),
     manualReviewRequiredCount: records.filter((r) => r.manualReviewRequired).length,
   };
   fs.writeFileSync(pDataQualitySummary, JSON.stringify(dqSummary, null, 2), "utf8");
@@ -816,15 +815,18 @@ export async function buildWalletIntelligenceMasterTable(
   // Write ranking_summary.json
   const rankingSummary = {
     totalWalletsEvaluated: records.length,
-    candidateGroupsCount: {
+    alphaCandidateGroupsCount: {
       raw_gmgn_profit_top5: rawProfitTop5.length,
       quality_adjusted_top5: qualityAdjustedTop5.length,
       active_consistent_top5: activeConsistentTop5.length,
-      high_win_rate_review_top5: highWinRateTop5.length,
-      anomaly_verification_top5: anomalyVerificationTop5.length,
-      label_priority_top5: labelPriorityTop5.length,
+      high_win_rate_top5: highWinRateTop5.length,
+      label_context_top5: labelContextTop5.length,
     },
+    reviewPriorityGroupsCount: { review_priority_top5: reviewPriorityTop5.length },
+    alphaCandidateRankedCount: alphaRanked.length,
+    reviewPriorityRankedCount: reviewRanked.length,
     candidateUnionCount: candidateUnionList.length,
+    reviewPriorityUnionCount: reviewPriorityUnionList.length,
     topLeadTierCounts: {
       TOP_LEAD: records.filter((r) => r.borrowedLeadTier === "TOP_LEAD").length,
       STRONG_LEAD: records.filter((r) => r.borrowedLeadTier === "STRONG_LEAD").length,
@@ -903,7 +905,7 @@ All GMGN fields are strictly tagged as **borrowed / unverified**. No formal Alph
     schema_version: "replay-manifest-v1",
     task_id: MASTER_CLEAN_RANK_TASK_ID,
     rule_version: WALLET_DATA_QUALITY_RULE_VERSION,
-    timestamp: new Date().toISOString(),
+    evaluation_time: new Date(evalTimeMs).toISOString(),
     input_hashes: {
       sol_addresses_txt: solAddressesTxtHash,
       sol_address_labels_json: solAddressLabelsJsonHash,
@@ -916,6 +918,7 @@ All GMGN fields are strictly tagged as **borrowed / unverified**. No formal Alph
       matched30dCount: profiles30d.size,
       dataQualityTierDistribution: tierCounts,
       candidateUnionCount: candidateUnionList.length,
+      reviewPriorityUnionCount: reviewPriorityUnionList.length,
     },
     output_files: outputFilesMap,
     output_hashes: outputHashes,
@@ -923,9 +926,10 @@ All GMGN fields are strictly tagged as **borrowed / unverified**. No formal Alph
 
   fs.writeFileSync(pReplayManifest, JSON.stringify(replayManifest, null, 2), "utf8");
 
-  const pos30 = records.filter((r) => (r.gmgn30dRealizedProfit ?? 0) > 0).length;
-  const zero30 = records.filter((r) => (r.gmgn30dRealizedProfit ?? 0) === 0).length;
-  const neg30 = records.filter((r) => (r.gmgn30dRealizedProfit ?? 0) < 0).length;
+  const pos30 = records.filter((r) => r.gmgn30dRealizedProfit !== null && r.gmgn30dRealizedProfit > 0).length;
+  const zero30 = records.filter((r) => r.gmgn30dRealizedProfit === 0).length;
+  const neg30 = records.filter((r) => r.gmgn30dRealizedProfit !== null && r.gmgn30dRealizedProfit < 0).length;
+  const unavailable30 = records.filter((r) => r.gmgn30dRealizedProfit === null).length;
 
   return {
     status: "SUCCESS",
@@ -944,7 +948,9 @@ All GMGN fields are strictly tagged as **borrowed / unverified**. No formal Alph
       positiveProfitCount30d: pos30,
       zeroProfitCount30d: zero30,
       negativeProfitCount30d: neg30,
+      unavailableProfitCount30d: unavailable30,
       candidateUnionCount: candidateUnionList.length,
+      reviewPriorityUnionCount: reviewPriorityUnionList.length,
     },
     outputFiles: outputFilesMap,
     outputHashes: {
