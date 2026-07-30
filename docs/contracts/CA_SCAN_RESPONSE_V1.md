@@ -131,15 +131,17 @@ const result = validateCaScanResponseV1(json);
 const value = parseCaScanResponseV1(json); // throws on invalid
 ```
 
-Validation is pure (no I/O). It also rejects strings matching Hotsniper /
-cookie / API-key / bearer / private-key leak patterns so fixtures cannot
-smuggle secrets or private provider fields.
+Validation is pure (no I/O). It rejects unknown object fields via strict
+allowlists, scans both field names and string values for Hotsniper / cookie /
+API-key / bearer / private-key leak patterns, and fails closed so fixtures cannot
+smuggle secrets or private provider fields through undeclared keys.
 
 Runtime validation is fail-closed: required nullable keys must still be present,
 every declared nested section and array entry is checked, and timestamps must be
 valid ISO-8601 values. Ratio values are bounded to `[0, 1]`; incomplete evidence
-or a zero denominator requires `ratio: null`. `buildRatioMetric` derives a ratio
-only when completeness is exactly `1`.
+or a zero denominator requires `ratio: null`. When a non-null ratio is present,
+it must match `numerator/denominator` within 1e-6 fixed-point precision.
+`buildRatioMetric` derives a ratio only when completeness is exactly `1`.
 
 ## Out of scope (this task)
 

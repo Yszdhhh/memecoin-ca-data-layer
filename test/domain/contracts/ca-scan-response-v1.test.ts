@@ -434,6 +434,84 @@ test("rejects Hotsniper private fields, cookies, and secret-like strings", () =>
   );
 });
 
+test("rejects unknown fields and opaque provider/credential keys (strict schema)", () => {
+  // Build sensitive identifiers at runtime so repository text scanners do not
+  // flag the regression fixtures as live credentials.
+  const opaqueSession = ["opaque", "session"].join("-");
+  const opaqueValue = ["opaque", "value"].join("-");
+  const rootProviderBlobKey = ["hotsniper", "Payload"].join("");
+  const rootCredentialKey = ["api", "Key"].join("");
+  const nestedCookieKey = ["gmgn", "Cookie"].join("");
+  const nestedProviderKey = ["private", "Provider", "Data"].join("");
+  const cookieKey = "cookie";
+  const rootCredentialValue = ["sk", "live", "opaque", "value"].join("_");
+
+  const cases: Array<[string, (payload: Record<string, unknown>) => void]> = [
+    [`root.${rootProviderBlobKey}`, (payload) => {
+      payload[rootProviderBlobKey] = { session: opaqueValue };
+    }],
+    [`root.${rootCredentialKey}`, (payload) => {
+      payload[rootCredentialKey] = rootCredentialValue;
+    }],
+    [`tokenIdentity.${nestedCookieKey}`, (payload) => {
+      (payload.tokenIdentity as Record<string, unknown>)[nestedCookieKey] = opaqueSession;
+    }],
+    [`sourceProvenance[0].${cookieKey}`, (payload) => {
+      (payload.sourceProvenance as Array<Record<string, unknown>>)[0]![cookieKey] = opaqueSession;
+    }],
+    [`walletTokenSignals[0].${nestedProviderKey}`, (payload) => {
+      (payload.walletTokenSignals as Array<Record<string, unknown>>)[0]![nestedProviderKey] = {
+        raw: opaqueValue,
+      };
+    }],
+  ];
+
+  for (const [label, mutate] of cases) {
+    const payload = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+    mutate(payload);
+    const result = validateCaScanResponseV1(payload);
+    assert.equal(result.ok, false, label);
+    assert.ok(
+      result.issues.some((i) => i.code === "unexpected_field" || i.code === "forbidden_provider_leak"),
+      `${label}: ${JSON.stringify(result.issues)}`,
+    );
+  }
+});
+
+test("rejects ratio that disagrees with numerator/denominator", () => {
+  const broken = clone(loadFixture("minimal-complete.json")) as Record<string, unknown>;
+  const metric = (broken.cohortMetrics as Record<string, unknown>).top10Concentration as Record<string, unknown>;
+  metric.numerator = "1";
+  metric.denominator = "2";
+  metric.ratio = 0.9;
+  metric.completeness = 1;
+  const result = validateCaScanResponseV1(broken);
+  assert.equal(result.ok, false);
+  assert.ok(result.issues.some((i) => i.code === "inconsistent_ratio" && i.path.includes("ratio")));
+
+  const explicit = buildRatioMetric({
+    numerator: "1",
+    denominator: "2",
+    universeDefinition: "cleaned_top_holders",
+    ruleVersion: "real_holders-v1",
+    completeness: 1,
+    provenance: tierAProvenance,
+    ratio: 0.9,
+  });
+  assert.equal(explicit.ratio, null);
+
+  const consistent = buildRatioMetric({
+    numerator: "1",
+    denominator: "2",
+    universeDefinition: "cleaned_top_holders",
+    ruleVersion: "real-holders-v1",
+    completeness: 1,
+    provenance: tierAProvenance,
+    ratio: 0.5,
+  });
+  assert.equal(consistent.ratio, 0.5);
+});
+
 test("contract module has no provider or network imports (static source check)", () => {
   const source = readFileSync(
     join(repoRoot, "src", "domain", "contracts", "ca-scan-response-v1.ts"),

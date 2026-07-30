@@ -371,14 +371,19 @@ export async function buildWalletIntelligenceMasterTable(
       if (rawCompleteness !== null && (!Number.isFinite(rawCompleteness) || rawCompleteness < 0 || rawCompleteness > 1)) {
         throw new Error("GMGN completeness must be a finite number in [0,1]");
       }
-      const status: "MAPPED" | "PARTIAL" | "UNAVAILABLE" =
-        rec.status === "MAPPED" || rec.status === "PARTIAL" || rec.status === "UNAVAILABLE"
-          ? rec.status
-          : rec.completeness === 1.0
-          ? "MAPPED"
-          : (rec.completeness ?? 0) > 0
-          ? "PARTIAL"
-          : "UNAVAILABLE";
+      // Fail-closed: only exact allowed statuses are accepted. Never invent MAPPED
+      // from completeness when status is missing, mistyped, or corrupted.
+      const allowedStatuses = new Set(["MAPPED", "PARTIAL", "UNAVAILABLE"]);
+      const warningCodes = Array.isArray(rec.warningCodes) ? [...rec.warningCodes] : [];
+      let status: "MAPPED" | "PARTIAL" | "UNAVAILABLE";
+      if (typeof rec.status === "string" && allowedStatuses.has(rec.status)) {
+        status = rec.status as "MAPPED" | "PARTIAL" | "UNAVAILABLE";
+      } else {
+        status = "UNAVAILABLE";
+        if (!warningCodes.includes("invalid_gmgn_period_status")) {
+          warningCodes.push("invalid_gmgn_period_status");
+        }
+      }
 
       return {
         status,
@@ -392,7 +397,7 @@ export async function buildWalletIntelligenceMasterTable(
         soldIncome: agg.soldIncome ?? null,
         tokenNum: agg.tokenNum ?? null,
         lastActiveTimestamp: agg.lastActiveTimestamp ?? null,
-        warningCodes: Array.isArray(rec.warningCodes) ? rec.warningCodes : [],
+        warningCodes,
       };
     };
 

@@ -544,6 +544,129 @@ test("7. Full synthetic master table builder execution", async () => {
 });
 
 
+test("7b. Illegal GMGN status fails closed (no invented MAPPED, no Alpha)", async () => {
+  const fix = makeSyntheticFixtureDir();
+  try {
+    const addrs: string[] = [];
+    const labelsObj: any[] = [];
+    const gmgnProfilesObj: any[] = [];
+
+    const healthyAggregates = (profit: number) => ({
+      periodPnl: 0.5,
+      realizedProfit: profit,
+      realizedProfitPnl: 0.5,
+      winRate: 75,
+      tradeCount: 40,
+      buyCount: 20,
+      sellCount: 20,
+      boughtCost: 5_000,
+      soldIncome: 17_000,
+      lastActiveTimestamp: 1_700_000_000,
+      tokenNum: 8,
+    });
+
+    const pushPeriod = (address: string, period: "7d" | "30d", status: unknown, profit: number) => {
+      const row: Record<string, unknown> = {
+        period,
+        status,
+        source: "gmgn",
+        verificationStatus: "unverified",
+        completeness: 1.0,
+        aggregates: healthyAggregates(profit),
+        warningCodes: [],
+        requestBudgetUsed: 1,
+        sourceInputFingerprint: computeFingerprint(address),
+        fetchedAt: "2026-07-28T00:00:00.000Z",
+      };
+      if (status === undefined) delete row.status;
+      gmgnProfilesObj.push(row);
+    };
+
+    for (let i = 0; i < 1433; i++) {
+      const addr = generateSyntheticAddress(i + 20_000);
+      addrs.push(addr);
+      labelsObj.push({ address: addr, labels: [`tag-${i}`], label_primary: `primary-${i}` });
+      const profit = 10_000 + i;
+      if (i === 0) {
+        pushPeriod(addr, "7d", "CORRUPTED", profit);
+        pushPeriod(addr, "30d", "mapped", profit * 2);
+      } else if (i === 1) {
+        pushPeriod(addr, "7d", undefined, profit);
+        pushPeriod(addr, "30d", 1, profit * 2);
+      } else if (i === 2) {
+        pushPeriod(addr, "7d", "", profit);
+        pushPeriod(addr, "30d", "MAPPED", profit * 2);
+      } else {
+        pushPeriod(addr, "7d", "MAPPED", profit);
+        pushPeriod(addr, "30d", "MAPPED", profit * 2);
+      }
+    }
+
+    const txtContent = `${addrs.join("\n")}\n`;
+    const jsonContent = JSON.stringify(labelsObj, null, 2);
+    fs.writeFileSync(path.join(fix.inputDir, "sol_addresses.txt"), txtContent, "utf8");
+    fs.writeFileSync(path.join(fix.inputDir, "sol_address_labels.json"), jsonContent, "utf8");
+    fs.writeFileSync(
+      path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"),
+      JSON.stringify(gmgnProfilesObj, null, 2),
+      "utf8",
+    );
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "summary.json"), JSON.stringify({ status: "SUCCESS" }), "utf8");
+
+    const result = await buildWalletIntelligenceMasterTable({
+      inputDir: fix.inputDir,
+      gmgnOutputDir: fix.gmgnOutputDir,
+      outputDir: fix.outputDir,
+      expectedHashes: {
+        solAddressesTxtHash: computeSha256(txtContent),
+        solAddressLabelsJsonHash: computeSha256(jsonContent),
+      },
+    });
+
+    assert.equal(result.status, "SUCCESS");
+    const masterRows = fs
+      .readFileSync(path.join(fix.outputDir, "wallet_master_private.jsonl"), "utf8")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    assert.equal(masterRows.length, 1433);
+
+    const corrupted = masterRows.find((row) => row.walletAddress === addrs[0]);
+    assert.equal(corrupted.gmgn7dStatus, "UNAVAILABLE");
+    assert.equal(corrupted.gmgn30dStatus, "UNAVAILABLE");
+    assert.ok(corrupted.gmgn7dWarningCodes.includes("invalid_gmgn_period_status"));
+    assert.ok(corrupted.gmgn30dWarningCodes.includes("invalid_gmgn_period_status"));
+    assert.equal(corrupted.alphaCandidateRank, null);
+    assert.equal(corrupted.manualReviewRequired, true);
+    assert.ok(corrupted.anomalyFlags.includes("INVALID_GMGN_STATUS_7D"));
+    assert.ok(corrupted.anomalyFlags.includes("INVALID_GMGN_STATUS_30D"));
+
+    const missing = masterRows.find((row) => row.walletAddress === addrs[1]);
+    assert.equal(missing.gmgn7dStatus, "UNAVAILABLE");
+    assert.equal(missing.gmgn30dStatus, "UNAVAILABLE");
+    assert.ok(missing.gmgn7dWarningCodes.includes("invalid_gmgn_period_status"));
+    assert.ok(missing.gmgn30dWarningCodes.includes("invalid_gmgn_period_status"));
+    assert.equal(missing.alphaCandidateRank, null);
+    assert.equal(missing.manualReviewRequired, true);
+
+    const emptyStatus = masterRows.find((row) => row.walletAddress === addrs[2]);
+    assert.equal(emptyStatus.gmgn7dStatus, "UNAVAILABLE");
+    assert.equal(emptyStatus.gmgn30dStatus, "MAPPED");
+    assert.ok(emptyStatus.gmgn7dWarningCodes.includes("invalid_gmgn_period_status"));
+    assert.equal(emptyStatus.alphaCandidateRank, null);
+    assert.equal(emptyStatus.manualReviewRequired, true);
+    assert.ok(emptyStatus.anomalyFlags.includes("INVALID_GMGN_STATUS_7D"));
+
+    // Healthy mapped wallet still can receive Alpha rank.
+    const healthy = masterRows.find((row) => row.walletAddress === addrs[10]);
+    assert.equal(healthy.gmgn7dStatus, "MAPPED");
+    assert.equal(healthy.gmgn30dStatus, "MAPPED");
+    assert.notEqual(healthy.alphaCandidateRank, null);
+  } finally {
+    fix.cleanup();
+  }
+});
+
 test("8. Invalid-address diagnostics redact the raw input", async () => {
   const fix = makeSyntheticFixtureDir();
   try {

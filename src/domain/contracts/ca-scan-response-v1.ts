@@ -307,7 +307,9 @@ export type ValidationIssueCode =
   | "tier_b_confirmed_conclusion"
   | "invalid_source_tier"
   | "invalid_verification_status"
-  | "forbidden_provider_leak";
+  | "forbidden_provider_leak"
+  | "unexpected_field"
+  | "inconsistent_ratio";
 
 export interface ValidationIssue {
   code: ValidationIssueCode;
@@ -341,6 +343,198 @@ const FORBIDDEN_LEAK_PATTERNS: ReadonlyArray<{ pattern: RegExp; label: string }>
   { pattern: /bearer\s+[a-z0-9._-]+/i, label: "Bearer token" },
   { pattern: /private[_-]?key/i, label: "private key" },
 ];
+
+/** Field-name patterns (bare identifiers, no value delimiter required). */
+const FORBIDDEN_KEY_LEAK_PATTERNS: ReadonlyArray<{ pattern: RegExp; label: string }> = [
+  { pattern: /hotsniper/i, label: "Hotsniper" },
+  { pattern: /cookie/i, label: "Cookie" },
+  { pattern: /api[_-]?key/i, label: "API key" },
+  { pattern: /authorization/i, label: "Authorization" },
+  { pattern: /bearer/i, label: "Bearer token" },
+  { pattern: /private[_-]?key/i, label: "private key" },
+];
+
+const ROOT_ALLOWED_KEYS = [
+  "schema",
+  "version",
+  "generatedAt",
+  "tokenIdentity",
+  "marketSnapshot",
+  "authorityFacts",
+  "holderUniverses",
+  "cohortMetrics",
+  "walletTokenSignals",
+  "clusterSummaries",
+  "devBehavior",
+  "crossTokenMatches",
+  "judgmentEvidence",
+  "sourceProvenance",
+  "completeness",
+  "warnings",
+] as const;
+
+const PROVENANCE_ALLOWED_KEYS = [
+  "source",
+  "sourceTier",
+  "verificationStatus",
+  "observedAt",
+  "watermarkRef",
+  "evidenceRef",
+  "ruleVersion",
+] as const;
+
+const RATIO_METRIC_ALLOWED_KEYS = [
+  "numerator",
+  "denominator",
+  "ratio",
+  "universeDefinition",
+  "ruleVersion",
+  "completeness",
+  "provenance",
+] as const;
+
+const TOKEN_IDENTITY_ALLOWED_KEYS = [
+  "chain",
+  "ca",
+  "name",
+  "symbol",
+  "decimals",
+  "totalSupplyRaw",
+  "launchpad",
+  "createdAt",
+  "creationTx",
+  "provenance",
+] as const;
+
+const MARKET_SNAPSHOT_ALLOWED_KEYS = [
+  "priceUsd",
+  "fdvUsd",
+  "liquidityUsd",
+  "marketCapUsd",
+  "pairAddress",
+  "volume24hUsd",
+  "observedAt",
+  "completeness",
+  "provenance",
+  "warnings",
+] as const;
+
+const AUTHORITY_FACTS_ALLOWED_KEYS = [
+  "mintAuthority",
+  "mintAuthorityRenounced",
+  "freezeAuthority",
+  "freezeAuthorityRenounced",
+  "creatorAddress",
+  "creatorProvenance",
+  "completeness",
+  "provenance",
+  "warnings",
+] as const;
+
+const HOLDER_ENTRY_ALLOWED_KEYS = [
+  "address",
+  "balanceRaw",
+  "rank",
+  "ownerAddress",
+  "exclusionReason",
+  "clusterId",
+  "confidence",
+  "ruleVersion",
+] as const;
+
+const HOLDER_UNIVERSES_ALLOWED_KEYS = [
+  ...HOLDER_UNIVERSE_KEYS,
+  "ruleVersion",
+  "completeness",
+  "provenance",
+  "warnings",
+] as const;
+
+const COHORT_METRICS_ALLOWED_KEYS = [
+  "top10Concentration",
+  "top20Concentration",
+  "eligibleHolderCount",
+  "excludedShare",
+  "ruleVersion",
+  "completeness",
+  "warnings",
+] as const;
+
+const WALLET_TOKEN_SIGNAL_ALLOWED_KEYS = [
+  "walletAddress",
+  "labels",
+  "labelSourceTier",
+  "labelVerificationStatus",
+  "firstBuyAt",
+  "lastActivityAt",
+  "balanceRaw",
+  "confidence",
+  "ruleVersion",
+  "provenance",
+  "warnings",
+] as const;
+
+const CLUSTER_SUMMARY_ALLOWED_KEYS = [
+  "clusterId",
+  "memberCount",
+  "aggregateBalanceRaw",
+  "confidence",
+  "riskLabels",
+  "confirmed",
+  "ruleVersion",
+  "sourceTier",
+  "completeness",
+  "evidenceRefs",
+  "warnings",
+] as const;
+
+const DEV_BEHAVIOR_ALLOWED_KEYS = [
+  "creatorAddress",
+  "currentHolding",
+  "relatedHolding",
+  "grossBought",
+  "grossSold",
+  "netDisposed",
+  "soldOfAcquired",
+  "directSellCount",
+  "relatedAddresses",
+  "calculatedAt",
+  "ruleVersion",
+  "completeness",
+  "provenance",
+  "warnings",
+] as const;
+
+const CROSS_TOKEN_MATCH_ALLOWED_KEYS = [
+  "relatedTokenCa",
+  "matchKind",
+  "sharedWallets",
+  "confidence",
+  "ruleVersion",
+  "sourceTier",
+  "verificationStatus",
+  "evidenceRefs",
+  "completeness",
+  "warnings",
+] as const;
+
+const JUDGMENT_EVIDENCE_ALLOWED_KEYS = [
+  "judgmentCode",
+  "humanReadableSummary",
+  "evidenceRefs",
+  "confidence",
+  "ruleVersion",
+  "sourceTier",
+  "completeness",
+  "warnings",
+  "status",
+] as const;
+
+const COMPLETENESS_REPORT_ALLOWED_KEYS = ["overall", "ratio", "sections"] as const;
+
+/** Micro-ratio fixed-point scale used by buildRatioMetric (6 decimal places). */
+const RATIO_SCALE = 1_000_000n;
+const RATIO_TOLERANCE = 1e-6;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -462,13 +656,22 @@ function validateRequired(
   return true;
 }
 
+function scanStringForLeaks(
+  text: string,
+  path: string,
+  issues: ValidationIssue[],
+  patterns: ReadonlyArray<{ pattern: RegExp; label: string }>,
+): void {
+  for (const { pattern, label } of patterns) {
+    if (pattern.test(text)) {
+      issues.push(issue("forbidden_provider_leak", path, `Forbidden secret/provider leak pattern matched (${label})`));
+    }
+  }
+}
+
 function scanForbiddenLeaks(value: unknown, path: string, issues: ValidationIssue[]): void {
   if (typeof value === "string") {
-    for (const { pattern, label } of FORBIDDEN_LEAK_PATTERNS) {
-      if (pattern.test(value)) {
-        issues.push(issue("forbidden_provider_leak", path, `Forbidden secret/provider leak pattern matched (${label})`));
-      }
-    }
+    scanStringForLeaks(value, path, issues, FORBIDDEN_LEAK_PATTERNS);
     return;
   }
   if (Array.isArray(value)) {
@@ -477,9 +680,40 @@ function scanForbiddenLeaks(value: unknown, path: string, issues: ValidationIssu
   }
   if (isObject(value)) {
     for (const [key, child] of Object.entries(value)) {
-      scanForbiddenLeaks(child, path ? `${path}.${key}` : key, issues);
+      const childPathValue = path ? `${path}.${key}` : key;
+      scanStringForLeaks(key, childPathValue, issues, FORBIDDEN_KEY_LEAK_PATTERNS);
+      scanForbiddenLeaks(child, childPathValue, issues);
     }
   }
+}
+
+function rejectUnexpectedFields(
+  value: Record<string, unknown>,
+  allowed: readonly string[],
+  path: string,
+  issues: ValidationIssue[],
+): boolean {
+  const allow = new Set<string>(allowed);
+  let ok = true;
+  for (const key of Object.keys(value)) {
+    if (!allow.has(key)) {
+      issues.push(issue("unexpected_field", childPath(path, key), `unexpected field "${key}"`));
+      ok = false;
+    }
+  }
+  return ok;
+}
+
+function deriveRatioFromRawIntegers(numerator: string, denominator: string): number | null {
+  if (!isRawIntegerString(numerator) || !isPositiveRawIntegerString(denominator)) return null;
+  const n = BigInt(numerator);
+  const d = BigInt(denominator);
+  if (n > d) return null;
+  return Number((n * RATIO_SCALE) / d) / Number(RATIO_SCALE);
+}
+
+function ratiosAgree(actual: number, expected: number): boolean {
+  return Math.abs(actual - expected) <= RATIO_TOLERANCE;
 }
 
 function validateProvenance(value: unknown, path: string, issues: ValidationIssue[]): value is SourceProvenance {
@@ -487,7 +721,7 @@ function validateProvenance(value: unknown, path: string, issues: ValidationIssu
     issues.push(issue("invalid_type", path, "expected SourceProvenance object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, PROVENANCE_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "source", path, issues, isNonEmptyString, "source must be a non-empty string") && ok;
   ok = validateRequired(value, "sourceTier", path, issues, isSourceTier, 'sourceTier must be "A" or "B"', "invalid_source_tier") && ok;
   ok = validateRequired(value, "verificationStatus", path, issues, isVerificationStatus, 'verificationStatus must be "unverified" or "confirmed"', "invalid_verification_status") && ok;
@@ -511,7 +745,7 @@ function validateRatioMetric(value: unknown, path: string, issues: ValidationIss
     issues.push(issue("invalid_type", path, "expected RatioMetric object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, RATIO_METRIC_ALLOWED_KEYS, path, issues);
   for (const key of ["numerator", "denominator", "ratio", "universeDefinition", "ruleVersion", "completeness", "provenance"] as const) {
     if (!hasOwn(value, key) || value[key] === undefined) {
       issues.push(issue("missing_ratio_metric_fields", `${path}.${key}`, `RatioMetric.${key} is required`));
@@ -546,6 +780,23 @@ function validateRatioMetric(value: unknown, path: string, issues: ValidationIss
     issues.push(issue("invalid_completeness", `${path}.ratio`, "ratio must be null unless evidence is complete and denominator is positive"));
     ok = false;
   }
+  if (
+    typeof value.ratio === "number" &&
+    isCompletenessRatio(value.ratio) &&
+    value.completeness === 1 &&
+    isRawIntegerString(value.numerator) &&
+    isPositiveRawIntegerString(value.denominator)
+  ) {
+    const expected = deriveRatioFromRawIntegers(value.numerator, value.denominator);
+    if (expected === null || !ratiosAgree(value.ratio, expected)) {
+      issues.push(issue(
+        "inconsistent_ratio",
+        `${path}.ratio`,
+        "ratio must match numerator/denominator within 1e-6 fixed-point precision",
+      ));
+      ok = false;
+    }
+  }
   if (!validateProvenance(value.provenance, `${path}.provenance`, issues)) ok = false;
   return ok;
 }
@@ -555,7 +806,7 @@ function validateHolderEntry(value: unknown, path: string, issues: ValidationIss
     issues.push(issue("invalid_type", path, "expected holder entry object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, HOLDER_ENTRY_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "address", path, issues, isNonEmptyString, "address must be non-empty") && ok;
   ok = validateRequired(value, "balanceRaw", path, issues, isRawIntegerString, "balanceRaw must be a raw integer string", "invalid_raw_integer") && ok;
   if (hasOwn(value, "rank") && value.rank !== undefined && (!Number.isInteger(value.rank) || (value.rank as number) < 1)) {
@@ -581,7 +832,7 @@ function validateHolderUniverses(value: unknown, path: string, issues: Validatio
     issues.push(issue("invalid_type", path, "expected HolderUniverses object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, HOLDER_UNIVERSES_ALLOWED_KEYS, path, issues);
   for (const key of HOLDER_UNIVERSE_KEYS) {
     if (!hasOwn(value, key) || !Array.isArray(value[key])) {
       issues.push(issue("missing_holder_universe_key", `${path}.${key}`, `${key} array is required`));
@@ -604,7 +855,7 @@ function validateJudgmentEvidence(value: unknown, path: string, issues: Validati
     issues.push(issue("invalid_type", path, "expected JudgmentEvidence object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, JUDGMENT_EVIDENCE_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "judgmentCode", path, issues, isNonEmptyString, "judgmentCode must be non-empty") && ok;
   ok = validateRequired(value, "humanReadableSummary", path, issues, isNonEmptyString, "humanReadableSummary must be non-empty") && ok;
   ok = validateRequired(value, "evidenceRefs", path, issues, isStringArray, "evidenceRefs must be a string array") && ok;
@@ -629,7 +880,7 @@ function validateTokenIdentity(value: unknown, path: string, issues: ValidationI
     issues.push(issue("missing_field", path, "tokenIdentity is required"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, TOKEN_IDENTITY_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "chain", path, issues, (candidate) => candidate === "solana", 'chain must be "solana"') && ok;
   ok = validateRequired(value, "ca", path, issues, isNonEmptyString, "ca must be non-empty") && ok;
   for (const key of ["name", "symbol", "launchpad", "creationTx"] as const) {
@@ -648,7 +899,7 @@ function validateMarketSnapshot(value: unknown, path: string, issues: Validation
     issues.push(issue("invalid_type", path, "expected MarketSnapshotSection object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, MARKET_SNAPSHOT_ALLOWED_KEYS, path, issues);
   for (const key of ["priceUsd", "fdvUsd", "liquidityUsd", "marketCapUsd", "volume24hUsd"] as const) {
     ok = validateRequired(value, key, path, issues, isFiniteNumberOrNull, `${key} must be a finite number or null`) && ok;
   }
@@ -666,7 +917,7 @@ function validateAuthorityFacts(value: unknown, path: string, issues: Validation
     issues.push(issue("invalid_type", path, "expected AuthorityFacts object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, AUTHORITY_FACTS_ALLOWED_KEYS, path, issues);
   for (const key of ["mintAuthority", "freezeAuthority", "creatorAddress"] as const) {
     ok = validateRequired(value, key, path, issues, isStringOrNull, `${key} must be string or null`) && ok;
   }
@@ -686,7 +937,7 @@ function validateCohortMetrics(value: unknown, path: string, issues: ValidationI
     issues.push(issue("invalid_type", path, "expected CohortMetrics object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, COHORT_METRICS_ALLOWED_KEYS, path, issues);
   for (const key of ["top10Concentration", "top20Concentration", "excludedShare"] as const) {
     if (!requireField(value, key, path, issues) || !validateRatioMetric(value[key], `${path}.${key}`, issues)) ok = false;
   }
@@ -702,7 +953,7 @@ function validateWalletTokenSignal(value: unknown, path: string, issues: Validat
     issues.push(issue("invalid_type", path, "expected WalletTokenSignal object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, WALLET_TOKEN_SIGNAL_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "walletAddress", path, issues, isNonEmptyString, "walletAddress must be non-empty") && ok;
   ok = validateRequired(value, "labels", path, issues, isStringArray, "labels must be a string array") && ok;
   ok = validateRequired(value, "labelSourceTier", path, issues, isSourceTier, 'labelSourceTier must be "A" or "B"', "invalid_source_tier") && ok;
@@ -727,7 +978,7 @@ function validateClusterSummary(value: unknown, path: string, issues: Validation
     issues.push(issue("invalid_type", path, "expected ClusterSummary object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, CLUSTER_SUMMARY_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "clusterId", path, issues, isNonEmptyString, "clusterId must be non-empty") && ok;
   ok = validateRequired(value, "memberCount", path, issues, (candidate) => Number.isInteger(candidate) && (candidate as number) >= 0, "memberCount must be a non-negative integer") && ok;
   ok = validateRequired(value, "aggregateBalanceRaw", path, issues, isRawIntegerOrNull, "aggregateBalanceRaw must be raw integer string or null", "invalid_raw_integer") && ok;
@@ -752,7 +1003,7 @@ function validateDevBehavior(value: unknown, path: string, issues: ValidationIss
     issues.push(issue("invalid_type", path, "expected DevBehaviorSection object or null"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, DEV_BEHAVIOR_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "creatorAddress", path, issues, isStringOrNull, "creatorAddress must be string or null") && ok;
   for (const key of ["currentHolding", "relatedHolding", "grossBought", "grossSold", "netDisposed", "soldOfAcquired"] as const) {
     if (!requireField(value, key, path, issues) || !validateRatioMetric(value[key], `${path}.${key}`, issues)) ok = false;
@@ -772,7 +1023,7 @@ function validateCrossTokenMatch(value: unknown, path: string, issues: Validatio
     issues.push(issue("invalid_type", path, "expected CrossTokenMatch object"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, CROSS_TOKEN_MATCH_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "relatedTokenCa", path, issues, isNonEmptyString, "relatedTokenCa must be non-empty") && ok;
   ok = validateRequired(value, "matchKind", path, issues, isNonEmptyString, "matchKind must be non-empty") && ok;
   ok = validateRequired(value, "sharedWallets", path, issues, isStringArray, "sharedWallets must be a string array") && ok;
@@ -795,7 +1046,7 @@ function validateCompletenessReport(value: unknown, path: string, issues: Valida
     issues.push(issue("missing_field", path, "completeness report is required"));
     return false;
   }
-  let ok = true;
+  let ok = rejectUnexpectedFields(value, COMPLETENESS_REPORT_ALLOWED_KEYS, path, issues);
   ok = validateRequired(value, "overall", path, issues, isCompletenessState, "invalid overall completeness", "invalid_completeness") && ok;
   if (hasOwn(value, "ratio") && value.ratio !== undefined && !isCompletenessRatio(value.ratio)) {
     issues.push(issue("invalid_completeness", `${path}.ratio`, "ratio must be in [0, 1] when present"));
@@ -823,6 +1074,7 @@ export function validateCaScanResponseV1(input: unknown): ValidationResult {
     issues.push(issue("invalid_type", "", "CaScanResponse v1 must be an object"));
     return { ok: false, issues };
   }
+  rejectUnexpectedFields(input, ROOT_ALLOWED_KEYS, "", issues);
 
   if (!hasOwn(input, "schema")) issues.push(issue("missing_schema", "schema", "schema field is required"));
   else if (input.schema !== CA_SCAN_RESPONSE_SCHEMA) issues.push(issue("invalid_schema", "schema", `schema must be "${CA_SCAN_RESPONSE_SCHEMA}"`));
@@ -891,14 +1143,17 @@ export function buildRatioMetric(input: {
     isRawIntegerString(input.numerator) &&
     isPositiveRawIntegerString(input.denominator)
   ) {
-    const denominator = BigInt(input.denominator);
+    const derived = deriveRatioFromRawIntegers(input.numerator, input.denominator);
     if (input.ratio !== undefined) {
-      ratio = input.ratio === null || isCompletenessRatio(input.ratio) ? input.ratio : null;
+      if (input.ratio === null) {
+        ratio = null;
+      } else if (isCompletenessRatio(input.ratio) && derived !== null && ratiosAgree(input.ratio, derived)) {
+        ratio = input.ratio;
+      } else {
+        ratio = null;
+      }
     } else {
-      const numerator = BigInt(input.numerator);
-      ratio = numerator <= denominator
-        ? Number((numerator * 1_000_000n) / denominator) / 1_000_000
-        : null;
+      ratio = derived;
     }
   }
 

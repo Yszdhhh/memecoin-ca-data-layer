@@ -227,6 +227,27 @@ export function evaluateWalletDataQuality(
     anomalies.push({ code: "WIN_RATE_UNIT_AMBIGUOUS", severity: "LOW", reason: "Win rate unit is ambiguous in provider payload", evidenceFields: ["gmgn7dWinRate", "gmgn30dWinRate"], ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION });
   }
 
+  if (s7d.warningCodes.includes("invalid_gmgn_period_status")) {
+    anomalies.push({
+      code: "INVALID_GMGN_STATUS_7D",
+      severity: "HIGH",
+      reason: "7d GMGN period status is missing, mistyped, or not in {MAPPED, PARTIAL, UNAVAILABLE}; fail-closed to UNAVAILABLE",
+      evidenceFields: ["gmgn7dStatus", "gmgn7dWarningCodes"],
+      ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION,
+    });
+    manualReviewReasons.push("invalid 7d GMGN period status");
+  }
+  if (s30d.warningCodes.includes("invalid_gmgn_period_status")) {
+    anomalies.push({
+      code: "INVALID_GMGN_STATUS_30D",
+      severity: "HIGH",
+      reason: "30d GMGN period status is missing, mistyped, or not in {MAPPED, PARTIAL, UNAVAILABLE}; fail-closed to UNAVAILABLE",
+      evidenceFields: ["gmgn30dStatus", "gmgn30dWarningCodes"],
+      ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION,
+    });
+    manualReviewReasons.push("invalid 30d GMGN period status");
+  }
+
   const partialOrUnverified = s7d.status === "PARTIAL" || s30d.status === "PARTIAL" || hasUnverifiedPeriod(s7d) || hasUnverifiedPeriod(s30d);
   if (partialOrUnverified || hasPartialFields(s7d) || hasPartialFields(s30d)) {
     anomalies.push({ code: "PROVIDER_DATA_INCOMPLETE", severity: "LOW", reason: "Provider returned partial fields or an unverified period", evidenceFields: ["gmgn7dCompleteness", "gmgn30dCompleteness"], ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION });
