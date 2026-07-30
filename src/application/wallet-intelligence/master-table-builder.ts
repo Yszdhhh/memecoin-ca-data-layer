@@ -280,7 +280,10 @@ export async function buildWalletIntelligenceMasterTable(
             ? item.labels_joined.split("|").map((s: string) => s.trim())
             : [];
           const noteStr = typeof item.label_primary === "string" ? item.label_primary.trim() : "";
-          labelMap.set(norm, { labels: Array.from(new Set(labelsArr.filter(Boolean))), note: noteStr });
+          const existing = labelMap.get(norm) ?? { labels: [], note: "" };
+          const labels = Array.from(new Set([...existing.labels, ...labelsArr.filter(Boolean)]));
+          const notes = Array.from(new Set([existing.note, noteStr].filter(Boolean)));
+          labelMap.set(norm, { labels, note: notes.join(" | ") });
         }
       }
     }
@@ -364,6 +367,10 @@ export async function buildWalletIntelligenceMasterTable(
         };
       }
       const agg = rec.aggregates ?? {};
+      const rawCompleteness = rec.completeness ?? null;
+      if (rawCompleteness !== null && (!Number.isFinite(rawCompleteness) || rawCompleteness < 0 || rawCompleteness > 1)) {
+        throw new Error("GMGN completeness must be a finite number in [0,1]");
+      }
       const status: "MAPPED" | "PARTIAL" | "UNAVAILABLE" =
         rec.status === "MAPPED" || rec.status === "PARTIAL" || rec.status === "UNAVAILABLE"
           ? rec.status
@@ -375,7 +382,7 @@ export async function buildWalletIntelligenceMasterTable(
 
       return {
         status,
-        completeness: rec.completeness ?? null,
+        completeness: rawCompleteness,
         realizedProfit: agg.realizedProfit ?? null,
         realizedProfitPnl: agg.realizedProfitPnl ?? null,
         winRate: agg.winRate ?? null,
@@ -600,7 +607,8 @@ export async function buildWalletIntelligenceMasterTable(
     record.gmgn30dRealizedProfit !== null &&
     record.borrowedCompositeLeadScore !== null &&
     (record.dataQualityTier === "DQ-A" || record.dataQualityTier === "DQ-B") &&
-    !record.gmgn30dWarningCodes.some((code) => code.includes("period_unverified"));
+    record.gmgn30dCompleteness === 1 &&
+    !record.gmgn30dWarningCodes.some((code) => code.includes("period_unverified") || code.includes("partial_fields"));
 
   const alphaRanked = records.filter(alphaEligible).sort((a, b) => {
     const scoreDelta = (b.borrowedCompositeLeadScore ?? -Infinity) - (a.borrowedCompositeLeadScore ?? -Infinity);
@@ -853,8 +861,8 @@ All GMGN fields are strictly tagged as **borrowed / unverified**. No formal Alph
 ## Data Quality Dimensions & Weights
 1. **Field Coverage (7d / 30d)** (30%): Fraction of valid fields returned by provider.
 2. **Pair Coverage** (25%): 1.0 if both 7d & 30d profiles exist, 0.5 if only 1 exists, 0.0 if missing.
-3. **Internal Accounting Consistency** (30%): Checks if \`realizedProfit\` matches \`soldIncome - boughtCost\` and 7d vs 30d monotonicity.
-4. **Anomaly Penalties** (15%): Deductions for severe accounting mismatches, 0 sold income with high profit, extreme trade frequency (> 2,000 trades), etc.
+3. **Internal Consistency** (30%): Checks cross-window monotonicity. Accounting residuals are recorded as provider-semantic observations and do not directly reduce this score.
+4. **Anomaly Penalties** (15%): Deductions for high/medium anomalies such as invalid completeness, zero sold income with high profit, and extreme trade frequency (> 2,000 trades).
 
 ## Data Quality Tiers
 - **DQ-A**: Score 80.0 – 100.0 (High quality & complete)

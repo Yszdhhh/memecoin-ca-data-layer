@@ -47,6 +47,36 @@ test("partial and period-unverified data are capped below DQ-A", () => {
   assert.ok(["DQ-C", "DQ-D", "DQ-U"].includes(unverified.dataQualityTier));
 });
 
+
+test("incomplete MAPPED, partial-fields, and invalid completeness fail closed below DQ-A", () => {
+  const incomplete = evaluateWalletDataQuality(period(), period({ status: "MAPPED", completeness: 0.5 }));
+  assert.equal(incomplete.dataQualityTier, "DQ-B");
+  assert.ok(incomplete.anomalyFlags.some((item) => item.code === "MAPPED_COMPLETENESS_INCONSISTENT_30D"));
+  assert.equal(incomplete.manualReviewRequired, true);
+
+  const partialFields = evaluateWalletDataQuality(
+    period(),
+    period({ warningCodes: ["gmgn_wallet_stats_partial_fields"] })
+  );
+  assert.notEqual(partialFields.dataQualityTier, "DQ-A");
+
+  for (const completeness of [null, -0.1, 1.1, Number.NaN]) {
+    const invalid = evaluateWalletDataQuality(period(), period({ completeness }));
+    assert.ok(["DQ-C", "DQ-D", "DQ-U"].includes(invalid.dataQualityTier));
+    assert.ok(invalid.anomalyFlags.some((item) => item.code === "INVALID_COMPLETENESS_30D"));
+  }
+});
+
+test("PARTIAL finite 30d values retain provisional scores but remain capped", () => {
+  const s7d = period();
+  const s30d = period({ status: "PARTIAL", completeness: 0.8 });
+  const dq = evaluateWalletDataQuality(s7d, s30d);
+  const scores = calculateBorrowedCandidateScores(s7d, s30d, dq, 50);
+  assert.equal(dq.dataQualityTier, "DQ-B");
+  assert.notEqual(scores.borrowedCompositeLeadScore, null);
+  assert.notEqual(scores.borrowedLeadTier, "UNQUALIFIED");
+});
+
 test("extreme frequency is not rewarded above healthy activity", () => {
   const s7d = period();
   const healthy30d = period({ buyCount: 50, sellCount: 50, tokenNum: 10 });

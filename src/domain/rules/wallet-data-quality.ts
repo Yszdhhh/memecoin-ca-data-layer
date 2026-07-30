@@ -1,4 +1,4 @@
-﻿export const WALLET_DATA_QUALITY_RULE_VERSION = "wallet-data-quality-v2";
+﻿export const WALLET_DATA_QUALITY_RULE_VERSION = "wallet-data-quality-v3";
 
 export type DataQualityTier = "DQ-A" | "DQ-B" | "DQ-C" | "DQ-D" | "DQ-U";
 
@@ -53,6 +53,9 @@ const isPresent = (period: GmgnPeriodStatsInput): boolean =>
 const hasUnverifiedPeriod = (period: GmgnPeriodStatsInput): boolean =>
   period.warningCodes.some((code) => code.includes("period_unverified"));
 
+const hasPartialFields = (period: GmgnPeriodStatsInput): boolean =>
+  period.warningCodes.some((code) => code.includes("partial_fields"));
+
 const tierForScore = (score: number): DataQualityTier => {
   if (score >= 80) return "DQ-A";
   if (score >= 65) return "DQ-B";
@@ -94,8 +97,6 @@ export function evaluateWalletDataQuality(
   s30d: GmgnPeriodStatsInput,
   evalTimeMs: number = Date.now()
 ): WalletDataQualityAssessment {
-  const c7 = s7d.completeness ?? 0;
-  const c30 = s30d.completeness ?? 0;
   const has7d = isPresent(s7d);
   const has30d = isPresent(s30d);
   const pairCoverage = has7d && has30d ? 1 : has7d || has30d ? 0.5 : 0;
@@ -103,6 +104,36 @@ export function evaluateWalletDataQuality(
   const manualReviewReasons: string[] = [];
   const exclusionCandidateFlags: string[] = [];
   let consistencyScore = 100;
+
+  const validatedCompleteness = (stats: GmgnPeriodStatsInput, period: "7D" | "30D"): number => {
+    if (!isPresent(stats)) return 0;
+    const value = stats.completeness;
+    if (value === null || !Number.isFinite(value) || value < 0 || value > 1) {
+      anomalies.push({
+        code: `INVALID_COMPLETENESS_${period}`,
+        severity: "HIGH",
+        reason: `${period.toLowerCase()} completeness must be a finite number in [0,1] for a present provider row`,
+        evidenceFields: [`gmgn${period === "7D" ? "7d" : "30d"}Completeness`],
+        ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION,
+      });
+      manualReviewReasons.push(`${period.toLowerCase()} completeness is missing or invalid`);
+      return 0;
+    }
+    if (stats.status === "MAPPED" && value < 1) {
+      anomalies.push({
+        code: `MAPPED_COMPLETENESS_INCONSISTENT_${period}`,
+        severity: "MEDIUM",
+        reason: `${period.toLowerCase()} status is MAPPED but completeness is below 1`,
+        evidenceFields: [`gmgn${period === "7D" ? "7d" : "30d"}Status`, `gmgn${period === "7D" ? "7d" : "30d"}Completeness`],
+        ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION,
+      });
+      manualReviewReasons.push(`${period.toLowerCase()} MAPPED status conflicts with incomplete coverage`);
+    }
+    return value;
+  };
+
+  const c7 = validatedCompleteness(s7d, "7D");
+  const c30 = validatedCompleteness(s30d, "30D");
 
   addResidualObservation(anomalies, "7D", s7d);
   addResidualObservation(anomalies, "30D", s30d);
@@ -197,7 +228,7 @@ export function evaluateWalletDataQuality(
   }
 
   const partialOrUnverified = s7d.status === "PARTIAL" || s30d.status === "PARTIAL" || hasUnverifiedPeriod(s7d) || hasUnverifiedPeriod(s30d);
-  if (partialOrUnverified || allWarnings.includes("gmgn_wallet_stats_partial_fields")) {
+  if (partialOrUnverified || hasPartialFields(s7d) || hasPartialFields(s30d)) {
     anomalies.push({ code: "PROVIDER_DATA_INCOMPLETE", severity: "LOW", reason: "Provider returned partial fields or an unverified period", evidenceFields: ["gmgn7dCompleteness", "gmgn30dCompleteness"], ruleVersion: WALLET_DATA_QUALITY_RULE_VERSION });
   }
 
@@ -216,8 +247,16 @@ export function evaluateWalletDataQuality(
   const dataQualityScore = Math.max(0, Math.min(100, Math.round(rawScore * 100) / 100));
 
   let dataQualityTier = tierForScore(dataQualityScore);
-  if (s7d.status === "PARTIAL" || s30d.status === "PARTIAL") dataQualityTier = capTier(dataQualityTier, "DQ-B");
-  if (hasUnverifiedPeriod(s7d) || hasUnverifiedPeriod(s30d)) dataQualityTier = capTier(dataQualityTier, "DQ-C");
+  const hasIncompletePresentRow = (has7d && c7 < 1) || (has30d && c30 < 1);
+  const hasMissingOrInvalidCompleteness =
+    (has7d && (s7d.completeness === null || !Number.isFinite(s7d.completeness) || s7d.completeness < 0 || s7d.completeness > 1)) ||
+    (has30d && (s30d.completeness === null || !Number.isFinite(s30d.completeness) || s30d.completeness < 0 || s30d.completeness > 1));
+  if (s7d.status === "PARTIAL" || s30d.status === "PARTIAL" || hasIncompletePresentRow || hasPartialFields(s7d) || hasPartialFields(s30d)) {
+    dataQualityTier = capTier(dataQualityTier, "DQ-B");
+  }
+  if (hasMissingOrInvalidCompleteness || hasUnverifiedPeriod(s7d) || hasUnverifiedPeriod(s30d)) {
+    dataQualityTier = capTier(dataQualityTier, "DQ-C");
+  }
 
   if (dataQualityTier === "DQ-D" || dataQualityTier === "DQ-U") exclusionCandidateFlags.push("LOW_DATA_QUALITY_EXCLUSION");
   if (highCount >= 2) exclusionCandidateFlags.push("SEVERE_DATA_ANOMALY_EXCLUSION");

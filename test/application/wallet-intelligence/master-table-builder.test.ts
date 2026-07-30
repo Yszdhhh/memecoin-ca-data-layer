@@ -16,6 +16,116 @@ import {
   computeFingerprint,
 } from "../../../src/application/wallet-intelligence/master-table-builder.js";
 
+const WALLET_MASTER_OUTPUT_FIELD_ALLOWLIST = [
+  "walletAddress",
+  "walletFingerprint",
+  "chain",
+  "sourceOrder",
+  "addressValidationStatus",
+  "existingLabels",
+  "existingNote",
+  "existingLabelSource",
+  "sourceInputFingerprint",
+  "sourceAddressesSha256",
+  "sourceLabelsSha256",
+  "gmgn7dStatus",
+  "gmgn7dCompleteness",
+  "gmgn7dRealizedProfit",
+  "gmgn7dRealizedProfitPnl",
+  "gmgn7dWinRate",
+  "gmgn7dBuyCount",
+  "gmgn7dSellCount",
+  "gmgn7dBoughtCost",
+  "gmgn7dSoldIncome",
+  "gmgn7dTokenNum",
+  "gmgn7dLastActiveTimestamp",
+  "gmgn7dWarningCodes",
+  "gmgn7dFetchedAt",
+  "gmgn30dStatus",
+  "gmgn30dCompleteness",
+  "gmgn30dRealizedProfit",
+  "gmgn30dRealizedProfitPnl",
+  "gmgn30dWinRate",
+  "gmgn30dBuyCount",
+  "gmgn30dSellCount",
+  "gmgn30dBoughtCost",
+  "gmgn30dSoldIncome",
+  "gmgn30dTokenNum",
+  "gmgn30dLastActiveTimestamp",
+  "gmgn30dWarningCodes",
+  "gmgn30dFetchedAt",
+  "activityCount7d",
+  "activityCount30d",
+  "avgTradesPerActiveDay7d",
+  "avgTradesPerActiveDay30d",
+  "buySellImbalance7d",
+  "buySellImbalance30d",
+  "capitalTurnover7d",
+  "capitalTurnover30d",
+  "profitPerTrade7d",
+  "profitPerTrade30d",
+  "profitPerToken7d",
+  "profitPerToken30d",
+  "incomeMinusCost7d",
+  "incomeMinusCost30d",
+  "profitAccountingResidual7d",
+  "profitAccountingResidual30d",
+  "profitGrowth7dTo30d",
+  "winRateStability7dVs30d",
+  "activityStability7dVs30d",
+  "profitablePeriodCount",
+  "dataAgeHours",
+  "fieldCoverage7d",
+  "fieldCoverage30d",
+  "pairCoverage",
+  "dataQualityScore",
+  "dataQualityTier",
+  "internalConsistencyScore",
+  "outlierPercentile30d",
+  "anomalyFlags",
+  "exclusionCandidateFlags",
+  "manualReviewRequired",
+  "manualReviewReasons",
+  "borrowedProfitabilityLeadScore",
+  "borrowedActivityLeadScore",
+  "borrowedConsistencyLeadScore",
+  "borrowedDataQualityScore",
+  "borrowedCompositeLeadScore",
+  "borrowedLeadRank",
+  "alphaCandidateRank",
+  "reviewPriorityRank",
+  "borrowedLeadTier",
+  "firstHandVerificationStatus",
+  "firstHandProvider",
+  "firstHandCoverage",
+  "verifiedSwapCount",
+  "verifiedTransferCount",
+  "verifiedRealizedPnlUsd30d",
+  "verifiedWinRate30d",
+  "verifiedActiveDays30d",
+  "verifiedTokenCount30d",
+  "pnlReconciliationStatus",
+  "directFunder",
+  "fundingSourceType",
+  "fundingSourceConfidence",
+  "relatedWalletClusterId",
+  "botAssessment",
+  "routerAssessment",
+  "exchangeAssessment",
+  "sybilAssessment",
+  "alphaScore",
+  "alphaScoreTier",
+  "alphaScoreStatus",
+  "finalWalletScore",
+  "finalWalletGrade",
+  "normalizedExistingLabels",
+  "candidateTags",
+  "confirmedTags",
+  "riskTags",
+  "analystNote",
+  "reviewStatus",
+] as const;
+
 function makeSyntheticFixtureDir(): { inputDir: string; gmgnOutputDir: string; outputDir: string; cleanup: () => void } {
   const tmpBase = fs.mkdtempSync(path.join(os.tmpdir(), "sol-master-test-"));
   const inputDir = path.join(tmpBase, "input");
@@ -248,7 +358,7 @@ test("7. Full synthetic master table builder execution", async () => {
       addrs.push(addr);
       labelsObj.push({
         address: addr,
-        labels: [`tag-${i}`],
+        labels: [`tag-${i}`, `tag-${i}`],
         label_primary: `primary-${i}`,
       });
 
@@ -282,28 +392,30 @@ test("7. Full synthetic master table builder execution", async () => {
         status: "MAPPED",
         source: "gmgn",
         verificationStatus: "unverified",
-        completeness: 1.0,
+        completeness: i === 4 ? 0.5 : i === 6 ? 0.8 : 1.0,
         aggregates: {
           periodPnl: 0.2,
-          realizedProfit: i === 0 ? null : i === 1 ? 1000 : i * 50,
+          realizedProfit: i === 0 ? null : i === 1 ? 0 : i === 2 ? -50 : i === 3 ? 1000 : i * 50,
           realizedProfitPnl: 0.2,
           winRate: 65,
           tradeCount: 40,
           buyCount: 20,
           sellCount: 20,
           boughtCost: 400,
-          soldIncome: i === 1 ? 0 : 450,
+          soldIncome: i === 3 ? 0 : 450,
           lastActiveTimestamp: 1700000000,
           tokenNum: 5,
         },
-        warningCodes: [],
+        warningCodes: i === 5 ? ["gmgn_wallet_stats_partial_fields"] : [],
         requestBudgetUsed: 1,
         sourceInputFingerprint: fp,
         fetchedAt: new Date().toISOString(),
       });
+      if (i === 6) gmgnProfilesObj[gmgnProfilesObj.length - 1].status = "PARTIAL";
     }
 
-    const txtContent = addrs.join("\n") + "\n";
+    labelsObj.push({ address: addrs[0], labels: ["tag-0", "merged-label"], label_primary: "merged-note" });
+    const txtContent = [...addrs, addrs[0], addrs[10]].join("\n") + "\n";
     const jsonContent = JSON.stringify(labelsObj, null, 2);
 
     fs.writeFileSync(path.join(fix.inputDir, "sol_addresses.txt"), txtContent, "utf8");
@@ -313,6 +425,19 @@ test("7. Full synthetic master table builder execution", async () => {
 
     const expectedTxtHash = computeSha256(txtContent);
     const expectedJsonHash = computeSha256(jsonContent);
+
+    const duplicateProfiles = [...gmgnProfilesObj, { ...gmgnProfilesObj[0] }];
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"), JSON.stringify(duplicateProfiles, null, 2), "utf8");
+    await assert.rejects(
+      buildWalletIntelligenceMasterTable({
+        inputDir: fix.inputDir,
+        gmgnOutputDir: fix.gmgnOutputDir,
+        outputDir: fix.outputDir,
+        expectedHashes: { solAddressesTxtHash: expectedTxtHash, solAddressLabelsJsonHash: expectedJsonHash },
+      }),
+      /Duplicate 7d record/
+    );
+    fs.writeFileSync(path.join(fix.gmgnOutputDir, "normalized_wallet_profiles.json"), JSON.stringify(gmgnProfilesObj, null, 2), "utf8");
 
     const result = await buildWalletIntelligenceMasterTable({
       inputDir: fix.inputDir,
@@ -329,6 +454,9 @@ test("7. Full synthetic master table builder execution", async () => {
     assert.equal(result.metrics.matched7dCount, 1433);
     assert.equal(result.metrics.matched30dCount, 1433);
     assert.ok(result.metrics.candidateUnionCount <= 20);
+    assert.equal(result.metrics.positiveProfitCount30d, 1430);
+    assert.equal(result.metrics.zeroProfitCount30d, 1);
+    assert.equal(result.metrics.negativeProfitCount30d, 1);
     assert.equal(result.metrics.unavailableProfitCount30d, 1);
     assert.equal(
       result.metrics.positiveProfitCount30d + result.metrics.zeroProfitCount30d + result.metrics.negativeProfitCount30d + result.metrics.unavailableProfitCount30d,
@@ -363,16 +491,35 @@ test("7. Full synthetic master table builder execution", async () => {
     assert.equal(result.outputHashes.replay_manifest_json, result2.outputHashes.replay_manifest_json);
 
     const masterRows = fs.readFileSync(path.join(fix.outputDir, "wallet_master_private.jsonl"), "utf8").trim().split("\n").map((line) => JSON.parse(line));
+    assert.equal(masterRows.length, 1433);
+    assert.deepEqual(masterRows.map((row) => row.walletAddress), addrs);
+    assert.deepEqual(masterRows[0].existingLabels, ["tag-0", "merged-label"]);
+    assert.equal(masterRows[0].existingNote, "primary-0 | merged-note");
+    const allowedFields = [...WALLET_MASTER_OUTPUT_FIELD_ALLOWLIST].sort();
+    for (const row of masterRows) assert.deepEqual(Object.keys(row).sort(), allowedFields);
+
     const unavailable = masterRows.find((row) => row.gmgn30dRealizedProfit === null);
     assert.equal(unavailable.borrowedCompositeLeadScore, null);
     assert.equal(unavailable.alphaCandidateRank, null);
     const review = masterRows.find((row) => row.manualReviewRequired);
     assert.ok(review.reviewPriorityRank !== null);
     assert.equal(review.alphaCandidateRank, null);
+    const incompleteMapped = masterRows.find((row) => row.walletAddress === addrs[4]);
+    assert.notEqual(incompleteMapped.dataQualityTier, "DQ-A");
+    assert.equal(incompleteMapped.alphaCandidateRank, null);
+    assert.ok(incompleteMapped.anomalyFlags.includes("MAPPED_COMPLETENESS_INCONSISTENT_30D"));
+    const partialFields = masterRows.find((row) => row.walletAddress === addrs[5]);
+    assert.notEqual(partialFields.dataQualityTier, "DQ-A");
+    assert.equal(partialFields.alphaCandidateRank, null);
+    const partial = masterRows.find((row) => row.walletAddress === addrs[6]);
+    assert.notEqual(partial.borrowedCompositeLeadScore, null);
+    assert.equal(partial.alphaCandidateRank, null);
 
     const shortlist = JSON.parse(fs.readFileSync(path.join(fix.outputDir, "candidate_shortlist.json"), "utf8"));
     assert.ok(shortlist.candidate_union.every((row: any) => row.shortlistType === "ALPHA_CANDIDATE"));
     assert.ok(shortlist.review_priority_union.every((row: any) => row.shortlistType === "REVIEW_PRIORITY"));
+    const alphaAddresses = new Set(shortlist.candidate_union.map((row: any) => row.walletAddress));
+    assert.ok(shortlist.review_priority_union.every((row: any) => !alphaAddresses.has(row.walletAddress)));
   } finally {
     fix.cleanup();
   }
