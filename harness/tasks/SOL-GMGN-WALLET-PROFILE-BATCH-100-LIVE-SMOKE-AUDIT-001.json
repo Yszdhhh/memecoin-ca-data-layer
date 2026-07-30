@@ -1,0 +1,42 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001",
+  "title": "Independent audit of SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001 evidence, boundaries, and normalized metrics",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently and read-only audit the evidence for SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-batch-100-live-smoke-001, which is different from the implementer identity, and must send no live/provider requests. Verify hash gating, deterministic 21st–120th selection after the 20-wallet pilot skip, <=200 request budget, >=1,000ms serial delay, field/output hygiene, no GMGN_PRIVATE_KEY dependency, GMGN source=gmgn and verificationStatus=unverified, and absence of Helius, BSC, database, automation, scraper, and raw credential/payload/error leakage. Only a GREEN independent audit closes the batch-100 completion gate.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/manifest.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not execute network calls or provider requests.",
+    "Do not modify implementation or test code.",
+    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts.",
+    "Do not use the implementer HARNESS_AGENT_ID; use the distinct auditor HARNESS_AGENT_ID declared in this task objective.",
+    "Do not mark the batch-100 milestone complete unless the audit run finishes GREEN or GREEN_WITH_ADVISORY with valid evidence."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

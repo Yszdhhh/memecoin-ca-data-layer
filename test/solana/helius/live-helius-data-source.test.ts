@@ -1,9 +1,10 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
 import test from "node:test";
 import { SourceDataUnavailableError } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
 import { LiveHeliusDataSource } from "../../../src/infrastructure/solana/helius/live-helius-data-source.js";
 
 const unitCredential = ["unit", "credential", "value"].join("-");
+const publicCa = "DMYA7GexqPCeZeFxjDRjAgPbut24K3DhUAXcMH48JHoX";
 
 function json(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json" } });
@@ -34,7 +35,7 @@ test("live Helius source reads finalized mint data without exposing its credenti
     },
   });
 
-  const result = await source.getMint("PublicMint");
+  const result = await source.getMint(` ${publicCa} `);
   assert.deepEqual(result.data, { decimals: 6, supplyRaw: "42000" });
   assert.equal(result.watermark.finalizedSlot, 123n);
   assert.equal(requests.length, 1);
@@ -54,7 +55,7 @@ test("live Helius source fails closed on a paginated holder response", async () 
   });
 
   await assert.rejects(
-    () => source.getTokenAccounts("PublicMint"),
+    () => source.getTokenAccounts(publicCa),
     (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_token_accounts_truncated",
   );
 });
@@ -78,8 +79,8 @@ test("live Helius source maps complete Helius DAS accounts and metadata", async 
     },
   });
 
-  const accounts = await source.getTokenAccounts("PublicMint");
-  const metadata = await source.getTokenMetadata("PublicMint");
+  const accounts = await source.getTokenAccounts(publicCa);
+  const metadata = await source.getTokenMetadata(publicCa);
   assert.deepEqual(accounts.data, [{ tokenAccount: "AccountOne", owner: "OwnerOne", amountRaw: "77" }]);
   assert.equal(accounts.watermark.finalizedSlot, 456n);
   assert.deepEqual(metadata.data, { name: "Public token", symbol: "PUB" });
@@ -97,7 +98,7 @@ test("live Helius source maps the documented flat token-account shape without pr
     } }),
   });
 
-  const accounts = await source.getTokenAccounts("PublicMint");
+  const accounts = await source.getTokenAccounts(publicCa);
   assert.deepEqual(accounts.data, [{ tokenAccount: "AccountTwo", owner: "OwnerTwo", amountRaw: "88" }]);
 
   const unsafeAmountSource = new LiveHeliusDataSource({
@@ -109,11 +110,56 @@ test("live Helius source maps the documented flat token-account shape without pr
     } }),
   });
   await assert.rejects(
-    () => unsafeAmountSource.getTokenAccounts("PublicMint"),
+    () => unsafeAmountSource.getTokenAccounts(publicCa),
     (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_token_account_malformed",
   );
 });
 
+test("live Helius source keeps a valid transaction and marks partial when a transfer cannot be normalized", async () => {
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json([{
+      signature: "safe-signature",
+      slot: 999,
+      timestamp: 1_783_000_000,
+      tokenTransfers: [{
+        mint: "MintOne",
+        fromUserAccount: "FromOne",
+        toUserAccount: "ToOne",
+        tokenAmount: 1.5,
+      }],
+      nativeTransfers: [{ fromUserAccount: "NativeFrom", toUserAccount: "NativeTo", amount: 7 }],
+    }]),
+  });
+
+  const result = await source.getTransactions([publicCa], new Date("2020-01-01T00:00:00.000Z"));
+  assert.equal(result.watermark.completeness, "partial");
+  assert.deepEqual(result.data, [{
+    signature: "safe-signature",
+    slot: "999",
+    blockTime: "2026-07-02T13:46:40.000Z",
+    tokenTransfers: [],
+    nativeTransfers: [{ eventIndex: 0, from: "NativeFrom", to: "NativeTo", amountRaw: "7" }],
+  }]);
+});
+
+test("live Helius source still rejects a transaction with invalid core identity fields", async () => {
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => json([{
+      signature: "",
+      slot: 999,
+      timestamp: 1_783_000_000,
+    }]),
+  });
+
+  await assert.rejects(
+    () => source.getTransactions([publicCa], new Date("2020-01-01T00:00:00.000Z")),
+    (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_transaction_malformed",
+  );
+});
 test("live Helius source enforces its fixed request budget", async () => {
   const source = new LiveHeliusDataSource({
     apiKey: unitCredential,
@@ -124,15 +170,81 @@ test("live Helius source enforces its fixed request budget", async () => {
     }),
   });
 
-  await source.getMint("PublicMint");
+  await source.getMint(publicCa);
   await assert.rejects(
-    () => source.getMint("PublicMint"),
+    () => source.getMint(publicCa),
     (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_request_budget_exhausted",
   );
+});
+
+test("live Helius source rejects invalid addresses before fetch", async () => {
+  let fetchCalls = 0;
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    fetchImpl: async () => {
+      fetchCalls += 1;
+      return json({ result: null });
+    },
+  });
+  const invalidCalls = [
+    () => source.getMint("abc"),
+    () => source.getTokenAccounts("not-a-solana-address"),
+    () => source.getTokenMetadata(`${publicCa}0`),
+    () => source.getTransactions(["1".repeat(31)], new Date(0)),
+  ];
+
+  for (const call of invalidCalls) {
+    await assert.rejects(
+      call,
+      (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_address_invalid",
+    );
+  }
+  assert.equal(fetchCalls, 0);
 });
 
 test("live Helius source rejects unavailable facts instead of fabricating tags or wallets", async () => {
   const source = new LiveHeliusDataSource({ apiKey: unitCredential, minRequestIntervalMs: 0 });
   await assert.rejects(() => source.getAddressTags(["PublicAddress"]), /helius_address_tags_unavailable/);
   await assert.rejects(() => source.getWalletFacts(["PublicAddress"], new Date()), /helius_wallet_facts_unavailable/);
+});
+
+test("live Helius source supports only the allowlisted gatekeeper beta RPC endpoint", async () => {
+  const requests: URL[] = [];
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    rpcEndpointMode: "gatekeeper_beta",
+    minRequestIntervalMs: 0,
+    fetchImpl: async (input) => {
+      assert.ok(input instanceof URL);
+      requests.push(new URL(input));
+      return json({
+        result: {
+          context: { slot: 123 },
+          value: { data: { parsed: { type: "mint", info: { supply: "1", decimals: 0 } } } },
+        },
+      });
+    },
+  });
+
+  await source.getMint(publicCa);
+  assert.equal(requests[0]?.origin, "https://beta.helius-rpc.com");
+});
+
+test("runtime Helius endpoint mode fails closed instead of accepting an arbitrary URL", () => {
+  const previousKey = process.env.HELIUS_API_KEY;
+  const previousMode = process.env.HELIUS_RPC_ENDPOINT_MODE;
+  try {
+    Reflect.set(process.env, "HELIUS_API_KEY", unitCredential);
+    Reflect.set(process.env, "HELIUS_RPC_ENDPOINT_MODE", "https://attacker.invalid");
+    assert.throws(
+      () => LiveHeliusDataSource.fromRuntime(),
+      (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_rpc_endpoint_mode_invalid",
+    );
+  } finally {
+    if (previousKey === undefined) Reflect.deleteProperty(process.env, "HELIUS_API_KEY");
+    else Reflect.set(process.env, "HELIUS_API_KEY", previousKey);
+    if (previousMode === undefined) Reflect.deleteProperty(process.env, "HELIUS_RPC_ENDPOINT_MODE");
+    else Reflect.set(process.env, "HELIUS_RPC_ENDPOINT_MODE", previousMode);
+  }
 });

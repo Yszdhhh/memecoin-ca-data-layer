@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "ALPHA-TERMINAL-DESIGN-IMPORT-001",
+  "title": "Import Alpha Terminal research draft for external review",
+  "tier": "T1",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Add the Owner-provided Alpha Terminal research document to the review branch as an explicitly unaccepted design draft. This task does not authorize implementing its future providers, automation, storage, UI, alerts, or additional chains.",
+  "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-001"],
+  "inputs": ["PROJECT_CONSTITUTION.md", "PROJECT_ARCHITECTURE.md", "OWNER_DECISIONS_NEEDED.md"],
+  "write_set": ["harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json", "harness/ledger/tasks.json", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "forbidden_actions": ["Do not implement or enable any capability described by the draft.", "Do not enable providers other than Helius, automation, production storage, background services, alerts, UI, BSC, Base, or Robinhood.", "Do not add credentials or raw provider payloads."],
+  "deliverables": ["docs/designs/ALPHA-TERMINAL-DESIGN-001.md"],
+  "acceptance_commands": ["npm run harness:doctor", "git diff --check"]
+}

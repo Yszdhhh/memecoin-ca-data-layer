@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001",
+  "title": "Independently audit the bounded signed cumulative holdings runner repair",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently and offline audit GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001. Verify tracked implementation, not task prose alone, mechanically binds fail-closed hashes, in-memory strict selection, credential-presence-only behavior, isolated HOME/CWD, GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the signed child environment, exactly one no-cursor invocation, safe parse/error disposal, and no real-input or credential read in tests. Confirm the amended live task is still blocked pending a fresh preflight audit. Do not make provider requests or inspect external files or credentials.",
+  "dependencies": [
+    "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.json",
+    "harness/dispatches/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.md",
+    "harness/inputs/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/manifest.json",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, RPC, or any network/provider.",
+    "Do not read C:\\Users\\10639\\chainfm_out\\sol, external addresses, .env files, GMGN_API_KEY, GMGN_PRIVATE_KEY, or any credential.",
+    "Do not modify application code, tests, package files, live task evidence, or the repair task artifacts.",
+    "Do not print or retain addresses, labels, credential values, raw payloads, stdout/stderr, or complete errors.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0
+  }
+}

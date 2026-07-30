@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001",
+  "title": "Bounded two-wallet one-wallet-per-invocation GMGN stats 7d/30d live re-smoke",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Execute a bounded post-repair live re-smoke for exactly two valid unique Solana wallets across 7d and 30d, using exactly one wallet per CLI invocation, exactly four maximum invocations/provider requests, strict serial ordering with at least 1000ms spacing, no retry, no pagination, and sanitized outputs. Confirm identity-bound parseable coverage before any full rerun.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/reports/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/manifest.json"
+  ],
+  "write_set": [
+    "src/cli/run-gmgn-wallet-stats-single-wallet-transport-7d-30d-live-resmoke.ts",
+    "test/application/gmgn/wallet-stats-single-wallet-transport-7d-30d-live-resmoke.test.ts",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not exceed 4 GMGN CLI invocations or 4 physical provider requests.",
+    "Do not use multi-wallet invocations, retry, concurrency, pagination, signed holdings, Helius, fallback, scraping, or any other provider.",
+    "Do not print, persist, or commit plaintext addresses or labels, credentials, proxy URLs, raw provider payloads, raw stdout/stderr, or complete exceptions.",
+    "Do not overwrite historical outputs and do not authorize a full rerun without an independent GREEN audit."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.json",
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 4,
+    "provider_requests": 4,
+    "gmgn_cli_invocations": 4,
+    "credential_reads": "presence_boolean_only",
+    "address_processing": 2
+  }
+}

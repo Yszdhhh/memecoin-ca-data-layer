@@ -1,0 +1,67 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+  "title": "Harness GMGN Wallet Stats Parser Repair 003 Write-Set and SHA Evidence Repair 001",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Repair Harness evidence for Repair-003: record baseline SHA (8d67bbab36b5314bc54a8a2acb1fd95267f962ec), actual delivery SHA (0b7ce3c8c5efc11d6c625cc4df99395caf39c004), mark external SHA 0b7ce3c62137ea6c9d784bc131fb0b3b44b827ea as incorrect external value, document original Repair-003 write_set omission of 4 consumer test files, verify read-only diffs of those 4 files, append Post-Delivery Evidence Correction to Repair-003 acceptance report, update audit dependencies, and state Harness limitation regarding Git diff write_set enforcement.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001/.gitkeep",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not modify src/ or test/ files.",
+    "Do not issue network or provider requests.",
+    "Do not read credentials or plaintext address files.",
+    "Do not execute live smoke or batch wallet fetching.",
+    "Do not modify Git history or forge commits for external invalid SHA."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

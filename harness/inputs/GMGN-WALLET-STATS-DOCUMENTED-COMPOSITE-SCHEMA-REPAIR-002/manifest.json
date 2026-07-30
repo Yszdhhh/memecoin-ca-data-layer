@@ -1,0 +1,10 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002",
+  "baseline_commit": "06f46955b1967c425180fb645f41166a06f4dc26",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "cli_invocation_budget": 0,
+  "credential_reads_allowed": 0,
+  "offline_mode": true
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+  "title": "Independent audit of cost-alias 7d/30d live re-smoke",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit the two-request live re-smoke with zero new network requests. Verify input hashes, budgets, serial delay, sanitized outputs, parser outcomes, warning codes, and whether both periods are usable enough to unlock a separately specified full batch.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network/provider/GMGN CLI requests.",
+    "Do not read credentials, plaintext addresses, labels, raw payloads, raw stdout/stderr, or full errors.",
+    "Do not modify application, parser, runner, or test code.",
+    "Do not authorize the full batch unless both 7d and 30d are MAPPED or PARTIAL without schema, alias, type, or period blocking diagnostics."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

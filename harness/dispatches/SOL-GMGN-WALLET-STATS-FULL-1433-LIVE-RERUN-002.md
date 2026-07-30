@@ -1,0 +1,3 @@
+# Dispatch: SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002
+
+Execute only `SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002` as HARNESS_AGENT_ID `implementer-sol-gmgn-wallet-stats-full-1433-live-rerun-002`. Verify approved external input hashes before network. Select exactly all 1,433 valid unique strict-32-byte Solana addresses in deterministic cleaned-input order. Query 7d then 30d using exactly one wallet per invocation, at most 2,866 invocations, strict serial spacing of at least 1,000ms, no retry, concurrency, pagination, or fallback. Persist only sanitized normalized records to the versioned 002 output directory.

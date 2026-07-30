@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001",
+  "title": "Evidence and Ledger reconciliation for GMGN cumulative portfolio adapter repair audit",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Align Harness Ledger state for GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001 to DONE, repair corrupted budget text in audit acceptance report to state zero live requests authorized, supplement audit evidence traceability (baseline SHA, completion SHA, clean workspace, zero network requests, offline-only scope), and sanitize memory-discard phrasing to process-boundary reference phrasing. Perform zero provider calls, zero network requests, zero live smoke tasks, and zero credential exposure.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/acceptance.md",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue any network request (HTTP/HTTPS, RPC, WS) to GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, or any external service.",
+    "Do not modify business logic in src/, package.json, lockfile, CLI versions, or production config.",
+    "Do not modify historical 100-wallet or 1433-wallet reports or results.",
+    "Do not modify or delete unrelated task specs, dispatches, manifests, reports, or Ledger entries.",
+    "Do not create, dispatch, or execute Signed Cumulative Holdings Live Smoke or downstream live tasks.",
+    "Do not read external address lists, sol_addresses.txt, sol_address_labels.json, cleaned.jsonl, or C:\\Users\\10639\\chainfm_out\\.",
+    "Do not read, print, log, or commit GMGN_API_KEY, GMGN_PRIVATE_KEY, credentials, tokens, or raw provider payloads.",
+    "Do not use git reset --hard, force push, or branch deletion."
+  ],
+  "deliverables": [
+    "harness/tasks/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001/acceptance.md",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

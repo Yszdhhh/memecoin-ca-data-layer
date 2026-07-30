@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-001",
+  "title": "Run a manually selected bounded Solana CA batch",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Add one manual command that accepts 1 to 10 distinct Solana CAs supplied by the operator and runs the approved bounded Helius CA-first read for each. It must not discover CAs, schedule itself, retain provider payloads, persist results, or use a provider other than Helius.",
+  "dependencies": ["SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001"],
+  "inputs": ["src/application/live/solana-live-ca-first.ts", "src/cli/run-solana-live-ca-first.ts", "OWNER_DECISIONS_NEEDED.md"],
+  "write_set": ["harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-001.json", "harness/ledger/tasks.json", "package.json", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts"],
+  "forbidden_actions": ["Do not add cron, scheduler, background loops, automatic token discovery, provider fallback, database/cache writes, queues, address-library writes, or non-Solana chains.", "Do not print, store, commit, or record credentials, raw provider payloads, or credential-bearing URLs.", "Do not claim creator, Dev, address, holder-concentration, or full-analysis facts."],
+  "deliverables": ["src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts", "package.json"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

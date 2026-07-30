@@ -1,0 +1,17 @@
+{
+  "manifest_version": "manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
+  "created_at_utc": "2026-07-30T00:23:25.000Z",
+  "baseline_commit": "8d67bbab36b5314bc54a8a2acb1fd95267f962ec",
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ]
+}

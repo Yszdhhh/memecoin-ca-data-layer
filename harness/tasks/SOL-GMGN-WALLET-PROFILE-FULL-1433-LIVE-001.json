@@ -1,0 +1,64 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001",
+  "title": "Strictly bounded, manually triggered, Solana-only, GMGN-only 1433-wallet statistical profile full live run",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Based on hash-verified Chain.fm Solana address-cleaning output, execute one manually triggered, strictly bounded, read-only GMGN official-API full 1433-wallet statistical profile run. Deterministically validate Base58/32-byte addresses and select all 1,433 unique valid wallets in sequence. Fetch 7d and 30d statistics serially with >=1,000ms between adjacent requests and a hard 2,866-request budget. Save only allowlisted normalized metrics to designated external derived directory; all GMGN values remain source=gmgn and verificationStatus=unverified. GMGN_PRIVATE_KEY is neither read nor passed to the statistics subprocess. The run is not independently completed until the downstream audit SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001 is GREEN.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
+    "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001",
+    "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/manifest.json",
+    "package.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "harness/gmgn-wallet-profile-full-1433-live-001.ts",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/**",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/**",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/dispatches/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.md",
+    "harness/ledger/tasks.json",
+    "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json"
+  ],
+  "forbidden_actions": [
+    "Do not call BSC, Robinhood, multichain, or any chain other than Solana.",
+    "Do not use web scraping, browser automation, Cloudflare bypass, GMGN Web pages, or non-official endpoints.",
+    "Do not execute trades, signatures, transfers, or orders.",
+    "Do not execute cron, background loops, auto-discovery, or automatic daily updates.",
+    "Do not call Helius or perform on-chain verification in this task.",
+    "Do not write to databases, Redis, queues, or production systems.",
+    "Do not print, persist, or commit API keys, private keys, raw payloads, raw errors, or full user address lists in Git.",
+    "Do not claim GMGN metrics are chain-confirmed facts, and do not use LLMs to score or explain individual wallets.",
+    "Do not read, display, persist, or pass GMGN_PRIVATE_KEY to the statistics subprocess; only GMGN_API_KEY may be supplied to the official GMGN statistics client.",
+    "Do not persist plaintext addresses, labels, credential URLs, raw provider payloads, complete provider exceptions, or non-allowlisted normalized fields in the external output or Git artifacts."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "harness/gmgn-wallet-profile-full-1433-live-001.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/dispatches/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/manifest.json",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

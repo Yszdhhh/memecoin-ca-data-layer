@@ -1,0 +1,45 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001",
+  "title": "Independent zero-network audit of single-wallet 7d and 30d GMGN wallet stats live re-smoke",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "PARK",
+  "objective": "Independently audit SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001 with a distinct HARNESS_AGENT_ID (auditor-sol-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke-001) and zero network/provider requests. Verify 2-invocation budget, 7d/30d serial execution, privacy, and sanitized evidence.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "src/cli/run-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "test/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN or any network provider.",
+    "Do not inspect credential values, proxy URLs, plaintext addresses, or raw payloads.",
+    "Do not modify application code or implementer evidence.",
+    "Do not use HARNESS_AGENT_ID implementer-sol-gmgn-wallet-stats-parser-v2-7d-30d-live-resmoke-001."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

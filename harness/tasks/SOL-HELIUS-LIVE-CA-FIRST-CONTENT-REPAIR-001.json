@@ -1,0 +1,37 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-LIVE-CA-FIRST-CONTENT-REPAIR-001",
+  "title": "Remove credential-like fixture text from CA-first test",
+  "tier": "T1",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application-hot-path",
+  "status": "DONE",
+  "objective": "Repair the CA-first test fixture so the secret-content scanner accepts the repository while preserving the assertion that arbitrary transport error text is never surfaced in the structured result.",
+  "dependencies": [
+    "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001"
+  ],
+  "inputs": [
+    "test/application/live/solana-live-ca-first.test.ts",
+    "harness/cli.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-CONTENT-REPAIR-001.json",
+    "harness/ledger/tasks.json",
+    "test/application/live/solana-live-ca-first.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not alter runtime implementation, provider configuration, credentials, providers, chain activation, database, cache, queue, automation, or scheduler behavior.",
+    "Do not print, store, commit, or record credentials, bearer values, raw provider payloads, or credential-bearing URLs."
+  ],
+  "deliverables": [
+    "test/application/live/solana-live-ca-first.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

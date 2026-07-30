@@ -1,0 +1,74 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",
+  "title": "Implement bounded daily GMGN discovery and Helius Solana analysis",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "DONE",
+  "objective": "Implement an operator-enabled daily workflow that queries only the official pinned gmgn-cli for Solana trending candidates created no more than 24 hours ago with current provider-reported market cap strictly above USD 1,000,000, sorts by market cap descending, selects at most 10 strictly validated unique Solana CAs, requires at least 5 candidates without padding or guessing, then invokes the existing bounded read-only Helius CA-first path and writes only a sanitized local daily report. The report may include allowlisted numeric GMGN market/risk/address claims with explicit unverified-provider provenance and Helius mint/metadata/token-account availability, count, completeness, slots and warning codes. Add an allowlisted Helius RPC endpoint mode for mainnet or the same-provider Gatekeeper beta because the current host resolves mainnet.helius-rpc.com to loopback while beta.helius-rpc.com is reachable. Add Windows DPAPI secret injection and an explicit Task Scheduler registration script; registration is opt-in and the one-shot command remains independently runnable.",
+  "dependencies": [
+    "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
+    "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
+    "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001",
+    "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "docs/audits/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json",
+    "harness/ledger/tasks.json",
+    "package.json",
+    "package-lock.json",
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "src/cli/run-solana-daily-new-token-analysis.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "scripts/configure-solana-daily-credentials.ps1",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "test/application/discovery/gmgn-daily-token-selector.test.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "test/solana/helius/live-helius-data-source.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "forbidden_actions": [
+    "Do not enable any chain other than Solana and do not call BSC, Robinhood or another chain.",
+    "Do not add a discovery provider other than GMGN or a chain-data provider other than Helius; Helius Gatekeeper beta is the same provider and must be an explicit allowlisted endpoint mode, never an arbitrary credential sink.",
+    "Do not trade, submit transactions, call swap/order/cooking commands, recommend tokens, or treat selection as investment advice.",
+    "Do not print, persist, commit or include API keys, credential-bearing URLs, raw GMGN or Helius payloads, arbitrary provider text, full exception text, token logos, websites or social text.",
+    "Do not write PostgreSQL, Redis, a queue, an address library or any production system; daily reports must remain local and sanitized outside the repository by default.",
+    "Do not create a background loop. Scheduling must use one explicit Windows scheduled task that invokes one bounded run per day and can be removed by the operator.",
+    "Do not pad a batch below five candidates, discover beyond the fixed GMGN query, or guess/substitute malformed CAs.",
+    "Do not represent GMGN concentration, creator or risk fields as independently verified Helius facts.",
+    "Do not claim complete holder concentration, owner clustering, Dev/creator history, automatic address-library sedimentation or complete Pump analysis; unavailable evidence must remain null/fail-closed."
+  ],
+  "deliverables": [
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "src/cli/run-solana-daily-new-token-analysis.ts",
+    "scripts/configure-solana-daily-credentials.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

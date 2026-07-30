@@ -1,0 +1,59 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-001",
+  "title": "Strictly bounded, manually triggered, Solana-only, GMGN-only 20-wallet statistical profile pilot",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Based on verified Chain.fm SOL address cleaning output, perform a strictly bounded, manually triggered, Solana-only, GMGN-only 20-wallet statistical pilot. For 20 deterministically selected addresses, fetch and normalize GMGN 7D and 30D wallet stats, collecting only allowlisted metrics with source=gmgn, verification_status=unverified, completeness, warning/error codes, and fetchedAt watermark. The result is a borrowed initial screening record output to an external directory, not a confirmed on-chain PnL, wallet quality grade, or Alpha tier.",
+  "dependencies": [
+    "SOL-CHAINFM-ADDRESS-INGEST-001",
+    "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/chainfm/clean-solana-address-directory.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-PILOT-001/manifest.json",
+    "package.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/**",
+    "src/infrastructure/gmgn/**",
+    "src/cli/**",
+    "harness/gmgn-wallet-profile-pilot.ts",
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-PILOT-001/**",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-PILOT-001/**",
+    "harness/ledger/tasks.json",
+    "test/application/gmgn/**",
+    "test/infrastructure/gmgn/**",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not call BSC, Robinhood, multichain, or any chain other than Solana.",
+    "Do not use web scraping, browser automation, Cloudflare bypass, or non-official endpoints.",
+    "Do not execute trades, signatures, transfers, or orders.",
+    "Do not execute cron, background loops, auto-discovery, or automatic daily updates.",
+    "Do not call Helius or perform on-chain verification in this task.",
+    "Do not write to databases, Redis, queues, or production systems.",
+    "Do not print, persist, or commit API keys, private keys, raw payloads, raw errors, or full user address lists in Git.",
+    "Do not claim GMGN metrics are chain-confirmed facts, and do not use LLMs to score or explain individual wallets."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-PILOT-001/acceptance.md",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "harness/gmgn-wallet-profile-pilot.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

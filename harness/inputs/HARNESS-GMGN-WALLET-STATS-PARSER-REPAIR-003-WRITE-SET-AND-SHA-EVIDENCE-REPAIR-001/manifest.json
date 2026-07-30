@@ -1,0 +1,21 @@
+{
+  "manifest_version": "manifest-v1",
+  "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+  "created_at_utc": "2026-07-29T16:36:17.000Z",
+  "baseline_commit": "0b7ce3c8c5efc11d6c625cc4df99395caf39c004",
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003/acceptance.md",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts"
+  ]
+}

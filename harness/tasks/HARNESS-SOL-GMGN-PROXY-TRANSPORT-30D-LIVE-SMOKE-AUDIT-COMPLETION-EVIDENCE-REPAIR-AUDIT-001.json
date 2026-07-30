@@ -1,0 +1,47 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001",
+  "title": "Independent zero-network audit of 30d Audit completion-evidence repair",
+  "tier": "T1",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001 with HARNESS_AGENT_ID auditor-harness-sol-gmgn-proxy-transport-30d-live-smoke-audit-completion-evidence-repair-001 and zero network/provider requests. Verify write-set hygiene, Post-Delivery Evidence Correction completeness (implementer delivery SHA vs audit start baseline vs original Audit Delivery SHA 945274487a7dccc427acb2c9bceff0fd01bfddff), remote parity language, unchanged GREEN_WITH_ADVISORY and Advisories, no src/test/live-output changes, and that this repair does not claim parser fix. Record Repair Delivery SHA after inspecting the repair commit; do not assert that either acceptance report self-references its own final commit SHA.",
+  "dependencies": [
+    "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.json",
+    "harness/dispatches/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.md",
+    "harness/inputs/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001/manifest.json",
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001/acceptance.md",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN or any network/provider.",
+    "Do not modify application code, tests, live outputs, or implementer evidence beyond this audit report and this audit task status.",
+    "Do not use HARNESS_AGENT_ID implementer-harness-sol-gmgn-proxy-transport-30d-live-smoke-audit-completion-evidence-repair-001.",
+    "Do not change original Audit Verdict or Advisories except by read-only verification.",
+    "Do not claim parser repair, signed holdings recovery, pagination recovery, or cumulative PnL recovery.",
+    "Do not force-push or reset --hard."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

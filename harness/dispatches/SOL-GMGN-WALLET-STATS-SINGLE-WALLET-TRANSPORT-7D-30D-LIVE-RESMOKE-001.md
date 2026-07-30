@@ -1,0 +1,3 @@
+# Dispatch: SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001
+
+Execute only the exact task spec `SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001` as HARNESS_AGENT_ID `implementer-sol-gmgn-wallet-stats-single-wallet-transport-7d-30d-live-resmoke-001`. Verify the two approved external input hashes before any request. Select exactly the first two valid unique strict-32-byte Solana addresses deterministically. Invoke GMGN stats once per wallet per period (7d then 30d), four total, strictly serial with at least 1,000ms spacing. Fail closed on budget, identity, or schema violations. Persist only sanitized normalized fields and aggregate evidence.

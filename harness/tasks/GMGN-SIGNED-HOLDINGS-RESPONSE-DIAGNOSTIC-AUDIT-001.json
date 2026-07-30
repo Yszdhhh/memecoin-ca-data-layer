@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001",
+  "title": "Independently audit safe GMGN signed-holdings diagnostic evidence",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001, its sanitized report, task/ledger state and git state. Confirm strict validation preceded exactly one Solana-only GMGN holdings invocation, only allowlisted safe diagnostic codes were retained, no raw provider/credential/error text escaped, and no unsupported wallet-history or quality claim was made. Use a HARNESS_AGENT_ID different from the implementer; do not call a provider; record a verdict.",
+  "dependencies": [
+    "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+    "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001/acceptance.md",
+    "harness/ledger/tasks.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any network provider.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text, token mints, token names, transaction signatures, counterparties or per-trade records.",
+    "Do not modify application, domain, infrastructure, test or configuration code.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

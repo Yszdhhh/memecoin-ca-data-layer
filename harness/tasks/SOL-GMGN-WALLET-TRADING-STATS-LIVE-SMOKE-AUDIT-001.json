@@ -1,0 +1,43 @@
+{
+    "schema_version":  "task-v1",
+    "task_id":  "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",
+    "title":  "Independently audit bounded GMGN wallet statistics screen evidence",
+    "tier":  "T3",
+    "role":  "auditor",
+    "chain":  "solana",
+    "layer":  "input",
+    "status":  "DONE",
+    "objective":  "Independently read and audit the completed SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001 task, its tracked sanitized evidence, task spec, ledger record, git state and test output. Confirm that exactly the eleven frozen public Solana wallets were used, strict validation preceded provider construction, the run stayed bounded to two GMGN portfolio-statistics invocations, no Helius or other provider call occurred, no secret/raw payload/arbitrary provider text leaked into tracked evidence, GMGN statistics remain labeled borrowed/unverified, and no unsupported Alpha tier, PnL, wallet-quality, clustering or address-library claim is made. Produce a tracked audit report with a verdict. The auditor must use a HARNESS_AGENT_ID different from the implementer and must not call any provider or modify implementation code.",
+    "dependencies":  [
+                         "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001"
+                     ],
+    "inputs":  [
+                   "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+                   "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001/acceptance.md",
+                   "harness/ledger/tasks.json",
+                   "src/domain/solana-address.ts",
+                   "src/domain/rules/alpha-score.ts"
+               ],
+    "write_set":  [
+                      "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001.json",
+                      "harness/ledger/tasks.json",
+                      "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001/acceptance.md"
+                  ],
+    "forbidden_actions":  [
+                              "Do not call GMGN, Helius, Dune, Chain.fm or any network provider.",
+                              "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, arbitrary provider text or full exception text.",
+                              "Do not modify application, domain, infrastructure, test or configuration code.",
+                              "Do not write outside the exact tracked write set."
+                          ],
+    "deliverables":  [
+                         "harness/reports/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001/acceptance.md"
+                     ],
+    "acceptance_commands":  [
+                                "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001.json",
+                                "npm run harness:doctor",
+                                "npm run typecheck",
+                                "npm test",
+                                "npm run build",
+                                "git diff --check"
+                            ]
+}

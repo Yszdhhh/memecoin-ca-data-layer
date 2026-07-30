@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001",
+  "title": "Single-wallet 7d and 30d live re-smoke after cost alias precedence repair",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Execute exactly one bounded single-wallet GMGN stats request for 7d and one for 30d after the independently audited cost-alias precedence and zero-timestamp repair. Validate fixed input hashes before network, run strictly serially with at least 1,000ms delay, save sanitized normalized evidence only, and fail closed without retries, pagination, holdings, fallback, or batch expansion.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/wallet-stats-parser-v2-7d-30d-live-resmoke.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/cli/run-gmgn-wallet-stats-cost-alias-7d-30d-live-resmoke.ts",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/manifest.json"
+  ],
+  "write_set": [
+    "src/cli/run-gmgn-wallet-stats-cost-alias-7d-30d-live-resmoke.ts",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, Chain.fm, Dune, RPC, browser automation, web scraping, third-party providers, or fallback.",
+    "Do not exceed 2 GMGN CLI invocations or 2 physical provider requests. Do not retry, paginate, execute holdings, or use concurrency.",
+    "Do not print, persist, or commit plaintext addresses, labels, credential values, proxy URLs, raw provider payloads, raw stdout/stderr, or complete exceptions.",
+    "Do not run 100-wallet or 1,433-wallet batches in this task.",
+    "Do not read or forward GMGN_PRIVATE_KEY."
+  ],
+  "deliverables": [
+    "src/cli/run-gmgn-wallet-stats-cost-alias-7d-30d-live-resmoke.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.json",
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 2,
+    "provider_requests": 2,
+    "gmgn_cli_invocations": 2,
+    "credential_reads": "presence_only_api_key",
+    "address_processing": 1
+  }
+}

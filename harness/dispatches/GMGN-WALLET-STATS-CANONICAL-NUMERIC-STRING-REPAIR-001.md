@@ -1,0 +1,3 @@
+# Dispatch: GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001
+
+Run only as `implementer-gmgn-wallet-stats-canonical-numeric-string-repair-001`. This is a zero-network parser repair. Use the audited safe shape evidence: canonical numeric strings were observed for allowlisted profit/monetary aliases, while counts/timestamps and documented `pnl_stat.winrate` remained JSON numbers. Implement a narrow parser primitive that accepts finite JSON numbers and canonical numeric strings only, then reapplies every metric-specific integer/range/unit rule after conversion. Preserve null as missing, preserve explicit zero, reject broad coercion, and add synthetic counterexamples. Create no live output.

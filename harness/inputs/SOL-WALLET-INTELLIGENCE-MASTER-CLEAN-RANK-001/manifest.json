@@ -1,0 +1,31 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001",
+  "external_inputs": [
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_addresses.txt",
+      "sha256": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+      "handling": "read only in master builder; plaintext never printed or committed into git"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_address_labels.json",
+      "sha256": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+      "handling": "read only for label merging; plaintext never printed or committed into git"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-full-1433-live-rerun-002/normalized_wallet_profiles.json",
+      "sha256": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+      "handling": "GMGN 7d/30d normalized profiles input"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-full-1433-live-rerun-002/summary.json",
+      "sha256": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D",
+      "handling": "GMGN rerun summary input"
+    }
+  ],
+  "selection": {
+    "rule": "all valid unique strict-32-byte Solana addresses in original sol_addresses.txt order",
+    "count": 1433
+  },
+  "output_directory": "C:/Users/10639/chainfm_out/sol/derived/wallet-intelligence-master-clean-rank-001"
+}

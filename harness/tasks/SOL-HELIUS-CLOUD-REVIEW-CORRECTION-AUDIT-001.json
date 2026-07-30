@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
+  "title": "Independent audit of cloud-review corrections",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently verify closure of the cloud review findings: strict validation before source/fetch, sanitized warning output, committed Helius smoke evidence, clean-tree DONE-input enforcement, corrected live wave state, and an explicit Alpha Terminal research boundary.",
+  "dependencies": ["PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001", "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001", "HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001", "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001", "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001"],
+  "inputs": ["harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json", "harness/tasks/SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001.json", "harness/tasks/HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001.json", "harness/tasks/HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001.json", "harness/tasks/SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001.json", "src/domain/solana-address.ts", "src/infrastructure/solana/helius/live-helius-data-source.ts", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-warning.ts", "src/cli/run-solana-live-ca-first.ts", "src/cli/run-solana-live-ca-batch.ts", "harness/lib/validation.ts", "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/acceptance.md", "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/upstream-evidence.md", "harness/CURRENT_WAVE.md", "KNOWN_LIMITATIONS.md", "OWNER_DECISIONS_NEEDED.md", "docs/BLUEPRINT_REVISION_PROPOSAL_2026-07-26.md", "docs/designs/ALPHA-TERMINAL-DESIGN-001.md", "test/solana/helius/live-helius-data-source.test.ts", "test/application/live/solana-live-ca-first.test.ts", "test/application/live/solana-live-ca-batch.test.ts", "test/harness.test.ts"],
+  "write_set": ["harness/tasks/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.json", "harness/ledger/tasks.json", "docs/audits/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.md"],
+  "forbidden_actions": ["Do not call Helius or any provider and do not inspect a runtime credential.", "Do not modify source, tests, runtime configuration, provider scope, chain activation, automation, persistence, cache, queue or production infrastructure.", "Do not print, store, commit or record credentials, raw payloads, credential-bearing URLs or ignored local run logs."],
+  "deliverables": ["docs/audits/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.md"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}

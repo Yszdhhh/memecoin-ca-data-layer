@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003",
+  "title": "Fresh independent preflight audit after signed holdings evidence-manifest repair",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently and offline preflight-audit SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001 after the narrow evidence-manifest repair. Verify the fresh immutable evidence manifest hashes match its tracked inputs and the actual tracked runner mechanically enforces both required external input hashes before any child spawn, first strict valid unique selection in memory only, credential presence-only handling, disposable HOME/CWD, GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the signed child, exactly one no-cursor holdings invocation, and only sanitized unverified GMGN output or allowlisted safe codes. This audit must give an explicit GREEN before the live task may be made READY. Do not issue network/provider requests or read external inputs/credentials.",
+  "dependencies": [
+    "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.md",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/acceptance.md",
+    "harness/tasks/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.json",
+    "harness/reports/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, RPC, or any network/provider.",
+    "Do not read C:\\Users\\10639\\chainfm_out\\sol, external addresses, .env files, GMGN_API_KEY, GMGN_PRIVATE_KEY, or any credential.",
+    "Do not select or retain an address, run the live CLI, or enable the live task.",
+    "Do not modify code, tests, packages, any dispatch, any input manifest, the live task, or historical output.",
+    "Do not print or retain addresses, labels, credentials, raw payloads, stdout/stderr, or full errors.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001",
+  "title": "Independent audit of full 1433-wallet statistical profile live run, evidence hygiene, and report compliance",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Independently and read-only audit SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001. The auditor must use HARNESS_AGENT_ID=auditor-sol-gmgn-wallet-profile-full-1433-live-001 (distinct from implementer), send zero live/provider requests, verify exact selection of 1,433 addresses, confirm budget limit of 2,866, confirm single selected_fingerprint_sequence_sha256 without per-address fingerprint table, verify output field whitelist, and ensure no keys/credentials/addresses/raw errors in report. Only a GREEN independent audit closes the full 1433 milestone.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md",
+    "harness/inputs/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/manifest.json",
+    "harness/ledger/tasks.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001/**"
+  ],
+  "forbidden_actions": [
+    "Do not execute network calls or provider requests.",
+    "Do not modify implementation or test code.",
+    "Do not print or commit API keys, private keys, raw provider payloads, or raw error texts.",
+    "Do not write per-address fingerprints in the audit report.",
+    "Do not use the implementer HARNESS_AGENT_ID; use the distinct auditor HARNESS_AGENT_ID declared in this task objective.",
+    "Do not mark the full 1433 milestone complete unless the audit run finishes GREEN or GREEN_WITH_ADVISORY with valid evidence."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

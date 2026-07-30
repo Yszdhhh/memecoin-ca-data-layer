@@ -1,0 +1,68 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001",
+  "title": "Harden GMGN wallet stats parser schema contract, period verification, unit rate, and zero semantics",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Harden GMGN wallet stats parser (v2) to eliminate broad recursive alias scanning, depth scoring, cross-node field composition, and unverified period/completeness assumptions. Introduce explicit schema contracts, expectedPeriod verification, completeness by field coverage, strict non-numeric/null/zero semantics, fail-closed winRate units, and safe allowlisted warning codes.",
+  "dependencies": [
+    "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001",
+    "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/application/gmgn/proxy-transport-30d-live-smoke.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not issue any live network or provider requests; budget must be strictly zero.",
+    "Do not call GMGN CLI, Helius, Chain.fm, Dune, Dexscreener, Birdeye, or RPC.",
+    "Do not read, display, or forward credentials, GMGN_API_KEY, GMGN_PRIVATE_KEY, proxy URLs, or plaintext address files (sol_addresses.txt, sol_address_labels.json).",
+    "Do not modify node_modules or include node_modules in task inputs or Git.",
+    "Do not perform arbitrary recursive alias scanning or depth scoring in parser.",
+    "Do not force completeness=1 on arbitrary MAPPED status in consumers.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

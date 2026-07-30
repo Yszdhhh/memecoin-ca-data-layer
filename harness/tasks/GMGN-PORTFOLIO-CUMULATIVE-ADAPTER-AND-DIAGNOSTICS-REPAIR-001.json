@@ -1,0 +1,64 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001",
+  "title": "Offline repair: isolate GMGN CLI credentials, classify sanitized failures, and add cumulative-holdings adapter contract",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Repair the GMGN portfolio integration offline before any re-run. Extract a minimal command/environment boundary that distinguishes API-key-only 7d/30d stats from signed cumulative holdings snapshots; prevent ambient .env/global-config credential leakage into either subprocess; preserve no-private-key stats isolation; classify child failures only into stable allowlisted codes without retaining raw stdout/stderr; define cursor/completeness behavior and sanitized cumulative holdings normalization. All acceptance must use synthetic fixtures and make zero provider requests. This task does not execute a live smoke, does not re-run 100 or 1433 wallets, and does not claim cumulative data was fetched.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
+    "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001",
+    "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001",
+    "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "harness/inputs/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md",
+    "harness/reports/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "write_set": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/infrastructure/gmgn/wallet-holdings-parser.test.ts",
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/dispatches/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.md",
+    "harness/inputs/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/**",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, any browser, or any provider/network request.",
+    "Do not read, print, persist, commit, or test against GMGN_API_KEY, GMGN_PRIVATE_KEY, credential-bearing URLs, signatures, raw provider payloads, raw stdout/stderr, complete exceptions, plaintext wallet addresses, labels, or external address files.",
+    "Do not modify the completed 100-wallet or 1433-wallet live outputs, their historical acceptance reports, task status, or task input manifests.",
+    "Do not re-run the 100-wallet or 1433-wallet jobs, add retry loops, add pagination loops, add background work, add a scheduler, add Helius, add another provider, write a database/cache/queue, or introduce wallet quality ratings or LLM conclusions.",
+    "Do not use the unsupported local gmgn-cli --sell-out flag. The pinned CLI contract must be detected and modeled through an explicit versioned capability.",
+    "Do not claim that a signed cumulative holdings request has succeeded; live validation is a separately dispatched task after this repair and independent audit."
+  ],
+  "deliverables": [
+    "A pure GMGN CLI boundary with explicit stats versus signed-holdings modes, command builders, isolated child environment plan, and safe failure classifier.",
+    "A pure cumulative holdings parser/normalizer with all-time field semantics, cursor-aware completeness, null-for-missing behavior, and source=gmgn / verificationStatus=unverified invariants.",
+    "Synthetic fixtures/tests covering API-key-only isolation, signed isolation, unsupported command flags, safe diagnostic classification, cursor partial/complete handling, and evidence renderer privacy.",
+    "harness/reports/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

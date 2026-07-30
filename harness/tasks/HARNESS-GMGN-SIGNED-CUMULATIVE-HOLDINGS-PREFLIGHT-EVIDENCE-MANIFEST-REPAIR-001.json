@@ -1,0 +1,54 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001",
+  "title": "Repair stale tracked evidence fingerprint blocking signed holdings preflight approval",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Offline-only narrow repair of the stale SHA-256 entry in the failed preflight-audit-002 input evidence manifest. Derive the replacement only from the current tracked completed bounded-runner repair audit task specification, record the before/after hashes and immutable task identifiers in a sanitized acceptance report, and create no authorization for a live request. Do not alter runner code, the live task, historical output, or any external input. A new independent preflight audit remains mandatory after this repair before the live task can be unlocked.",
+  "dependencies": [
+    "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002"
+  ],
+  "inputs": [
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json",
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.json",
+    "harness/dispatches/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.md",
+    "harness/inputs/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001/manifest.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, RPC, or any network/provider.",
+    "Do not read C:\\Users\\10639\\chainfm_out\\sol, external address files, .env files, GMGN_API_KEY, GMGN_PRIVATE_KEY, or any credential.",
+    "Do not modify application code, tests, packages, the live task, live dispatch, live manifest, runner repair artifacts, or historical outputs.",
+    "Do not enable, start, or run a live task.",
+    "Do not print or retain addresses, labels, credential values, raw payloads, stdout/stderr, or full errors.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0,
+    "files_modified_outside_write_set": 0
+  }
+}

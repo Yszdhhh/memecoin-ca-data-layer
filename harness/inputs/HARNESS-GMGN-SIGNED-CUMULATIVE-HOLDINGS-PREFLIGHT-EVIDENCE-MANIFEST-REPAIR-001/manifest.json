@@ -1,0 +1,31 @@
+{
+  "schema_version": "harness-evidence-manifest-v1",
+  "task_id": "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001",
+  "created_at": "2026-07-29T00:00:00.000Z",
+  "tracked_input_sha256": {
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json": "08A5152B4E54902A8B694C7A13117E49E5017DF07854B427D239125F8E374EC8",
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json": "5F75F287A51EA77D465D4EA203CABEB0ED40F272E73E1B9CCEF1EE5C8CE1D733",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/acceptance.md": "1E5056D02A2C88D70E37BED8175FAEB3DA3F5BCE36B25B74D1875D7C6993504A",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002.json": "7BA20C324B3EEFBE095B3ECC8164EDFCC96E4BA4960104687CD8C2925E806608"
+  },
+  "scope": {
+    "repair_target": "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json",
+    "repair_key": "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+    "allowed_mutation": "Replace only the stale value at tracked_input_sha256[repair_key] with the SHA-256 of the current tracked repair-audit task specification.",
+    "live_authorization_created": false
+  },
+  "privacy": {
+    "plaintext_addresses": false,
+    "labels": false,
+    "credential_values": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false,
+    "raw_stdout_stderr": false
+  },
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001",
+  "title": "Independent zero-network audit of proxy-transport 30d live smoke",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001 with a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify one-invocation budget, period=30d only, same target fingerprint as 7d smoke, null/zero field semantics, privacy, and whether scoped 30d recovery claims are justified by sanitized evidence only. Do not test Signed Holdings.",
+  "dependencies": [
+    "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001.md",
+    "harness/inputs/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001/acceptance.md",
+    "src/application/gmgn/proxy-transport-30d-live-smoke.ts",
+    "src/cli/run-gmgn-proxy-transport-30d-live-smoke.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN or any network provider.",
+    "Do not inspect credential values, proxy URLs, plaintext addresses, or raw payloads.",
+    "Do not modify application code or implementer evidence.",
+    "Do not test Signed Holdings.",
+    "Do not use HARNESS_AGENT_ID implementer-sol-gmgn-proxy-transport-30d-live-smoke-001."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

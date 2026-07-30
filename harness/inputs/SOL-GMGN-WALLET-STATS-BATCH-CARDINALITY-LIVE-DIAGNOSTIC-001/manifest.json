@@ -1,0 +1,30 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001",
+  "baseline_commit": "22b6a7c6e0c0219b8a7fa31f8755d496b85bbaef",
+  "external_input_directory": "C:/Users/10639/chainfm_out/sol",
+  "expected_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "selection": {
+    "chain": "solana",
+    "validation": "Base58 and strict 32-byte",
+    "deduplicate": true,
+    "offset_valid_unique": 0,
+    "count": 20
+  },
+  "periods": [
+    "30d"
+  ],
+  "wallets_per_cli_invocation": 20,
+  "cli_invocation_cap": 1,
+  "physical_provider_request_upper_bound": 1,
+  "min_inter_invocation_delay_ms": 0,
+  "retries": 0,
+  "pagination": false,
+  "fallback": false,
+  "source": "gmgn",
+  "verificationStatus": "unverified",
+  "external_output_directory": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-batch-cardinality-live-diagnostic-001"
+}

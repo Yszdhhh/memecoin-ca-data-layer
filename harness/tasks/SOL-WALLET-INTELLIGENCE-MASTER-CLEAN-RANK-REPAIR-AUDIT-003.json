@@ -1,0 +1,59 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003",
+  "title": "Independent audit of wallet clean-rank repair 003",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently verify that repair 003 closes every blocking finding from audit 002: symmetric 7d/30d Alpha eligibility isolation, duplicate 30d fail-closed behavior, explicit 7d incomplete/PARTIAL/partial-fields regressions, and non-vacuous disjoint Alpha/review unions, while preserving exact write-set and offline boundaries.",
+  "dependencies": [
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-003"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-002/acceptance.md",
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-003.json",
+    "harness/dispatches/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-003.md",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-003/acceptance.md",
+    "src/application/wallet-intelligence/master-table-builder.ts",
+    "test/application/wallet-intelligence/master-table-builder.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003.json",
+    "harness/dispatches/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003.md",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation code or tests.",
+    "Do not issue network, provider, RPC, GMGN CLI, Helius, or third-party requests.",
+    "Do not read credentials, private keys, proxy URLs, plaintext wallet labels, live payloads, or private batches.",
+    "Do not rerun the private 1,433-wallet batch.",
+    "Do not push, merge, or modify main."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check 5d8e1ef..ccaff1c576c5fd5e612369cc1ee77956ea58f0d1"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

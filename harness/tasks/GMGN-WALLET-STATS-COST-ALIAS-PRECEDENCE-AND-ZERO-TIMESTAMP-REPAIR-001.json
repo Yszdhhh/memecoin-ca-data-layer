@@ -1,0 +1,64 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001",
+  "title": "Repair GMGN cost alias precedence and zero timestamp semantics",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Use independently audited one-request 30d alias-shape evidence and pinned gmgn-cli@1.5.4 skill semantics to stop treating bought_cost and total_cost as unconditional equal aliases. Prefer the documented bought_cost field family and use total_cost only as a fallback family, retain fail-closed conflicts inside a chosen family, treat an explicit zero last_timestamp as an unavailable sentinel rather than an invalid type or fabricated activity, and add pure offline synthetic tests. No live request.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001"
+  ],
+  "inputs": [
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "package.json",
+    "package-lock.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001/acceptance.md",
+    "harness/inputs/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/manifest.json"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001/.gitkeep",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not issue network/provider/GMGN CLI requests or read credentials/real addresses.",
+    "Do not equate bought_cost and total_cost when both are present with different values.",
+    "Do not infer tradeCount, periodPnl, timestamps, or missing values.",
+    "Do not output timestamp zero as verified activity; zero may only be omitted as a provider unavailable sentinel.",
+    "Do not relax period, envelope, ownership, numeric lexical, range, integer, or win-rate contracts.",
+    "Do not modify transport, holdings, batch execution, database, cache, queue, or production systems."
+  ],
+  "deliverables": [
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "harness/reports/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001",
+  "external_inputs": [
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_addresses.txt",
+      "sha256": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+      "handling": "read only inside bounded runner; never print or persist plaintext"
+    },
+    {
+      "path": "C:/Users/10639/chainfm_out/sol/sol_address_labels.json",
+      "sha256": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+      "handling": "hash verification only; never print or persist contents"
+    }
+  ],
+  "output_directory": "C:/Users/10639/chainfm_out/sol/derived/gmgn-wallet-stats-single-wallet-transport-7d-30d-live-resmoke-001",
+  "request_budget": {
+    "wallets": 2,
+    "periods": [
+      "7d",
+      "30d"
+    ],
+    "cli_invocations": 4,
+    "provider_requests_upper_bound": 4,
+    "min_spacing_ms": 1000
+  }
+}

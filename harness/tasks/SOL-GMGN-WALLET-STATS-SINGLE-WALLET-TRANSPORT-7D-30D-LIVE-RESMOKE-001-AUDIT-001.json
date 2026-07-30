@@ -1,0 +1,49 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+  "title": "Independent zero-network audit of bounded two-wallet single-wallet transport live re-smoke",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit the bounded post-repair live re-smoke evidence. Require exactly four single-wallet invocations, two identities each with 7d and 30d parseable PARTIAL or MAPPED records, clean sanitized outputs, and no budget or security violation. No live requests.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.json",
+    "harness/dispatches/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.md",
+    "harness/inputs/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/manifest.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not issue network, provider, or GMGN CLI requests.",
+    "Do not read credentials, plaintext addresses, labels, raw payloads, raw stdout/stderr, proxy URLs, or complete exceptions.",
+    "Do not modify application code, tests, live output, or implementer report.",
+    "Do not authorize full rerun unless every wallet-period observation is identity-bound and PARTIAL or MAPPED."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

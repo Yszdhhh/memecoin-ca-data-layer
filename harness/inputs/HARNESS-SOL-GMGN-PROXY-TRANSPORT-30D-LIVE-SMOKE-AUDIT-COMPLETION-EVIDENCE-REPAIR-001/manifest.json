@@ -1,0 +1,39 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001",
+  "baseline_commit": "945274487a7dccc427acb2c9bceff0fd01bfddff",
+  "origin_commit_at_start": "945274487a7dccc427acb2c9bceff0fd01bfddff",
+  "ahead_behind_at_start": "0/0",
+  "workspace_at_start": "clean",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "cli_invocation_budget": 0,
+  "credential_reads_allowed": 0,
+  "address_processing_allowed": 0,
+  "repaired_audit_task": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001",
+  "original_audit_verdict": "GREEN_WITH_ADVISORY",
+  "sha_roles": {
+    "audited_30d_implementer_delivery": "5759e2150335ece4140fa9df7306848099c320b4",
+    "original_30d_audit_start_baseline": "5759e2150335ece4140fa9df7306848099c320b4",
+    "original_30d_audit_delivery": "945274487a7dccc427acb2c9bceff0fd01bfddff",
+    "evidence_repair_takeover_remote": "945274487a7dccc427acb2c9bceff0fd01bfddff"
+  },
+  "scope": {
+    "modify_original_audit_findings": false,
+    "change_original_verdict": false,
+    "modify_src": false,
+    "modify_test": false,
+    "modify_live_outputs": false,
+    "modify_implementer_acceptance": false,
+    "network": false,
+    "provider": false
+  },
+  "privacy": {
+    "credential_values": false,
+    "proxy_url_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}

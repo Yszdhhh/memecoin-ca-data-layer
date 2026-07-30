@@ -1,0 +1,3 @@
+# Dispatch: SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002
+
+Execute only this task as `implementer-sol-gmgn-wallet-stats-documented-composite-live-resmoke-002`. Verify clean Git and exact input hashes before network. Use the existing audited API-key-only isolated GMGN stats boundary. Select one deterministic valid unique Solana address internally without printing it. Execute 7d then wait at least 1,000ms then execute 30d. Maximum two CLI/provider requests. Persist only normalized allowlisted fields in the new external output directory. Never expose address, labels, credentials, proxy URL, raw provider payload, stdout/stderr, or complete exception. Fail closed on hash mismatch or missing API key.

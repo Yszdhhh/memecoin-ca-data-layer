@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001",
+  "title": "Independently audit the bounded eleven-wallet Helius activity snapshot",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "status": "DONE",
+  "objective": "Independently and read-only audit SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001. Confirm that its tracked task spec freezes exactly the eleven Owner-supplied wallet inputs and a seven-day lower bound of 2026-07-21T00:00:00.000Z; that the underlying strict Solana address normalization rejects non-Base58 or non-32-byte values; that the report records only the frozen wallet address, user-provided-unverified label, aggregate availability/count fields, bounded-page completeness, slot availability and stable safe warning codes; and that the report accurately limits its conclusion to a degraded, one-attempt Helius-only history snapshot. Verify that no raw payload, credential, credential-bearing URL, transaction signature, counterparty, token mint, arbitrary provider text, PnL, realized profit, win rate, wallet classification, clustering, holder concentration, creator/Dev history, complete-history or token-quality claim is present. This is a read-only audit: do not execute any provider request, retry, scheduler, database/cache/queue, trade, signing, swap, transaction, or other live action. Note as an advisory that the underlying ignored run manifest is not treated as a DONE-task input artifact; the audit conclusion must stand on tracked task, report, ledger and source evidence only.",
+  "dependencies": [
+    "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001.json",
+    "harness/reports/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001/acceptance.md",
+    "harness/ledger/tasks.json",
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not execute Helius, GMGN, Dune, Chain.fm or any other provider request, and do not inspect, expose or rotate credentials.",
+    "Do not modify application code, tests, fixtures, reports for the implementation task, schedules, databases, caches, queues, address libraries or production systems.",
+    "Do not treat user labels as verified facts or make PnL, profit, win-rate, wallet classification, clustering, holder, creator/Dev, complete-history or token-quality claims.",
+    "Do not add or substitute wallets, CAs or other inputs.",
+    "Do not print, persist, commit or quote raw payloads, transaction signatures, counterparties, token mints, credentials, credential-bearing URLs, arbitrary provider text or full exception text.",
+    "Do not use an ignored Harness run manifest as a declared audit input or as a replacement for tracked evidence.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

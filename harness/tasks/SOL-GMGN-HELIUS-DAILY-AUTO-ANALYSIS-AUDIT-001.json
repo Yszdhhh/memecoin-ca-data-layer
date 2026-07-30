@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001",
+  "title": "Audit bounded daily GMGN discovery and Helius analysis",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "application",
+  "status": "DONE",
+  "objective": "Independently audit the uploaded-ready implementation for bounded daily Solana candidate discovery and read-only Helius analysis. Confirm strict candidate age/market-cap/count/address gates, validation before Helius source construction, fixed request bounds, error and payload sanitization, explicit unverified GMGN provenance, no unsupported holder/creator claims, allowlisted Helius endpoint modes, DPAPI process-only credential injection, opt-in removable Windows scheduling, no database/cache/queue/trading side effects, reproducible tests, task specs and ledger evidence.",
+  "dependencies": [
+    "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",
+    "SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json",
+    "harness/tasks/SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001.json",
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-daily-new-token-analysis.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
+    "scripts/configure-solana-daily-credentials.ps1",
+    "scripts/run-solana-daily-new-token-analysis.ps1",
+    "scripts/register-solana-daily-new-token-analysis.ps1",
+    "test/application/discovery/gmgn-daily-token-selector.test.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "test/solana/helius/live-helius-data-source.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation, tests, scripts, dependencies or runtime behavior.",
+    "Do not call GMGN or Helius and do not inspect or display credential values.",
+    "Do not expand the feature scope or reinterpret unverified provider fields as first-hand facts.",
+    "Do not write outside the exact audit write set."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

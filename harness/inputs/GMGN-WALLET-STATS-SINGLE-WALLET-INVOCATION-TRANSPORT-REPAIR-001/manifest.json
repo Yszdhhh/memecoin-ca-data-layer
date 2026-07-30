@@ -1,0 +1,17 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001",
+  "baseline_commit": "277bd020bcba6f16842a33f2daabe9b2bdf4ebc1",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "cli_invocation_budget": 0,
+  "credential_reads_allowed": 0,
+  "offline_mode": true,
+  "evidence": {
+    "batch_cardinality_diagnostic_commit": "8b71dc6ad77fa5af85c1461f81e7ceb31fed1e14",
+    "batch_cardinality_audit_commit": "277bd020bcba6f16842a33f2daabe9b2bdf4ebc1",
+    "observed_requested_wallets": 20,
+    "observed_candidate_records": 1,
+    "observed_missing_requested_identities": 19
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001",
+  "title": "Independently audit safe GMGN wallet-stat mapping repair and bounded retest",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently audit GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001 without any provider or credential access. Verify from the committed parser, unit tests, bounded live runner, task spec, Harness manifest and sanitized acceptance report that: all output fields are allowlisted wallet/period aggregate values or stable safe codes; unknown provider keys/values cannot be emitted; every frozen wallet is Base58/32-byte validated before spawn; the runner has exactly two allowed period invocations and no retry, pagination, Helius, fallback or persistence path; mapped observations remain borrowed_unverified; reported period PnL is not labeled as cumulative/all-time or chain-verified profit; and the report contains no raw payload, credential-bearing URL, API key, arbitrary provider text, signature, counterparty, mint or trade record. Re-run the declared local acceptance commands only. Record GREEN_WITH_ADVISORY if the code/report evidence passes while GMGN supplied mapped aggregates for fewer than all eleven frozen wallets; do not call a provider to fill the gap.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "harness/gmgn-wallet-stats-live-smoke.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any other provider or network endpoint; do not inspect, print or use credential values.",
+    "Do not modify application source, tests, the implementation task, its live report, package configuration, dependencies or run manifest.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text, transaction signatures, counterparties, token mints or per-trade records.",
+    "Do not claim cumulative/all-time profit, realized chain-verified PnL, win rate, wallet quality, wallet classification, clustering, address-library eligibility, complete history or Alpha N/R/SR/SSR/UR tier.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

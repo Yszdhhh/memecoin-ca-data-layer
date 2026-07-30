@@ -1,0 +1,26 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001",
+  "baseline_commit": "ac93c939cd40fe4362d60b874d8e2cf726efcffd",
+  "network_requests_allowed": 1,
+  "provider_requests_allowed": 1,
+  "cli_invocation_budget": 1,
+  "period": "30d",
+  "wallets": 1,
+  "retry": false,
+  "pagination": false,
+  "paths_forbidden_in_this_task": ["7d", "holdings", "signed_holdings", "helius", "batch_100", "batch_1433"],
+  "expected_target_fingerprint": "174CF1E8ECAD45A8184B4A86201480C37F16E51C2BE7892A3FA88BDE51CDD2D6",
+  "expected_input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3"
+  },
+  "privacy": {
+    "credential_values": false,
+    "proxy_url_values": false,
+    "plaintext_addresses": false,
+    "labels": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  }
+}

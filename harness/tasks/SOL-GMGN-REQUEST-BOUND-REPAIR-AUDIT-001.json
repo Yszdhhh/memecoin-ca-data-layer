@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001",
+  "title": "Audit repaired GMGN retry request bound",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "application",
+  "status": "DONE",
+  "objective": "Independently audit the narrow GMGN request-bound repair and confirm the daily workflow now truthfully declares the pinned gmgn-cli@1.5.4 maximum of two underlying HTTP attempts, including its single qualifying rate-limit retry, without weakening any existing Solana-only, read-only, candidate eligibility, CA validation, Helius request, sanitization, credential, scheduling or persistence boundary.",
+  "dependencies": [
+    "SOL-GMGN-REQUEST-BOUND-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-001.json",
+    "docs/audits/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.md",
+    "src/application/discovery/gmgn-daily-token-selector.ts",
+    "src/application/live/solana-daily-new-token-analysis.ts",
+    "test/application/live/solana-daily-new-token-analysis.test.ts",
+    "docs/runbooks/SOLANA_DAILY_NEW_TOKEN_ANALYSIS.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not modify implementation, tests, scripts, dependencies or runtime behavior.",
+    "Do not call GMGN or Helius and do not inspect or display credential values.",
+    "Do not expand scope or reinterpret unverified GMGN claims as first-hand facts.",
+    "Do not write outside the exact audit write set."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002",
+  "title": "GMGN Wallet Stats Parser and Consumer Contract Repair 002",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Harden GMGN Wallet Stats Parser V2 for runtime envelope safety (data/result/stats/pnl_stat non-object safety), global period verification across all locations, alias conflict resolution fail-closed, candidate container ambiguity detection, strict per-field numeric type validation, and winRate unit contracts.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/application/gmgn/proxy-transport-30d-live-smoke.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "harness/gmgn-wallet-stats-live-smoke.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002.json",
+    "harness/dispatches/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002.md",
+    "harness/inputs/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001/.gitkeep",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001.json",
+    "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/proxy-transport-7d-live-smoke.ts",
+    "src/application/gmgn/proxy-transport-30d-live-smoke.ts",
+    "src/application/gmgn/portfolio-three-path-live-diagnostic.ts",
+    "harness/gmgn-wallet-stats-live-smoke.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/proxy-transport-7d-live-smoke.test.ts",
+    "test/application/gmgn/proxy-transport-30d-live-smoke.test.ts",
+    "test/application/gmgn/portfolio-three-path-live-diagnostic.test.ts"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not read credentials or plaintext address files.",
+    "Do not execute live smoke or batch wallet fetching."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001",
+  "title": "Add a mechanically bounded runner for one signed GMGN cumulative holdings smoke",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Perform a zero-network repair that adds one tracked, auditable runner for the separately authorized one-wallet GMGN signed cumulative holdings live smoke. The runner must validate both approved external input hashes before any child spawn, select exactly the first valid unique strict Base58 32-byte Solana address only in memory, check only credential presence without revealing values, isolate HOME/CWD, set GMGN_RATE_LIMIT_AUTO_RETRY_MAX_WAIT_MS=0 in the actual signed child environment, issue at most one fixed holdings CLI invocation with no cursor, parse only sanitized one-page aggregates, and return only allowlisted diagnostics. Amend the blocked live smoke task to require a fresh independent preflight audit after this repair. This repair itself must make zero network or provider requests and must not read external inputs or credentials.",
+  "dependencies": [
+    "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/infrastructure/gmgn/wallet-holdings-parser.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "package.json",
+    "package-lock.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001/acceptance.md"
+  ],
+  "write_set": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.json",
+    "harness/dispatches/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.md",
+    "harness/inputs/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/inputs/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001/manifest.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002/manifest.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue any HTTP, HTTPS, RPC, WS, GMGN CLI, or other network/provider request.",
+    "Do not read C:\\Users\\10639\\chainfm_out\\sol, external address files, cleaned files, GMGN_API_KEY, GMGN_PRIVATE_KEY, .env files, user HOME configuration, or any credential value.",
+    "Do not print, persist, commit, fixture, or hardcode a real wallet address, label, credential, credential URL, provider payload, provider stdout/stderr, or full exception text.",
+    "Do not modify historical outputs, reports, full-run results, databases, caches, queues, production systems, automation, package manifests, lockfiles, CLI version, or unrelated tasks.",
+    "Do not execute the live smoke. Do not use git reset --hard, force push, or delete branches."
+  ],
+  "deliverables": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "src/cli/run-gmgn-signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+    "harness/inputs/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/manifest.json",
+    "harness/reports/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "external_input_reads": 0,
+    "credential_reads": 0,
+    "child_process_spawns": 0
+  }
+}

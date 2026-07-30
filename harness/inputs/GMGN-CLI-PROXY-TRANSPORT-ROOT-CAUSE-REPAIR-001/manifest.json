@@ -1,0 +1,31 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001",
+  "baseline_commit": "a435992280134e4b2b3cc9a3f31cb84ade630172",
+  "network_requests_allowed": 0,
+  "provider_requests_allowed": 0,
+  "gmgn_cli_pinned_version": "1.5.4",
+  "offline_root_cause_hypothesis": {
+    "copy_runtime_environment_strips_proxy": true,
+    "parent_proxy_env_present_names_only": ["HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "ALL_PROXY"],
+    "all_proxy_forward_forbidden": true,
+    "gmgn_cli_reads_http_https_proxy_at_startup": true,
+    "node_options_must_be_fixed_not_inherited": true
+  },
+  "privacy": {
+    "proxy_url_values": false,
+    "credential_values": false,
+    "plaintext_addresses": false,
+    "raw_provider_payloads": false,
+    "raw_provider_errors": false
+  },
+  "related_prior_evidence": {
+    "three_path_diagnostic": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001",
+    "three_path_audit": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
+    "7d_status": "UNAVAILABLE",
+    "7d_code": "gmgn_cli_network_unavailable",
+    "30d_status": "PARK",
+    "signed_holdings_status": "PARK",
+    "cli_invocations_used": 1
+  }
+}

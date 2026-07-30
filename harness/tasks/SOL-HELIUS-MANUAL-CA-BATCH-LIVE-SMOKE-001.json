@@ -1,0 +1,48 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001",
+  "title": "Run a one-time live Helius smoke for ten fixed public Solana CAs",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "input",
+  "status": "PARK",
+  "objective": "Manually invoke the existing bounded Helius-only CA batch once for these ten fixed, public, locally validated Solana CAs: H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump, EUx9N4UXDyAXJpziyLF36j6Ut3Gu9X3VKEGptbmfpump, H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump, Ai66LHZG9MCzg1WKdawwqduVAXpNDUuV8M3uyq5ppump, Ge87EtsjwRQbHaqQmKRno69RFTwh9bfSsm99XNxTpump, 9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump, BQYc6c5hivsPrEEmTxBVjGT16setk2gmPvbv7YBxpump, 4NBTf8PfLH4oLFnwf3knv46FY9i5oXjDxffCetXRpump, Ce2gx9KGXJ6C9Mp5b5x1sn9Mg87JwEbrQby4Zqo3pump, 9ZtbETDNjnST9Y2zs82FZYy49xUMPgqXRh46YjjRpump. The candidates were selected once from a GMGN read-only Solana 1h trending query with market cap above USD 1,000,000, then frozen here as explicit operator input. Record only a scrubbed per-CA summary containing CA, status, completeness, bounded counts, slot, warning code and request-budget result.",
+  "dependencies": [
+    "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
+    "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001",
+    "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001",
+    "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json",
+    "docs/audits/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not discover, recommend, substitute or add another CA during this task; use only the ten addresses frozen in the objective.",
+    "Do not call GMGN or any provider other than Helius during the live batch.",
+    "Do not print, save, commit or record any API key, credential-bearing URL, raw provider payload, arbitrary provider text or full exception text.",
+    "Do not write a database, cache, queue, address library or production system.",
+    "Do not enable cron, a scheduler, background loops, automatic daily updates, BSC, Robinhood or provider fallback.",
+    "Do not claim full Pump analysis, creator or Dev profiling, holder concentration or automated address-library coverage."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,9 +1,53 @@
 # ALPHA-TERMINAL-DESIGN-001
 
 **产品**：Meme 一级市场 Bloomberg Terminal
-**文档状态**：Design Draft v0.1
+**文档状态**：Boundary-corrected Research Draft v0.2
 **日期**：2026-07-27
 **原则**：吸收 Chain.fm 的 *Discovery 范式*，不复制 UI/品牌；所有外部标签（GMGN / Chain.fm）只作 Observation，结论由自有引擎产出。
+
+---
+
+## 执行边界声明（2026-07-28）
+
+本文件是产品与 schema 研究，不是 Harness dispatch，也不是已批准的
+运行时蓝图。文中的 TypeScript、SQL、API、cron、Redis、WS、告警和多链
+片段全部是未来形态草图，不得据此直接改代码或启用基础设施。
+
+### 当前可执行
+
+- Solana-only、Helius-only。
+- 人工输入单个 CA，或人工精选 1–10 个不同 CA 后手动批量触发。
+- 每个 CA 只做受限、只读的 mint、metadata、token-account 首查。
+- 只返回安全摘要；不保存 raw payload，不写数据库/缓存/队列。
+- 缺凭证、非法 CA、超时、部分或不可用数据一律 fail-closed。
+
+### 可继续保留的研究
+
+- Observation-only、外部标签不覆盖链上事实。
+- `rule_version`、`evidence[]`、`completeness` 和可回放纪律。
+- Discovery / Investigation 双轨交互、三栏 Terminal、Channel/Feed
+  信息架构、Research Inspector 复用方向。
+- 仅用 schema、mock、fixture 探索上述设计，不接 live 基础设施。
+
+### 必须等待 Owner 决策
+
+- 自动发现每日热门币或自动日更。
+- 新增任何 provider 或 provider fallback。
+- 真实 PostgreSQL/Redis、历史回填、队列、WS/SSE、Alert Worker。
+- Telegram/social/KOL ingestion、Web Push、User Channel。
+- BSC、Base、Robinhood 或其他链的激活。
+
+### 当前禁止实施
+
+- cron、后台循环、自动抓币、自动推送机会。
+- 生产数据库、缓存、队列或地址库自动沉淀。
+- Redis Stream、WS Gateway、Telegram/Web Push。
+- GMGN、Birdeye、DexScreener、Chain.fm、TG、X 等接入当前 Helius
+  CA-first 路径。
+- 将受限首查描述为完整 Pump 深度分析、creator/Dev 画像、真实持仓
+  集中度或完整 Alpha Terminal。
+
+后文所有“Phase”“最终形态”和产品级验收标准均应按以上分类阅读。
 
 ---
 

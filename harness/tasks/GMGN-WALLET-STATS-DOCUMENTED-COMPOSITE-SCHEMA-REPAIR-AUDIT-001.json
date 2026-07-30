@@ -1,0 +1,44 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001",
+  "title": "Independent audit of GMGN wallet stats parser documented composite schema repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "PARK",
+  "objective": "PARKED: Repair-001 supported root + pnl_stat composite, but did not enforce container field ownership. Acceptance and external feedback contained Delivery SHA errors. Superseded by GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002 and its independent Audit. Do not mark GREEN.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.json",
+    "harness/dispatches/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.md",
+    "harness/inputs/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN CLI or any network provider.",
+    "Do not inspect credential values, proxy URLs, plaintext addresses, or raw payloads.",
+    "Do not modify application code or implementer evidence.",
+    "Do not use HARNESS_AGENT_ID implementer-gmgn-wallet-stats-documented-composite-schema-repair-001."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

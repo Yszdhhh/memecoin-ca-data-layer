@@ -1,0 +1,50 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001",
+  "title": "Run bounded Helius CA-first pilot for Chain.fm channel candidates",
+  "tier": "T3",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "application",
+  "status": "DONE",
+  "objective": "Manually run the existing bounded read-only Helius CA-first batch exactly once for these seven public Solana token CAs observed by the Owner-directed manual review of Chain.fm channels 1305397292697653436, 1307532946063757359 and 1307775393968689167 on 2026-07-28: H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump, 5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2, 4N4DnNo3qpPks9aQCkcWkzoir8tnvT6diS4TnnZibonk, 3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw, 9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump, Ge87EtsjwRQbHaqQmKRno69RFTwh9bfSsm99XNxTpump and Grass7B4RdKfBCjTKgSqnXkqjwiGvQyFbuSCUJr3XXjs. Treat all Chain.fm labels and displayed market-cap figures as borrowed and unverified. Validate every CA before source construction, use only the allowlisted Helius endpoint mode, cap each CA at three requests and the batch at twenty-one requests, and record only a sanitized normalized CA-first summary. The visible sample from channel 1307532946063757359 contained no candidate represented as above USD 1 million and is not padded with ineligible addresses.",
+  "dependencies": [
+    "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not automate, scrape, reverse engineer or bypass Chain.fm access controls; the seven public CAs are already frozen in this task spec.",
+    "Do not treat Chain.fm labels, displayed market caps or channel marketing claims as verified on-chain facts.",
+    "Do not call GMGN or any provider other than Helius during this task.",
+    "Do not run more than one Helius batch and do not add, discover, guess or substitute another CA.",
+    "Do not pass Chain.fm opaque account route identifiers to Helius or represent them as Solana wallet addresses.",
+    "Do not print, persist, commit or quote API keys, credential-bearing URLs, raw Helius payloads, arbitrary provider text or full exception text.",
+    "Do not write a database, cache, queue, address library, schedule or production system.",
+    "Do not run trading, signing, swap, order or transaction commands.",
+    "Do not claim holder concentration, owner clustering, creator history, Dev behavior analysis, wallet PnL, win rate or wallet classification from this bounded CA-first result.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

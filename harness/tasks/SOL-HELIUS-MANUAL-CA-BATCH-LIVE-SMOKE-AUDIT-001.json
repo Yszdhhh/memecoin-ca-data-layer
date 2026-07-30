@@ -1,0 +1,46 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001",
+  "title": "Independent audit of the fixed ten-CA live Helius smoke",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently verify that the ten-CA live smoke used exactly the addresses frozen in SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001; all passed strict 32-byte Base58 validation before Helius source creation; execution stayed Solana-only, Helius-only, read-only, manually triggered, bounded to at most three requests per CA and fail-closed; the committed report contains only scrubbed per-CA evidence; and the PARK verdict accurately states that no complete Helius result was obtained because only the allowlisted helius_transport_unavailable warning remained.",
+  "dependencies": [
+    "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
+    "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001.json",
+    "harness/reports/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001/acceptance.md",
+    "src/domain/solana-address.ts",
+    "src/application/live/solana-live-ca-first.ts",
+    "src/application/live/solana-live-ca-batch.ts",
+    "src/application/live/solana-live-warning.ts",
+    "src/cli/run-solana-live-ca-batch.ts",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "docs/audits/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001.md"
+  ],
+  "forbidden_actions": [
+    "Do not call Helius, GMGN or any network provider during the audit.",
+    "Do not inspect, print, save or record any credential, credential-bearing URL, raw provider payload, arbitrary provider text, full exception text or ignored Harness logs.",
+    "Do not modify runtime source, tests, provider scope, chain activation, automation, persistence, cache, queue, production infrastructure or the smoke report.",
+    "Do not upgrade a PARK live result to a successful data-completeness claim."
+  ],
+  "deliverables": [
+    "docs/audits/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

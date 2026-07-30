@@ -17,9 +17,10 @@
     "OWNER_DECISIONS_NEEDED.md",
     "src/infrastructure/solana/helius/live-helius-data-source.ts",
     "src/infrastructure/solana/helius/helius-solana-adapter.ts",
-    "harness/runs/20260727143845_SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001/manifest.json",
-    "harness/runs/20260727144414_SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001/manifest.json",
-    "harness/runs/20260727144928_SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001/manifest.json"
+    "harness/tasks/SOL-HELIUS-LIVE-MINT-CONTRACT-REPAIR-001.json",
+    "harness/tasks/SOL-HELIUS-LIVE-ACCOUNT-CURSOR-REPAIR-001.json",
+    "harness/tasks/SOL-HELIUS-LIVE-ACCOUNT-SHAPE-REPAIR-001.json",
+    "harness/reports/SOL-HELIUS-LIVE-SMOKE-E2E-001/upstream-evidence.md"
   ],
   "write_set": [
     "harness/tasks/SOL-HELIUS-LIVE-SMOKE-E2E-001.json",

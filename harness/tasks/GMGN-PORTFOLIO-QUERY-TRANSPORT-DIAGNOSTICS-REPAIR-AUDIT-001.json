@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001",
+  "title": "Independent zero-network audit of GMGN query transport and diagnostics repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently audit GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001 using a distinct HARNESS_AGENT_ID and zero network/provider requests. Verify that API-key-only 7d/30d stats use bounded multi-wallet CLI invocations, stats mode never forwards GMGN_PRIVATE_KEY, both API-key-only and signed child environments use disposable HOME/CWD, IPv4-first DNS, disabled CLI rate-limit auto retry, and a 30000ms process ceiling. Verify malformed signed-key material is rejected locally before spawn, raw child/provider text is reduced to allowlisted safe codes and is not retained, external records preserve null-for-missing plus source=gmgn and verificationStatus=unverified, and the corrected historical live-smoke report distinguishes activation baseline, delivery commit, CLI invocation count, and physical-request upper bound. This audit must not claim live availability; a separate exact-budget live diagnostic is required after GREEN.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001",
+    "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001"
+  ],
+  "inputs": [
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+    "harness/dispatches/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.md",
+    "harness/inputs/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, a browser, web scraping, or any network provider.",
+    "Do not inspect, display, retain, or test against credential values, external address files, plaintext addresses, labels, raw payloads, raw stdout/stderr, complete exceptions, signatures, or credential URLs.",
+    "Do not modify application code, tests, package manifests, implementer evidence, historical normalized outputs, or external files.",
+    "Do not use HARNESS_AGENT_ID implementer-gmgn-portfolio-query-transport-diagnostics-repair-001.",
+    "Do not authorize or run a live diagnostic unless this audit is GREEN and a separate exact-budget task spec and dispatch exist."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "execution_limits": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "address_processing": 0,
+    "credential_reads": 0
+  }
+}

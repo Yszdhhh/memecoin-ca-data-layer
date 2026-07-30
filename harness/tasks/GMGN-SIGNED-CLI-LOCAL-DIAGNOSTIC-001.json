@@ -1,0 +1,38 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001",
+  "title": "Diagnose local GMGN signed CLI configuration without a provider request",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Perform a local-only, no-network diagnostic after the bounded signed GMGN holdings pilot returned `gmgn_request_unavailable`. Confirm only the presence (never values) of required GMGN environment variables, inspect the locally installed gmgn-cli version and its credential-variable contract as pinned by the tracked package manifests, and document whether the observed environment names meet that local contract. Do not invoke any GMGN command that makes a request, and do not infer the validity of a credential from presence alone. Retain only safe configuration facts and stable diagnostic codes.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001"
+  ],
+  "inputs": [
+    "package.json",
+    "package-lock.json",
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any network provider.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw provider payloads, arbitrary provider text or full exception text.",
+    "Do not change environment variables, credentials, package manifests, dependency versions, application code, tests or configuration.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001.json",
+    "npm run harness:doctor",
+    "git diff --check"
+  ]
+}

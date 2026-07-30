@@ -1,0 +1,68 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001",
+  "title": "Offline repair of GMGN stats batching, bounded transport, credential preflight, and safe diagnostics",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Repair mechanically known defects in the Solana-only GMGN portfolio query path without making a live request. Add bounded child-process timeouts, IPv4-first child DNS behavior, local-only signed-key structural preflight, actionable allowlisted failure classification, and batch-capable 7d/30d stats invocations so future smoke tasks do not issue one physical request per wallet. Correct the completed signed holdings smoke evidence so it distinguishes the activation baseline from the delivery commit and does not claim an exactly observed physical provider count when only one CLI invocation/upper bound was observable. Preserve source=gmgn, verificationStatus=unverified, null-for-missing, no raw payload/error retention, and no claim that any live query is restored until a separately audited live diagnostic succeeds.",
+  "dependencies": [
+    "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001",
+    "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001"
+  ],
+  "inputs": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001/acceptance.md",
+    "harness/reports/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001/acceptance.md",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md",
+    "harness/inputs/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "src/application/gmgn/gmgn-cli-boundary.ts",
+    "src/application/gmgn/wallet-profile-pilot.ts",
+    "src/application/gmgn/signed-cumulative-holdings-live-smoke.ts",
+    "test/application/gmgn/gmgn-cli-boundary.test.ts",
+    "test/application/gmgn/wallet-profile-pilot.test.ts",
+    "test/application/gmgn/signed-cumulative-holdings-live-smoke.test.ts",
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+    "harness/dispatches/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.md",
+    "harness/inputs/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/manifest.json",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+    "harness/reports/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001/acceptance.md",
+    "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not invoke GMGN, Helius, Chain.fm, Dune, Dexscreener, Birdeye, RPC, a browser, web scraping, or any provider/network request.",
+    "Do not inspect, print, persist, commit, or test against credential values, credential URLs, signatures, plaintext wallet addresses, labels, external address-file contents, raw provider payloads, raw stdout/stderr, or complete exceptions.",
+    "Do not rotate or overwrite GMGN_API_KEY or GMGN_PRIVATE_KEY and do not read credentials from ambient project/global .env files.",
+    "Do not claim the prior one-invocation holdings smoke proved one physical HTTP request; report only the CLI invocation count and a physical-request upper bound unless transport instrumentation proves otherwise.",
+    "Do not re-run 100 or 1433 wallets, add pagination/retry/background loops, add another provider, enable another chain, or write a database/cache/queue/production system.",
+    "Do not claim 7d, 30d, cumulative holdings, or all-time PnL is restored. Live verification requires a separate exact-budget task after independent zero-network audit."
+  ],
+  "deliverables": [
+    "Minimal GMGN CLI boundary changes for batch stats arguments, fixed timeout ceilings, IPv4-first child behavior, local signed-key structural validation, and safe actionable error codes.",
+    "Pure synthetic tests proving no secret leakage, no private-key forwarding in stats mode, zero spawn on invalid signed-key structure, bounded child termination, and batched 7d/30d request planning.",
+    "Corrected signed holdings smoke evidence wording and post-run audit readiness.",
+    "harness/reports/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001/acceptance.md",
+    "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,3 @@
+# Dispatch: GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001
+
+Audit only `harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json` after the repair task is DONE. Use a distinct `HARNESS_AGENT_ID`. This is a zero-network, read-only independent audit. Do not read external inputs or credentials and do not run the live task. Inspect the tracked runner and tests for each mechanical bound listed in the task objective. Mark the audit GREEN only if the cap and sequence are enforced in code; otherwise record a safe FAIL finding. Write only the audit task status, ledger status, and sanitized acceptance report.

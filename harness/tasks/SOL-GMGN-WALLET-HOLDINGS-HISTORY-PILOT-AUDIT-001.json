@@ -1,0 +1,43 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001",
+  "title": "Independently audit the signed GMGN wallet-holdings history-field pilot evidence",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently read and audit the completed SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001 task, its tracked sanitized evidence, ledger state and git state. Confirm the frozen public Solana wallet was strict-validated before provider construction; exactly one GMGN portfolio-holdings invocation occurred; the request was Solana-only, read-only and unpaginated; credential values, raw payloads, arbitrary provider text and full exception text are absent; and the report does not overclaim a complete history, PnL, quality, classification or Alpha tier. The auditor must use a HARNESS_AGENT_ID different from the implementer, must not call a provider and must record a verdict.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001.json",
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001/acceptance.md",
+    "harness/ledger/tasks.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not call GMGN, Helius, Dune, Chain.fm or any other network provider.",
+    "Do not print, persist, commit or quote API keys, private keys, credential-bearing URLs, raw provider payloads, arbitrary provider text, full exception text, token mints, token names, transaction signatures, counterparties or per-trade records.",
+    "Do not modify application, domain, infrastructure, test or configuration code.",
+    "Do not write outside the exact tracked write set."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ]
+}

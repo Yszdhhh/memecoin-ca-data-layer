@@ -3,7 +3,12 @@ import test from "node:test";
 import type { FinishedRunEvidence, ProjectConfig, TaskLedger, TaskSpec } from "../harness/lib/contracts.js";
 import { globMatches } from "../harness/lib/files.js";
 import { secretContentRulesFor } from "../harness/cli.js";
-import { applyReadinessUpdates, deriveLifecyclePlan, validateTask } from "../harness/lib/validation.js";
+import {
+  applyReadinessUpdates,
+  deriveLifecyclePlan,
+  validateDeclaredInputArtifacts,
+  validateTask,
+} from "../harness/lib/validation.js";
 
 const config: ProjectConfig = {
   schema_version: "harness-v1",
@@ -53,6 +58,33 @@ test("auditor cannot write production source", () => {
 test("write-set glob matches only its bounded subtree", () => {
   assert.equal(globMatches("src/infrastructure/solana/pump/**", "src/infrastructure/solana/pump/decoder.ts"), true);
   assert.equal(globMatches("src/infrastructure/solana/pump/**", "src/infrastructure/solana/helius/client.ts"), false);
+});
+
+test("DONE tasks require existing, Git-tracked repository input artifacts", async () => {
+  const done = task({
+    status: "DONE",
+    inputs: ["harness/runs/missing/manifest.json", "external system record"],
+  });
+  assert.deepEqual(
+    await validateDeclaredInputArtifacts(done, async () => false),
+    ["declared input does not exist: harness/runs/missing/manifest.json"],
+  );
+  assert.deepEqual(
+    await validateDeclaredInputArtifacts(done, async () => true, new Set()),
+    ["declared input is not Git-tracked: harness/runs/missing/manifest.json"],
+  );
+  assert.deepEqual(
+    await validateDeclaredInputArtifacts(
+      done,
+      async () => true,
+      new Set(["harness/runs/missing/manifest.json"]),
+    ),
+    [],
+  );
+  assert.deepEqual(
+    await validateDeclaredInputArtifacts({ ...done, status: "READY" }, async () => false),
+    [],
+  );
 });
 
 test("lifecycle plan marks dependency-complete READY tasks runnable and never auto-DONE", () => {

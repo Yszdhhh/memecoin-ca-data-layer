@@ -1,0 +1,28 @@
+{
+  "version": "v1",
+  "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001",
+  "inputs": [
+    {
+      "file_name": "sol_addresses.txt",
+      "sha256": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+      "record_count": 1433
+    },
+    {
+      "file_name": "sol_address_labels.json",
+      "sha256": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+      "record_count": 1433
+    }
+  ],
+  "selection_rule": "Deterministic Base58 + strict 32-byte validated Solana addresses from cleaned.jsonl after SHA-256 verification: select all 1,433 valid unique addresses in input sequence.",
+  "selected_count": 1433,
+  "selection_index_range": {
+    "skip_first_unique_valid": 0,
+    "select_positions_inclusive": [
+      1,
+      1433
+    ]
+  },
+  "selected_fingerprint_sequence_sha256": "4a00cec89a6c353527670c935ded799f3ec03bc066d9a0eef9c0d9f30eca0088",
+  "external_input_directory": "C:/Users/10639/chainfm_out/sol",
+  "sensitivity": "No plaintext addresses or labels; fingerprint sequence is irreversible SHA-256 value only."
+}

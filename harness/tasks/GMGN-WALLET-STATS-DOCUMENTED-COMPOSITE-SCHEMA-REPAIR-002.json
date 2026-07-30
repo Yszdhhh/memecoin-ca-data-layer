@@ -1,0 +1,66 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002",
+  "title": "Enforce explicit field ownership, fail-closed mislocated metrics, and offline synthetic coverage for GMGN wallet stats parser documented composite schema",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Enforce explicit container field ownership in GMGN official composite schema (root + pnl_stat), fail-closed on mislocated metrics (pnl_stat.realized_profit, pnl_stat.buy_count, root.token_num), preserve standalone stats mode and legal structures, fix Repair-001 evidence SHA correction in acceptance, update Repair-001 Audit status to PARK, and expand synthetic counterexample tests.",
+  "dependencies": [
+    "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "harness/DISPATCH_PLAN.md",
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/acceptance.md",
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts"
+  ],
+  "write_set": [
+    "src/infrastructure/gmgn/wallet-stats-parser.ts",
+    "test/gmgn-wallet-stats-parser.test.ts",
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002.json",
+    "harness/dispatches/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002.md",
+    "harness/inputs/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002/manifest.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001/.gitkeep",
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue network or provider requests.",
+    "Do not call Helius, GMGN CLI, web scraping, or third party providers.",
+    "Do not read credentials or plaintext address files.",
+    "Do not execute live smoke or batch wallet fetching.",
+    "Do not mark failed live smoke as GREEN or rewrite historical evidence.",
+    "Do not include node_modules in harness inputs or Git."
+  ],
+  "deliverables": [
+    "harness/reports/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002/acceptance.md",
+    "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002.json",
+    "npm run harness:task -- validate harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "credential_reads": 0,
+    "address_processing": 0
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-27T15:03:30.343844Z",
+  "updated_at_utc": "2026-07-29T22:02:30Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -480,7 +480,642 @@
     {
       "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001",
       "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-ORCHESTRATION-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-CA-FIRST-CONTENT-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-FIRST-CONTENT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001",
+      "spec": "harness/tasks/SOL-DAILY-MANUAL-DISCOVERY-ASSESSMENT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "ALPHA-TERMINAL-DESIGN-IMPORT-001",
+      "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-IMPORT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001",
+      "spec": "harness/tasks/ALPHA-TERMINAL-DESIGN-FORMAT-VERIFICATION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001",
+      "spec": "harness/tasks/PROJECT-BLUEPRINT-LIVE-BOUNDARY-CORRECTION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-CA-VALIDATION-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-HELIUS-LIVE-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-DONE-TASK-INPUT-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-ERROR-SANITIZATION-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-CLOUD-REVIEW-CORRECTION-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001",
+      "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001",
+      "spec": "harness/tasks/SOL-DAILY-DPAPI-FILENAME-HARNESS-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-ANALYSIS-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-001",
+      "spec": "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-REQUEST-BOUND-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-HELIUS-DAILY-AUTO-LIVE-SMOKE-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001",
+      "spec": "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-DISCOVERED-CA-LIVE-ANALYSIS-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001",
+      "spec": "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001",
+      "spec": "harness/tasks/SOL-CHAINFM-CHANNEL-CA-LIVE-PILOT-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-CHAINFM-AUDIT-TRACKED-INPUT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-ACTIVITY-SNAPSHOT-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-MANUAL-WALLET-RECENCY-STATS-LIVE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-HELIUS-LIVE-TRANSACTION-SHAPE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001",
+      "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/SOL-HELIUS-PARTIAL-TRANSFER-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-TRADING-STATS-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-INPUT-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-ADAPTER-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-TRACKED-INPUT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-HOLDINGS-HISTORY-PILOT-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001",
+      "spec": "harness/tasks/GMGN-SIGNED-CLI-LOCAL-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001",
+      "spec": "harness/tasks/GMGN-SIGNED-HOLDINGS-RESPONSE-DIAGNOSTIC-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-AUDIT-SERIALIZATION-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CHAINFM-ADDRESS-INGEST-001",
+      "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001",
+      "spec": "harness/tasks/SOL-CHAINFM-ADDRESS-INGEST-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-PILOT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-PILOT-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-WALLET-PROFILE-BATCH-100-LIVE-SMOKE-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-PROFILE-FULL-1433-LIVE-AUDIT-001.json",
       "status": "READY"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-CUMULATIVE-ADAPTER-AND-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PORTFOLIO-CUMULATIVE-AUDIT-EVIDENCE-LEDGER-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001",
+      "spec": "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-SIGNED-CUMULATIVE-HOLDINGS-BOUNDED-RUNNER-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002",
+      "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-SIGNED-CUMULATIVE-HOLDINGS-PREFLIGHT-EVIDENCE-MANIFEST-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003",
+      "spec": "harness/tasks/SOL-GMGN-SIGNED-CUMULATIVE-HOLDINGS-LIVE-SMOKE-PREFLIGHT-AUDIT-003.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-PORTFOLIO-QUERY-TRANSPORT-DIAGNOSTICS-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PORTFOLIO-REPAIR-AUDIT-EVIDENCE-CORRECTION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-PORTFOLIO-THREE-PATH-LIVE-DIAGNOSTIC-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001",
+      "spec": "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-CLI-PROXY-TRANSPORT-ROOT-CAUSE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-7D-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-GMGN-PROXY-TRANSPORT-INPUT-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-SOL-GMGN-PROXY-TRANSPORT-30D-LIVE-SMOKE-AUDIT-COMPLETION-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-AUDIT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-002-AUDIT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SCHEMA-CONTRACT-AND-PARSER-HARDENING-REPAIR-003-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-WRITE-SET-AND-SHA-EVIDENCE-REPAIR-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-REPAIR-003-AUDIT-DEPENDENCY-UNLOCK-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001",
+      "spec": "harness/tasks/HARNESS-GMGN-WALLET-STATS-PARSER-FINAL-AUDIT-DEPENDENCY-RECONCILIATION-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-PARSER-V2-7D-30D-LIVE-RESMOKE-AUDIT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-AUDIT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-SCHEMA-REPAIR-002-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-DOCUMENTED-COMPOSITE-7D-30D-LIVE-RESMOKE-002-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-SAFE-VALUE-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-REPAIR-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-CANONICAL-NUMERIC-STRING-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-30D-SAFE-ALIAS-SHAPE-DIAGNOSTIC-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-COST-ALIAS-PRECEDENCE-AND-ZERO-TIMESTAMP-REPAIR-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-COST-ALIAS-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-BATCH-CARDINALITY-LIVE-DIAGNOSTIC-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/GMGN-WALLET-STATS-SINGLE-WALLET-INVOCATION-TRANSPORT-REPAIR-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-SINGLE-WALLET-TRANSPORT-7D-30D-LIVE-RESMOKE-001-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001",
+      "spec": "harness/tasks/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001",
+      "spec": "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001",
+      "spec": "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
+      "status": "DONE"
     }
   ]
 }

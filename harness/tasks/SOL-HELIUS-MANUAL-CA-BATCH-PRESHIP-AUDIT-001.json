@@ -1,0 +1,17 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001",
+  "title": "Independent pre-ship audit of the bounded manual CA batch",
+  "tier": "T3",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "input",
+  "status": "DONE",
+  "objective": "Independently verify that the manual Solana CA batch remains limited to 1 to 10 operator-supplied CAs, validates all CAs before constructing Helius sources, exposes only sanitized bounded first-look results, and does not introduce discovery, automation, persistence, provider fallback, or non-Solana behavior.",
+  "dependencies": ["SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001"],
+  "inputs": ["harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-001.json", "harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-REPAIR-001.json", "src/application/live/solana-live-ca-first.ts", "src/application/live/solana-live-ca-batch.ts", "src/cli/run-solana-live-ca-batch.ts", "test/application/live/solana-live-ca-batch.test.ts", "package.json"],
+  "write_set": ["harness/tasks/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.json", "harness/ledger/tasks.json", "docs/audits/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.md"],
+  "forbidden_actions": ["Do not call Helius or any other provider, and do not require or inspect a runtime credential.", "Do not modify implementation, tests, runtime configuration, database, cache, queue, chain activation, scheduler, cron, or discovery behavior.", "Do not print, store, commit, or record credentials, raw provider payloads, or credential-bearing URLs."],
+  "deliverables": ["docs/audits/SOL-HELIUS-MANUAL-CA-BATCH-PRESHIP-AUDIT-001.md"],
+  "acceptance_commands": ["npm run harness:doctor", "npm run typecheck", "npm test", "npm run build", "git diff --check"]
+}
