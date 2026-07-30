@@ -18,7 +18,11 @@
     "solana:pilot:real-data-cleaning": "tsx src/cli/run-solana-ca-real-data-cleaning-pilot.ts",
     "solana:daily:new-token-analysis": "tsx src/cli/run-solana-daily-new-token-analysis.ts",
     "solana:chainfm:clean": "tsx src/cli/clean-solana-chainfm-addresses.ts",
-    "harness:gmgn-wallet-profile-pilot": "tsx harness/gmgn-wallet-profile-pilot.ts"
+    "harness:gmgn-wallet-profile-pilot": "tsx harness/gmgn-wallet-profile-pilot.ts",
+    "console:dev": "npm --prefix apps/operator-console run dev",
+    "console:build": "npm --prefix apps/operator-console run build",
+    "console:test": "npm --prefix apps/operator-console run test",
+    "console:check": "npm --prefix apps/operator-console run check"
   },
   "dependencies": {
     "gmgn-cli": "1.5.4",

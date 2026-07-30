@@ -1,0 +1,77 @@
+{
+  "alpha": 0,
+  "tierBUsablePool": 1370,
+  "tierBShortlist": 8,
+  "manualReview": 63,
+  "unavailablePeriodWallets": 84,
+  "mapped": 0,
+  "partialApproxPct": 97,
+  "source": "gmgn-scrubbed-summary",
+  "verificationStatus": "unverified",
+  "disclaimer": "Third-party Tier-B observation. Not confirmed on-chain smart money.",
+  "observedAt": "2026-07-30T10:12:13.461Z",
+  "wallets": [
+    {
+      "id": "fp-b0368d73",
+      "fingerprint": "b0368d73…",
+      "tier": "Tier-B shortlist",
+      "status7d": "PARTIAL",
+      "status30d": "PARTIAL",
+      "completeness": 0.74,
+      "warnings": [
+        "gmgn_wallet_stats_partial_fields",
+        "gmgn_wallet_stats_period_unverified"
+      ],
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "fp-9deefa80",
+      "fingerprint": "9deefa80…",
+      "tier": "Tier-B shortlist",
+      "status7d": "PARTIAL",
+      "status30d": "PARTIAL",
+      "completeness": 0.72,
+      "warnings": [
+        "gmgn_wallet_stats_partial_fields"
+      ],
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "fp-3fc29992",
+      "fingerprint": "3fc29992…",
+      "tier": "Tier-B shortlist",
+      "status7d": "PARTIAL",
+      "status30d": "PARTIAL",
+      "completeness": 0.7,
+      "warnings": [
+        "gmgn_wallet_stats_partial_fields"
+      ],
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "fp-c420a236",
+      "fingerprint": "c420a236…",
+      "tier": "Manual Review",
+      "status7d": "PARTIAL",
+      "status30d": "PARTIAL",
+      "completeness": 0.68,
+      "warnings": [
+        "gmgn_wallet_stats_partial_fields",
+        "manual_review"
+      ],
+      "verificationStatus": "unverified"
+    },
+    {
+      "id": "demo-synth-01",
+      "fingerprint": "demo-synth-01",
+      "tier": "Tier-B usable pool",
+      "status7d": "PARTIAL",
+      "status30d": "UNAVAILABLE",
+      "completeness": 0.4,
+      "warnings": [
+        "gmgn_expected_metrics_unavailable"
+      ],
+      "verificationStatus": "unverified"
+    }
+  ]
+}

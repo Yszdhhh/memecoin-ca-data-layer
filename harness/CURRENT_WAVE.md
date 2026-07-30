@@ -10,7 +10,7 @@ cumulative PnL remain parked.
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
-| Historical Waves A鈥揇 | DONE, prior audits | Not reopened. |
+| Historical Waves A–D | DONE, prior audits | Not reopened. |
 | Wallet 1433 GMGN 7d/30d full pull | DONE | Local `chainfm_out` only; not in Git. |
 | Clean-rank + Repair-003 offline replay | DONE | Alpha=0; Tier-B usable pool ~1370; shortlist 8 + review 9. |
 | SOL-CA-REAL-DATA-CLEANING-PILOT-001 | DONE / **MERGED** | 6 public CA; 3 OK / 3 PARTIAL scrubbed evidence. |
@@ -22,12 +22,12 @@ cumulative PnL remain parked.
 ## M0 integration (authoritative)
 
 ```text
-M0锛欴ONE / GREEN / MERGED
+M0：DONE / GREEN / MERGED
 
-PR锛?4
-Merge commit锛?976316e3853e377eff112484f9817ac2e1eba57
-Main integration report锛歟8929a61262f2c32924ede3b7ba6067bc1d15b79
-Audited implementation pin锛歛1d56dade268d24a1205e010581b6f6c478ac1bb
+PR：#4
+Merge commit：2976316e3853e377eff112484f9817ac2e1eba57
+Main integration report：e8929a61262f2c32924ede3b7ba6067bc1d15b79
+Audited implementation pin：a1d56dade268d24a1205e010581b6f6c478ac1bb
 ```
 
 ## ACTIVE (primary task)
@@ -39,30 +39,32 @@ OPERATOR-CONSOLE-SHELL-001
 Goal: first browser-operable shell (fixtures / desensitized data allowed).
 Do **not** require full Live Provider wiring for shell acceptance.
 
+`OPERATOR-CONSOLE-SHELL-001` is **M1 Operator Console MVP phase 1**.
+
 ## NEXT
 
 ```text
 SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
 ```
 
-Then (after hotpath + Owner gates): stability batches 001鈥?03,
+Then (after hotpath + Owner gates): stability batches 001–003,
 `ADDRESS-INTELLIGENCE-LOCAL-STORE-MVP-001`, task orchestrator, liquidity dashboard.
 
 ## PARKED
 
-* 鍏ㄩ噺 1,433 閲嶆姄
-* 鍏ㄩ噺绱 PnL
-* GMGN signed holdings 绉佹湁璺緞
-* 鑷姩鍙戠幇
+* 全量 1,433 重抓
+* 全量累计 PnL
+* GMGN signed holdings 私有路径
+* 自动发现
 * cron
 * BSC
-* 瀹屾暣 SOL-E2E
-* 涓轰骇鐢?Alpha 鏁伴噺鏀惧 Repair-003
-* 鏃犻檺鏂板 Harness 寰换鍔?
+* 完整 SOL-E2E
+* 为产生 Alpha 数量放宽 Repair-003
+* 无限新增 Harness 微任务
 
-## Still blocked (not M0 鈥?product/Owner gates)
+## Still blocked (not M0 — product/Owner gates)
 
-* 鐪熷疄 CA Web live Provider 鎺ョ嚎锛坰hell 鍙敤 fixtures 鍏堝仛锛?
+* 真实 CA Web live Provider 接线（shell 可用 fixtures 先做）
 * CA stability Live batches without hotpath readiness
 * Production database deploy
 * Confirmed smart-money branding without on-chain review

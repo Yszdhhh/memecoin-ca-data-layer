@@ -1,0 +1,20 @@
+# OPERATOR-CONSOLE-SHELL-001 exact write-set
+# Base: a3a96379abfc6b6561783553fbad7a602ae4e66d
+
+apps/operator-console/**
+package.json
+docs/contracts/OPERATOR_CONSOLE_DATA_SOURCE_V1.md
+docs/handoffs/STATUS_SYSTEM_20260730.md
+docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md
+harness/CURRENT_WAVE.md
+harness/tasks/OPERATOR-CONSOLE-SHELL-001.json
+harness/reports/OPERATOR-CONSOLE-SHELL-001/**
+
+# Explicitly excluded
+node_modules/
+apps/operator-console/node_modules/
+apps/operator-console/dist/
+chainfm_out/
+.env*
+DPAPI
+src/ domain provider implementations (unchanged)

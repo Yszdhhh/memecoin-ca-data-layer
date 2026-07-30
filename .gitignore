@@ -13,3 +13,7 @@ harness/logs/*
 
 .DS_Store
 
+
+apps/operator-console/tsconfig.tsbuildinfo
+apps/operator-console/dist/
+

@@ -1,0 +1,83 @@
+{
+  "items": [
+    {
+      "taskId": "TASK-FIXTURE-OK-001",
+      "input": {
+        "mint": "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump"
+      },
+      "provider": "fixture",
+      "status": "completed",
+      "requestBudget": 6,
+      "requestsUsed": 6,
+      "startedAt": "2026-07-30T12:00:00Z",
+      "endedAt": "2026-07-30T12:00:08Z",
+      "warnings": [],
+      "outputLink": "/ca/H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump",
+      "failureReason": null
+    },
+    {
+      "taskId": "TASK-FIXTURE-PARTIAL-001",
+      "input": {
+        "mint": "H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump"
+      },
+      "provider": "fixture",
+      "status": "partial",
+      "requestBudget": 8,
+      "requestsUsed": 5,
+      "startedAt": "2026-07-30T12:01:00Z",
+      "endedAt": "2026-07-30T12:01:12Z",
+      "warnings": [
+        "pagination_incomplete"
+      ],
+      "outputLink": "/ca/H1adbGC578HdoddVNAZT1Bn4uNrPiioTCfYmRjBHpump",
+      "failureReason": null
+    },
+    {
+      "taskId": "TASK-FIXTURE-FAILED-001",
+      "input": {
+        "mint": "InvalidMintXXX"
+      },
+      "provider": "fixture",
+      "status": "failed",
+      "requestBudget": 1,
+      "requestsUsed": 0,
+      "startedAt": "2026-07-30T12:02:00Z",
+      "endedAt": "2026-07-30T12:02:01Z",
+      "warnings": [],
+      "outputLink": null,
+      "failureReason": "invalid_mint"
+    },
+    {
+      "taskId": "TASK-FIXTURE-QUEUED-001",
+      "input": {
+        "mint": "queued-demo"
+      },
+      "provider": "fixture",
+      "status": "queued",
+      "requestBudget": 10,
+      "requestsUsed": 0,
+      "startedAt": null,
+      "endedAt": null,
+      "warnings": [],
+      "outputLink": null,
+      "failureReason": null
+    },
+    {
+      "taskId": "TASK-FIXTURE-BLOCKED-001",
+      "input": {
+        "mint": "blocked-demo"
+      },
+      "provider": "helius",
+      "status": "blocked",
+      "requestBudget": 10,
+      "requestsUsed": 0,
+      "startedAt": null,
+      "endedAt": null,
+      "warnings": [
+        "credential_unavailable"
+      ],
+      "outputLink": null,
+      "failureReason": "credential_unavailable"
+    }
+  ]
+}
