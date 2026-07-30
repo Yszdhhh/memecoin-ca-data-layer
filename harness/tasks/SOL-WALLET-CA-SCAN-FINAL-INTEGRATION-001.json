@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001",
+  "title": "Integrate independently audited wallet ranking and CaScanResponse repairs",
+  "tier": "T2",
+  "role": "coordinator",
+  "chain": "solana",
+  "layer": "judgment_layer",
+  "status": "IN_PROGRESS",
+  "objective": "On a local integration branch based on main, merge exactly the independently audited wallet clean-rank tip and CaScanResponse v1 repair tip, preserve main's design commit, prove both audited histories are ancestors, run the complete offline Harness/typecheck/test/build/diff gates, and persist a reproducible integration acceptance report without pushing or modifying main.",
+  "dependencies": [
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003",
+    "CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-002"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/reports/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003/acceptance.md",
+    "harness/reports/CA-SCAN-RESPONSE-V1-REPAIR-AUDIT-002/acceptance.md"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001.json",
+    "harness/dispatches/SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001.md",
+    "harness/reports/SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001/acceptance.md"
+  ],
+  "forbidden_actions": [
+    "Do not alter implementation, tests, fixtures, docs, or imported audited commits during integration.",
+    "Do not issue network/provider/RPC/GMGN/Helius/third-party requests.",
+    "Do not read credentials, private keys, proxy URLs, live payloads, or private wallet data.",
+    "Do not add dependencies or modify package files.",
+    "Do not push, modify main, or merge the integration branch into main."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-CA-SCAN-FINAL-INTEGRATION-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check e3c7f6ac00ee66ae24dd8cb4bfeeaa58c4cceff0..HEAD",
+    "git merge-base --is-ancestor e3c7f6ac00ee66ae24dd8cb4bfeeaa58c4cceff0 HEAD",
+    "git merge-base --is-ancestor b5cdeed8b2726be9d7adff2f53835240a2658243 HEAD",
+    "git merge-base --is-ancestor 6a5305d HEAD"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "credential_reads": 0,
+    "private_data_reads": 0
+  }
+}
