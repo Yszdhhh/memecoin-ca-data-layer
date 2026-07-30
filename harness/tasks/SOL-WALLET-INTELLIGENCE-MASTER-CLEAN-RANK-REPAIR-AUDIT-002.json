@@ -6,7 +6,7 @@
   "role": "auditor",
   "chain": "solana",
   "layer": "cold_path",
-  "status": "READY",
+  "status": "DONE",
   "objective": "Independently verify that repair 002 closes every remaining finding from repair audit 001, including completeness validation and quality caps, Alpha eligibility isolation, the full enumerated regression-test matrix, PARTIAL evidence semantics, data-dictionary accuracy, deterministic output, and exact write-set compliance.",
   "dependencies": [
     "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-002"
