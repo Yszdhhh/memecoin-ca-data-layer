@@ -1,0 +1,90 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001",
+  "auditedTip": "57345911d54f132664c41753cd371d12c1166353",
+  "baseMain": "5cc414c83d5b0d602d55eac9bc392953a3161196",
+  "verdict": "GREEN",
+  "mergeStance": "ACCEPT_AND_MERGE",
+  "p0Count": 0,
+  "p1Count": 0,
+  "p2Count": 3,
+  "findings": [
+    {
+      "id": "AUD-P2-001",
+      "severity": "P2",
+      "title": "harness:doctor fails on scrubbed wallets.json already on main",
+      "file": "apps/operator-console/src/data/fixtures/wallets.json",
+      "line": 1,
+      "controlFlow": "npm run harness:doctor → harness/cli.ts doctor forbids tracked wallet*.json; file is a scrubbed aggregate summary (manualReview=9, fingerprints only) from OPERATOR-CONSOLE-SHELL-001 on main, not introduced by Hotpath tip delta beyond a one-line summary fix.",
+      "impact": "Gate reports FAIL even though offline product/security gates pass and no private wallet bulk is present. Risk of false-blocking future Hotpath merges if treated as P0 without classification.",
+      "reproduction": "On tip 5734591: npm run harness:doctor → status FAIL, error 'forbidden tracked files for wallet*.json: apps/operator-console/src/data/fixtures/wallets.json'.",
+      "confirmedRisk": false,
+      "privacyRisk": false,
+      "mergeBlocking": false,
+      "recommendedBoundedRepair": "Narrow harness doctor allowlist for scrubbed operator-console fixture summaries OR rename fixture outside wallet*.json pattern; do not reopen M0."
+    },
+    {
+      "id": "AUD-P2-002",
+      "severity": "P2",
+      "title": "Task catch path may apply stale provider metrics snapshot",
+      "file": "src/application/operator-api/ca-holder-task-service.ts",
+      "line": 353,
+      "controlFlow": "runTask assigns metrics = budgeted.executor.metrics after factory (pre-flight snapshot), re-reads only after pilot returns. catch (error) applies that metrics variable. If pilot throws after real HTTP consumes, providerRequestCount can remain 0 while requests were made. Primary budget-refuse mid-enumerate path returns partial inside LiveHelius instead of throwing, so hotpath budgetStop success path is correct.",
+      "impact": "Unexpected transport exceptions may under-report request counts; status mapping still sets failed/blocked/partial via message, but accounting telemetry can be wrong.",
+      "reproduction": "Inject sourceFactory that consumes via executor then throws a non-budget Error after N fetches; observe task.providerRequestCount may be 0 after failed status.",
+      "confirmedRisk": true,
+      "privacyRisk": false,
+      "mergeBlocking": false,
+      "recommendedBoundedRepair": "In catch, re-read budgeted.executor.metrics (hoist budgeted outside try or store ref) before applyMetrics; add unit test for mid-flight throw metrics integrity."
+    },
+    {
+      "id": "AUD-P2-003",
+      "severity": "P2",
+      "title": "createOperatorApiServer accepts non-loopback host without fail-closed",
+      "file": "src/application/operator-api/http-server.ts",
+      "line": 22,
+      "controlFlow": "options.host defaults to 127.0.0.1 but any string is stored on __bindHost and passed to server.listen. Product CLI run-operator-api.ts hardcodes host: '127.0.0.1'. Host header allowlist still rejects non-loopback Host on requests, but bind address itself is not validated.",
+      "impact": "Misuse of library API could bind public interfaces; CLI entry path is safe. Defense-in-depth gap vs 'no public bind without fail-closed'.",
+      "reproduction": "Call createOperatorApiServer({ host: '0.0.0.0', service }) then listenOperatorApi — server listens on all interfaces without throw.",
+      "confirmedRisk": true,
+      "privacyRisk": false,
+      "mergeBlocking": false,
+      "recommendedBoundedRepair": "In listenOperatorApi / createOperatorApiServer, reject host not in {127.0.0.1, localhost, ::1} unless explicit dangerous opt-in that still fails closed for production scripts."
+    }
+  ],
+  "bindingSemantics": {
+    "consumeHttpAttemptPerHttp": "PASS",
+    "paginationCounted": "PASS",
+    "retriesCounted": "PASS",
+    "providerRequestCountEqualsFetches": "PASS",
+    "providerOperationCountLogicalOnly": "PASS",
+    "budgetPlusOneNoFetch": "PASS",
+    "exactBudgetSuccessNotExhausted": "PASS",
+    "furtherRefusePartialIneligible": "PASS",
+    "credentialUnavailableBlockedZeroRequests": "PASS",
+    "noSecretsInLogs": "PASS"
+  },
+  "loopbackSecurity": {
+    "bind127": "PASS_CLI",
+    "hostAllowlist": "PASS",
+    "originAllowlist": "PASS",
+    "secFetchSiteCrossSite": "PASS",
+    "jsonRequired": "PASS",
+    "unknownFieldReject": "PASS",
+    "clientKeyReject": "PASS",
+    "noCorsWildcard": "PASS",
+    "optionsAllowlistedOnly": "PASS",
+    "getNonMutating": "PASS",
+    "publicBindFailClosed": "ADVISORY_P2_LIBRARY"
+  },
+  "privacyTrust": {
+    "M0_rerun": 0,
+    "chainfm_out_reads": 0,
+    "private_wallet_bulk": 0,
+    "credential_persisted": 0,
+    "raw_provider_payload_committed": 0,
+    "trading_signing": 0,
+    "tierB_promoted_confirmed": 0,
+    "privacy_grep_hits_classified": "docs_and_harness_history_only_no_live_secrets"
+  },
+  "note": "No P0/P1. Advisories only. Auditor did not modify implementation."
+}

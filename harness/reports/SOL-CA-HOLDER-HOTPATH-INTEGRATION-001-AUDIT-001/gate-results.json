@@ -1,0 +1,115 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001",
+  "auditedTip": "57345911d54f132664c41753cd371d12c1166353",
+  "baseMain": "5cc414c83d5b0d602d55eac9bc392953a3161196",
+  "mergeBaseEqualsBase": true,
+  "statusCleanDuringAudit": true,
+  "ancestry": {
+    "revertsPresent": [
+      "47fbe70 Revert 6e043e4",
+      "e7c28dd Revert 7953a19",
+      "f06819e Revert 85f6291"
+    ],
+    "historyRewriteDetected": false,
+    "g2g8ProductPathsInEffectiveDiff": false,
+    "effectiveDiffPathCount": 25,
+    "matchesImplementerWriteSet": true
+  },
+  "commands": {
+    "npm_ci": { "exitCode": 0, "status": "PASS" },
+    "typecheck": { "exitCode": 0, "status": "PASS" },
+    "npm_test": {
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 431,
+      "pass": 430,
+      "fail": 0,
+      "skipped": 1
+    },
+    "build": { "exitCode": 0, "status": "PASS" },
+    "console:check": { "exitCode": 0, "status": "PASS" },
+    "console:build": { "exitCode": 0, "status": "PASS" },
+    "security:scan": {
+      "exitCode": 0,
+      "status": "PASS",
+      "matchedLines": 186,
+      "classifiedLeaks": 0
+    },
+    "provider_accounting_tests": {
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "ca_holder_task_service_tests": {
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 11,
+      "pass": 11,
+      "fail": 0
+    },
+    "http_server_security_tests": {
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 7,
+      "pass": 7,
+      "fail": 0
+    },
+    "git_diff_check": { "exitCode": 0, "status": "PASS" },
+    "harness:doctor": {
+      "exitCode": 1,
+      "status": "FAIL",
+      "raw": "forbidden tracked files for wallet*.json: apps/operator-console/src/data/fixtures/wallets.json",
+      "classification": "PREEXISTING_ON_MAIN_SCRUBBED_FIXTURE_P2_ADVISORY",
+      "notRewrittenToPass": true
+    }
+  },
+  "privacyGrep": {
+    "ran": true,
+    "liveSecretsInHotpathDiff": false,
+    "classification": "hits_are_docs_harness_history_policy_placeholders_only"
+  },
+  "live": {
+    "priorImplementerSmoke": {
+      "publicCaCount": 2,
+      "totalProviderRequests": 11,
+      "withinBudget": true,
+      "scrubbed": true,
+      "acceptedAsHistoricalEvidence": true
+    },
+    "tipDeltaImpact327e77eTo5734591": {
+      "transportPathUnchanged": true,
+      "deltaRejectSemanticsOnly": true,
+      "priorNonExhausted6and5PathsStillValid": true
+    },
+    "auditorResmoke": {
+      "executed": true,
+      "executedAtCommit": "57345911d54f132664c41753cd371d12c1166353",
+      "publicCaCount": 1,
+      "requestBudget": 9,
+      "providerRequestCount": 6,
+      "providerOperationCount": 3,
+      "pageCount": 4,
+      "retryCount": 0,
+      "timeoutCount": 0,
+      "status": "completed",
+      "providerBudgetExhausted": false,
+      "paginationComplete": true,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "mintFingerprint": "1c2c7d3cac226153",
+      "scrubbedOutputSha": "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce",
+      "cumulativeSmokeRequests": 17,
+      "withinCumulativeCap20": true,
+      "forged": false
+    },
+    "liveEvidenceAccepted": true
+  },
+  "offline": "ACCEPTABLE",
+  "verdict": "GREEN",
+  "mergeStance": "ACCEPT_AND_MERGE",
+  "auditorBusinessImplementationEdits": 0,
+  "note": "Exit codes recorded honestly. harness:doctor FAIL retained as FAIL with P2 classification."
+}

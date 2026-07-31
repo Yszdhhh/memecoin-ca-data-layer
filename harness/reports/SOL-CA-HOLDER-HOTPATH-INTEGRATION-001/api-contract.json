@@ -1,0 +1,14 @@
+{
+  "service": "operator-api",
+  "bind": "127.0.0.1",
+  "endpoints": [
+    { "method": "GET", "path": "/api/v1/health" },
+    { "method": "POST", "path": "/api/v1/ca-holder-tasks", "body": { "mint": "string", "idempotencyKey": "string?" } },
+    { "method": "GET", "path": "/api/v1/ca-holder-tasks/:taskId" },
+    { "method": "GET", "path": "/api/v1/ca-holder-results/:taskId" }
+  ],
+  "liveGateEnv": "OPERATOR_API_LIVE=1",
+  "credentialEnv": "HELIUS_API_KEY",
+  "trustFields": ["accountingEligible", "exclusionCoverage", "concentrationEligible"],
+  "rejectedClientFields": ["apiKey", "provider", "rpcUrl", "chain", "credential"]
+}

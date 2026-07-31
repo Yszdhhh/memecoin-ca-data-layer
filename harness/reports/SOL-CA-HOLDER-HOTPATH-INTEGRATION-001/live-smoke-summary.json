@@ -1,0 +1,74 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+  "liveSmokeAttempted": true,
+  "credentialState": "runtime_env_present",
+  "publicCaCount": 2,
+  "totalProviderRequests": 11,
+  "totalBudget": 20,
+  "withinBudget": true,
+  "perCa": [
+    {
+      "taskId": "a587711b-b295-4d8c-83d6-ea691a03c19f",
+      "mintFingerprint": "1c2c7d3cac226153",
+      "selectionLabel": "OK_history",
+      "startedAt": "2026-07-31T02:17:43.349Z",
+      "completedAt": "2026-07-31T02:17:45.425Z",
+      "durationMs": 2075,
+      "providerRequestCount": 6,
+      "providerOperationCount": 3,
+      "pageCount": 4,
+      "retryCount": 0,
+      "timeoutCount": 0,
+      "budgetUsed": 6,
+      "requestBudget": 10,
+      "resultStatus": "completed",
+      "paginationComplete": true,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "residualRatio": "0",
+      "warningCodes": [
+        "pool_exclusion_coverage_incomplete"
+      ],
+      "failureReason": null,
+      "sourceWatermark": "helius|436269773|complete|JEByd5M7kLH8uEJNZEoCkF7djEEvHoisE4Crqn9UNx9W",
+      "scrubbedOutputSha": "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce"
+    },
+    {
+      "taskId": "8eca2b4f-7f05-43e1-ad3c-535e0ed60f5a",
+      "mintFingerprint": "ebf68724c95a103c",
+      "selectionLabel": "PARTIAL_history",
+      "startedAt": "2026-07-31T02:17:45.425Z",
+      "completedAt": "2026-07-31T02:17:47.112Z",
+      "durationMs": 1687,
+      "providerRequestCount": 5,
+      "providerOperationCount": 3,
+      "pageCount": 3,
+      "retryCount": 0,
+      "timeoutCount": 0,
+      "budgetUsed": 5,
+      "requestBudget": 10,
+      "resultStatus": "completed",
+      "paginationComplete": true,
+      "accountingEligible": true,
+      "exclusionCoverage": "partial",
+      "concentrationEligible": false,
+      "residualRatio": "0",
+      "warningCodes": [
+        "pool_exclusion_coverage_incomplete"
+      ],
+      "failureReason": null,
+      "sourceWatermark": "helius|436269775|complete|JEBps6J3J1915q5wTq5ipJJgAszevtJQysTkJ24XWL59",
+      "scrubbedOutputSha": "95c1da4909a808e8293167c1c269dcbe50d68f293e77ae4b3c8c693f696208cc"
+    }
+  ],
+  "verdict": "LIVE_SMOKE_EXECUTED",
+  "overall": "OFFLINE_GREEN_LIVE_EXECUTED_AWAITING_INDEPENDENT_AUDIT",
+  "privacy": {
+    "chainfm_out_read": 0,
+    "private_wallet_bulk": 0,
+    "credential_persisted": 0,
+    "raw_provider_payload_committed": 0
+  },
+  "note": "Real Helius only. Fixture not used as Live. Implementer does not self-GREEN merge."
+}
