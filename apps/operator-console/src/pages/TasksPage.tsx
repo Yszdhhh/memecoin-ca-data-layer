@@ -18,39 +18,27 @@ export function TasksPage() {
   }, []);
 
   async function createDemo() {
-    try {
-      const t = await dataSource.createLocalDemoTask(mint.trim() || "demo-mint");
-      const meta = dataSource.getDataSourceMeta();
-      setNote(
-        meta.mode === "http"
-          ? `已提交本地 API 任务 ${t.taskId}（status=${t.status}；凭据仅服务端；${t.failureReason ?? "ok"}）`
-          : `已创建本地 demo task ${t.taskId}（fixture 模式，未调用 Helius）`,
-      );
-      await reload();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "create_failed";
-      setNote(`任务失败：${msg}（live_gate_disabled / credential_unavailable / invalid_mint 均为预期 fail-closed）`);
-    }
+    const t = await dataSource.createLocalDemoTask(mint.trim() || "demo-mint");
+    setNote(`已创建本地 demo task ${t.taskId}（未调用 Helius / 无网络）`);
+    await reload();
   }
-
-  const meta = dataSource.getDataSourceMeta();
 
   return (
     <div>
       <h1>任务中心</h1>
       <div className="banner">
-        数据源：{meta.mode} · live={String(meta.live)} · {meta.note}
+        Shell 阶段任务为静态 fixture + 本地 demo。发起任务不会触发 Helius / GMGN / RPC。
       </div>
       <div className="panel">
         <div className="form-row">
           <input
-            placeholder="Solana mint（HTTP 模式走本地 Operator API）"
+            placeholder="可选 mint（仅写入本地 demo task）"
             value={mint}
             onChange={(e) => setMint(e.target.value)}
             aria-label="demo-task-mint"
           />
           <button className="primary" type="button" onClick={() => void createDemo()}>
-            发起 CA 任务
+            发起本地 demo 任务
           </button>
         </div>
         {note && <div className="muted">{note}</div>}

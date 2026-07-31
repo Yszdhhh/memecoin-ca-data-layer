@@ -47,13 +47,8 @@ async function handle(
         service: "operator-api",
         bind: "127.0.0.1",
         liveDefault: false,
-        note: "CA holder hotpath + task list. Memory tasks. Process restart drops state.",
+        note: "CA holder hotpath only. Memory tasks. Process restart drops state.",
       });
-    }
-
-    if (method === "GET" && url.pathname === "/api/v1/ca-holder-tasks") {
-      const tasks = service.listTasks().map(toPublicTaskSummary);
-      return json(res, 200, { tasks });
     }
 
     if (method === "POST" && url.pathname === "/api/v1/ca-holder-tasks") {
