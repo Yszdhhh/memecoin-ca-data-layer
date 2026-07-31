@@ -71,18 +71,20 @@ export function TaskDetailPage() {
   const liveBlock = readinessBlocksLiveSubmit(readiness);
 
   async function retryNewTask() {
-    const mint = task?.input.mint?.trim();
+    if (!task) return;
+    const mint = task.input.mint?.trim();
     if (!mint) return;
     if (liveBlock.disabled) {
       setErr(`Retry 禁用：${readiness.banner}`);
       return;
     }
+    const previousTaskId = task.taskId;
     setBusyRetry(true);
     setErr(null);
     try {
       // Retry creates a NEW taskId — never mutates the previous task.
       const next = await dataSource.createCaHolderTask(mint, {
-        idempotencyKey: `retry:${task.taskId}:${Date.now()}`,
+        idempotencyKey: `retry:${previousTaskId}:${Date.now()}`,
       });
       nav(`/tasks/${encodeURIComponent(next.taskId)}`);
     } catch (e) {

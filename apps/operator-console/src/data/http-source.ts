@@ -218,18 +218,11 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
 
       if (["completed", "partial"].includes(String(summary.status))) {
         try {
+          // Pass API result through mapper only — never synthesize observedAt from task times.
           const result = await this.api<PublicResultSummary>(
             `/api/v1/ca-holder-results/${encodeURIComponent(taskId)}`,
           );
-          // Inject observedAt from task if API already has it; mapper requires field on result
-          const withObserved: PublicResultSummary = {
-            ...result,
-            observedAt:
-              typeof result.observedAt === "string" && result.observedAt
-                ? result.observedAt
-                : (summary.endedAt ?? summary.startedAt ?? ""),
-          };
-          this.resultCache.set(summary.mint, mapPublicResultToCaScan(withObserved));
+          this.resultCache.set(summary.mint, mapPublicResultToCaScan(result));
         } catch (e) {
           if (e instanceof OperatorApiError && e.code === "not_found") {
             /* result_not_ready */

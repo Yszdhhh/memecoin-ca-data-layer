@@ -1,6 +1,7 @@
 {
   "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
-  "note": "Screenshot binaries are local-only (not committed to Git). Paths are absolute on implementer machine; SHA256 for verification.",
+  "note": "Screenshot binaries are local-only (not committed to Git). task-running and task-terminal SHAs MUST differ: running captured under status=running (intercepted), terminal under status=completed.",
+  "runningVsTerminalDistinct": true,
   "entries": [
     {
       "id": "ca-input-ready",
@@ -11,20 +12,22 @@
     {
       "id": "task-running",
       "localPath": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/screenshots/task-running.png",
-      "sha256": "bcac69ebc83e3991d2bcfeeab8b87f99a0f6d4a638a27094ef0deffae5ae891e",
-      "bytes": 60515
+      "sha256": "50ce0a44a0da981a54e28e64be1e171e09062f5ce661236323ab9e3c121cbd84",
+      "bytes": 52030,
+      "statusShown": "running"
     },
     {
       "id": "task-terminal",
       "localPath": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/screenshots/task-terminal.png",
-      "sha256": "bcac69ebc83e3991d2bcfeeab8b87f99a0f6d4a638a27094ef0deffae5ae891e",
-      "bytes": 60515
+      "sha256": "0c5b2d89327dbbe8bb1baeb7208bb61b50942ab7059041a38cd5005d07312f9c",
+      "bytes": 54200,
+      "statusShown": "completed"
     },
     {
       "id": "ca-result-trust-strip",
       "localPath": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/screenshots/ca-result-trust-strip.png",
-      "sha256": "85c19f19f087585c82a285d5707663fdf03c7e956bdc49cc5b76b34736f24ce4",
-      "bytes": 142863
+      "sha256": "5063aea093e73491ff2ca67fe134816dd179d14e6790e843b1af434edb677efe",
+      "bytes": 112209
     },
     {
       "id": "api-unreachable",
@@ -43,7 +46,7 @@
       "localPath": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/offline-states/budget-exhausted-partial.json",
       "sha256": "cccfd745b4520a4178f0cfd409e484fb39999bdaf314251c466e94232fe481d9",
       "bytes": 65,
-      "note": "DOM/state evidence; mapsToTaskStatus=partial"
+      "note": "mapsToTaskStatus=partial"
     },
     {
       "id": "schema-error",

@@ -2,11 +2,26 @@
   "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
   "baseSha": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
   "branch": "feature/operator-console-live-wiring-001",
+  "implementationTip": "PENDING_FREEZE",
+  "evidenceLogs": {
+    "testsLog": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/tests.log",
+    "gatesLog": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/gates.log"
+  },
   "gates": [
     { "name": "typecheck", "result": "PASS", "command": "npm run typecheck" },
-    { "name": "test", "result": "PASS", "command": "npm test", "counts": { "pass": 430, "fail": 0, "skipped": 1 } },
+    {
+      "name": "test",
+      "result": "PASS",
+      "command": "npm test",
+      "counts": { "pass": 430, "fail": 0, "skipped": 1 }
+    },
     { "name": "build", "result": "PASS", "command": "npm run build" },
-    { "name": "console:check", "result": "PASS", "command": "npm run console:check", "consoleTests": 64 },
+    {
+      "name": "console:check",
+      "result": "PASS",
+      "command": "npm run console:check",
+      "consoleTests": 66
+    },
     { "name": "console:build", "result": "PASS", "command": "npm run console:build" },
     {
       "name": "harness:doctor",
@@ -14,24 +29,29 @@
       "command": "npm run harness:doctor",
       "note": "forbidden tracked wallets.json under apps/operator-console fixtures — known main lineage miss only"
     },
-    { "name": "security:scan", "result": "PASS", "command": "npm run security:scan", "classifiedLeaks": 0 },
+    {
+      "name": "security:scan",
+      "result": "PASS",
+      "command": "npm run security:scan",
+      "classifiedLeaks": 0
+    },
     {
       "name": "render-helpers",
       "result": "PASS",
       "command": "node docs/prototypes/operator-console-v2/lib/render-helpers.test.cjs"
-    },
-    { "name": "git diff --check", "result": "PASS" },
-    {
-      "name": "secret-grep-write-set",
-      "result": "PASS",
-      "note": "No credential values in implementation write-set; policy docs may mention HELIUS_API_KEY= pattern"
     },
     {
       "name": "browser-live-smoke",
       "result": "PASS",
       "heliusAttempts": 6,
       "budget": 10,
-      "browserDirectHelius": 0
+      "browserDirectHelius": 0,
+      "runningVsTerminalScreenshotsDistinct": true
+    },
+    {
+      "name": "getTask-missing-observedAt",
+      "result": "PASS",
+      "note": "HttpOperatorConsoleDataSource.getTask throws schema_error; no endedAt injection"
     }
   ]
 }
