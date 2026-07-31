@@ -720,7 +720,7 @@
     else if (root === "schedules")
       html = pagePlaceholder("Schedules", "Cron/schedules Owner-gated — not G1.");
     else if (root === "replay")
-      html = pagePlaceholder("Replay", "As-of historical replay engine — G6 boundary.");
+      html = pagePlaceholder("Replay", "As-of historical replay engine — G8 Replay boundary (G6 = advanced CA intelligence only).");
     else if (root === "liquidity")
       html = pagePlaceholder("Liquidity dashboard", "Daily macro liquidity — separate from CA hotpath SLA.");
     else if (root === "settings")

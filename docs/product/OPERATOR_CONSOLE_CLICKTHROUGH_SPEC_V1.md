@@ -20,7 +20,7 @@ On `file://`, a non-blocking hint banner explains offline mode. Core demo data n
 
 ## 2. Global chrome (always visible)
 
-1. **Watermark:** `DESIGN PROTOTYPE / SYNTHETIC DATA` (fixed overlay + meta strip).
+1. **Watermark:** `DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE` (fixed overlay + meta strip).
 2. **Primary nav:** CA · Tasks · Wallets · Addresses · Watchlist · Schedules · Replay · Liquidity · Settings.
 3. **State switcher:** `success | partial | credential blocked | budget exhausted | stale | schema error | empty`.
 4. **Meta strip:** `mode=fixture · live=false` · five trust domain names · null-ratio rule · Tier-B rule.

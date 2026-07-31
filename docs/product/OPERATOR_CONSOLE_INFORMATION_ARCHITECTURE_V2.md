@@ -99,11 +99,11 @@ Wallet language: **Tier-B usable pool / shortlist** — never “smart money” 
 3. 地址库 → `/addresses`
 4. 任务中心 → `/tasks`
 
-### Secondary / future nav (G2+; show disabled or “Future” until wired)
+### Secondary / future nav (show disabled or “Future” until wired; Replay = G8, Liquidity = G7, Watchlist/addr/orch later Gx)
 
 5. 观察列表 → `/watchlist` — **NOT_WIRED** until G2+
 6. 调度 → `/schedules` — **NOT_WIRED** / Owner-gated
-7. 回放 → `/replay` — **NOT_WIRED** / harness-aligned
+7. 回放 → `/replay` — **NOT_WIRED · G8 Replay** / harness-aligned
 8. 流动性 → `/liquidity` — G7 / **G2+**
 9. 设置 → `/settings` — may land late G1 as read-only meta
 
@@ -362,7 +362,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 | **Early Buyer** | First N buyers with library overlay | Call them smart money without rules |
 | **Cluster** | Funding graph / cluster summaries | Confirmed cluster from Tier-B only |
 | **Cross-CA** | Same addresses on other mints | Invent history without library store |
-| **Replay** | Jump to `/replay?mint=&asOf=` | Imply live time-travel without watermarks |
+| **Replay (G8)** | Jump to `/replay?mint=&asOf=` | Imply live time-travel without watermarks |
 
 #### Data sources (Tier-A / Tier-B)
 
@@ -381,7 +381,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 | `getCaScan(mint)` | **Current main** (fixture) |
 | FUTURE: hotpath scan by mint | G1 Live Wiring |
 | FUTURE: `listAddressHitsForMint(mint)` | G2+ address store |
-| FUTURE: `listEvidence(mint, asOf?)` | G2+ / replay |
+| FUTURE: `listEvidence(mint, asOf?)` | **G8 Replay** |
 | FUTURE: market snapshot attach | Tier-B adapter, still unverified |
 
 #### Loading / empty / error
@@ -397,7 +397,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 
 - **Understand trust state** (read strip) then expand evidence  
 - Live (later): re-run scan / open task  
-- G2+: add to watchlist, open replay  
+- G3+/later: add to watchlist; **G8**: open replay  
 
 #### Prohibited behaviors
 
@@ -416,7 +416,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 | Token basics + Accounting / Exclusion / Concentration + holder summary + concentration table + issues | **G1 shell** (fixture live today) |
 | Market Data domain populated | G1 Live Wiring (still Tier-B) |
 | Address hits live | **G2+** |
-| Dev / Early Buyer / Cluster / Cross-CA / Replay panels | **NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA** until respective milestones |
+| Dev / Early Buyer / Cluster / Cross-CA panels (G6) + Replay (G8) | **NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA** until respective milestones |
 
 #### Fixture vs Live
 
@@ -926,7 +926,7 @@ Fixture: empty or disabled examples. Live: explicit authorization.
 
 ---
 
-### 3.11 `/replay`
+### 3.11 `/replay` (G8 Replay)
 
 #### User goal
 
@@ -953,7 +953,7 @@ Pinned snapshots (fixture / stored Tier-A). Tier-B historical only if recorded; 
 
 | API | Status |
 | --- | --- |
-| FUTURE: `replayCaScan({ mint, asOf, ruleVersion })` | **NOT_WIRED · FUTURE_MILESTONE** |
+| FUTURE: `replayCaScan({ mint, asOf, ruleVersion })` | **NOT_WIRED · G8 Replay** |
 | Harness suite `replay` | Research/engineering, not necessarily UI |
 
 #### Loading / empty / error
@@ -972,7 +972,7 @@ Missing pin → block with “需要 watermark / fixture pin”. Partial replay 
 
 #### Milestone
 
-**NOT_WIRED · G2+** (UI). Harness replay exists as engineering path separately.
+**NOT_WIRED · G8 Replay** (UI). Harness replay exists as engineering path separately. G6 is advanced CA intelligence only — not replay.
 
 #### Fixture vs Live
 
@@ -1120,7 +1120,7 @@ Settings controls which mode; does not itself fetch market data.
 | `/tasks/:taskId` | No | G1 complete / G4 · NOT_WIRED route | Interface exists | G4 |
 | `/watchlist` | No | G2+ · NOT_WIRED | — | — |
 | `/schedules` | No | Owner-gated · NOT_WIRED | — | — |
-| `/replay` | No | G2+ · NOT_WIRED | Harness-first | Watermarked only |
+| `/replay` | No | **G8 Replay** · NOT_WIRED | Harness-first | Watermarked only |
 | `/liquidity` | No | G7 · NOT_WIRED | — | Macro path |
 | `/settings` | No | G1 late · NOT_WIRED | Meta in topbar | HTTP config |
 
@@ -1138,7 +1138,7 @@ Use this as UX/audit checklist for the primary card:
 - [ ] Data quality issues table  
 - [ ] Address hits region (empty/FUTURE allowed, not omitted forever without label)  
 - [ ] Evidence drawer  
-- [ ] Dev / Early Buyer / Cluster / Cross-CA / Replay placeholders marked **NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA**  
+- [ ] Dev / Early Buyer / Cluster / Cross-CA (G6) + Replay (G8) placeholders marked **NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA**  
 - [ ] No trade CTA, no emoji, no single risk score  
 - [ ] Color not sole semantic  
 

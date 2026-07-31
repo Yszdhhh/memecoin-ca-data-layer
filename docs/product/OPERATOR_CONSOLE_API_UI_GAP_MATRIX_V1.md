@@ -348,7 +348,7 @@ interface CreateCaTaskRequestV1 {
 | **missing field** | stable `resultId`, immutable snapshot, `schema`/`version`, full provenance |
 | **temporary UI behavior** | Fixture mint detail; no replay |
 | **backend change needed** | Immutable result store; validation fail-closed; content hash optional |
-| **milestone** | G0-HOTPATH / G1-LIVE-WIRING → G4-ORCH (replay) |
+| **milestone** | G0-HOTPATH / G1-LIVE-WIRING → **G8 Replay** (result immutability / as-of; not G4 Orchestration) |
 
 **Note:** Product may keep `ca-holder-results/:taskId` as the first read path and later add `ca-results/:resultId` for multi-version history.
 
@@ -432,7 +432,7 @@ interface CreateCaTaskRequestV1 {
 |-----------------|-------------|------------------|---------------|----------------------|----------------------|-----------|
 | `POST /api/v1/ca-tasks` | MISSING | unified create form | kind, modules, lineage | hide multi-module | orchestrator create | G4 / FUTURE |
 | `GET /api/v1/tasks/:id` | MISSING | Task detail route | polymorphic task | alias holder task when ready | unified task record | G4 / FUTURE |
-| `GET /api/v1/ca-results/:id` | domain v1 not HTTP | detail/replay/evidence | resultId, immutability, schema | fixture by mint | result store + validate | G1→G4 |
+| `GET /api/v1/ca-results/:id` | domain v1 not HTTP | detail/replay/evidence | resultId, immutability, schema | fixture by mint | result store + validate | G1→**G8** (replay/evidence); G4 only if generic task store |
 | `GET /api/v1/tokens/:mint/latest` | fixture CaScan VM | CA latest view | freshness, ids | fixture + not “live latest” | latest pointer | G0-HOTPATH / G1-LIVE-WIRING |
 | `GET /api/v1/wallets/:address` | fixture wallet VM | wallet detail | live stats, hits | scrubbed disclaimer | profile API | G3 / FUTURE |
 | `GET /api/v1/addresses` | fixture labels | addresses | query/persist | localStorage demo | library API | G3-ADDR |
