@@ -6,6 +6,7 @@ apps/operator-console/src/data/api-error.test.ts
 apps/operator-console/src/data/api-error.ts
 apps/operator-console/src/data/fixture-source.test.ts
 apps/operator-console/src/data/fixture-source.ts
+apps/operator-console/src/data/http-source.test.ts
 apps/operator-console/src/data/http-source.ts
 apps/operator-console/src/data/live-api-map.test.ts
 apps/operator-console/src/data/live-api-map.ts
