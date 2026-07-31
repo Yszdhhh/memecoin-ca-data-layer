@@ -43,7 +43,7 @@ docs/research/PROVIDER_CAPABILITY_AND_TRUST_MATRIX_20260731.md
 harness/reports/HOTPATH-MERGE-AND-G1-PRODUCT-LINE-LAUNCH/launch-report.md
 harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/acceptance.md
 harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/browser-live-smoke-summary.json
-harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/exact-write-set-partial.txt
+harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/exact-write-set.txt
 harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/findings.json
 harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/gate-results.json
 harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/pr-metadata.json
