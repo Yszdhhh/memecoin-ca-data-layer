@@ -343,7 +343,21 @@ test("HTTP server health and validation", async () => {
 
   const health = await fetchJson(port, "GET", "/api/v1/health");
   assert.equal(health.status, 200);
-  assert.equal((health.body as { status: string }).status, "ok");
+  const healthBody = health.body as {
+    status: string;
+    liveEnabled?: boolean;
+    credentialConfigured?: boolean;
+    provider?: string;
+    bindMode?: string;
+  };
+  assert.equal(healthBody.status, "ok");
+  assert.equal(healthBody.liveEnabled, true);
+  assert.equal(typeof healthBody.credentialConfigured, "boolean");
+  assert.equal(healthBody.provider, "helius");
+  assert.equal(healthBody.bindMode, "loopback");
+  // never expose credential value
+  assert.equal("apiKey" in (health.body as object), false);
+  assert.equal("HELIUS_API_KEY" in (health.body as object), false);
 
   const bad = await fetchJson(port, "POST", "/api/v1/ca-holder-tasks", { mint: OK_MINT, apiKey: "secret" });
   assert.equal(bad.status, 400);

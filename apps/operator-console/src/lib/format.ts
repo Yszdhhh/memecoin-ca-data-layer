@@ -12,6 +12,12 @@ export function formatRatio(ratio: number | null | undefined): string {
   return `${(ratio * 100).toFixed(2)}%`;
 }
 
+/** Missing optional counts → em dash, never coerce null to 0. */
+export function formatCount(n: number | null | undefined): string {
+  if (n === null || n === undefined || Number.isNaN(n)) return "—";
+  return String(n);
+}
+
 export function accountingLabel(eligible: boolean, completeness?: string): string {
   if (eligible) return "CONFIRMED";
   if (completeness === "partial") return "PARTIAL";

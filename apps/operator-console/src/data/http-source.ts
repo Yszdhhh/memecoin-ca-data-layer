@@ -17,23 +17,21 @@ import {
   type PublicResultSummary,
   type PublicTaskSummary,
 } from "./live-api-map";
-
-const SESSION_TASKS_KEY = "operator-console-live-tasks-v1";
-const SESSION_MINT_TASK_KEY = "operator-console-live-mint-task-v1";
-
-function loadJson<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveJson(key: string, value: unknown): void {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+import {
+  makeApiError,
+  mapHttpStatusError,
+  mapNetworkFailure,
+  OperatorApiError,
+  scrubErrorText,
+} from "./api-error";
+import {
+  isTerminalTaskStatus,
+  loadTaskRefs,
+  mapPool,
+  TASK_REFS_QUERY_CONCURRENCY,
+  updateTaskRefStatus,
+  upsertTaskRef,
+} from "./task-refs";
 
 /**
  * Live Wiring HTTP adapter — loopback Operator API only.
@@ -60,37 +58,65 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
   }
 
   private async api<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(this.url(path), {
-      ...init,
-      headers: {
-        accept: "application/json",
-        ...(init?.body ? { "content-type": "application/json" } : {}),
-        ...(init?.headers ?? {}),
-      },
-    });
-    const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    let res: Response;
+    try {
+      res = await fetch(this.url(path), {
+        ...init,
+        headers: {
+          accept: "application/json",
+          ...(init?.body ? { "content-type": "application/json" } : {}),
+          ...(init?.headers ?? {}),
+        },
+      });
+    } catch (e) {
+      throw mapNetworkFailure(e);
+    }
+
+    const text = await res.text();
+    let body: Record<string, unknown> = {};
+    if (text) {
+      try {
+        const parsed = JSON.parse(text) as unknown;
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          body = parsed as Record<string, unknown>;
+        } else if (!res.ok) {
+          throw makeApiError("schema_error", {
+            httpStatus: res.status,
+            message: "invalid JSON error body",
+          });
+        } else {
+          throw makeApiError("schema_error", {
+            httpStatus: res.status,
+            message: "invalid JSON response",
+          });
+        }
+      } catch (e) {
+        if (e instanceof OperatorApiError) throw e;
+        throw makeApiError("schema_error", {
+          httpStatus: res.status,
+          message: "invalid JSON",
+          cause: scrubErrorText(text.slice(0, 80)),
+        });
+      }
+    }
+
     if (!res.ok) {
-      const err = typeof body.error === "string" ? body.error : `http_${res.status}`;
-      throw new Error(err);
+      const err = typeof body.error === "string" ? body.error : null;
+      throw mapHttpStatusError(res.status, err, body);
     }
     return body as T;
   }
 
-  private rememberTaskId(taskId: string, mint?: string): void {
-    const ids = loadJson<string[]>(SESSION_TASKS_KEY, []);
-    if (!ids.includes(taskId)) {
-      ids.unshift(taskId);
-      saveJson(SESSION_TASKS_KEY, ids.slice(0, 50));
-    }
-    if (mint) {
-      const map = loadJson<Record<string, string>>(SESSION_MINT_TASK_KEY, {});
-      map[mint] = taskId;
-      saveJson(SESSION_MINT_TASK_KEY, map);
-    }
+  private rememberTask(task: { taskId: string; mint?: string; status?: string }): void {
+    upsertTaskRef({
+      taskId: task.taskId,
+      mint: task.mint ?? "",
+      createdAt: new Date().toISOString(),
+      lastKnownStatus: task.status ?? "queued",
+    });
   }
 
   async listCaScans(): Promise<CaScanListItem[]> {
-    // Live path has no historical list endpoint — surface session results only.
     return [...this.resultCache.values()].map(toCaScanListItem);
   }
 
@@ -98,10 +124,11 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
     const cached = this.resultCache.get(mint);
     if (cached) return cached;
 
-    const map = loadJson<Record<string, string>>(SESSION_MINT_TASK_KEY, {});
-    const taskId = map[mint];
-    if (!taskId) return null;
+    const refs = loadTaskRefs().filter((r) => r.mint === mint);
+    if (refs.length === 0) return null;
 
+    // Prefer newest ref
+    const taskId = refs[0]!.taskId;
     try {
       const result = await this.api<PublicResultSummary>(
         `/api/v1/ca-holder-results/${encodeURIComponent(taskId)}`,
@@ -109,13 +136,16 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
       const scan = mapPublicResultToCaScan(result);
       this.resultCache.set(mint, scan);
       return scan;
-    } catch {
-      return null;
+    } catch (e) {
+      if (e instanceof OperatorApiError) {
+        if (e.code === "not_found") return null;
+        throw e;
+      }
+      throw mapNetworkFailure(e);
     }
   }
 
   async listWallets(): Promise<{ summary: WalletPoolSummary; items: WalletListItem[] }> {
-    // G1 non-goal: wallets remain fixture / Tier-B unverified
     return this.fixture.listWallets();
   }
 
@@ -132,13 +162,46 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
   }
 
   async listTasks(): Promise<TaskViewModel[]> {
-    const ids = loadJson<string[]>(SESSION_TASKS_KEY, []);
-    const out: TaskViewModel[] = [];
-    for (const id of ids) {
-      const t = await this.getTask(id);
-      if (t) out.push(t);
-    }
-    return out;
+    const refs = loadTaskRefs();
+    const results = await mapPool(refs, TASK_REFS_QUERY_CONCURRENCY, async (ref) => {
+      try {
+        const t = await this.getTask(ref.taskId);
+        if (t) return t;
+        // keep ref visible as local-only placeholder when 404
+        return {
+          taskId: ref.taskId,
+          input: { mint: ref.mint },
+          provider: "operator-api-helius",
+          status: (ref.lastKnownStatus as TaskViewModel["status"]) || "failed",
+          requestBudget: 0,
+          requestsUsed: 0,
+          startedAt: ref.createdAt,
+          endedAt: null,
+          warnings: ["task_ref_not_on_server"],
+          outputLink: ref.mint ? `/ca/${encodeURIComponent(ref.mint)}` : null,
+          failureReason: "not_found",
+          localOnly: true,
+        } satisfies TaskViewModel;
+      } catch (e) {
+        // API unavailable: keep refs and surface unavailable
+        const code = e instanceof OperatorApiError ? e.code : "api_unreachable";
+        return {
+          taskId: ref.taskId,
+          input: { mint: ref.mint },
+          provider: "operator-api-helius",
+          status: (ref.lastKnownStatus as TaskViewModel["status"]) || "failed",
+          requestBudget: 0,
+          requestsUsed: 0,
+          startedAt: ref.createdAt,
+          endedAt: null,
+          warnings: [code, "api_unavailable_ref_kept"],
+          outputLink: ref.mint ? `/ca/${encodeURIComponent(ref.mint)}` : null,
+          failureReason: code,
+          localOnly: true,
+        } satisfies TaskViewModel;
+      }
+    });
+    return results;
   }
 
   async getTask(taskId: string): Promise<TaskViewModel | null> {
@@ -146,39 +209,72 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
       const summary = await this.api<PublicTaskSummary>(
         `/api/v1/ca-holder-tasks/${encodeURIComponent(taskId)}`,
       );
-      this.rememberTaskId(summary.taskId, summary.mint);
-      // Refresh CA cache when terminal with result
+      this.rememberTask({
+        taskId: summary.taskId,
+        mint: summary.mint,
+        status: String(summary.status),
+      });
+      updateTaskRefStatus(summary.taskId, String(summary.status));
+
       if (["completed", "partial"].includes(String(summary.status))) {
         try {
           const result = await this.api<PublicResultSummary>(
             `/api/v1/ca-holder-results/${encodeURIComponent(taskId)}`,
           );
-          this.resultCache.set(summary.mint, mapPublicResultToCaScan(result, {
-            observedAt: summary.endedAt ?? undefined,
-          }));
-        } catch {
-          /* result_not_ready */
+          // Inject observedAt from task if API already has it; mapper requires field on result
+          const withObserved: PublicResultSummary = {
+            ...result,
+            observedAt:
+              typeof result.observedAt === "string" && result.observedAt
+                ? result.observedAt
+                : (summary.endedAt ?? summary.startedAt ?? ""),
+          };
+          this.resultCache.set(summary.mint, mapPublicResultToCaScan(withObserved));
+        } catch (e) {
+          if (e instanceof OperatorApiError && e.code === "not_found") {
+            /* result_not_ready */
+          } else if (e instanceof OperatorApiError && e.code === "schema_error") {
+            throw e;
+          }
+          /* other result errors: leave task view intact */
         }
       }
       return mapPublicTaskToViewModel(summary);
-    } catch {
-      return null;
+    } catch (e) {
+      if (e instanceof OperatorApiError) {
+        if (e.code === "not_found") return null;
+        throw e;
+      }
+      throw mapNetworkFailure(e);
     }
   }
 
   /**
-   * G1: create real CA-holder task via loopback Operator API.
+   * Create real CA-holder task via loopback Operator API.
    * Body is mint-only — never api keys / rpc / provider.
+   * Retry must call this again (new taskId); never mutates prior task.
    */
-  async createLocalDemoTask(mint: string): Promise<TaskViewModel> {
+  async createCaHolderTask(
+    mint: string,
+    opts?: { idempotencyKey?: string },
+  ): Promise<TaskViewModel> {
     const cleaned = mint.trim();
-    if (!cleaned) throw new Error("invalid_mint");
+    if (!cleaned) throw makeApiError("schema_error", { message: "invalid_mint" });
+
+    const body: { mint: string; idempotencyKey?: string } = { mint: cleaned };
+    if (opts?.idempotencyKey?.trim()) {
+      body.idempotencyKey = opts.idempotencyKey.trim().slice(0, 200);
+    }
 
     const summary = await this.api<PublicTaskSummary>("/api/v1/ca-holder-tasks", {
       method: "POST",
-      body: JSON.stringify({ mint: cleaned }),
+      body: JSON.stringify(body),
     });
-    this.rememberTaskId(summary.taskId, summary.mint);
+    this.rememberTask({
+      taskId: summary.taskId,
+      mint: summary.mint,
+      status: String(summary.status),
+    });
     return mapPublicTaskToViewModel(summary);
   }
 
@@ -192,7 +288,7 @@ export class HttpOperatorConsoleDataSource implements OperatorConsoleDataSource 
     for (let i = 0; i < maxAttempts; i += 1) {
       const t = await this.getTask(taskId);
       if (!t) return null;
-      if (!["queued", "running"].includes(t.status)) return t;
+      if (isTerminalTaskStatus(t.status)) return t;
       await new Promise((r) => setTimeout(r, intervalMs));
     }
     return this.getTask(taskId);

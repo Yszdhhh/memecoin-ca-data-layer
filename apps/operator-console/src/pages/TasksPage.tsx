@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { dataSource, isHttpLiveSource } from "../data/source";
+import { Link, useNavigate } from "react-router-dom";
+import { dataSource, resolveOperatorApiBase } from "../data/source";
 import type { TaskViewModel } from "../data/types";
 import { describeTaskTerminalState } from "../data/live-api-map";
 import { TrustBadge } from "../components/TrustBadge";
+import {
+  emptyReadiness,
+  probeReadiness,
+  readinessBlocksLiveSubmit,
+  type ReadinessFlags,
+} from "../data/readiness";
+import { errorDisplayLabel, isOperatorApiError } from "../data/api-error";
 
 export function TasksPage() {
   const [tasks, setTasks] = useState<TaskViewModel[]>([]);
@@ -11,37 +18,54 @@ export function TasksPage() {
   const [note, setNote] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [readiness, setReadiness] = useState<ReadinessFlags>(() => emptyReadiness());
+  const nav = useNavigate();
   const meta = dataSource.getDataSourceMeta();
   const live = meta.mode === "http";
+  const apiBase = resolveOperatorApiBase();
 
   async function reload() {
     setTasks(await dataSource.listTasks());
   }
 
   useEffect(() => {
-    void reload().catch((e: Error) => setErr(e.message));
+    void reload().catch((e: Error) => {
+      if (isOperatorApiError(e)) setErr(`${errorDisplayLabel(e.code)}：${e.message}`);
+      else setErr(e.message);
+    });
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void probeReadiness(apiBase).then((r) => {
+      if (!cancelled) setReadiness(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
+
+  const liveBlock = readinessBlocksLiveSubmit(readiness);
 
   async function createTask() {
     setBusy(true);
     setErr(null);
     setNote(null);
     try {
-      const t = await dataSource.createLocalDemoTask(mint.trim() || (live ? "" : "demo-mint"));
-      if (live && isHttpLiveSource(dataSource)) {
-        setNote(`已创建 Live 任务 ${t.taskId}，轮询中…`);
-        const done = await dataSource.pollTask(t.taskId, { maxAttempts: 45, intervalMs: 700 });
-        setNote(
-          done
-            ? `任务 ${done.taskId} → ${done.status}（${done.requestsUsed}/${done.requestBudget}）`
-            : `任务 ${t.taskId} 已提交`,
-        );
-      } else {
-        setNote(`已创建本地 demo task ${t.taskId}（未调用 Helius / 无网络）`);
+      if (live && liveBlock.disabled) {
+        setErr(`Live Submit 禁用：${readiness.banner}（${liveBlock.reason}）`);
+        return;
+      }
+      const t = await dataSource.createCaHolderTask(mint.trim() || (live ? "" : "demo-mint"));
+      setNote(`已创建任务 ${t.taskId}（status=${t.status}）`);
+      if (live) {
+        nav(`/tasks/${encodeURIComponent(t.taskId)}`);
+        return;
       }
       await reload();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "create_failed");
+      if (isOperatorApiError(e)) setErr(`${errorDisplayLabel(e.code)}：${e.message}`);
+      else setErr(e instanceof Error ? e.message : "create_failed");
     } finally {
       setBusy(false);
     }
@@ -50,10 +74,20 @@ export function TasksPage() {
   return (
     <div>
       <h1>任务中心</h1>
-      <div className={`banner ${live ? "warn" : ""}`}>
-        {live
-          ? "Live Wiring：任务经 loopback Operator API（POST/GET ca-holder-tasks）。浏览器无 Helius Key。"
-          : "Shell 阶段任务为静态 fixture + 本地 demo。发起任务不会触发 Helius / GMGN / RPC。"}
+      <div className={`banner ${live && !readiness.READY ? "warn" : ""}`} data-testid="readiness-banner">
+        {live ? (
+          <>
+            <strong>{readiness.banner}</strong>
+            {" · Live Wiring：任务经 loopback Operator API。浏览器无 Helius Key。"}
+            {!readiness.READY && (
+              <div className="muted" style={{ marginTop: 6 }}>
+                Live Submit 已禁用 — {liveBlock.reason}
+              </div>
+            )}
+          </>
+        ) : (
+          "Shell 阶段任务为静态 fixture + 本地 demo。发起任务不会触发 Helius / GMGN / RPC。"
+        )}
       </div>
       <div className="panel">
         <div className="form-row">
@@ -66,14 +100,19 @@ export function TasksPage() {
           <button
             className="primary"
             type="button"
-            disabled={busy || (live && !mint.trim())}
+            disabled={busy || (live && (!mint.trim() || liveBlock.disabled))}
+            title={live && liveBlock.disabled ? liveBlock.reason : undefined}
             onClick={() => void createTask()}
           >
             {live ? (busy ? "提交中…" : "发起 CA Holder 任务") : "发起本地 demo 任务"}
           </button>
         </div>
         {note && <div className="muted">{note}</div>}
-        {err && <div className="error">{err}</div>}
+        {err && (
+          <div className="error" data-testid="tasks-error">
+            {err}
+          </div>
+        )}
       </div>
       <div className="panel">
         <table>
@@ -110,6 +149,7 @@ export function TasksPage() {
                 <tr key={t.taskId}>
                   <td className="mono">
                     <Link to={`/tasks/${encodeURIComponent(t.taskId)}`}>{t.taskId}</Link>
+                    {t.localOnly ? <div className="muted">local ref</div> : null}
                   </td>
                   <td className="mono">{t.input.mint ?? "—"}</td>
                   <td>{t.provider}</td>

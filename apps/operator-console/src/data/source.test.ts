@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { allowOperatorApiBase, resolveOperatorApiBase } from "./source";
+import { allowOperatorApiBase, resolveOperatorApiBase } from "./api-base";
+import { createOperatorConsoleDataSource } from "./source";
 
 describe("allowOperatorApiBase", () => {
   it("accepts only loopback http(s) origins", () => {
@@ -24,7 +25,15 @@ describe("allowOperatorApiBase", () => {
 
 describe("resolveOperatorApiBase", () => {
   it("defaults to null without VITE_OPERATOR_API_BASE (fixture mode)", () => {
-    // vitest env has no VITE_OPERATOR_API_BASE unless injected
     expect(resolveOperatorApiBase()).toBeNull();
+  });
+});
+
+describe("createOperatorConsoleDataSource", () => {
+  it("defaults to fixture; Live method is createCaHolderTask not createLocalDemoTask", () => {
+    const ds = createOperatorConsoleDataSource();
+    expect(ds.getDataSourceMeta().mode).toBe("fixture");
+    expect(typeof ds.createCaHolderTask).toBe("function");
+    expect(ds as { createLocalDemoTask?: unknown }).not.toHaveProperty("createLocalDemoTask");
   });
 });

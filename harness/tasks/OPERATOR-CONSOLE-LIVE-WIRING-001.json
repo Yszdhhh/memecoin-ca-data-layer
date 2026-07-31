@@ -1,0 +1,50 @@
+{
+  "task_id": "OPERATOR-CONSOLE-LIVE-WIRING-001",
+  "title": "Operator Console Live Wiring completion — fail-closed errors, readiness, browser E2E, PR gate",
+  "status": "implementation_complete_pending_independent_audit",
+  "objective": "Close G1 Live Wiring so the Operator Console is user-operable, state-honest, and independently auditable: typed API errors, health readiness handshake, fail-closed DTO mapping, task-ref refresh recovery, offline demos, real Live smoke via loopback API→Helius, harness pack, Draft→Ready PR. Merge only after independent audit GREEN.",
+  "base_sha": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
+  "branch": "feature/operator-console-live-wiring-001",
+  "lineage": {
+    "main_pin": "b3c8650",
+    "hotpath_merge": "ae60368",
+    "starting_tip": "bf9ff3c",
+    "known_aligned_research": "bf9ff3c"
+  },
+  "allowed_paths": [
+    "apps/operator-console/**",
+    "src/application/operator-api/**",
+    "docs/contracts/**",
+    "docs/product/**",
+    "harness/tasks/OPERATOR-CONSOLE-LIVE-WIRING-001.json",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/**",
+    "package.json",
+    "test/application/operator-api/**"
+  ],
+  "forbidden": [
+    "Stability batches",
+    "G2 market/permission/pool productization",
+    "PostgreSQL productionization",
+    "Frontend direct Helius",
+    "Browser credential storage",
+    "chainfm_out reads",
+    "raw provider payload commits",
+    "merge of PR in this task"
+  ],
+  "acceptance": [
+    "Typed OperatorApiError codes; never collate failures to null/未找到",
+    "Fail-closed DTO: no synthesized observedAt/0 counts/frontend universe",
+    "Five readiness flags; Live Submit disabled until READY",
+    "createCaHolderTask Live path; fixture keeps local demo semantics",
+    "Task refs versioned max 20; no raw payload",
+    "Offline states evidenced; Live smoke ≤10 Helius; browser→Helius=0",
+    "Harness pack + PR Ready; NOT_MERGED"
+  ],
+  "gates": [
+    "npm ci / typecheck / test / build / console:check / console:build",
+    "harness:doctor (wallets.json FAIL_PREEXISTING only)",
+    "security:scan",
+    "render-helpers.test.cjs",
+    "secret grep on write-set"
+  ]
+}

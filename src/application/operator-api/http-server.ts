@@ -78,11 +78,18 @@ async function handle(
     }
 
     if (method === "GET" && url.pathname === "/api/v1/health") {
+      // Safe readiness fields only — never credential value/hash/length or full provider endpoint.
+      const credentialConfigured = Boolean(process.env.HELIUS_API_KEY?.trim());
       return json(res, 200, {
         status: "ok",
         service: "operator-api",
-        bind: "127.0.0.1",
-        liveDefault: false,
+        version: "1",
+        liveEnabled: service.isLiveEnabled(),
+        credentialConfigured,
+        provider: "helius",
+        chain: "solana",
+        bindMode: "loopback",
+        observedAt: new Date().toISOString(),
         note: "CA holder hotpath only. Memory tasks. Process restart drops state.",
       }, origin);
     }

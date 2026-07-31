@@ -1,3 +1,4 @@
+import { makeApiError } from "./api-error";
 import type {
   CaScanListItem,
   CaScanViewModel,
@@ -41,12 +42,18 @@ export interface PublicResultSummary {
   accountingEligible: boolean | null;
   exclusionCoverage: ExclusionCoverage | null;
   concentrationEligible: boolean;
-  accounting: CaScanViewModel["accounting"];
-  ownerCounts: CaScanViewModel["ownerCounts"];
+  accounting: CaScanViewModel["accounting"] | null;
+  ownerCounts: {
+    total: number | null;
+    included: number | null;
+    excluded: number | null;
+    unresolved: number | null;
+    tokenAccounts?: number | null;
+  } | null;
   concentration: Array<{
     name: string;
-    numerator: string;
-    denominator: string;
+    numerator: string | null;
+    denominator: string | null;
     ratio: number | null;
     verificationStatus: "confirmed" | "unverified";
   }>;
@@ -65,6 +72,10 @@ export interface PublicResultSummary {
   heliusRequestCount?: number;
   paginationComplete: boolean | null;
   sourceWatermark: string;
+  /** Must come from API — never browser Date.now() */
+  observedAt: string;
+  /** Must come from API/domain contract — never frontend guess */
+  universeDefinition: string;
   scrubbedOutputSha?: string | null;
 }
 
@@ -123,7 +134,6 @@ export function describeTaskTerminalState(task: PublicTaskSummary): TerminalUiSt
     };
   }
 
-  // budget_exhausted = partial (binding Hotpath semantic)
   if (
     task.providerBudgetExhausted === true ||
     hasWarning(task, "request_budget_exhausted") ||
@@ -137,13 +147,6 @@ export function describeTaskTerminalState(task: PublicTaskSummary): TerminalUiSt
     };
   }
 
-  if (hasWarning(task, "timeout") || (task.timeoutCount ?? 0) > 0 && status === "failed") {
-    if (hasWarning(task, "timeout") || status === "failed") {
-      if (hasWarning(task, "timeout")) {
-        return { kind: "timeout", label: "FAILED · timeout", severity: "bad", mapsToTaskStatus: "failed" };
-      }
-    }
-  }
   if (hasWarning(task, "timeout")) {
     return { kind: "timeout", label: "FAILED · timeout", severity: "bad", mapsToTaskStatus: "failed" };
   }
@@ -167,7 +170,13 @@ export function describeTaskTerminalState(task: PublicTaskSummary): TerminalUiSt
     return { kind: "completed", label: "COMPLETED", severity: "ok", mapsToTaskStatus: "completed" };
   }
 
-  return { kind: "unknown", label: status.toUpperCase() || "UNKNOWN", severity: "muted", mapsToTaskStatus: "failed" };
+  // unknown status → schema error path (not success/empty fallback)
+  return {
+    kind: "schema_error",
+    label: "FAILED · schema · unknown status",
+    severity: "bad",
+    mapsToTaskStatus: "failed",
+  };
 }
 
 export function mapPublicTaskToViewModel(task: PublicTaskSummary): TaskViewModel {
@@ -178,6 +187,10 @@ export function mapPublicTaskToViewModel(task: PublicTaskSummary): TaskViewModel
     status: (String(task.status) as TaskStatus) || "failed",
     requestBudget: task.requestBudget,
     requestsUsed: task.requestsUsed ?? task.providerRequestCount ?? 0,
+    providerRequestCount: task.providerRequestCount ?? task.requestsUsed ?? 0,
+    pageCount: task.pageCount ?? null,
+    retryCount: task.retryCount ?? null,
+    timeoutCount: task.timeoutCount ?? null,
     startedAt: task.startedAt,
     endedAt: task.endedAt,
     warnings: [...(task.warnings ?? [])],
@@ -186,38 +199,78 @@ export function mapPublicTaskToViewModel(task: PublicTaskSummary): TaskViewModel
   };
 }
 
+function optionalCount(v: unknown): number | null {
+  if (v === null || v === undefined) return null;
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  return v;
+}
+
 function concentrationRecord(
-  rows: PublicResultSummary["concentration"],
+  rows: PublicResultSummary["concentration"] | null | undefined,
   concentrationEligible: boolean,
 ): Record<string, ConcentrationMetricView | null> {
   const out: Record<string, ConcentrationMetricView | null> = {};
+  const list = rows ?? [];
   for (const name of ["top1", "top5", "top10", "top20", "top50", "top100"]) {
-    const hit = rows.find((r) => r.name === name);
+    const hit = list.find((r) => r.name === name);
     if (!hit) {
       out[name] = null;
       continue;
     }
-    // ratio=null must stay null when not concentration-eligible (never coerce to 0)
-    const ratio = concentrationEligible ? hit.ratio : null;
+    // ratio=null stays null when ineligible — never coerce to 0
+    const ratio = concentrationEligible ? (hit.ratio === undefined ? null : hit.ratio) : null;
+    const vs =
+      concentrationEligible && hit.verificationStatus === "confirmed" ? "confirmed" : "unverified";
     out[name] = {
-      numerator: hit.numerator,
-      denominator: hit.denominator,
-      ratio: ratio === undefined ? null : ratio,
-      verificationStatus: concentrationEligible ? "confirmed" : "unverified",
+      numerator: hit.numerator ?? null,
+      denominator: hit.denominator ?? null,
+      ratio,
+      verificationStatus: vs,
     };
   }
   return out;
 }
 
-/** Map Operator API result → console CA scan view model. */
-export function mapPublicResultToCaScan(
-  result: PublicResultSummary,
-  opts?: { observedAt?: string },
-): CaScanViewModel {
+/**
+ * Strict parse of public result → view model.
+ * Missing required observedAt / universeDefinition → schema_error (throw).
+ * Missing optional counts/ratios → null (never 0 / never browser now).
+ */
+export function mapPublicResultToCaScan(result: PublicResultSummary): CaScanViewModel {
+  if (!result || typeof result !== "object") {
+    throw makeApiError("schema_error", { message: "result missing" });
+  }
+  if (typeof result.mint !== "string" || !result.mint) {
+    throw makeApiError("schema_error", { message: "result.mint required" });
+  }
+  if (typeof result.observedAt !== "string" || !result.observedAt.trim()) {
+    throw makeApiError("schema_error", {
+      message: "missing required observedAt",
+      taskId: typeof result.taskId === "string" ? result.taskId : null,
+    });
+  }
+  if (typeof result.universeDefinition !== "string" || !result.universeDefinition.trim()) {
+    throw makeApiError("schema_error", {
+      message: "missing required universeDefinition",
+      taskId: typeof result.taskId === "string" ? result.taskId : null,
+    });
+  }
+  if (typeof result.sourceWatermark !== "string" || !result.sourceWatermark) {
+    throw makeApiError("schema_error", { message: "missing required sourceWatermark" });
+  }
+
+  const knownStatus = ["OK", "PARTIAL", "REJECTED"].includes(String(result.status));
+  if (!knownStatus) {
+    throw makeApiError("schema_error", {
+      message: `unknown result status: ${String(result.status)}`,
+    });
+  }
+
   const concentrationEligible = result.concentrationEligible === true;
   const exclusion = (result.exclusionCoverage ?? "unavailable") as ExclusionCoverage;
   const accountingEligible = result.accountingEligible === true;
-  const concentration = concentrationRecord(result.concentration ?? [], concentrationEligible);
+  const concentration = concentrationRecord(result.concentration, concentrationEligible);
+  const oc = result.ownerCounts;
 
   return {
     mint: result.mint,
@@ -227,21 +280,33 @@ export function mapPublicResultToCaScan(
     accountingEligible,
     exclusionCoverage: exclusion,
     concentrationEligible,
-    observedAt: opts?.observedAt ?? new Date().toISOString(),
+    observedAt: result.observedAt,
     dataSource: "operator-api-live",
     decimals: null,
     mintSupplyRaw: result.accounting?.mintSupplyRaw ?? null,
-    sourceWatermark: result.sourceWatermark ?? "live:unknown",
+    sourceWatermark: result.sourceWatermark,
     provider: "helius",
     heliusRequestCountHistorical: result.heliusRequestCount ?? result.providerRequestCount,
     judgmentEligibleDeprecated: accountingEligible,
-    accounting: result.accounting,
+    accounting: result.accounting ?? {
+      mintSupplyRaw: "",
+      enumeratedTokenAccountBalanceRaw: "",
+      includedOwnerBalanceRaw: "",
+      excludedBalanceRaw: "",
+      unresolvedBalanceRaw: "",
+      accountingResidualRaw: "",
+      accountingResidualRatio: null,
+      completeness: "unavailable",
+      paginationComplete: false,
+      residualReasons: [],
+      identity: "unavailable",
+    },
     ownerCounts: {
-      total: result.ownerCounts?.total ?? 0,
-      included: result.ownerCounts?.included ?? 0,
-      excluded: result.ownerCounts?.excluded ?? 0,
-      unresolved: result.ownerCounts?.unresolved ?? 0,
-      tokenAccounts: result.ownerCounts?.tokenAccounts ?? result.ownerCounts?.total ?? 0,
+      total: optionalCount(oc?.total),
+      included: optionalCount(oc?.included),
+      excluded: optionalCount(oc?.excluded),
+      unresolved: optionalCount(oc?.unresolved),
+      tokenAccounts: optionalCount(oc?.tokenAccounts ?? oc?.total),
     },
     paginationComplete: result.paginationComplete === true,
     concentration,
@@ -253,7 +318,7 @@ export function mapPublicResultToCaScan(
       severity: i.severity,
       whetherManualReviewRequired: i.whetherManualReviewRequired,
     })),
-    universeDefinition: "cleaned_holder_universe_operator_api",
+    universeDefinition: result.universeDefinition,
   };
 }
 
@@ -284,7 +349,6 @@ export function describeResultPresence(
     if (task && ["completed", "partial"].includes(String(task.status))) return "empty";
     return "empty";
   }
-  // Stale: ended long ago and no fresh watermark marker (soft heuristic for UI only)
   if (task?.endedAt) {
     const ageMs = Date.now() - Date.parse(task.endedAt);
     if (Number.isFinite(ageMs) && ageMs > 24 * 60 * 60 * 1000) return "stale";

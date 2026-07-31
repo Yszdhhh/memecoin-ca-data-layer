@@ -1,0 +1,41 @@
+{
+  "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
+  "attempted": true,
+  "ok": true,
+  "path": "Browser Console (127.0.0.1:5173) → loopback Operator API (127.0.0.1:8787) → Helius (server-only)",
+  "publicCA": 1,
+  "mintFingerprint": "1c2c7d3cac226153",
+  "apiTaskId": "e024fa79-a9f3-4644-abb5-555ac3f3e3be",
+  "taskStatus": "completed",
+  "providerRequestCount": 6,
+  "requestBudget": 10,
+  "heliusAttemptsCeiling": 10,
+  "pageCount": 4,
+  "retryCount": 0,
+  "timeoutCount": 0,
+  "paginationComplete": true,
+  "accountingEligible": true,
+  "exclusionCoverage": "partial",
+  "concentrationEligible": false,
+  "warnings": ["pool_exclusion_coverage_incomplete"],
+  "observedAt": "2026-07-31T09:46:30.774Z",
+  "sourceWatermark": "helius|436333665|complete|JEByd5M7kLH8uEJNZEoCkF7djEEvHoisE4Crqn9UNx9W",
+  "universeDefinition": "cleaned_holder_universe",
+  "scrubbedOutputSha": "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce",
+  "outputSha": "6b28c81dbeecfe93f00547d4c34b65606ad7478444392c0f28837f9dc61de424",
+  "browserDirectHelius": 0,
+  "credentialExposure": 0,
+  "browserNetworkHosts": ["127.0.0.1:5173", "127.0.0.1:8787"],
+  "durationMs": 4049,
+  "localEvidence": {
+    "apiSmoke": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/browser-live-smoke.json",
+    "browserSmoke": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/browser-live-smoke-browser.json",
+    "screenshotsDir": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/screenshots"
+  },
+  "privacy": {
+    "chainfm_out_reads": 0,
+    "private_wallet_reads": 0,
+    "raw_payload_committed": 0,
+    "credential_persisted": 0
+  }
+}

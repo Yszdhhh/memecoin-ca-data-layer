@@ -7,7 +7,8 @@ import {
   type PublicResultSummary,
   type PublicTaskSummary,
 } from "./live-api-map";
-import { formatRatio } from "../lib/format";
+import { formatCount, formatRatio } from "../lib/format";
+import { isOperatorApiError } from "./api-error";
 
 function baseTask(over: Partial<PublicTaskSummary> = {}): PublicTaskSummary {
   return {
@@ -62,6 +63,8 @@ function baseResult(over: Partial<PublicResultSummary> = {}): PublicResultSummar
     heliusRequestCount: 6,
     paginationComplete: true,
     sourceWatermark: "helius:live:abc",
+    observedAt: "2026-07-31T00:01:00.000Z",
+    universeDefinition: "cleaned_holder_universe",
     ...over,
   };
 }
@@ -120,9 +123,15 @@ describe("describeTaskTerminalState", () => {
     expect(describeTaskTerminalState(baseTask({ status: "queued" })).kind).toBe("queued");
     expect(describeTaskTerminalState(baseTask({ status: "running" })).kind).toBe("running");
   });
+
+  it("unknown status → schema_error (not success/empty)", () => {
+    const s = describeTaskTerminalState(baseTask({ status: "weird_state" as never }));
+    expect(s.kind).toBe("schema_error");
+    expect(s.mapsToTaskStatus).toBe("failed");
+  });
 });
 
-describe("mapPublicResultToCaScan", () => {
+describe("mapPublicResultToCaScan fail-closed", () => {
   it("keeps concentration ratio null when not eligible (never 0)", () => {
     const scan = mapPublicResultToCaScan(baseResult({ concentrationEligible: false }));
     expect(scan.concentrationEligible).toBe(false);
@@ -130,6 +139,148 @@ describe("mapPublicResultToCaScan", () => {
     expect(scan.concentration.top10?.verificationStatus).toBe("unverified");
     expect(formatRatio(scan.concentration.top10?.ratio)).toBe("暂不可确认");
     expect(formatRatio(scan.concentration.top10?.ratio)).not.toBe("0.00%");
+  });
+
+  it("missing owner count != 0", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({
+        ownerCounts: {
+          total: null,
+          included: null,
+          excluded: null,
+          unresolved: null,
+          tokenAccounts: null,
+        },
+      }),
+    );
+    expect(scan.ownerCounts.total).toBeNull();
+    expect(scan.ownerCounts.included).toBeNull();
+    expect(formatCount(scan.ownerCounts.total)).toBe("—");
+    expect(formatCount(scan.ownerCounts.total)).not.toBe("0");
+  });
+
+  it("missing amount fields stay empty string from accounting, not coerced numeric 0 display requirement", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({
+        accounting: {
+          mintSupplyRaw: "",
+          enumeratedTokenAccountBalanceRaw: "",
+          includedOwnerBalanceRaw: "",
+          excludedBalanceRaw: "",
+          unresolvedBalanceRaw: "",
+          accountingResidualRaw: "",
+          accountingResidualRatio: null,
+          completeness: "partial",
+          paginationComplete: false,
+          residualReasons: [],
+          identity: "pilot",
+        },
+      }),
+    );
+    expect(scan.accounting.includedOwnerBalanceRaw).toBe("");
+    expect(scan.accounting.accountingResidualRatio).toBeNull();
+  });
+
+  it("ratio null != 0%", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({
+        concentrationEligible: true,
+        concentration: [
+          {
+            name: "top10",
+            numerator: "1",
+            denominator: "1",
+            ratio: null,
+            verificationStatus: "unverified",
+          },
+        ],
+      }),
+    );
+    expect(scan.concentration.top10?.ratio).toBeNull();
+    expect(formatRatio(scan.concentration.top10?.ratio)).not.toBe("0.00%");
+  });
+
+  it("observedAt not synthesized — missing throws schema_error", () => {
+    expect(() =>
+      mapPublicResultToCaScan(baseResult({ observedAt: "" as unknown as string })),
+    ).toThrow();
+    try {
+      mapPublicResultToCaScan({ ...baseResult(), observedAt: undefined as unknown as string });
+    } catch (e) {
+      expect(isOperatorApiError(e)).toBe(true);
+      if (isOperatorApiError(e)) expect(e.code).toBe("schema_error");
+    }
+  });
+
+  it("observedAt comes from API field only", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({ observedAt: "2026-01-02T03:04:05.000Z" }),
+    );
+    expect(scan.observedAt).toBe("2026-01-02T03:04:05.000Z");
+  });
+
+  it("universe not guessed — missing throws schema_error", () => {
+    try {
+      mapPublicResultToCaScan(baseResult({ universeDefinition: "" }));
+      expect.fail("should throw");
+    } catch (e) {
+      expect(isOperatorApiError(e)).toBe(true);
+      if (isOperatorApiError(e)) expect(e.code).toBe("schema_error");
+    }
+  });
+
+  it("universe from API", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({ universeDefinition: "cleaned_holder_universe" }),
+    );
+    expect(scan.universeDefinition).toBe("cleaned_holder_universe");
+  });
+
+  it("accounting true + exclusion partial + concentration false", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({
+        accountingEligible: true,
+        exclusionCoverage: "partial",
+        concentrationEligible: false,
+      }),
+    );
+    expect(scan.accountingEligible).toBe(true);
+    expect(scan.exclusionCoverage).toBe("partial");
+    expect(scan.concentrationEligible).toBe(false);
+  });
+
+  it("pagination incomplete preserved", () => {
+    const scan = mapPublicResultToCaScan(baseResult({ paginationComplete: false }));
+    expect(scan.paginationComplete).toBe(false);
+  });
+
+  it("unknown status → schema error", () => {
+    try {
+      mapPublicResultToCaScan(baseResult({ status: "WEIRD" }));
+      expect.fail("should throw");
+    } catch (e) {
+      expect(isOperatorApiError(e)).toBe(true);
+      if (isOperatorApiError(e)) expect(e.code).toBe("schema_error");
+    }
+  });
+
+  it("Tier-B never confirmed when concentration ineligible", () => {
+    const scan = mapPublicResultToCaScan(
+      baseResult({
+        concentrationEligible: false,
+        concentration: [
+          {
+            name: "top10",
+            numerator: "1",
+            denominator: "1",
+            ratio: 0.5,
+            verificationStatus: "confirmed",
+          },
+        ],
+      }),
+    );
+    expect(scan.concentration.top10?.verificationStatus).toBe("unverified");
+    expect(scan.concentration.top10?.ratio).toBeNull();
   });
 
   it("preserves confirmed ratio only when concentrationEligible", () => {
@@ -157,19 +308,6 @@ describe("mapPublicResultToCaScan", () => {
     expect(scan.sourceWatermark).toBe("helius:live:xyz");
     expect(scan.provider).toBe("helius");
   });
-
-  it("splits accounting vs exclusion vs concentration", () => {
-    const scan = mapPublicResultToCaScan(
-      baseResult({
-        accountingEligible: true,
-        exclusionCoverage: "partial",
-        concentrationEligible: false,
-      }),
-    );
-    expect(scan.accountingEligible).toBe(true);
-    expect(scan.exclusionCoverage).toBe("partial");
-    expect(scan.concentrationEligible).toBe(false);
-  });
 });
 
 describe("mapPublicTaskToViewModel", () => {
@@ -193,5 +331,9 @@ describe("describeResultPresence", () => {
   it("stale when ended >24h ago", () => {
     const old = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
     expect(describeResultPresence(baseResult(), baseTask({ endedAt: old }))).toBe("stale");
+  });
+
+  it("valid empty classified as empty", () => {
+    expect(describeResultPresence(null, baseTask({ status: "partial" }))).toBe("empty");
   });
 });
