@@ -7,17 +7,21 @@
 ## 当前阶段指针
 
 ```text
-M0：DONE / GREEN / MERGED
+M0：DONE / GREEN / MERGED（PR #4）
+OPERATOR-CONSOLE-SHELL-001：DONE / MERGED（PR #6）
+SOL-CA-HOLDER-HOTPATH-INTEGRATION-001：DONE / GREEN / MERGED（PR #7）
 
-PR：#4
-Merge commit：2976316e3853e377eff112484f9817ac2e1eba57
-Main integration report：e8929a61262f2c32924ede3b7ba6067bc1d15b79
+PR：#7
+Merge commit：ae60368bcd82ebc3fb9f2655dd82f6d079158401
+Independent audit：GREEN（SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001）
+Main critical gates：PASS（harness:doctor wallets.json = pre-existing P2）
 
 当前 ACTIVE：
-OPERATOR-CONSOLE-SHELL-001
+OPERATOR-CONSOLE-LIVE-WIRING-001
+Branch：feature/operator-console-live-wiring-001
 
-NEXT：
-SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
+NEXT（after Live Wiring GREEN）：
+Stability batch（Owner-gated；不得抢跑）
 
 PARKED：
 1433 全量重抓
@@ -26,11 +30,12 @@ PARKED：
 cron
 BSC
 完整 SOL-E2E
+G2–G8 offline product surfaces
 ```
 
-`OPERATOR-CONSOLE-SHELL-001` = **M1 Operator Console MVP 的第一阶段**（fixtures / 脱敏优先）。
+`OPERATOR-CONSOLE-LIVE-WIRING-001` = Console shell 接到 loopback CA holder Operator API（非 Stability、非 G2–G8 扩面）。
 
-不要再等待 M0 merge；不要重复 M0 审计/集成。
+不要重复 Hotpath 实现/审计；不要在 Live Wiring 完成前进入 Stability。
 
 ---
 

@@ -9,15 +9,15 @@
 
 ## 0. 一句话现状
 
-系统已形成两条并行事实链路，且 **M0 已合入 main**：
+系统已形成两条并行事实链路，且 **M0 + Console Shell + CA Holder Hotpath 已合入 main**：
 
 1. **钱包情报（GMGN 借用层）**：1433 地址 7d/30d 已全量抓取；累计盈利未打通（明细仅本地）。
-2. **CA 持仓（Helius Tier-A 试点）**：6 公开 CA；3 OK / 3 PARTIAL；Repair-002 + REPAIR-AUDIT-002 GREEN；**PR #4 已 merge**。
+2. **CA 持仓（Helius Tier-A）**：M0 试点 GREEN 已 merge；**Hotpath Operator API（PR #7）已 merge**（独立审计 GREEN）。
 
-**当前 ACTIVE**：`OPERATOR-CONSOLE-SHELL-001`（M1 第一阶段）  
-**NEXT**：`SOL-CA-HOLDER-HOTPATH-INTEGRATION-001`  
+**当前 ACTIVE**：`OPERATOR-CONSOLE-LIVE-WIRING-001`  
+**DONE（刚完成）**：`SOL-CA-HOLDER-HOTPATH-INTEGRATION-001`（PR #7 merge `ae60368`）  
 
-不要再等待 M0 merge，不要重复 M0 审计/集成。
+不要重复 Hotpath 实现/审计；不要进入 Stability（须先完成 Live Wiring）。
 
 ---
 
@@ -27,11 +27,13 @@
 | --- | --- |
 | Remote | `https://github.com/Yszdhhh/memecoin-ca-data-layer.git` |
 | 本地主路径 | `G:\链上战壕` |
-| 主干 | `main`（M0 已合入） |
-| M0 merge commit | `2976316e3853e377eff112484f9817ac2e1eba57` |
-| M0 integration report | `e8929a61262f2c32924ede3b7ba6067bc1d15b79` |
-| 已审计实现 Pin | `a1d56dade268d24a1205e010581b6f6c478ac1bb` |
-| PR | [#4](https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/4) |
+| 主干 | `main`（Hotpath 已合入） |
+| Hotpath merge commit | `ae60368bcd82ebc3fb9f2655dd82f6d079158401` |
+| Hotpath PR | [#7](https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/7) |
+| Hotpath independent audit | `harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/` |
+| Console Shell merge | `5cc414c83d5b0d602d55eac9bc392953a3161196`（PR #6） |
+| M0 merge commit | `2976316e3853e377eff112484f9817ac2e1eba57`（PR #4） |
+| ACTIVE branch | `feature/operator-console-live-wiring-001` |
 
 ---
 
@@ -82,7 +84,8 @@
 ## 5. 地址库 / Web / 流动性
 
 - 地址领域模型与 PG adapter 存在；**无**运营闭环。  
-- **无**正式 Web Console（Shell 建设中）。  
+- Operator Console **Shell 已 merge**（fixture）；**Live Wiring 进行中**（连 loopback Operator API）。  
+- Hotpath API：`127.0.0.1` only；`OPERATOR_API_LIVE=1` + runtime `HELIUS_API_KEY`。  
 - 流动性：SQL/日报骨架；无稳定看板。  
 - DPAPI 仅本地。
 
@@ -98,15 +101,18 @@
 
 ---
 
-## 7. M0 合并后状态（权威）
+## 7. Hotpath 合并后状态（权威）
 
 ```text
-M0：DONE / GREEN / MERGED
-PR：#4
-Merge：2976316e3853e377eff112484f9817ac2e1eba57
+M0：DONE / GREEN / MERGED（PR #4）
+OPERATOR-CONSOLE-SHELL-001：DONE / MERGED（PR #6）
+SOL-CA-HOLDER-HOTPATH-INTEGRATION-001：DONE / GREEN / MERGED（PR #7）
+  Merge：ae60368bcd82ebc3fb9f2655dd82f6d079158401
+  Audit：GREEN / ACCEPT_AND_MERGE
+  Main critical gates：PASS（harness:doctor wallets.json P2 预存）
 
-ACTIVE：OPERATOR-CONSOLE-SHELL-001
-NEXT：SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
+ACTIVE：OPERATOR-CONSOLE-LIVE-WIRING-001
+NEXT：Stability 仅在 Live Wiring 完成后（Owner-gated）
 
 PARKED：
 1433 全量重抓
@@ -115,6 +121,7 @@ PARKED：
 cron
 BSC
 完整 SOL-E2E
+G2–G8 offline product surfaces
 ```
 
 ---
@@ -127,3 +134,6 @@ BSC
 | 计划 | `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
 | CA 试点 | `harness/reports/SOL-CA-REAL-DATA-CLEANING-PILOT-001/` |
 | M0 集成 | `harness/reports/M0-CA-CLEANING-MAIN-INTEGRATION-001/` |
+| Hotpath 实现报告 | `harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001/` |
+| Hotpath 独立审计 | `harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/` |
+| CA Holder API 合同 | `docs/contracts/OPERATOR_CA_HOLDER_API_V1.md` |
