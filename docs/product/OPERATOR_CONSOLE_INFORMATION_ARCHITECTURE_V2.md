@@ -52,7 +52,7 @@ Global shell chrome (all routes):
 
 | Tag | Meaning |
 | --- | --- |
-| **G1 shell / live wiring** | Shell UI exists or is specified for M1; live/hotpath may wire via Data Source contract without IA rewrite |
+| **G1 shell / live wiring** | Shell UI exists or is specified for G0 shell; live/hotpath may wire via Data Source contract without IA rewrite |
 | **G2+** | After shell + holder hotpath stability; address store, orchestrator, liquidity, richer intelligence |
 | **NOT_WIRED** | Route or section exists in IA only; no production data path; must show FUTURE banner |
 | **FUTURE_MILESTONE** | Explicit product future; not implied by current shell |
@@ -104,7 +104,7 @@ Wallet language: **Tier-B usable pool / shortlist** — never “smart money” 
 5. 观察列表 → `/watchlist` — **NOT_WIRED** until G2+
 6. 调度 → `/schedules` — **NOT_WIRED** / Owner-gated
 7. 回放 → `/replay` — **NOT_WIRED** / harness-aligned
-8. 流动性 → `/liquidity` — M5 / **G2+**
+8. 流动性 → `/liquidity` — G7 / **G2+**
 9. 设置 → `/settings` — may land late G1 as read-only meta
 
 ### Global search routing rules (shell)
@@ -180,7 +180,7 @@ Enter or open a CA research card; scan recent analyses with **split trust gates*
 | `listCaScans()` | **Current main** (fixture implemented) |
 | `getDataSourceMeta()` | **Current main** |
 | FUTURE: `searchCaScans(query)` | G2+ |
-| FUTURE: hotpath `POST /ca/scan` enqueue | Live wiring / M2 |
+| FUTURE: hotpath `POST /ca/scan` enqueue | G1 Live Wiring |
 
 #### Loading / empty / error
 
@@ -379,7 +379,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 | API | Status |
 | --- | --- |
 | `getCaScan(mint)` | **Current main** (fixture) |
-| FUTURE: hotpath scan by mint | M2 live wiring |
+| FUTURE: hotpath scan by mint | G1 Live Wiring |
 | FUTURE: `listAddressHitsForMint(mint)` | G2+ address store |
 | FUTURE: `listEvidence(mint, asOf?)` | G2+ / replay |
 | FUTURE: market snapshot attach | Tier-B adapter, still unverified |
@@ -414,7 +414,7 @@ Render as panels with badges: **`NOT_WIRED` · `FUTURE_MILESTONE` · `NO_LIVE_DA
 | Layer | Tag |
 | --- | --- |
 | Token basics + Accounting / Exclusion / Concentration + holder summary + concentration table + issues | **G1 shell** (fixture live today) |
-| Market Data domain populated | G1 live wiring / M2 (still Tier-B) |
+| Market Data domain populated | G1 Live Wiring (still Tier-B) |
 | Address hits live | **G2+** |
 | Dev / Early Buyer / Cluster / Cross-CA / Replay panels | **NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA** until respective milestones |
 
@@ -584,7 +584,7 @@ Operate the **address library** (local demo in shell): search labels, add operat
 - Filter by verificationStatus / sourceTier  
 - Label priority display (risk > behavior > capability > social)  
 - Bulk import from task output (FUTURE)  
-- Link to Postgres address library when M3 lands  
+- Link to Postgres address library when G3 lands  
 
 #### Data sources
 
@@ -592,7 +592,7 @@ Operate the **address library** (local demo in shell): search labels, add operat
 | --- | --- |
 | Operator demo notes | Local / non-production |
 | Borrowed tags | Tier-B + unverified |
-| Confirmed library labels | Tier-A + rule_version (G2+ / M3) |
+| Confirmed library labels | Tier-A + rule_version (G3) |
 
 #### Required APIs
 
@@ -600,7 +600,7 @@ Operate the **address library** (local demo in shell): search labels, add operat
 | --- | --- |
 | `listAddressLabels()` | **Current main** |
 | `saveLocalDemoLabel(input)` | **Current main** (localStorage demo) |
-| FUTURE: address library CRUD / search | M3 `ADDRESS-INTELLIGENCE-LOCAL-STORE-MVP` |
+| FUTURE: address library CRUD / search | G3 `ADDRESS-INTELLIGENCE-LOCAL-STORE-MVP` |
 | FUTURE: reverse search by mint | G2+ |
 
 #### Loading / empty / error
@@ -623,7 +623,7 @@ Operate the **address library** (local demo in shell): search labels, add operat
 
 #### Milestone
 
-**G1 shell** local demo. **G2+ / M3** real address asset store.
+**G1 shell** local demo. **G3** real address asset store.
 
 #### Fixture vs Live
 
@@ -663,7 +663,7 @@ Mixed: library store (target Tier-A confirmed + Tier-B features). Cross-CA edges
 | API | Status |
 | --- | --- |
 | FUTURE: `getAddress(id)` | **NOT_WIRED** (no route in shell App today) |
-| FUTURE: `listAddressCaHits(id)` | G2+ / M3 |
+| FUTURE: `listAddressCaHits(id)` | G3 |
 | FUTURE: `listAddressEvidence(id)` | G2+ |
 
 #### Loading / empty / error
@@ -686,7 +686,7 @@ Mixed: library store (target Tier-A confirmed + Tier-B features). Cross-CA edges
 
 #### Milestone
 
-**NOT_WIRED · FUTURE_MILESTONE** relative to shell routes; implement with **G2+ / M3**.
+**NOT_WIRED · FUTURE_MILESTONE** relative to shell routes; implement with **G3**.
 
 #### Fixture vs Live
 
@@ -726,7 +726,7 @@ Task metadata is control-plane; task **outputs** may attach Tier-A/B scan artifa
 | `listTasks()` | **Current main** |
 | `createLocalDemoTask(mint)` | **Current main** (local only) |
 | `getTask(taskId)` | **Current main** (for detail route) |
-| FUTURE: real orchestrator create/cancel | M4 `RESEARCH-TASK-ORCHESTRATOR-MVP` |
+| FUTURE: real orchestrator create/cancel | G4 `RESEARCH-TASK-ORCHESTRATOR-MVP` |
 
 #### Loading / empty / error
 
@@ -748,7 +748,7 @@ Task metadata is control-plane; task **outputs** may attach Tier-A/B scan artifa
 
 #### Milestone
 
-**G1 shell** demo/fixture. **G2+ / M4** real orchestration.
+**G1 shell** demo/fixture. **G4** real orchestration.
 
 #### Fixture vs Live
 
@@ -792,8 +792,8 @@ Control-plane + linked scan provenance (Tier-A/B as on artifact).
 | API | Status |
 | --- | --- |
 | `getTask(taskId)` | **Current main** interface; **route NOT_WIRED** in shell `App.tsx` (list only today) |
-| FUTURE: `getTaskSteps(taskId)` | M4 |
-| FUTURE: `retryTask` / `cancelTask` | M4 + Owner policy |
+| FUTURE: `getTaskSteps(taskId)` | G4 |
+| FUTURE: `retryTask` / `cancelTask` | G4 + Owner policy |
 
 #### Loading / empty / error
 
@@ -815,7 +815,7 @@ Control-plane + linked scan provenance (Tier-A/B as on artifact).
 
 #### Milestone
 
-IA **G1** (detail page should land with shell completion); full orchestrator **G2+ / M4**. Route currently **NOT_WIRED** in shell router until implemented.
+IA **G1** (detail page should land with shell completion); full orchestrator **G4**. Route currently **NOT_WIRED** in shell router until implemented.
 
 #### Fixture vs Live
 
@@ -1007,7 +1007,7 @@ Primarily **Tier-B** market/macro; on-chain vault balances if later Tier-A path 
 
 | API | Status |
 | --- | --- |
-| FUTURE: liquidity dashboard APIs | M5 `MACRO-LIQUIDITY-DASHBOARD-MVP` · **G2+** |
+| FUTURE: liquidity dashboard APIs | G7 `MACRO-LIQUIDITY-DASHBOARD-MVP` · **G2+** |
 | Macro daily / Dune paths | Separate workstream; do not silently merge into CA card as chain fact |
 
 #### Loading / empty / error
@@ -1026,7 +1026,7 @@ Degraded source → PARTIAL board, not empty zeros as “no liquidity risk”.
 
 #### Milestone
 
-**NOT_WIRED** in shell; **G2+ / M5**
+**NOT_WIRED** in shell; **G7**
 
 #### Fixture vs Live
 
@@ -1111,17 +1111,17 @@ Settings controls which mode; does not itself fetch market data.
 | Route | Shell router today | Milestone | Fixture | Live |
 | --- | --- | --- | --- | --- |
 | `/ca` | Yes | G1 | Yes | Wiring later |
-| `/ca/:mint` | Yes | G1 (+ FUTURE panels marked) | Yes | M2+ |
+| `/ca/:mint` | Yes | G1 (+ FUTURE panels marked) | Yes | G1+ |
 | `/wallets` | Yes | G1 | Yes | G2+ controlled |
 | `/wallets/:id` | Yes | G1 | Yes | G2+ |
-| `/addresses` | Yes | G1 demo | Yes | M3 |
-| `/addresses/:id` | No | G2+ / M3 · NOT_WIRED | Planned | Planned |
-| `/tasks` | Yes | G1 demo | Yes | M4 |
-| `/tasks/:taskId` | No | G1 complete / M4 · NOT_WIRED route | Interface exists | M4 |
+| `/addresses` | Yes | G1 demo | Yes | G3 |
+| `/addresses/:id` | No | G3 · NOT_WIRED | Planned | Planned |
+| `/tasks` | Yes | G1 demo | Yes | G4 |
+| `/tasks/:taskId` | No | G1 complete / G4 · NOT_WIRED route | Interface exists | G4 |
 | `/watchlist` | No | G2+ · NOT_WIRED | — | — |
 | `/schedules` | No | Owner-gated · NOT_WIRED | — | — |
 | `/replay` | No | G2+ · NOT_WIRED | Harness-first | Watermarked only |
-| `/liquidity` | No | M5 · NOT_WIRED | — | Macro path |
+| `/liquidity` | No | G7 · NOT_WIRED | — | Macro path |
 | `/settings` | No | G1 late · NOT_WIRED | Meta in topbar | HTTP config |
 
 ---
@@ -1152,22 +1152,22 @@ Non-binding names for implementers; real tasks must still declare write sets.
 // G1 complete
 getTask(taskId) → route /tasks/:taskId
 
-// G2+ / M3
+// G3
 getAddress(id)
 listAddressHitsForMint(mint)
 listAddressCaHits(addressId)
 listWatchlist / addWatch / removeWatch
 
-// M2 live CA
+// G1 live CA
 enqueueCaScan(mint) → taskId
 getCaScanLive(mint) // still returns same trust fields
 
-// M4
+// G4
 createResearchTask(spec)
 getTaskSteps(taskId)
 cancelTask / retryTask
 
-// M5
+// G7
 getLiquidityBoard(scope)
 
 // Replay

@@ -285,7 +285,7 @@ These are **fixture data-source methods**, not REST on main:
 | *(dataSource)* `listCaScans` / `getCaScan` | Fixture JSON | CA list/detail | Live/index/task link | Fixture only | Latest-by-mint API | G0-HOTPATH / G1-LIVE-WIRING |
 | *(dataSource)* wallets | Fixture pool | Wallet pages | Live profile, hits | Placeholder hits | Wallet API | G3-ADDR |
 | *(dataSource)* addresses | Fixture + localStorage | Addresses page | Server write | Demo labels | Address library API | G3-ADDR |
-| *(dataSource)* tasks | Fixture + localStorage | Tasks page | Server list/lineage | Demo tasks | Task index | M2/M4 |
+| *(dataSource)* tasks | Fixture + localStorage | Tasks page | Server list/lineage | Demo tasks | Task index | G1/G4 |
 
 ---
 
@@ -434,7 +434,7 @@ interface CreateCaTaskRequestV1 {
 | `GET /api/v1/tasks/:id` | MISSING | Task detail route | polymorphic task | alias holder task when ready | unified task record | G4 / FUTURE |
 | `GET /api/v1/ca-results/:id` | domain v1 not HTTP | detail/replay/evidence | resultId, immutability, schema | fixture by mint | result store + validate | G1→G4 |
 | `GET /api/v1/tokens/:mint/latest` | fixture CaScan VM | CA latest view | freshness, ids | fixture + not “live latest” | latest pointer | G0-HOTPATH / G1-LIVE-WIRING |
-| `GET /api/v1/wallets/:address` | fixture wallet VM | wallet detail | live stats, hits | scrubbed disclaimer | profile API | M3 / FUTURE |
+| `GET /api/v1/wallets/:address` | fixture wallet VM | wallet detail | live stats, hits | scrubbed disclaimer | profile API | G3 / FUTURE |
 | `GET /api/v1/addresses` | fixture labels | addresses | query/persist | localStorage demo | library API | G3-ADDR |
 | `GET /api/v1/liquidity/latest` | MISSING | liquidity page | entire resource | NOT_WIRED | liquidity read model | G7 / FUTURE |
 | `POST /api/v1/schedules` | MISSING | schedules page | entire resource | hidden / parked | scheduler + gates | FUTURE (parked cron) |

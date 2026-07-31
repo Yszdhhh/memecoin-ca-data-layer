@@ -1,7 +1,7 @@
 ﻿# Operator Console v2 鈥?Offline Design Prototype
 
 **Task:** `OPERATOR-CONSOLE-PRODUCT-RESEARCH-AND-UX-SPEC-001`  
-**Status:** DESIGN PROTOTYPE / SYNTHETIC DATA only  
+**Status:** DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE only  
 **Live Provider calls:** 0  
 
 ## Open locally

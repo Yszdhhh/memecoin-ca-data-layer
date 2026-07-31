@@ -2,126 +2,103 @@
 
 **Status:** design input only (not production-binding until Live Wiring GREEN)  
 **Research tip absorbed:** `942d00ccedda822955d5f6e1237d845f2962a894`  
-**Absorb method:** merge into `feature/operator-console-live-wiring-001` (`c25ee24`)  
-**Hotpath on main:** PR #7 merge `ae60368`; audited tip `5734591`  
+**Absorb method:** merge `--no-ff` into `feature/operator-console-live-wiring-001`  
+**Research merge commit:** see git log for `Merge research/operator-console-product-research-ux-spec-001`  
+**Hotpath on main:** PR #7 merge `ae60368bcd82ebc3fb9f2655dd82f6d079158401`  
+**Audited tip (pre-merge feature):** `57345911d54f132664c41753cd371d12c1166353`  
 **Date:** 2026-07-31
 
 ## Purpose
 
 Correct research pack assumptions after Holder Hotpath landed on main. Research
 docs and the offline prototype remain **design references**. They must not
-overwrite Hotpath API truth, restore old M1–M5 maps as binding product status,
-or ship G2–G8 offline implementations as production.
+overwrite Hotpath API truth, restore self-made M-lanes as binding product status,
+or ship G2–G8 product surfaces as production during Live Wiring.
 
-## 1. G0–G8 mapping (corrected)
+## 1. G0–G8 mapping (binding)
 
-| Gate | Meaning after Hotpath merge | Status |
-| --- | --- | --- |
-| **G0** | Shell + Holder Hotpath Operator API on main | **DONE** (Shell PR #6, Hotpath PR #7) |
-| **G1** | Operator Console Live Wiring to loopback CA-holder API | **ACTIVE** (`OPERATOR-CONSOLE-LIVE-WIRING-001`) |
-| **G2+** | Stability batches, observability, address/wallet/liquidity product surfaces | **NOT STARTED** — parked until G1 GREEN + Owner gates |
+```text
+G0: Console Shell + Holder Hotpath + bounded Live + merge   [DONE — PR #6 / #7]
+G1: OPERATOR-CONSOLE-LIVE-WIRING-001 + Stability Batches + Observability
+G2: CA Analysis Core v1
+G3: Address Intelligence Store
+G4: Controlled Orchestration
+G5: Wallet Ledger / PnL
+G6: advanced CA intelligence
+G7: Liquidity Dashboard
+G8: Replay / Calibration / Alerts / Security / Local Release
+```
 
-Deprecated research labels (do not use as authority):
-
-| Old research tag | Corrected |
+| Deprecated research tag | Corrected |
 | --- | --- |
 | M1-SHELL | G0-SHELL (done) |
-| M2-HOTPATH | G0-HOTPATH (done) + G1-LIVE-WIRING (active); Stability is separate NEXT |
-| M3-ADDR / M4-ORCH / M5-LIQ | Map to later Gx product gates only; **not** in G1 write-set |
+| M2-HOTPATH | G0-HOTPATH (done) + G1-LIVE-WIRING (active) |
+| M2 stability / “G2 stability” | G1 Stability (after Live Wiring) |
+| “G5 task orchestrator” | G4 Orchestration |
+| “G6 replay” | G8 Replay; G6 = advanced CA intelligence only |
+| M3-ADDR / M4-ORCH / M5-LIQ | G3 / G4 / G7 |
+| bare `ADOPT_NOW` | `ADOPT_UI_PATTERN_NOW` vs `IMPLEMENT_IN_G<n>` |
 
-**NEXT after G1 GREEN:** `SOL-CA-HOLDER-STABILITY-BATCHES-001`  
-**AFTER:** `OBSERVABILITY-BASELINE-001`
+**ACTIVE:** `OPERATOR-CONSOLE-LIVE-WIRING-001`  
+**NEXT after G1 Live Wiring GREEN:** Stability batches (still G1 lane) — not G2 product core.
 
 ## 2. Hotpath API truth (binding)
 
 Loopback-only (`127.0.0.1`). Browser never holds `HELIUS_API_KEY`.
 
-| Method | Path | Role |
-| --- | --- | --- |
-| GET | `/api/v1/health` | Liveness |
-| POST | `/api/v1/ca-holder-tasks` | Create single-CA task `{ mint }` (+ optional idempotencyKey) |
-| GET | `/api/v1/ca-holder-tasks/:taskId` | Task status / provider accounting |
-| GET | `/api/v1/ca-holder-results/:taskId` | Scrubbed result summary |
-
-Live gate: `OPERATOR_API_LIVE=1` + runtime env `HELIUS_API_KEY` on the **server**.
-Without gate → `live_gate_disabled`. Missing credential → `status=blocked`,
-`failureReason=credential_unavailable`, `providerRequestCount=0`.
-
-## 3. `budget_exhausted = partial` (not failed)
-
-When further HTTP would exceed task budget:
-
-- `status = partial` (task + result)
-- warning / reason includes `request_budget_exhausted`
-- `providerBudgetExhausted = true`
-- `accountingEligible = false`, `concentrationEligible = false`
-- concentration `ratio = null` (UI must not render `0%`)
-- incomplete pagination retained; no HTTP beyond hard budget
-
-Exact-budget success remains `completed` with `providerBudgetExhausted=false`.
-
-## 4. Success path (G1 happy path)
+| Method | Path | Backend on main | Console wiring |
+| --- | --- | --- | --- |
+| GET | `/api/v1/health` | **implemented** | not wired |
+| POST | `/api/v1/ca-holder-tasks` | **implemented** | not wired |
+| GET | `/api/v1/ca-holder-tasks/:taskId` | **implemented** | not wired |
+| GET | `/api/v1/ca-holder-results/:taskId` | **implemented** | not wired |
 
 ```text
-Browser enters public Solana CA
-→ POST /api/v1/ca-holder-tasks  (loopback; JSON only; no keys)
-→ taskId
-→ poll GET /api/v1/ca-holder-tasks/:taskId
-→ when result ready: GET /api/v1/ca-holder-results/:taskId
-→ map scrubbed summary → CA detail view (Accounting / Exclusion / Concentration split)
+API Live exists  ≠  Console Live Wiring complete
+Backend endpoint = implemented
+Production Console HTTP wiring = not implemented
+Browser Live path = not wired
+Current next gap = adapter + polling + result VM + states
 ```
 
-Console env for HTTP mode: `VITE_OPERATOR_API_BASE=http://127.0.0.1:8787`  
-(Default without env remains fixture mode.)
+Never write “endpoints missing on main” for the four routes above.
 
-## 5. Fixture vs Live watermark
+## 3. Owner Gate refresh
 
-| Mode | `dataSource` / watermark | Live flag |
-| --- | --- | --- |
-| Fixture | scrubbed pilot fixtures; `mode=fixture`, `live=false` | Never claims Live |
-| HTTP Live | `sourceWatermark` from Operator API result; `mode=http`, `live=true` only when base URL configured and responses are from Operator API | Never invents fixture rows as Live |
-
-UI must show an explicit fixture/live chip (Layout meta + page banners).
-
-## 6. Owner Gate
-
-- Stability / G2–G8 / 1,433-wallet bulk / PostgreSQL console path require explicit Owner gate after G1.
-- Live smoke historical evidence: **2 public CA / 11 total Helius HTTP requests** (implementer smoke accepted in audit). Do not re-burn budget for launch status.
-- Research prototype (`docs/prototypes/operator-console-v2`) is offline design — **not** production-bound.
-
-## 7. API / UI gap (G1 slice only)
-
-| Surface | G1 action |
+| Gate | Status |
 | --- | --- |
-| `/ca` | Mint input → create task / open detail; list = session tasks + optional fixture hybrid |
-| `/ca/:mint` | Poll task + show result; trust badges split |
-| `/tasks` | List tasks from Operator API session + create |
-| `/tasks/:taskId` | Task detail + link to result CA |
-| Wallets / Addresses / Watchlist / Schedules / Replay / Liquidity | **Out of G1** — remain fixture or nav-only; no new product backends |
+| Helius bounded smoke | **Done** and merged with PR #7 (`ae60368`) |
+| Runtime HELIUS_API_KEY | Local runtime / security boundary (not “G0 smoke unrun”) |
+| Paid Birdeye / GMGN / Bubblemaps | Later Owner Gate |
+| Stability | **Only after** Live Wiring GREEN |
+| Schedules / cron / auto-discovery | **Parked** |
 
-Terminal states UI must eventually cover (implementation may start thin, expand on branch):
+## 4. Prototype semantic fixes (aligned)
 
-```text
-completed | partial | failed | blocked(credential)
-request_budget_exhausted | timeout | schema_error | empty | stale
-queued | running
+| Topic | Contract |
+| --- | --- |
+| Budget exhaust | `status=partial` + `failureReason=request_budget_exhausted` + `providerBudgetExhausted=true` + pagination/accounting/concentration ineligible + ratio null; UI banner `BUDGET_EXHAUSTED` |
+| Success scenario | Title and data agree: accounting complete, exclusion complete, concentration eligible |
+| Watermark | `DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE` |
+| Status map | Backend `queued|running|completed|partial|failed|blocked`; UI derived from status+failureReason+warnings |
+
+Research strengths retained: five-domain Trust Strip, ratio-null non-confirmable, Tier-B unverified, Evidence Drawer, task lineage, fixture/live indicator, NOT_WIRED, no trade CTA, provider matrix, clickable offline prototype.
+
+## 5. Tests
+
+```bash
+node docs/prototypes/operator-console-v2/lib/render-helpers.test.cjs
 ```
 
-## 8. Hard non-goals for this branch
-
-- Browser Helius key or direct Provider calls
-- Stability batches
-- Watchlist / Schedules / Replay / Liquidity
-- PostgreSQL for console
-- Reading 1,433 wallets as console hot path
-- G2–G8 offline domain engines from research prototype
-- Claiming wallets chain-verified or research prototype in production
-
-## 9. Absorb evidence
+## 6. Production code during alignment
 
 ```text
-research commit: 942d00ccedda822955d5f6e1237d845f2962a894
-merge on product branch: c25ee24 (Merge research/... into live-wiring)
-paths: docs/product/*, docs/research/*, docs/prototypes/operator-console-v2/*
-Hotpath API / src application paths: not overwritten by research merge
+Production code changed during alignment: 0
+(apps/operator-console/** and Hotpath src/** untouched)
+```
+
+## Verdict
+
+```text
+RESEARCH_ALIGNED_READY_FOR_LIVE_WIRING
 ```

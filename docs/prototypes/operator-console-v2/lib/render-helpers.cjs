@@ -6,6 +6,7 @@
 "use strict";
 
 var NON_CONFIRMABLE = "\u4e0d\u53ef\u786e\u8ba4"; // 不可确认
+var WATERMARK = "DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE";
 
 function formatRatio(ratio) {
   if (ratio === null || ratio === undefined || Number.isNaN(ratio)) {
@@ -41,6 +42,80 @@ function forbiddenTradeCta(text) {
     if (t.indexOf(patterns[i]) !== -1) return true;
   }
   return false;
+}
+
+/**
+ * Map Hotpath backend task DTO → UI derived state.
+ * Raw status stays queued|running|completed|partial|failed|blocked.
+ * Derived UI labels only from status + failureReason + warnings + flags.
+ */
+function mapTaskStatusToUi(task) {
+  var t = task || {};
+  var status = String(t.status || "").toLowerCase();
+  var reason = String(t.failureReason || "").toLowerCase();
+  var warnings = Array.isArray(t.warnings) ? t.warnings.map(String) : [];
+  var exhausted =
+    t.providerBudgetExhausted === true ||
+    reason === "request_budget_exhausted" ||
+    reason.indexOf("request_budget_exhausted") !== -1 ||
+    warnings.indexOf("request_budget_exhausted") !== -1 ||
+    warnings.indexOf("helius_request_budget_exhausted") !== -1;
+
+  if (status === "blocked" || reason.indexOf("credential") !== -1) {
+    return {
+      rawStatus: status || "blocked",
+      uiState: "BLOCKED_CREDENTIAL",
+      badgeKey: "credential_blocked",
+    };
+  }
+  if (exhausted) {
+    return {
+      rawStatus: status || "partial",
+      uiState: "BUDGET_EXHAUSTED",
+      badgeKey: "budget_exhausted",
+    };
+  }
+  if (warnings.indexOf("result_stale_relative_to_policy") !== -1 || reason.indexOf("stale") !== -1) {
+    return {
+      rawStatus: status || "completed",
+      uiState: "STALE_RESULT",
+      badgeKey: "stale",
+    };
+  }
+  if (reason.indexOf("schema") !== -1 || warnings.indexOf("schema_unknown_fail_closed") !== -1) {
+    return {
+      rawStatus: status || "failed",
+      uiState: "SCHEMA_ERROR",
+      badgeKey: "schema_error",
+    };
+  }
+  if (warnings.indexOf("empty_result_not_error") !== -1 || status === "empty") {
+    return {
+      rawStatus: status || "completed",
+      uiState: "EMPTY",
+      badgeKey: "empty",
+    };
+  }
+  if (status === "completed") {
+    return { rawStatus: "completed", uiState: "SUCCEEDED", badgeKey: "success" };
+  }
+  if (status === "partial") {
+    return { rawStatus: "partial", uiState: "PARTIAL", badgeKey: "partial" };
+  }
+  if (status === "running") {
+    return { rawStatus: "running", uiState: "RUNNING", badgeKey: "running" };
+  }
+  if (status === "queued") {
+    return { rawStatus: "queued", uiState: "QUEUED", badgeKey: "running" };
+  }
+  if (status === "failed") {
+    return { rawStatus: "failed", uiState: "FAILED", badgeKey: "failed" };
+  }
+  return {
+    rawStatus: status || "unknown",
+    uiState: String(status || "UNKNOWN").toUpperCase(),
+    badgeKey: status || "unknown",
+  };
 }
 
 function stateBadge(state) {
@@ -80,7 +155,7 @@ function concentrationCell(metric) {
 }
 
 function watermarkText() {
-  return "DESIGN PROTOTYPE / SYNTHETIC DATA";
+  return WATERMARK;
 }
 
 function assertNoTradeCtas(uiStrings) {
@@ -92,17 +167,30 @@ function assertNoTradeCtas(uiStrings) {
   return hits;
 }
 
+function fiveTrustDomains() {
+  return [
+    "Accounting",
+    "Exclusion Coverage",
+    "Concentration",
+    "Market Data",
+    "Wallet Intelligence",
+  ];
+}
+
 var api = {
   formatRatio: formatRatio,
   isNonConfirmableRatio: isNonConfirmableRatio,
   trustDomainLabel: trustDomainLabel,
   tierBLabel: tierBLabel,
   forbiddenTradeCta: forbiddenTradeCta,
+  mapTaskStatusToUi: mapTaskStatusToUi,
   stateBadge: stateBadge,
   concentrationCell: concentrationCell,
   watermarkText: watermarkText,
   assertNoTradeCtas: assertNoTradeCtas,
+  fiveTrustDomains: fiveTrustDomains,
   NON_CONFIRMABLE: NON_CONFIRMABLE,
+  WATERMARK: WATERMARK,
 };
 
 if (typeof module === "object" && module.exports) {

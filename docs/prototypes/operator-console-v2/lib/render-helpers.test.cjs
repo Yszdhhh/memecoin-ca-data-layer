@@ -5,6 +5,8 @@
 "use strict";
 
 const path = require("path");
+const fs = require("fs");
+const vm = require("vm");
 const R = require(path.join(__dirname, "render-helpers.cjs"));
 
 let failed = 0;
@@ -17,7 +19,7 @@ function assert(cond, msg) {
   }
 }
 
-const EXPECT = R.NON_CONFIRMABLE; // 不可确认 via unicode escapes in module
+const EXPECT = R.NON_CONFIRMABLE;
 
 assert(R.formatRatio(null) === EXPECT, "null ratio is non-confirmable label");
 assert(R.formatRatio(undefined) === EXPECT, "undefined ratio is non-confirmable label");
@@ -51,9 +53,13 @@ assert(hits.length === 0, "research CTAs clean");
 const hits2 = R.assertNoTradeCtas(["Buy", "Sell"]);
 assert(hits2.length === 2, "trade CTAs flagged");
 
-assert(R.watermarkText() === "DESIGN PROTOTYPE / SYNTHETIC DATA", "watermark text exact");
+assert(
+  R.watermarkText() === "DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE",
+  "watermark text exact"
+);
 
-const domains = ["Accounting", "Exclusion Coverage", "Concentration", "Market Data", "Wallet Intelligence"];
+const domains = R.fiveTrustDomains();
+assert(domains.length === 5, "five trust domains present");
 domains.forEach(function (d) {
   const lab = R.trustDomainLabel(d, "UNVERIFIED");
   assert(lab.domain === d, "trust domain " + d);
@@ -63,6 +69,53 @@ domains.forEach(function (d) {
 const badge = R.stateBadge("credential_blocked");
 assert(badge.text === "BLOCKED_CREDENTIAL", "credential blocked badge");
 assert(badge.className.indexOf("bad") !== -1, "credential blocked is bad class");
+
+// --- Load synthetic scenarios (shipped data module) ---
+const synthPath = path.join(__dirname, "..", "data", "synthetic.js");
+const sandbox = { globalThis: {} };
+sandbox.globalThis = sandbox;
+vm.runInNewContext(fs.readFileSync(synthPath, "utf8"), sandbox);
+const Oc = sandbox.OcSynthetic || sandbox.globalThis.OcSynthetic;
+assert(!!Oc && !!Oc.SCENARIOS, "synthetic scenarios load from shipped path");
+
+const budget = Oc.SCENARIOS.budget_exhausted;
+assert(budget.task.status === "partial", "budget exhausted raw task status = partial");
+assert(
+  budget.task.failureReason === "request_budget_exhausted",
+  "failureReason = request_budget_exhausted"
+);
+assert(budget.task.providerBudgetExhausted === true, "providerBudgetExhausted = true");
+assert(budget.task.paginationComplete === false, "budget paginationComplete = false");
+assert(budget.task.accountingEligible === false, "budget accountingEligible = false");
+assert(budget.task.concentrationEligible === false, "budget concentrationEligible = false");
+assert(budget.ca.concentration.top10.ratio === null, "budget concentration ratio = null");
+
+const mappedBudget = R.mapTaskStatusToUi(budget.task);
+assert(mappedBudget.rawStatus === "partial", "mapped raw status remains partial");
+assert(mappedBudget.uiState === "BUDGET_EXHAUSTED", "UI derived BUDGET_EXHAUSTED banner state");
+assert(mappedBudget.badgeKey === "budget_exhausted", "badge key budget_exhausted");
+
+const success = Oc.SCENARIOS.success;
+assert(
+  /accounting complete/i.test(success.title) && /concentration eligible/i.test(success.title),
+  "success scenario title consistent with eligibility"
+);
+assert(success.ca.accountingEligible === true, "success accountingEligible true");
+assert(success.ca.exclusionCoverage === "complete", "success exclusion complete");
+assert(success.ca.concentrationEligible === true, "success concentrationEligible true");
+assert(success.ca.concentration.top10.ratio === 0.5, "success ratio numeric when eligible");
+assert(success.task.status === "completed", "success task completed");
+assert(success.task.providerBudgetExhausted === false, "success not budget exhausted");
+
+const cred = Oc.SCENARIOS.credential_blocked;
+assert(cred.task.status === "blocked", "credential blocked status");
+assert(cred.task.failureReason === "credential_unavailable", "credential failureReason");
+assert(cred.task.requestsUsed === 0, "credential zero requests");
+const mappedCred = R.mapTaskStatusToUi(cred.task);
+assert(mappedCred.uiState === "BLOCKED_CREDENTIAL", "UI BLOCKED_CREDENTIAL");
+
+// Default demo remains partial
+assert(Oc.SCENARIOS.partial.task.status === "partial", "default partial demo status");
 
 if (failed) {
   console.error("\n" + failed + " assertion(s) failed");

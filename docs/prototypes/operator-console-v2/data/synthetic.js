@@ -125,7 +125,7 @@
   var SCENARIOS = {
     success: {
       id: "success",
-      title: "Success (accounting OK; concentration still gated)",
+      title: "Success — accounting complete, exclusion complete, concentration eligible",
       ca: baseCa({
         status: "OK",
         accountingEligible: true,
@@ -178,6 +178,10 @@
         status: "completed",
         requestBudget: 20,
         requestsUsed: 6,
+        providerBudgetExhausted: false,
+        paginationComplete: true,
+        accountingEligible: true,
+        concentrationEligible: true,
         failureReason: null,
         warnings: [],
       },
@@ -224,7 +228,8 @@
         status: "blocked",
         requestBudget: 20,
         requestsUsed: 0,
-        failureReason: "BLOCKED_CREDENTIAL: HELIUS_API_KEY unavailable in this environment",
+        providerBudgetExhausted: false,
+        failureReason: "credential_unavailable",
         warnings: ["credential_unavailable"],
       },
       banner: {
@@ -234,7 +239,7 @@
     },
     budget_exhausted: {
       id: "budget_exhausted",
-      title: "Budget exhausted",
+      title: "Budget exhausted (Hotpath: partial + request_budget_exhausted)",
       ca: baseCa({
         status: "PARTIAL",
         accountingEligible: false,
@@ -250,18 +255,31 @@
           completeness: "partial",
           paginationComplete: false,
         },
+        concentration: {
+          top1: { numerator: "10", denominator: "100", ratio: null, verificationStatus: "unverified" },
+          top5: { numerator: "20", denominator: "100", ratio: null, verificationStatus: "unverified" },
+          top10: { numerator: "30", denominator: "100", ratio: null, verificationStatus: "unverified" },
+          top20: { numerator: "40", denominator: "100", ratio: null, verificationStatus: "unverified" },
+          top50: { numerator: "50", denominator: "100", ratio: null, verificationStatus: "unverified" },
+          top100: { numerator: "60", denominator: "100", ratio: null, verificationStatus: "unverified" },
+        },
       }),
       task: {
         taskId: "task_synth_budget",
-        status: "failed",
+        // Hotpath contract: refuse further attempt → partial (not generic failed)
+        status: "partial",
         requestBudget: 8,
         requestsUsed: 8,
-        failureReason: "BUDGET_EXHAUSTED: request budget reached before pagination complete",
+        providerBudgetExhausted: true,
+        paginationComplete: false,
+        accountingEligible: false,
+        concentrationEligible: false,
+        failureReason: "request_budget_exhausted",
         warnings: ["request_budget_exhausted", "pagination_incomplete"],
       },
       banner: {
         kind: "budget",
-        text: "BUDGET_EXHAUSTED：预算耗尽 ≠ complete。已取得的 partial 事实可展示，但不得标记 SUCCESS。",
+        text: "BUDGET_EXHAUSTED：raw status=partial + failureReason=request_budget_exhausted。已取得的 partial 事实可展示，但不得标记 SUCCESS。",
       },
     },
     stale: {
