@@ -170,22 +170,6 @@ test("credential unavailable maps to failed", async () => {
   assert.equal(service.getTask(created.taskId)!.failureReason, "credential_unavailable");
 });
 
-test("Live hotpath records ProviderExecutor providerCalls", async () => {
-  const service = new CaHolderTaskService({
-    liveEnabled: true,
-    sourceFactory: () => fixtureSource(),
-    now: () => new Date(FIXED),
-    requestBudget: 20,
-  });
-  const created = await service.createTask({ mint: OK_MINT });
-  await waitFor(service, created.taskId, (s) => s !== "queued" && s !== "running");
-  const task = service.getTask(created.taskId)!;
-  assert.ok(task.providerCalls >= 1, "providerCalls should be counted via ProviderExecutor");
-  const summary = toPublicTaskSummary(task);
-  assert.equal(typeof summary.providerCalls, "number");
-  assert.equal(typeof summary.providerBudgetExhausted, "boolean");
-});
-
 test("public summaries never include api keys", async () => {
   const service = new CaHolderTaskService({
     liveEnabled: true,

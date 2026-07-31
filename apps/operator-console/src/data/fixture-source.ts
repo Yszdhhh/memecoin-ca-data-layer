@@ -1,18 +1,15 @@
 import type {
   AddressLabelViewModel,
-  AlertView,
   CaScanListItem,
   CaScanViewModel,
   JobViewModel,
   LiquidityViewModel,
   LocalDemoLabelInput,
   OperatorConsoleDataSource,
-  ScheduleView,
   TaskViewModel,
   WalletListItem,
   WalletPoolSummary,
   WalletViewModel,
-  WatchlistItemView,
 } from "./types";
 import caScansFixture from "./fixtures/ca-scans.json";
 import walletsFixture from "./fixtures/wallets.json";
@@ -196,100 +193,7 @@ export class FixtureOperatorConsoleDataSource implements OperatorConsoleDataSour
   async getReplayCalibration(): Promise<Record<string, unknown>> {
     return {
       note: "Use HTTP Operator API /api/v1/replay/calibration for shipped pure path",
-      asOfCheck: { ok: true },
-      labelsAsOfCount: 0,
-      calibration: { threshold: null, sampleSize: 0, warnings: ["fixture_shell", "insufficient_samples_for_calibration"] },
+      calibration: { threshold: null, warnings: ["fixture_shell"] },
     };
-  }
-
-  async listWatchlist(): Promise<WatchlistItemView[]> {
-    return loadJson("operator-console-watchlist-v1", []);
-  }
-
-  async addWatch(input: { kind: "ca" | "address"; subject: string; label?: string }): Promise<WatchlistItemView> {
-    const list = await this.listWatchlist();
-    const item: WatchlistItemView = {
-      watchId: `w-${Date.now()}`,
-      kind: input.kind,
-      subject: input.subject,
-      label: input.label ?? null,
-      enabled: true,
-      createdAt: new Date().toISOString(),
-      cooldownMinutes: 60,
-    };
-    list.unshift(item);
-    saveJson("operator-console-watchlist-v1", list.slice(0, 50));
-    const alerts = loadJson<AlertView[]>("operator-console-alerts-v1", []);
-    alerts.unshift({
-      alertId: `a-${Date.now()}`,
-      watchId: item.watchId,
-      kind: "manual",
-      subject: item.subject,
-      summary: "Watch added (fixture shell)",
-      evidenceRefs: ["fixture:watch"],
-      evidenceLink: input.kind === "ca" ? `/ca/${input.subject}` : `/wallets/${input.subject}`,
-      createdAt: new Date().toISOString(),
-      read: false,
-      disclaimer: "Research notification only — not a trade signal.",
-    });
-    saveJson("operator-console-alerts-v1", alerts.slice(0, 100));
-    return item;
-  }
-
-  async listAlerts(unreadOnly = false): Promise<{ items: AlertView[]; unreadCount: number }> {
-    const items = loadJson<AlertView[]>("operator-console-alerts-v1", []);
-    const filtered = unreadOnly ? items.filter((a) => !a.read) : items;
-    return { items: filtered, unreadCount: items.filter((a) => !a.read).length };
-  }
-
-  async markAlertRead(alertId: string): Promise<void> {
-    const items = loadJson<AlertView[]>("operator-console-alerts-v1", []);
-    for (const a of items) if (a.alertId === alertId) a.read = true;
-    saveJson("operator-console-alerts-v1", items);
-  }
-
-  async markAllAlertsRead(): Promise<void> {
-    const items = loadJson<AlertView[]>("operator-console-alerts-v1", []);
-    for (const a of items) a.read = true;
-    saveJson("operator-console-alerts-v1", items);
-  }
-
-  async listSchedules(): Promise<ScheduleView[]> {
-    return loadJson("operator-console-schedules-v1", []);
-  }
-
-  async createSchedule(input: {
-    type: string;
-    subjects: string[];
-    intervalHours: number;
-    budgetPerRun: number;
-    enabled?: boolean;
-  }): Promise<ScheduleView> {
-    if (input.subjects.includes("*") || input.type === "full_market_scan") {
-      throw new Error("full_market_scan_forbidden");
-    }
-    const list = await this.listSchedules();
-    const s: ScheduleView = {
-      scheduleId: `s-${Date.now()}`,
-      type: input.type,
-      subjects: input.subjects,
-      enabled: input.enabled === true,
-      intervalHours: input.intervalHours,
-      nextRunAt: new Date(Date.now() + input.intervalHours * 3600_000).toISOString(),
-      budgetPerRun: input.budgetPerRun,
-      createdAt: new Date().toISOString(),
-    };
-    list.unshift(s);
-    saveJson("operator-console-schedules-v1", list);
-    return s;
-  }
-
-  async setScheduleEnabled(scheduleId: string, enabled: boolean): Promise<ScheduleView | null> {
-    const list = await this.listSchedules();
-    const s = list.find((x) => x.scheduleId === scheduleId);
-    if (!s) return null;
-    s.enabled = enabled;
-    saveJson("operator-console-schedules-v1", list);
-    return s;
   }
 }

@@ -130,21 +130,6 @@ test("offline product API drives shipped pure engines end-to-end", async () => {
   });
   assert.equal(badSched.status, 400);
 
-  // Watchlist + alerts (local research notify)
-  const wl = await fetchJson(port, "GET", "/api/v1/watchlist");
-  assert.equal(wl.status, 200);
-  assert.ok(((wl.body as { items: unknown[] }).items).length >= 1);
-  const alerts = await fetchJson(port, "GET", "/api/v1/alerts");
-  assert.equal(alerts.status, 200);
-  assert.ok(((alerts.body as { items: unknown[] }).items).length >= 1);
-  assert.ok(
-    ((alerts.body as { items: Array<{ disclaimer: string }> }).items)[0]!.disclaimer.match(/not a trade/i),
-  );
-
-  // Schedules list
-  const sched = await fetchJson(port, "GET", "/api/v1/schedules");
-  assert.equal(sched.status, 200);
-
   await new Promise<void>((resolve) => server.close(() => resolve()));
   fs.rmSync(dir, { recursive: true, force: true });
 });

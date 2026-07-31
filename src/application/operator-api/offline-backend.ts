@@ -33,7 +33,6 @@ import {
   filterLabelsAsOf,
   type CalibrationReport,
 } from "../../domain/rules/replay-asof-v1.js";
-import { WatchlistAlertStore } from "../watchlist/watchlist-alerts.js";
 
 const DEMO_MINT = "H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump";
 const DEMO_WALLET_A = "So11111111111111111111111111111111111111112";
@@ -49,7 +48,6 @@ export class OfflineBackend {
   readonly jobs: JobQueue;
   readonly schedules: ScheduleStore;
   readonly archive: CrossCaArchive;
-  readonly watchlist: WatchlistAlertStore;
   private liquidityHistory: LiquidityRawPoint[] = [];
   private caCards = new Map<string, CaAnalysisResponseV2>();
   private devByMint = new Map<string, DevBehaviorV1>();
@@ -59,7 +57,6 @@ export class OfflineBackend {
     this.addresses = new LocalAddressStore(path.join(options.dataDir, "addresses"));
     this.jobs = new JobQueue({ dataDir: path.join(options.dataDir, "jobs") });
     this.schedules = new ScheduleStore(path.join(options.dataDir, "schedules"));
-    this.watchlist = new WatchlistAlertStore({ dataDir: path.join(options.dataDir, "watchlist") });
     this.archive = new CrossCaArchive();
     this.seed();
   }
@@ -220,26 +217,6 @@ export class OfflineBackend {
       if (j) {
         this.jobs.markRunning(j.jobId);
         this.jobs.complete(j.jobId, `ca-card:${DEMO_MINT}`, 0, false);
-      }
-    }
-
-    if (this.watchlist.listWatches().length === 0) {
-      const w = this.watchlist.addWatch({
-        kind: "ca",
-        subject: DEMO_MINT,
-        label: "demo_ca_watch",
-        cooldownMinutes: 30,
-      });
-      // Seed one research alert via evaluation (dedupe/cooldown path exercised)
-      const card = this.caCards.get(DEMO_MINT);
-      if (card && w) {
-        this.watchlist.evaluateCaSnapshot(DEMO_MINT, {
-          accountingEligible: card.dataQuality.accountingEligible,
-          concentrationEligible: card.dataQuality.concentrationEligible,
-          liquidityUsd: card.market.liquidityUsd,
-          addressHitCount: card.addressHits?.length ?? 0,
-          mintAuthorityPresent: card.identity.mintAuthority !== null,
-        });
       }
     }
   }

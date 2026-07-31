@@ -7,9 +7,6 @@ import { WalletDetailPage } from "./pages/WalletDetailPage";
 import { AddressesPage } from "./pages/AddressesPage";
 import { TasksPage } from "./pages/TasksPage";
 import { LiquidityPage } from "./pages/LiquidityPage";
-import { WatchlistPage } from "./pages/WatchlistPage";
-import { SchedulesPage } from "./pages/SchedulesPage";
-import { ReplayPage } from "./pages/ReplayPage";
 
 export function App() {
   return (
@@ -23,9 +20,6 @@ export function App() {
         <Route path="addresses" element={<AddressesPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="liquidity" element={<LiquidityPage />} />
-        <Route path="watchlist" element={<WatchlistPage />} />
-        <Route path="schedules" element={<SchedulesPage />} />
-        <Route path="replay" element={<ReplayPage />} />
         <Route
           path="*"
           element={
