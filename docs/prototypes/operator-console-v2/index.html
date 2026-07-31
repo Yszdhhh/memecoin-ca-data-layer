@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Operator Console v2 鈥?Design Prototype (Synthetic)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="watermark" id="wm" aria-hidden="true">DESIGN PROTOTYPE / SYNTHETIC + SCRUBBED PUBLIC FIXTURE</div>
+
+    <header class="app-header">
+      <div class="brand">Operator Console 路 Research Terminal</div>
+      <nav aria-label="Primary">
+        <a href="#/ca" data-nav="/ca">CA</a>
+        <a href="#/tasks" data-nav="/tasks">Tasks</a>
+        <a href="#/wallets" data-nav="/wallets">Wallets</a>
+        <a href="#/addresses" data-nav="/addresses">Addresses</a>
+        <a href="#/watchlist" data-nav="/watchlist">Watchlist</a>
+        <a href="#/schedules" data-nav="/schedules">Schedules</a>
+        <a href="#/replay" data-nav="/replay">Replay</a>
+        <a href="#/liquidity" data-nav="/liquidity">Liquidity</a>
+        <a href="#/settings" data-nav="/settings">Settings</a>
+      </nav>
+      <div class="state-switcher">
+        <label for="sim-state">Simulate state</label>
+        <select id="sim-state" aria-label="Simulate result state">
+          <option value="success">success</option>
+          <option value="partial" selected>partial</option>
+          <option value="credential_blocked">credential blocked</option>
+          <option value="budget_exhausted">budget exhausted</option>
+          <option value="stale">stale</option>
+          <option value="schema_error">schema error</option>
+          <option value="empty">empty</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="meta-strip">
+      <span id="live-meta">mode=fixture 路 live=false</span>
+      <span>Trust domains: Accounting 路 Exclusion 路 Concentration 路 Market 路 Wallet Intel</span>
+      <span>null ratio 鈫?涓嶅彲纭 路 Tier-B never confirmed smart money</span>
+    </div>
+
+    <div id="file-hint" class="banner warn" hidden style="margin: 0; border-radius: 0">
+      Opened via <code>file://</code>. This prototype uses plain scripts (no ES modules) and works offline.
+      Optional local static server: <code>npx --yes serve docs/prototypes/operator-console-v2</code>
+    </div>
+
+    <main class="main" id="view" tabindex="-1"></main>
+
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+    <aside class="drawer" id="evidence-drawer" aria-label="Evidence drawer" role="dialog" aria-modal="true">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
+        <h2 style="margin: 0">Evidence</h2>
+        <button type="button" class="btn" id="drawer-close">Close</button>
+      </div>
+      <div id="evidence-body"></div>
+    </aside>
+
+    <!-- Plain scripts (no type=module) so file:// double-click works -->
+    <script src="lib/render-helpers.cjs"></script>
+    <script src="data/synthetic.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+

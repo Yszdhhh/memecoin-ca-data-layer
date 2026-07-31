@@ -1,0 +1,54 @@
+{
+  "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
+  "severity": "implementation_self_check",
+  "p1_repairs": [
+    {
+      "id": "P1-A",
+      "title": "Typed API errors; no swallow-to-null/未找到 collation",
+      "status": "FIXED",
+      "files": [
+        "apps/operator-console/src/data/api-error.ts",
+        "apps/operator-console/src/data/http-source.ts"
+      ]
+    },
+    {
+      "id": "P1-B",
+      "title": "Fail-closed DTO mapping (observedAt/counts/universe)",
+      "status": "FIXED",
+      "files": [
+        "apps/operator-console/src/data/live-api-map.ts",
+        "src/application/operator-api/ca-holder-task-service.ts"
+      ]
+    },
+    {
+      "id": "P1-C",
+      "title": "Health readiness five-flag handshake; Live Submit gated",
+      "status": "FIXED",
+      "files": [
+        "apps/operator-console/src/data/readiness.ts",
+        "src/application/operator-api/http-server.ts",
+        "apps/operator-console/src/pages/CaListPage.tsx"
+      ]
+    },
+    {
+      "id": "P1-D",
+      "title": "Harness pack + browser E2E + PR metadata",
+      "status": "FIXED",
+      "files": [
+        "harness/tasks/OPERATOR-CONSOLE-LIVE-WIRING-001.json",
+        "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/**"
+      ]
+    }
+  ],
+  "residual_risks": [
+    "Default createTask idempotency is mint-scoped (double-submit returns same taskId); Retry always passes unique idempotencyKey.",
+    "harness:doctor still FAIL_PREEXISTING on apps/operator-console/src/data/fixtures/wallets.json (main lineage).",
+    "Market Data / Wallet Intelligence remain NOT_WIRED in G1 by design."
+  ],
+  "privacy": {
+    "chainfm_out_reads": 0,
+    "private_wallet_reads": 0,
+    "raw_payload_committed": 0,
+    "credential_in_browser": 0
+  }
+}

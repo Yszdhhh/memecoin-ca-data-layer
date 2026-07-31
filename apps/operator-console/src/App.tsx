@@ -6,6 +6,7 @@ import { WalletListPage } from "./pages/WalletListPage";
 import { WalletDetailPage } from "./pages/WalletDetailPage";
 import { AddressesPage } from "./pages/AddressesPage";
 import { TasksPage } from "./pages/TasksPage";
+import { TaskDetailPage } from "./pages/TaskDetailPage";
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
         <Route path="wallets/:walletId" element={<WalletDetailPage />} />
         <Route path="addresses" element={<AddressesPage />} />
         <Route path="tasks" element={<TasksPage />} />
+        <Route path="tasks/:taskId" element={<TaskDetailPage />} />
         <Route
           path="*"
           element={

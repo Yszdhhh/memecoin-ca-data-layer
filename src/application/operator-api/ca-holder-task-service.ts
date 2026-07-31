@@ -132,6 +132,11 @@ export class CaHolderTaskService {
     return this.tasks.get(taskId)?.result ?? null;
   }
 
+  /** Safe for health — boolean only, never credential material. */
+  isLiveEnabled(): boolean {
+    return this.liveEnabled;
+  }
+
   async createTask(input: CreateCaHolderTaskInput): Promise<CaHolderTaskRecord> {
     if (!this.liveEnabled) {
       throw new Error("live_gate_disabled");
@@ -415,10 +420,15 @@ export function toPublicTaskSummary(task: CaHolderTaskRecord): Record<string, un
   };
 }
 
+/** Domain universe label for Console trust strip — never invent on frontend. */
+export const CLEANED_HOLDER_UNIVERSE_DEFINITION = "cleaned_holder_universe";
+
 export function toPublicResultSummary(task: CaHolderTaskRecord): Record<string, unknown> | null {
   if (!task.result) return null;
   const c = task.result.cleaning;
   const concentrationEligible = task.concentrationEligible === true;
+  const observedAt = task.endedAt ?? task.startedAt;
+  if (!observedAt) return null;
   return {
     taskId: task.taskId,
     mint: task.mint,
@@ -458,6 +468,8 @@ export function toPublicResultSummary(task: CaHolderTaskRecord): Record<string, 
     heliusRequestCount: task.providerRequestCount,
     paginationComplete: task.paginationComplete,
     sourceWatermark: task.result.sourceWatermark,
+    observedAt,
+    universeDefinition: CLEANED_HOLDER_UNIVERSE_DEFINITION,
     caScanPresent: task.result.caScanResponse !== null,
     scrubbedOutputSha: task.scrubbedOutputSha,
   };

@@ -1,0 +1,63 @@
+{
+  "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
+  "note": "Screenshot binaries are local-only (not committed to Git). Paths use {SCRATCH}/implementer placeholder only — no absolute user paths. task-running and task-terminal SHAs MUST differ.",
+  "runningVsTerminalDistinct": true,
+  "localEvidenceAvailable": true,
+  "localEvidenceCommitted": false,
+  "entries": [
+    {
+      "id": "ca-input-ready",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/ca-input-ready.png",
+      "sha256": "74192d3506a30755c662c8eefa2fbfe02c9bab11b773d75f085f7178b485ce6e",
+      "bytes": 34457
+    },
+    {
+      "id": "task-running",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/task-running.png",
+      "sha256": "50ce0a44a0da981a54e28e64be1e171e09062f5ce661236323ab9e3c121cbd84",
+      "bytes": 52030,
+      "statusShown": "running"
+    },
+    {
+      "id": "task-terminal",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/task-terminal.png",
+      "sha256": "0c5b2d89327dbbe8bb1baeb7208bb61b50942ab7059041a38cd5005d07312f9c",
+      "bytes": 54200,
+      "statusShown": "completed"
+    },
+    {
+      "id": "ca-result-trust-strip",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/ca-result-trust-strip.png",
+      "sha256": "5063aea093e73491ff2ca67fe134816dd179d14e6790e843b1af434edb677efe",
+      "bytes": 112209
+    },
+    {
+      "id": "api-unreachable",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/api-unreachable.png",
+      "sha256": "a8ce68ea29bca0c7696b11046e5741b2f24e613208e31640a1c6d5d9dd40ae8f",
+      "bytes": 11807
+    },
+    {
+      "id": "credential-unavailable",
+      "scratchRelativePath": "{SCRATCH}/implementer/screenshots/credential-unavailable.png",
+      "sha256": "7b55b0ed0970ca93dcde590a40ffa8a23b28b2506f4b48ed3396c6e2d1d6e10e",
+      "bytes": 12507
+    },
+    {
+      "id": "budget-exhausted-partial",
+      "scratchRelativePath": "{SCRATCH}/implementer/offline-states/budget-exhausted-partial.json",
+      "sha256": "cccfd745b4520a4178f0cfd409e484fb39999bdaf314251c466e94232fe481d9",
+      "bytes": 65,
+      "statusShown": "partial",
+      "note": "mapsToTaskStatus=partial"
+    },
+    {
+      "id": "schema-error",
+      "scratchRelativePath": "{SCRATCH}/implementer/offline-states/schema-error.json",
+      "sha256": "2127623407ffb32e19b0e477263cf101177ffa7f2f4222ff05c843185e0732b7",
+      "bytes": 72,
+      "statusShown": "schema_error",
+      "note": "missing required observedAt -> schema_error from shipped mapper"
+    }
+  ]
+}

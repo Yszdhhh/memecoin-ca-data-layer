@@ -137,10 +137,16 @@ export class FixtureOperatorConsoleDataSource implements OperatorConsoleDataSour
     return all.find((t) => t.taskId === taskId) ?? null;
   }
 
-  async createLocalDemoTask(mint: string): Promise<TaskViewModel> {
-    // Local demo only — never triggers Helius/network.
+  /**
+   * Fixture-local demo task only — never triggers Helius/network.
+   * Live path uses HttpOperatorConsoleDataSource.createCaHolderTask.
+   */
+  async createCaHolderTask(
+    mint: string,
+    opts?: { idempotencyKey?: string },
+  ): Promise<TaskViewModel> {
     const task: TaskViewModel = {
-      taskId: `TASK-DEMO-${Date.now()}`,
+      taskId: `TASK-DEMO-${Date.now()}${opts?.idempotencyKey ? "-retry" : ""}`,
       input: { mint },
       provider: "fixture-local-demo",
       status: "completed",

@@ -1,0 +1,90 @@
+{
+  "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001",
+  "auditedTip": "8a173da0a50a4bb42766f5af6f49140a37d99e94",
+  "implementationCodeTip": "52dfc9651047b3d3259c7b6ee4980cf18a65f369",
+  "baseMain": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
+  "mergeBaseEqualsBase": true,
+  "implementationTipIsAncestor": true,
+  "sourceOrTestAfterImplementationTip": false,
+  "statusCleanDuringAudit": true,
+  "ancestry": {
+    "historyRewriteDetected": false,
+    "effectiveDiffPathCount": 55,
+    "matchesImplementerWriteSet": true,
+    "outOfAllowlistPaths": 0
+  },
+  "commands": {
+    "typecheck": { "exitCode": 0, "status": "PASS" },
+    "npm_test": {
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 431,
+      "pass": 430,
+      "fail": 0,
+      "skipped": 1
+    },
+    "build": { "exitCode": 0, "status": "PASS" },
+    "console:check": {
+      "exitCode": 0,
+      "status": "PASS",
+      "consoleTests": 66
+    },
+    "console:build": { "exitCode": 0, "status": "PASS" },
+    "security:scan": {
+      "exitCode": 0,
+      "status": "PASS",
+      "matchedLines": 197,
+      "classifiedLeaks": 0
+    },
+    "render_helpers": { "exitCode": 0, "status": "PASS" },
+    "git_diff_check_production_paths": {
+      "exitCode": 0,
+      "status": "PASS",
+      "scope": "apps/operator-console src test harness/tasks harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001"
+    },
+    "git_diff_check_full_tree": {
+      "exitCode": 2,
+      "status": "FAIL_DOCS_WHITESPACE_ONLY",
+      "classification": "P2_INHERITED_RESEARCH_PRODUCT_DOCS",
+      "notRewrittenToPass": true
+    },
+    "harness:doctor": {
+      "exitCode": 1,
+      "status": "FAIL",
+      "raw": "forbidden tracked files for wallet*.json: apps/operator-console/src/data/fixtures/wallets.json",
+      "classification": "PREEXISTING_ON_MAIN_SCRUBBED_FIXTURE_P2_ADVISORY",
+      "notRewrittenToPass": true
+    }
+  },
+  "live": {
+    "implementerBrowserSmoke": {
+      "accepted": true,
+      "status": "completed",
+      "providerRequestCount": 6,
+      "requestBudget": 10,
+      "browserDirectHelius": 0,
+      "credentialExposure": 0,
+      "localEvidenceCommitted": false
+    },
+    "auditorLoopbackApiResmoke": {
+      "executedAtCommit": "8a173da0a50a4bb42766f5af6f49140a37d99e94",
+      "publicCaCount": 1,
+      "requestBudget": 10,
+      "providerRequestCount": 1,
+      "status": "failed",
+      "failureReason": "provider_shape_drift",
+      "observedAtPresent": true,
+      "universeDefinition": "cleaned_holder_universe",
+      "healthCredentialFieldsAbsent": true,
+      "artifact": "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/auditor-live-smoke-summary.json",
+      "classification": "environment_provider_outcome_wiring_ok"
+    }
+  },
+  "privacyGrep": {
+    "ran": true,
+    "absolutePathsInHarnessLiveWiringReports": 0,
+    "hardcodedHeliusKeyInWriteSet": false,
+    "browserBundleHeliusHost": false,
+    "genOfflineStatesAbsoluteDefaultPath": true
+  }
+}

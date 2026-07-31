@@ -1,44 +1,134 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { dataSource } from "../data/source";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { dataSource, resolveOperatorApiBase } from "../data/source";
 import type { CaScanViewModel } from "../data/types";
 import { TrustBadge } from "../components/TrustBadge";
 import {
   accountingLabel,
   concentrationLabel,
   exclusionLabel,
+  formatCount,
   formatRatio,
   shortMint,
 } from "../lib/format";
+import { errorDisplayLabel, isOperatorApiError, type OperatorApiErrorCode } from "../data/api-error";
+import {
+  emptyReadiness,
+  probeReadiness,
+  readinessBlocksLiveSubmit,
+  type ReadinessFlags,
+} from "../data/readiness";
 
 export function CaDetailPage() {
   const { mint = "" } = useParams();
   const [scan, setScan] = useState<CaScanViewModel | null | undefined>(undefined);
   const [err, setErr] = useState<string | null>(null);
+  const [errCode, setErrCode] = useState<OperatorApiErrorCode | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [readiness, setReadiness] = useState<ReadinessFlags>(() => emptyReadiness());
+  const nav = useNavigate();
+  const meta = dataSource.getDataSourceMeta();
+  const apiBase = resolveOperatorApiBase();
+
+  useEffect(() => {
+    let cancelled = false;
+    void probeReadiness(apiBase).then((r) => {
+      if (!cancelled) setReadiness(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
 
   useEffect(() => {
     setScan(undefined);
     setErr(null);
+    setErrCode(null);
     dataSource
       .getCaScan(mint)
       .then(setScan)
-      .catch((e: Error) => setErr(e.message));
+      .catch((e: unknown) => {
+        if (isOperatorApiError(e)) {
+          setErrCode(e.code);
+          setErr(`${errorDisplayLabel(e.code)}：${e.message}`);
+        } else {
+          setErr(e instanceof Error ? e.message : "load_failed");
+        }
+      });
   }, [mint]);
 
-  if (err) return <div className="error">加载失败：{err}</div>;
+  const liveBlock = readinessBlocksLiveSubmit(readiness);
+
+  async function runLive() {
+    setBusy(true);
+    setErr(null);
+    setErrCode(null);
+    if (meta.mode === "http" && liveBlock.disabled) {
+      setErr(`Live Submit 禁用：${readiness.banner}（${liveBlock.reason}）`);
+      setBusy(false);
+      return;
+    }
+    try {
+      const task = await dataSource.createCaHolderTask(mint);
+      nav(`/tasks/${encodeURIComponent(task.taskId)}`);
+    } catch (e) {
+      if (isOperatorApiError(e)) {
+        setErrCode(e.code);
+        setErr(`${errorDisplayLabel(e.code)}：${e.message}`);
+      } else {
+        setErr(e instanceof Error ? e.message : "live_failed");
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (err && scan === undefined) {
+    return (
+      <div className="error" data-testid="ca-detail-error">
+        {errCode ? errorDisplayLabel(errCode) : "加载失败"}：{err}
+        <div style={{ marginTop: 10 }}>
+          <Link to="/ca">返回</Link>
+        </div>
+      </div>
+    );
+  }
   if (scan === undefined) return <div className="loading">加载中…</div>;
   if (scan === null) {
     return (
-      <div className="empty">
-        未找到 fixture CA：<span className="mono">{mint}</span>
+      <div className="empty" data-testid="ca-empty">
+        空结果 / 未找到 CA 结果：<span className="mono">{mint}</span>
+        {err && (
+          <div className="error" style={{ marginTop: 10 }}>
+            {err}
+          </div>
+        )}
         <div style={{ marginTop: 10 }}>
-          <Link to="/ca">返回列表</Link>
+          {meta.mode === "http" ? (
+            <button
+              className="primary"
+              type="button"
+              disabled={busy || liveBlock.disabled}
+              title={liveBlock.disabled ? liveBlock.reason : undefined}
+              onClick={() => void runLive()}
+            >
+              {busy ? "提交中…" : "对该 mint 发起 Live 分析"}
+            </button>
+          ) : (
+            <Link to="/ca">返回列表</Link>
+          )}
         </div>
+        {meta.mode === "http" && liveBlock.disabled && (
+          <div className="banner warn" style={{ marginTop: 12 }}>
+            {readiness.banner} — Live Submit 禁用（{liveBlock.reason}）
+          </div>
+        )}
       </div>
     );
   }
 
   const topNames = ["top1", "top5", "top10", "top20", "top50", "top100"] as const;
+  const liveScan = scan.dataSource === "operator-api-live" || meta.live;
 
   return (
     <div>
@@ -46,8 +136,10 @@ export function CaDetailPage() {
         CA 详情 · {scan.symbol ?? "—"}{" "}
         <TrustBadge label={scan.status} />
       </h1>
-      <div className="banner warn">
-        Fixture / scrubbed pilot · source={scan.dataSource} · provider={scan.provider} · Live 未接入
+      <div className={`banner ${liveScan ? "warn" : ""}`} data-testid="ca-result-trust-strip">
+        {liveScan
+          ? `Live / Operator API · source=${scan.dataSource} · provider=${scan.provider} · watermark=${scan.sourceWatermark} · observedAt=${scan.observedAt} · universe=${scan.universeDefinition} · 浏览器无 Helius Key`
+          : `Fixture / scrubbed pilot · source=${scan.dataSource} · provider=${scan.provider} · Live 未接入`}
       </div>
 
       <div className="panel">
@@ -111,23 +203,23 @@ export function CaDetailPage() {
           <h2>Holder universes</h2>
           <div className="kv">
             <div className="k">raw owner count</div>
-            <div>{scan.ownerCounts.total}</div>
+            <div>{formatCount(scan.ownerCounts.total)}</div>
             <div className="k">included</div>
-            <div>{scan.ownerCounts.included}</div>
+            <div>{formatCount(scan.ownerCounts.included)}</div>
             <div className="k">excluded</div>
-            <div>{scan.ownerCounts.excluded}</div>
+            <div>{formatCount(scan.ownerCounts.excluded)}</div>
             <div className="k">unresolved</div>
-            <div>{scan.ownerCounts.unresolved}</div>
+            <div>{formatCount(scan.ownerCounts.unresolved)}</div>
             <div className="k">token accounts</div>
-            <div>{scan.ownerCounts.tokenAccounts}</div>
+            <div>{formatCount(scan.ownerCounts.tokenAccounts)}</div>
             <div className="k">included amount</div>
-            <div className="mono">{scan.accounting.includedOwnerBalanceRaw}</div>
+            <div className="mono">{scan.accounting.includedOwnerBalanceRaw || "—"}</div>
             <div className="k">excluded amount</div>
-            <div className="mono">{scan.accounting.excludedBalanceRaw}</div>
+            <div className="mono">{scan.accounting.excludedBalanceRaw || "—"}</div>
             <div className="k">unresolved amount</div>
-            <div className="mono">{scan.accounting.unresolvedBalanceRaw}</div>
+            <div className="mono">{scan.accounting.unresolvedBalanceRaw || "—"}</div>
             <div className="k">accounting residual</div>
-            <div className="mono">{scan.accounting.accountingResidualRaw}</div>
+            <div className="mono">{scan.accounting.accountingResidualRaw || "—"}</div>
             <div className="k">pagination</div>
             <div>
               <TrustBadge label={scan.paginationComplete ? "COMPLETE" : "PARTIAL"} />
@@ -179,10 +271,27 @@ export function CaDetailPage() {
         </div>
       </div>
 
+      <div className="grid-2">
+        <div className="panel">
+          <h2>Market Data</h2>
+          <TrustBadge label="NOT_WIRED" />
+          <div className="muted" style={{ marginTop: 8 }}>
+            G1 未接线 — 不使用 synthetic 数值填补 Live。
+          </div>
+        </div>
+        <div className="panel">
+          <h2>Wallet Intelligence</h2>
+          <TrustBadge label="NOT_WIRED" />
+          <div className="muted" style={{ marginTop: 8 }}>
+            G1 未接线 / fixture-only — 不声称 smart money confirmed。
+          </div>
+        </div>
+      </div>
+
       <div className="panel">
         <h2>Data quality</h2>
         {scan.issues.length === 0 ? (
-          <div className="muted">无 issue records（本 fixture）</div>
+          <div className="muted">无 issue records</div>
         ) : (
           <table>
             <thead>

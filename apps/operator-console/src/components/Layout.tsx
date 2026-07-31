@@ -1,11 +1,24 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState, type FormEvent } from "react";
-import { dataSource } from "../data/source";
+import { useEffect, useState, type FormEvent } from "react";
+import { dataSource, resolveOperatorApiBase } from "../data/source";
+import { emptyReadiness, probeReadiness, type ReadinessFlags } from "../data/readiness";
 
 export function Layout() {
   const meta = dataSource.getDataSourceMeta();
   const nav = useNavigate();
   const [q, setQ] = useState("");
+  const [readiness, setReadiness] = useState<ReadinessFlags>(() => emptyReadiness());
+  const apiBase = resolveOperatorApiBase();
+
+  useEffect(() => {
+    let cancelled = false;
+    void probeReadiness(apiBase).then((r) => {
+      if (!cancelled) setReadiness(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
 
   function onSearch(e: FormEvent) {
     e.preventDefault();
@@ -22,11 +35,18 @@ export function Layout() {
     nav(`/addresses?q=${encodeURIComponent(v)}`);
   }
 
+  const chip =
+    meta.mode === "fixture"
+      ? `source: fixture · live=false`
+      : `source: http · ${readiness.READY ? "Ready" : readiness.banner}`;
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">Operator Console</div>
-        <div className="brand-sub">memecoin-ca-data-layer · Shell</div>
+        <div className="brand-sub">
+          memecoin-ca-data-layer · {meta.live ? "G1 Live Wiring" : "Shell / Fixture"}
+        </div>
         <nav className="nav">
           <NavLink to="/ca" className={({ isActive }) => (isActive ? "active" : "")}>
             CA 分析
@@ -53,8 +73,8 @@ export function Layout() {
             />
             <button type="submit">搜索</button>
           </form>
-          <span className="meta-chip" title={meta.note}>
-            source: {meta.mode} · live={String(meta.live)}
+          <span className="meta-chip" title={meta.note} data-testid="source-chip">
+            {chip}
           </span>
         </header>
         <main className="content">

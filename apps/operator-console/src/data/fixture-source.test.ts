@@ -69,8 +69,8 @@ describe("FixtureOperatorConsoleDataSource", () => {
     expect(hit?.note).toBe("n1");
   });
 
-  it("demo task does not use network provider", async () => {
-    const t = await ds.createLocalDemoTask("H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump");
+  it("fixture createCaHolderTask does not use network provider", async () => {
+    const t = await ds.createCaHolderTask("H3GtwGSrYRVqp7dtjkaDfjE2inydLkHwFkFJSPzrpump");
     expect(t.provider).toContain("fixture");
     expect(t.requestsUsed).toBe(0);
     expect(t.requestBudget).toBe(0);

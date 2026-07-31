@@ -3,8 +3,8 @@ export type ExclusionCoverage = "complete" | "partial" | "unavailable";
 export type TaskStatus = "queued" | "running" | "completed" | "partial" | "failed" | "blocked";
 
 export interface ConcentrationMetricView {
-  numerator: string;
-  denominator: string;
+  numerator: string | null;
+  denominator: string | null;
   ratio: number | null;
   verificationStatus: "confirmed" | "unverified";
 }
@@ -51,11 +51,11 @@ export interface CaScanViewModel extends CaScanListItem {
     identity: string;
   };
   ownerCounts: {
-    total: number;
-    included: number;
-    excluded: number;
-    unresolved: number;
-    tokenAccounts: number;
+    total: number | null;
+    included: number | null;
+    excluded: number | null;
+    unresolved: number | null;
+    tokenAccounts: number | null;
   };
   paginationComplete: boolean;
   concentration: Record<string, ConcentrationMetricView | null>;
@@ -119,11 +119,17 @@ export interface TaskViewModel {
   status: TaskStatus;
   requestBudget: number;
   requestsUsed: number;
+  providerRequestCount?: number;
+  pageCount?: number | null;
+  retryCount?: number | null;
+  timeoutCount?: number | null;
   startedAt: string | null;
   endedAt: string | null;
   warnings: string[];
   outputLink: string | null;
   failureReason: string | null;
+  /** Present when API unavailable but local ref still held */
+  localOnly?: boolean;
 }
 
 export interface OperatorConsoleDataSource {
@@ -135,6 +141,13 @@ export interface OperatorConsoleDataSource {
   saveLocalDemoLabel(input: LocalDemoLabelInput): Promise<void>;
   listTasks(): Promise<TaskViewModel[]>;
   getTask(taskId: string): Promise<TaskViewModel | null>;
-  createLocalDemoTask(mint: string): Promise<TaskViewModel>;
+  /**
+   * Live path: create CA holder task via Operator API (or fixture local demo).
+   * Pass a unique idempotencyKey on Retry so a new taskId is minted (never mutates prior task).
+   */
+  createCaHolderTask(
+    mint: string,
+    opts?: { idempotencyKey?: string },
+  ): Promise<TaskViewModel>;
   getDataSourceMeta(): { mode: "fixture" | "http"; live: boolean; note: string };
 }

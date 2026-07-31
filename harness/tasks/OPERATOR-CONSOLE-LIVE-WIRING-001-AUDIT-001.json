@@ -1,0 +1,31 @@
+{
+  "task_id": "OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001",
+  "title": "Independent audit of OPERATOR-CONSOLE-LIVE-WIRING-001 (PR #8)",
+  "status": "GREEN",
+  "role": "auditor",
+  "audited_task": "OPERATOR-CONSOLE-LIVE-WIRING-001",
+  "audited_pr": 8,
+  "base_sha": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
+  "audited_tip": "8a173da0a50a4bb42766f5af6f49140a37d99e94",
+  "implementation_code_tip": "52dfc9651047b3d3259c7b6ee4980cf18a65f369",
+  "branch": "feature/operator-console-live-wiring-001",
+  "verdict": "GREEN",
+  "merge_stance": "ACCEPT_AND_MERGE",
+  "merge_method": "normal merge commit only",
+  "write_set": [
+    "harness/tasks/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001.json",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/**"
+  ],
+  "forbidden": [
+    "business implementation edits",
+    "squash/rebase/force-push",
+    "merge execution by auditor unless Owner instructs"
+  ],
+  "reports": [
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/acceptance.md",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/findings.json",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/gate-results.json",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/exact-write-set.txt",
+    "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001/auditor-live-smoke-summary.json"
+  ]
+}
