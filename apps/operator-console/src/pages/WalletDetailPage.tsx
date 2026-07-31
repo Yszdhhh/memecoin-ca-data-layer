@@ -79,37 +79,6 @@ export function WalletDetailPage() {
           </tbody>
         </table>
       </div>
-      {w.ledger && (
-        <div className="panel">
-          <h2>Wallet token ledger（offline fixture path）</h2>
-          <pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>
-            {JSON.stringify(
-              {
-                openBalanceRaw: (w.ledger as { openBalanceRaw?: string }).openBalanceRaw,
-                netDeltaRaw: (w.ledger as { netDeltaRaw?: string }).netDeltaRaw,
-                conservationOk: (w.ledger as { conservationOk?: boolean }).conservationOk,
-                completeness: (w.ledger as { completeness?: string }).completeness,
-              },
-              null,
-              2,
-            )}
-          </pre>
-        </div>
-      )}
-      {w.performance && (
-        <div className="panel">
-          <h2>PnL（fail-closed）</h2>
-          <pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>{JSON.stringify(w.performance, null, 2)}</pre>
-        </div>
-      )}
-      {w.crossCa && (
-        <div className="panel">
-          <h2>Cross-CA</h2>
-          <pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>
-            {JSON.stringify((w.crossCa as { walletToTokens?: unknown }).walletToTokens, null, 2)}
-          </pre>
-        </div>
-      )}
     </div>
   );
 }

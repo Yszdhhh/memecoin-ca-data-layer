@@ -1,6 +1,6 @@
 {
   "taskId": "SECURITY-RETENTION-CI-001",
-  "scannedAt": "2026-07-30T16:51:41.084Z",
+  "scannedAt": "2026-07-30T16:32:17.546Z",
   "findingCount": 0,
   "findings": [],
   "verdict": "GREEN"

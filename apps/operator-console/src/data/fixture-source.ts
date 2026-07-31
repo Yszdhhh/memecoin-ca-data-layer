@@ -2,8 +2,6 @@ import type {
   AddressLabelViewModel,
   CaScanListItem,
   CaScanViewModel,
-  JobViewModel,
-  LiquidityViewModel,
   LocalDemoLabelInput,
   OperatorConsoleDataSource,
   TaskViewModel,
@@ -158,42 +156,5 @@ export class FixtureOperatorConsoleDataSource implements OperatorConsoleDataSour
     demo.unshift(task);
     saveJson(DEMO_TASKS_KEY, demo.slice(0, 20));
     return task;
-  }
-
-  /**
-   * Fixture-mode liquidity still documents nulls; for full pure-engine wiring
-   * use HTTP mode against Operator API (buildLiquiditySnapshotV1 on server).
-   */
-  async getLiquidityLatest(): Promise<LiquidityViewModel> {
-    return {
-      observedAt: "2026-07-30T00:00:00.000Z",
-      freshness: "stale",
-      source: "fixture_shell",
-      ruleVersion: "liquidity-metrics-v1",
-      metrics: {
-        dexVolumeUsd: 12_500_000,
-        swapCount: 420_000,
-        activeAddresses: 88_000,
-        newTokens: 1200,
-        graduatedTokens: 45,
-        newPools: 900,
-        protocolRevenueUsd: null,
-        compositeLevel: null,
-      },
-      percentiles: { dexVolumeUsd7d: null, dexVolumeUsd30d: null },
-      warnings: ["fixture_shell_use_http_for_shipped_pure_path"],
-      briefMarkdown: "# Liquidity Daily Brief\n\n- freshness: stale\n- protocol revenue: null\n",
-    };
-  }
-
-  async listJobs(): Promise<JobViewModel[]> {
-    return [];
-  }
-
-  async getReplayCalibration(): Promise<Record<string, unknown>> {
-    return {
-      note: "Use HTTP Operator API /api/v1/replay/calibration for shipped pure path",
-      calibration: { threshold: null, warnings: ["fixture_shell"] },
-    };
   }
 }

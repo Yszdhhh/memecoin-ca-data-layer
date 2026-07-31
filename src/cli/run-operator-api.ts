@@ -1,21 +1,18 @@
-import path from "node:path";
 import { CaHolderTaskService } from "../application/operator-api/ca-holder-task-service.js";
 import { createOperatorApiServer, listenOperatorApi } from "../application/operator-api/http-server.js";
-import { OfflineBackend } from "../application/operator-api/offline-backend.js";
 import { LiveHeliusDataSource } from "../infrastructure/solana/helius/live-helius-data-source.js";
 
 /**
- * Local loopback Operator API: hotpath + offline product surfaces.
+ * Local loopback Operator API for CA holder hotpath.
  *
- *   npm run operator-api -- --port 8787
- *   OPERATOR_API_LIVE=1 HELIUS_API_KEY=... npm run operator-api
+ *   OPERATOR_API_LIVE=1 HELIUS_API_KEY=... npx tsx src/cli/run-operator-api.ts --port 8787
+ *
+ * Default: live gate disabled (createTask fails closed).
+ * Binds 127.0.0.1 only. No cron. Memory tasks only.
  */
 async function main(): Promise<number> {
   const args = parseArgs(process.argv.slice(2));
   const liveEnabled = process.env.OPERATOR_API_LIVE === "1";
-  const dataDir = args.dataDir ?? path.join(process.cwd(), ".local-data", "operator-api");
-  const offline = new OfflineBackend({ dataDir });
-
   const service = new CaHolderTaskService({
     liveEnabled,
     requestBudget: args.requestBudget,
@@ -32,40 +29,28 @@ async function main(): Promise<number> {
   const server = createOperatorApiServer({
     host: "127.0.0.1",
     service,
-    offline,
   });
 
   await listenOperatorApi(server, args.port);
   // eslint-disable-next-line no-console
-  console.log(
-    JSON.stringify({
-      status: "listening",
-      host: "127.0.0.1",
-      port: args.port,
-      liveEnabled,
-      dataDir,
-      offlineCaCount: offline.listCaScans().length,
-      addressCount: offline.listAddresses().length,
-      note: "offline_product_surfaces_seeded; live_create_requires_OPERATOR_API_LIVE",
-    }),
-  );
+  console.log(JSON.stringify({
+    status: "listening",
+    host: "127.0.0.1",
+    port: args.port,
+    liveEnabled,
+    note: "memory_tasks_mvp_restart_drops_state",
+  }));
 
   await new Promise<void>(() => {
-    /* run until signal */
+    /* run until process signal */
   });
   return 0;
 }
 
-function parseArgs(argv: string[]): {
-  port: number;
-  requestBudget: number;
-  maxPages: number;
-  dataDir?: string;
-} {
+function parseArgs(argv: string[]): { port: number; requestBudget: number; maxPages: number } {
   let port = 8787;
   let requestBudget = 20;
   let maxPages = 8;
-  let dataDir: string | undefined;
   for (let i = 0; i < argv.length; i += 1) {
     const k = argv[i];
     const v = argv[i + 1];
@@ -78,13 +63,10 @@ function parseArgs(argv: string[]): {
     } else if (k === "--max-pages" && v) {
       maxPages = Number(v);
       i += 1;
-    } else if (k === "--data-dir" && v) {
-      dataDir = v;
-      i += 1;
     }
   }
   if (!Number.isInteger(port) || port <= 0) throw new Error("invalid_port");
-  return { port, requestBudget, maxPages, ...(dataDir ? { dataDir } : {}) };
+  return { port, requestBudget, maxPages };
 }
 
 main().catch((error) => {

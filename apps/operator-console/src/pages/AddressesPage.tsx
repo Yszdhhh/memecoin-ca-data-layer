@@ -34,28 +34,15 @@ export function AddressesPage() {
   }, [items, q]);
 
   async function onSave() {
-    try {
-      await dataSource.saveLocalDemoLabel({ addressId, label, note });
-      const mode = dataSource.getDataSourceMeta().mode;
-      setMsg(
-        mode === "http"
-          ? "已写入本地 Operator API 地址库（LABEL-OPS；Tier-B unverified）"
-          : "已写入浏览器 localStorage 演示库（非生产数据库）",
-      );
-      await reload();
-    } catch (e) {
-      setMsg(`保存失败：${e instanceof Error ? e.message : "error"}`);
-    }
+    await dataSource.saveLocalDemoLabel({ addressId, label, note });
+    setMsg("已写入浏览器 localStorage 演示库（非生产数据库）");
+    await reload();
   }
-
-  const meta = dataSource.getDataSourceMeta();
 
   return (
     <div>
-      <h1>地址库</h1>
-      <div className="banner warn">
-        source={meta.mode} · {meta.note} · 人工标签永不自动 confirmed
-      </div>
+      <h1>地址库（本地演示）</h1>
+      <div className="banner warn">Local demo data — not persisted to production database</div>
       <div className="panel">
         <div className="form-row">
           <input
