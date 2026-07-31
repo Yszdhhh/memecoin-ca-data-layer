@@ -56,7 +56,8 @@ export class ProviderExecutor {
       timeoutCount: this.timeoutCount,
       budgetUsed: this.requestCount,
       requestBudget: this.options.budget,
-      providerBudgetExhausted: this.exhausted || this.requestCount >= this.options.budget,
+      // True only when a further HTTP attempt was refused — not mere full utilization.
+      providerBudgetExhausted: this.exhausted,
     };
   }
 
@@ -68,16 +69,26 @@ export class ProviderExecutor {
     return this.options.budget;
   }
 
+  /**
+   * True only after a consume was refused (stop-on-exhaustion).
+   * Using exactly `budget` requests successfully does NOT set this.
+   */
   get budgetExhausted(): boolean {
-    return this.exhausted || this.requestCount >= this.options.budget;
+    return this.exhausted;
+  }
+
+  /** Whether another HTTP attempt would be refused. */
+  get hasRemainingBudget(): boolean {
+    return this.requestCount < this.options.budget && !this.exhausted;
   }
 
   /**
    * Consume one unit for a real HTTP attempt.
    * Throws ProviderBudgetExhaustedError without incrementing past budget.
+   * Only then is budgetExhausted / providerBudgetExhausted set true.
    */
   consumeHttpAttempt(meta: { operation: string; isRetry?: boolean; isTimeout?: boolean } = { operation: "http" }): void {
-    if (this.requestCount >= this.options.budget) {
+    if (this.requestCount >= this.options.budget || this.exhausted) {
       this.exhausted = true;
       this.emit("budget_exhausted", meta.operation, { isRetry: Boolean(meta.isRetry) });
       throw new ProviderBudgetExhaustedError();

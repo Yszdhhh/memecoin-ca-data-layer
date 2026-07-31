@@ -3,10 +3,10 @@
   "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196",
   "commands": {
     "typecheck": "PASS",
-    "npm_test": { "pass": 427, "fail": 0, "skipped": 1 },
-    "provider_accounting_tests": { "pass": 4, "fail": 0 },
+    "npm_test": { "pass": 430, "fail": 0, "skipped": 1 },
+    "provider_accounting_tests": { "pass": 5, "fail": 0 },
     "api_security_tests": { "pass": 7, "fail": 0 },
-    "ca_holder_task_tests": { "pass": 9, "fail": 0 },
+    "ca_holder_task_tests": { "pass": 11, "fail": 0 },
     "build": "PASS",
     "console:check": "PASS",
     "console:build": "PASS",
@@ -16,6 +16,15 @@
       "note": "forbidden tracked files for wallet*.json — apps/operator-console/src/data/fixtures/wallets.json already on main from OPERATOR-CONSOLE-SHELL-001; not introduced by Hotpath repair"
     },
     "git_diff_check": "PASS"
+  },
+  "budgetSemantics": {
+    "fullUtilizationIsNotExhaustion": true,
+    "stopOnRefuseOnly": true,
+    "tests": [
+      "exact-budget complete success is not request_budget_exhausted",
+      "mid-flight budget refuse yields partial + request_budget_exhausted + ineligible",
+      "exact-budget full utilization without refused attempt is not exhausted"
+    ]
   },
   "offline": "GREEN",
   "liveSmoke": {
@@ -27,5 +36,5 @@
     "verdict": "LIVE_SMOKE_EXECUTED"
   },
   "overall": "GREEN_FOR_INDEPENDENT_AUDIT",
-  "note": "Implementer does not self-GREEN merge; independent auditor required"
+  "note": "Implementer does not self-GREEN merge; independent auditor required. offline-gates.log re-captured with console:check EXIT=0."
 }

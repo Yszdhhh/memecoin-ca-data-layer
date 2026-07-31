@@ -266,20 +266,24 @@ export class CaHolderTaskService {
       }
 
       const result = batch.results[0] ?? null;
-      const budgetExhausted =
+      // Only true when a further HTTP attempt was refused (not mere full utilization).
+      const budgetStop =
         budgeted.executor.budgetExhausted
-        || batch.warnings.some((w) => w.includes("budget"))
-        || (result?.warnings.some((w) => w.includes("budget")) ?? false);
+        || batch.warnings.some((w) => w === "request_budget_exhausted" || w === "helius_request_budget_exhausted")
+        || (result?.warnings.some((w) => w === "request_budget_exhausted" || w === "helius_request_budget_exhausted") ?? false);
 
-      if (budgetExhausted) {
+      if (budgetStop) {
         task.providerBudgetExhausted = true;
         if (!task.warnings.includes("request_budget_exhausted")) {
           task.warnings.push("request_budget_exhausted");
         }
+      } else {
+        // Full utilization of budget without a refused attempt is not exhaustion.
+        task.providerBudgetExhausted = false;
       }
 
       if (!result) {
-        if (budgetExhausted) {
+        if (budgetStop) {
           task.status = "partial";
           task.failureReason = "request_budget_exhausted";
           task.accountingEligible = false;
@@ -297,25 +301,21 @@ export class CaHolderTaskService {
       task.result = result;
       task.resultStatus = result.status;
       task.paginationComplete = result.paginationComplete;
-      // Prefer executor page count when present (enumerate pages); fall back to pilot.
-      if (task.pageCount === 0 && typeof result.heliusRequestCount === "number") {
-        // pageCount already from executor; leave as-is if zero (no pages).
-      }
       if (budgeted.executor.metrics.pageCount > 0) {
         task.pageCount = budgeted.executor.metrics.pageCount;
       }
 
-      if (budgetExhausted || !result.paginationComplete) {
+      if (budgetStop) {
+        // Mid-flight refuse: incomplete data path.
+        task.accountingEligible = false;
+        task.concentrationEligible = false;
+        task.paginationComplete = false;
+      } else if (!result.paginationComplete) {
         task.accountingEligible = false;
         task.concentrationEligible = false;
       } else {
         task.accountingEligible = result.cleaning.accountingEligible;
         task.concentrationEligible = result.cleaning.concentrationEligible;
-      }
-      if (budgetExhausted) {
-        task.accountingEligible = false;
-        task.concentrationEligible = false;
-        task.paginationComplete = false;
       }
       task.exclusionCoverage = result.cleaning.exclusionCoverage;
 
@@ -324,7 +324,7 @@ export class CaHolderTaskService {
         ...batch.warnings,
         ...result.cleaning.issues.map((i) => i.code),
         ...task.warnings,
-      ])].slice(0, 32);
+      ])].filter((w) => budgetStop || w !== "request_budget_exhausted").slice(0, 32);
 
       task.scrubbedOutputSha = createHash("sha256")
         .update(JSON.stringify({
@@ -337,11 +337,12 @@ export class CaHolderTaskService {
         }))
         .digest("hex");
 
-      if (budgetExhausted) {
+      if (budgetStop) {
         task.status = "partial";
         task.failureReason = "request_budget_exhausted";
       } else if (result.status === "OK") {
         task.status = "completed";
+        task.failureReason = null;
       } else if (result.status === "PARTIAL") {
         task.status = "partial";
       } else {

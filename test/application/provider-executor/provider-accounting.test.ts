@@ -129,7 +129,7 @@ test("page-2 429 then success: retry counted in request count, retryCount=1, no 
   assert.equal(joined.includes("https://"), false);
 });
 
-test("budget=2 needing 3 pages: ≤2 requests, partial incomplete, ineligible, budget exhausted", async () => {
+test("budget=2 needing 3 pages: ≤2 requests, partial incomplete, stop-on-exhaustion true", async () => {
   const executor = new ProviderExecutor({ taskId: "t-budget2", budget: 2 });
   let calls = 0;
   const source = new LiveHeliusDataSource({
@@ -165,9 +165,42 @@ test("budget=2 needing 3 pages: ≤2 requests, partial incomplete, ineligible, b
   assert.equal(executor.metrics.providerRequestCount, 2);
   assert.equal(result.paginationComplete, false);
   assert.ok(result.accounts.length >= 1, "partial pages retained");
+  // Exhaustion is true only because a further (page-3) attempt was refused.
   assert.equal(executor.metrics.providerBudgetExhausted, true);
-  // No 3rd HTTP.
   assert.equal(calls, 2);
+});
+
+test("exact-budget full utilization without refused attempt is not exhausted", async () => {
+  const executor = new ProviderExecutor({ taskId: "t-exact", budget: 2 });
+  let calls = 0;
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    minRequestIntervalMs: 0,
+    executor,
+    fetchImpl: async () => {
+      calls += 1;
+      if (calls === 1) {
+        return json(pagePayload({
+          accounts: [{ address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", owner: "So11111111111111111111111111111111111111112", amount: "1" }],
+          cursor: "c1",
+          total: 2,
+        }));
+      }
+      // Final page — no further cursor.
+      return json(pagePayload({
+        accounts: [{ address: "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", owner: "11111111111111111111111111111111", amount: "2" }],
+        total: 2,
+      }));
+    },
+  });
+
+  const result = await source.enumerateTokenAccounts(publicCa, { maxPages: 10, pageSize: 1 });
+  assert.equal(calls, 2);
+  assert.equal(executor.metrics.providerRequestCount, 2);
+  assert.equal(result.paginationComplete, true);
+  // Used entire budget successfully — must NOT claim stop-on-exhaustion.
+  assert.equal(executor.metrics.providerBudgetExhausted, false);
+  assert.equal(executor.budgetExhausted, false);
 });
 
 test("missing credential: zero requests, throws credential unavailable (not budget exhausted)", () => {

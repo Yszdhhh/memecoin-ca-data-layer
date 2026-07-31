@@ -10,6 +10,7 @@ import { createOperatorApiServer, listenOperatorApi } from "../../../src/applica
 import type { PilotTokenAccountSource } from "../../../src/application/live/solana-ca-real-data-cleaning-pilot.js";
 import { SourceDataUnavailableError } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
 import type { RpcTokenAccount } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
+import { LiveHeliusDataSource } from "../../../src/infrastructure/solana/helius/live-helius-data-source.js";
 
 const FIXED = "2026-07-30T16:00:00.000Z";
 // Valid 32-byte base58-looking public mint from pilot
@@ -152,6 +153,146 @@ test("idempotency and same-mint dedupe", async () => {
   const b = await service.createTask({ mint: OK_MINT, idempotencyKey: "k1" });
   assert.equal(a.taskId, b.taskId);
   await waitFor(service, a.taskId, (s) => s === "completed" || s === "partial" || s === "failed");
+});
+
+test("exact-budget complete success is not request_budget_exhausted", async () => {
+  // Pilot: getMint + getTokenMetadata + 1 enumerate page = 3 HTTP when budget=3.
+  const unitCredential = ["unit", "credential", "value"].join("-");
+  let calls = 0;
+  const service = new CaHolderTaskService({
+    liveEnabled: true,
+    requestBudget: 3,
+    maxPages: 4,
+    now: () => new Date(FIXED),
+    sourceFactory: (executor) => {
+      const fetchImpl: typeof fetch = async (_input, init) => {
+        calls += 1;
+        const body = typeof init?.body === "string" ? init.body : "";
+        if (body.includes("getAccountInfo")) {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            result: {
+              context: { slot: 1 },
+              value: { data: { parsed: { type: "mint", info: { supply: "100", decimals: 0 } } } },
+            },
+          }), { status: 200, headers: { "content-type": "application/json" } });
+        }
+        if (body.includes("getAsset")) {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            result: { content: { metadata: { name: "T", symbol: "T" } }, last_indexed_slot: 1 },
+          }), { status: 200, headers: { "content-type": "application/json" } });
+        }
+        // Single complete page of holders.
+        return new Response(JSON.stringify({
+          jsonrpc: "2.0",
+          result: {
+            token_accounts: [{
+              address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+              owner: "So11111111111111111111111111111111111111112",
+              amount: "100",
+            }],
+            total: 1,
+            last_indexed_slot: 1,
+          },
+        }), { status: 200, headers: { "content-type": "application/json" } });
+      };
+      return new LiveHeliusDataSource({
+        apiKey: unitCredential,
+        minRequestIntervalMs: 0,
+        fetchImpl,
+        ...(executor ? { executor } : {}),
+      });
+    },
+  });
+
+  const created = await service.createTask({ mint: OK_MINT });
+  await waitFor(service, created.taskId, (s) => s !== "queued" && s !== "running", 10_000);
+  const task = service.getTask(created.taskId)!;
+  assert.equal(calls, 3, `expected exactly 3 HTTP, got ${calls}`);
+  assert.equal(task.providerRequestCount, 3);
+  assert.equal(task.requestBudget, 3);
+  assert.equal(task.providerBudgetExhausted, false, "full utilization is not stop-on-exhaustion");
+  assert.equal(task.failureReason, null);
+  assert.equal(task.warnings.includes("request_budget_exhausted"), false);
+  assert.equal(task.status, "completed");
+  assert.equal(task.paginationComplete, true);
+  assert.equal(task.accountingEligible, true);
+  // concentration remains ineligible under partial exclusion coverage; ratios null.
+  const pub = toPublicResultSummary(task)!;
+  const top10 = (pub.concentration as Array<{ name: string; ratio: number | null }>).find((m) => m.name === "top10");
+  assert.equal(top10?.ratio, null);
+});
+
+test("mid-flight budget refuse yields partial + request_budget_exhausted + ineligible", async () => {
+  // budget=3: getMint + getTokenMetadata + page1; page2 refused.
+  const unitCredential = ["unit", "credential", "value"].join("-");
+  let calls = 0;
+  const service = new CaHolderTaskService({
+    liveEnabled: true,
+    requestBudget: 3,
+    maxPages: 8,
+    now: () => new Date(FIXED),
+    sourceFactory: (executor) => {
+      const fetchImpl: typeof fetch = async (_input, init) => {
+        calls += 1;
+        const body = typeof init?.body === "string" ? init.body : "";
+        if (body.includes("getAccountInfo")) {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            result: {
+              context: { slot: 1 },
+              value: { data: { parsed: { type: "mint", info: { supply: "100", decimals: 0 } } } },
+            },
+          }), { status: 200, headers: { "content-type": "application/json" } });
+        }
+        if (body.includes("getAsset")) {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            result: { content: { metadata: { name: "T", symbol: "T" } }, last_indexed_slot: 1 },
+          }), { status: 200, headers: { "content-type": "application/json" } });
+        }
+        // Page 1 with cursor → would need page 2 (4th HTTP) which must be refused.
+        return new Response(JSON.stringify({
+          jsonrpc: "2.0",
+          result: {
+            token_accounts: [{
+              address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+              owner: "So11111111111111111111111111111111111111112",
+              amount: "50",
+            }],
+            cursor: "more-pages",
+            total: 2,
+            last_indexed_slot: 1,
+          },
+        }), { status: 200, headers: { "content-type": "application/json" } });
+      };
+      return new LiveHeliusDataSource({
+        apiKey: unitCredential,
+        minRequestIntervalMs: 0,
+        fetchImpl,
+        ...(executor ? { executor } : {}),
+      });
+    },
+  });
+
+  const created = await service.createTask({ mint: OK_MINT });
+  await waitFor(service, created.taskId, (s) => s !== "queued" && s !== "running", 10_000);
+  const task = service.getTask(created.taskId)!;
+  assert.ok(calls <= 3, `must not exceed budget HTTP attempts, calls=${calls}`);
+  assert.equal(task.providerRequestCount, 3);
+  assert.equal(task.providerBudgetExhausted, true);
+  assert.equal(task.status, "partial");
+  assert.equal(task.failureReason, "request_budget_exhausted");
+  assert.equal(task.warnings.includes("request_budget_exhausted"), true);
+  assert.equal(task.paginationComplete, false);
+  assert.equal(task.accountingEligible, false);
+  assert.equal(task.concentrationEligible, false);
+  const pub = toPublicResultSummary(task)!;
+  assert.equal(pub.accountingEligible, false);
+  assert.equal(pub.concentrationEligible, false);
+  const top10 = (pub.concentration as Array<{ name: string; ratio: number | null }>).find((m) => m.name === "top10");
+  assert.equal(top10?.ratio, null);
 });
 
 test("credential unavailable maps to blocked with zero requests (not budget exhausted)", async () => {
