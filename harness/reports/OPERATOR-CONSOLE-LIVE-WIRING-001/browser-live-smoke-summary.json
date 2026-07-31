@@ -2,7 +2,7 @@
   "taskId": "OPERATOR-CONSOLE-LIVE-WIRING-001",
   "attempted": true,
   "ok": true,
-  "path": "Browser Console (127.0.0.1:5173) \u922b?loopback Operator API (127.0.0.1:8787) \u922b?Helius (server-only)",
+  "path": "Browser Console (127.0.0.1:5173) -> loopback Operator API (127.0.0.1:8787) -> Helius (server-only)",
   "publicCA": 1,
   "mintFingerprint": "1c2c7d3cac226153",
   "apiTaskId": "e024fa79-a9f3-4644-abb5-555ac3f3e3be",
@@ -33,9 +33,11 @@
   ],
   "durationMs": 4049,
   "localEvidence": {
-    "apiSmoke": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/browser-live-smoke.json",
-    "browserSmoke": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/browser-live-smoke-browser.json",
-    "screenshotsDir": "C:/Users/10639/AppData/Local/Temp/grok-goal-9bf98c84e05e/implementer/screenshots"
+    "localEvidenceAvailable": true,
+    "localEvidenceCommitted": false,
+    "apiSmoke": "{SCRATCH}/implementer/browser-live-smoke.json",
+    "browserSmoke": "{SCRATCH}/implementer/browser-live-smoke-browser.json",
+    "screenshotsDir": "{SCRATCH}/implementer/screenshots"
   },
   "privacy": {
     "chainfm_out_reads": 0,
@@ -43,5 +45,7 @@
     "raw_payload_committed": 0,
     "credential_persisted": 0
   },
-  "implementationTip": "94049cc4865c5feac44801bfd8ad3471929ce8f9"
+  "implementationCodeTip": "52dfc9651047b3d3259c7b6ee4980cf18a65f369",
+  "auditTargetPolicy": "current PR head at independent audit start",
+  "prHeadAtReportPreparation": "1854b2694945c41931b34a8a6449fda91959e70d"
 }

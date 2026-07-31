@@ -7,7 +7,9 @@
   "headBranch": "feature/operator-console-live-wiring-001",
   "baseSha": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
   "startingTip": "bf9ff3c3c874a489fbed1dceda73a9c85cc87fdf",
-  "implementationTip": "94049cc4865c5feac44801bfd8ad3471929ce8f9",
+  "implementationCodeTip": "52dfc9651047b3d3259c7b6ee4980cf18a65f369",
+  "auditTargetPolicy": "current PR head at independent audit start",
+  "prHeadAtReportPreparation": "1854b2694945c41931b34a8a6449fda91959e70d",
   "mergeBase": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
   "prStatus": "ready_for_review",
   "mergeStatus": "NOT_MERGED",
@@ -20,5 +22,15 @@
   "independentAudit": "pending",
   "stability": "not_started",
   "browserHoldsNoCredential": true,
-  "fixtureLiveBoundary": "fixture default; Live only via loopback Operator API + server Helius"
+  "fixtureLiveBoundary": "fixture default; Live only via loopback Operator API + server Helius",
+  "auditNotes": [
+    "Independent Auditor audits the PR head at audit start (not a self-referential report commit).",
+    "Verify 52dfc9651047b3d3259c7b6ee4980cf18a65f369 is an ancestor of that PR head.",
+    "Verify no production source or test changes after implementationCodeTip (only docs/report/governance allowed)."
+  ],
+  "inheritedAcceptedDesignAssets": [
+    "docs/research/**",
+    "docs/product/**",
+    "docs/prototypes/operator-console-v2/**"
+  ]
 }

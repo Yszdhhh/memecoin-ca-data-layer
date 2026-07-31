@@ -5,22 +5,36 @@
   "objective": "Close G1 Live Wiring so the Operator Console is user-operable, state-honest, and independently auditable: typed API errors, health readiness handshake, fail-closed DTO mapping, task-ref refresh recovery, offline demos, real Live smoke via loopback API→Helius, harness pack, Draft→Ready PR. Merge only after independent audit GREEN.",
   "base_sha": "b3c8650c318b2854e773e6cbcb398ea5e4201fc5",
   "branch": "feature/operator-console-live-wiring-001",
+  "implementationCodeTip": "52dfc9651047b3d3259c7b6ee4980cf18a65f369",
+  "auditTargetPolicy": "current PR head at independent audit start",
+  "prHeadAtReportPreparation": "1854b2694945c41931b34a8a6449fda91959e70d",
   "lineage": {
     "main_pin": "b3c8650",
     "hotpath_merge": "ae60368",
     "starting_tip": "bf9ff3c",
-    "known_aligned_research": "bf9ff3c"
+    "known_aligned_research": "bf9ff3c",
+    "implementation_code_tip": "52dfc96"
   },
   "allowed_paths": [
     "apps/operator-console/**",
     "src/application/operator-api/**",
     "docs/contracts/**",
     "docs/product/**",
+    "docs/research/**",
+    "docs/prototypes/operator-console-v2/**",
     "harness/tasks/OPERATOR-CONSOLE-LIVE-WIRING-001.json",
     "harness/reports/OPERATOR-CONSOLE-LIVE-WIRING-001/**",
     "package.json",
     "test/application/operator-api/**"
   ],
+  "inherited_accepted_design_assets": {
+    "note": "Previously accepted research/design inputs. Included in PR lineage / exact-write-set but not new production implementation for this task.",
+    "paths": [
+      "docs/research/**",
+      "docs/product/**",
+      "docs/prototypes/operator-console-v2/**"
+    ]
+  },
   "forbidden": [
     "Stability batches",
     "G2 market/permission/pool productization",
@@ -38,13 +52,15 @@
     "createCaHolderTask Live path; fixture keeps local demo semantics",
     "Task refs versioned max 20; no raw payload",
     "Offline states evidenced; Live smoke ≤10 Helius; browser→Helius=0",
-    "Harness pack + PR Ready; NOT_MERGED"
+    "Harness pack + PR Ready; NOT_MERGED",
+    "implementationCodeTip=52dfc96; auditor audits current PR head; no source/test after code tip"
   ],
   "gates": [
     "npm ci / typecheck / test / build / console:check / console:build",
     "harness:doctor (wallets.json FAIL_PREEXISTING only)",
     "security:scan",
     "render-helpers.test.cjs",
-    "secret grep on write-set"
+    "secret grep on write-set",
+    "absolute local path scan on harness/reports = 0 hits"
   ]
 }
