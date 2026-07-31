@@ -41,11 +41,49 @@ Prefer **`G:\链上战壕`** for SOL-CA pilot work unless a dispatch names anoth
 | --- | --- |
 | DPAPI secret directory | `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets` |
 | Helius key file | `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets\HELIUS_API_KEY.dpapi` |
+| GMGN key file | `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets\GMGN_API_KEY.dpapi` |
 | Runtime env | `HELIUS_API_KEY` (process-only), optional `HELIUS_RPC_ENDPOINT_MODE` |
 | Configure script | `scripts/configure-solana-daily-credentials.ps1` |
+| PS runners that load DPAPI → process env | `scripts/run-solana-ca-real-data-cleaning-pilot.ps1`, `scripts/run-solana-daily-new-token-analysis.ps1` |
 
 Missing `HELIUS_API_KEY` must fail closed as `RUNTIME_CREDENTIAL_UNAVAILABLE`.
 Do not write keys, credential-bearing URLs, raw headers, or unscrubbed provider payloads into git.
+**Never print secret values** (only boolean presence / length).
+
+### Credential read order (this Windows operator host — Agent memory)
+
+Observed 2026-07-31: Helius **is** configured on the machine even when a Grok/Agent child process reports empty `process.env`.
+
+| Priority | Source | How to read (PowerShell) | Notes |
+| --- | --- | --- | --- |
+| 1 | Process env | `$env:HELIUS_API_KEY` | What Node `LiveHeliusDataSource.fromRuntime()` uses |
+| 2 | Windows **User** env | `[Environment]::GetEnvironmentVariable('HELIUS_API_KEY','User')` | May be set while Process is empty (stale shell / agent not restarted) |
+| 3 | Windows Machine env | `…('HELIUS_API_KEY','Machine')` | Usually empty on this host |
+| 4 | DPAPI file | `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets\HELIUS_API_KEY.dpapi` | Present on this host; decrypt via project PS scripts only |
+| 5 | Repo `.env` | `G:\链上战壕\.env` | **Usually absent** — do not invent or commit |
+
+**Injection for Node (without echoing value):**
+
+```powershell
+# Prefer User env if process empty
+if (-not $env:HELIUS_API_KEY) {
+  $env:HELIUS_API_KEY = [Environment]::GetEnvironmentVariable('HELIUS_API_KEY', 'User')
+}
+# Or run PS wrappers that decrypt DPAPI into process env for the child only
+# Or: scripts\run-solana-ca-real-data-cleaning-pilot.ps1
+$env:OPERATOR_API_LIVE = '1'
+$env:HELIUS_RPC_ENDPOINT_MODE = 'gatekeeper_beta'   # see endpoint note below
+# Clear proxy if needed:
+Remove-Item Env:HTTP_PROXY,Env:HTTPS_PROXY,Env:http_proxy,Env:https_proxy -ErrorAction SilentlyContinue
+```
+
+**Agent checklist before claiming “no credentials”:**
+
+1. Check Process **and** User env (boolean only).
+2. Check DPAPI file **existence** under `%LOCALAPPDATA%\memecoin-ca-data-layer\secrets\`.
+3. Prefer `scripts\run-solana-*.ps1` for Live, or inject User/DPAPI into process for `npm run operator-api`.
+4. `npm run operator-api` does **not** auto-load DPAPI — only `process.env.HELIUS_API_KEY`.
+5. Do not treat empty Agent process env as “host has no Helius”.
 
 ### Helius endpoint note (this operator host)
 
