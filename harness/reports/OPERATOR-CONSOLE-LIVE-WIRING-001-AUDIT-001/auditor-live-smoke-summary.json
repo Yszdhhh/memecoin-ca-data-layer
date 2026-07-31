@@ -1,0 +1,39 @@
+{
+  "mode": "auditor_loopback_api_resmoke",
+  "path": "loopback Operator API (127.0.0.1:8799) -> Helius (server-only)",
+  "executedAtCommit": "8a173da0a50a4bb42766f5af6f49140a37d99e94",
+  "publicCaCount": 1,
+  "mintFingerprint": "b537cf276aee67c1",
+  "taskId": "b479a312-dd64-4933-af12-b606cd9c1f47",
+  "status": "failed",
+  "requestBudget": 10,
+  "providerRequestCount": 1,
+  "pageCount": 0,
+  "retryCount": 0,
+  "timeoutCount": 0,
+  "providerBudgetExhausted": false,
+  "paginationComplete": false,
+  "accountingEligible": false,
+  "exclusionCoverage": "unavailable",
+  "concentrationEligible": false,
+  "warnings": [
+    "provider_shape_drift",
+    "pagination_incomplete",
+    "pool_exclusion_coverage_incomplete"
+  ],
+  "failureReason": "provider_shape_drift",
+  "resultStatus": "REJECTED",
+  "observedAtPresent": true,
+  "universeDefinition": "cleaned_holder_universe",
+  "scrubbedOutputSha": "92e7ddaeb9637245f513ba62b5a06e23675cd8df5bb3cf160c56233f4ea26c5d",
+  "health": {
+    "liveEnabled": true,
+    "credentialConfigured": true,
+    "provider": "helius",
+    "bindMode": "loopback",
+    "hasApiKeyField": false,
+    "hasHeliusKeyField": false
+  },
+  "browserDirectHelius": "n/a_api_only_resmoke",
+  "note": "Corroborates server path + health DTO; browserDirectHelius=0 remains implementer browser evidence + architecture review. Terminal failed is provider_shape_drift (environment), not a Live Wiring control-flow defect."
+}
