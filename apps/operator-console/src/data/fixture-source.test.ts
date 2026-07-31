@@ -46,9 +46,18 @@ describe("FixtureOperatorConsoleDataSource", () => {
     const { summary, items } = await ds.listWallets();
     expect(summary.alpha).toBe(0);
     expect(summary.tierBUsablePool).toBe(1370);
+    expect(summary.tierBShortlist).toBe(8);
+    expect(summary.manualReview).toBe(9);
+    expect(summary.mapped).toBe(0);
+    expect(summary.unavailablePeriodWallets).toBe(84);
+    expect(summary.verificationStatus).toBe("unverified");
     expect(summary.disclaimer.toLowerCase()).toContain("not confirmed on-chain smart money");
     for (const w of items) {
       expect(w.verificationStatus).toBe("unverified");
+      // Sample wallets remain fingerprint/synthetic only — no plaintext Solana address bulk.
+      expect(w.id).toMatch(/^(fp-|demo-)/);
+      expect(w.fingerprint.length).toBeLessThan(48);
+      expect(w.fingerprint).not.toMatch(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/);
     }
   });
 

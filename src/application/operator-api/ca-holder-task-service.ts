@@ -6,8 +6,13 @@ import {
   type PerCaPilotArtifacts,
 } from "../live/solana-ca-real-data-cleaning-pilot.js";
 import { normalizeSolanaAddress } from "../../domain/solana-address.js";
+import {
+  createBudgetedSourceFactory,
+  isBudgetExhaustedError,
+} from "../provider-executor/budgeted-pilot-source.js";
+import type { ProviderExecutor, ProviderExecutorMetrics } from "../provider-executor/provider-executor.js";
 
-export type CaHolderTaskStatus = "queued" | "running" | "completed" | "partial" | "failed";
+export type CaHolderTaskStatus = "queued" | "running" | "completed" | "partial" | "failed" | "blocked";
 
 export interface CaHolderTaskRecord {
   taskId: string;
@@ -16,6 +21,13 @@ export interface CaHolderTaskRecord {
   status: CaHolderTaskStatus;
   requestBudget: number;
   requestsUsed: number;
+  providerRequestCount: number;
+  providerOperationCount: number;
+  pageCount: number;
+  retryCount: number;
+  timeoutCount: number;
+  budgetUsed: number;
+  providerBudgetExhausted: boolean;
   startedAt: string | null;
   endedAt: string | null;
   warnings: string[];
@@ -36,7 +48,11 @@ export interface CreateCaHolderTaskInput {
 }
 
 export interface CaHolderTaskServiceOptions {
-  sourceFactory: () => PilotTokenAccountSource;
+  /**
+   * Build a pilot source. When executor is provided (Live path), inject it so
+   * every real HTTP attempt shares the task budget.
+   */
+  sourceFactory: (executor?: ProviderExecutor) => PilotTokenAccountSource;
   requestBudget?: number;
   maxPages?: number;
   now?: () => Date;
@@ -57,6 +73,17 @@ const FORBIDDEN_BODY_KEYS = new Set([
   "credential",
 ]);
 
+const EMPTY_METRICS = (budget: number): ProviderExecutorMetrics => ({
+  providerRequestCount: 0,
+  providerOperationCount: 0,
+  pageCount: 0,
+  retryCount: 0,
+  timeoutCount: 0,
+  budgetUsed: 0,
+  requestBudget: budget,
+  providerBudgetExhausted: false,
+});
+
 export class CaHolderTaskService {
   private readonly tasks = new Map<string, CaHolderTaskRecord>();
   private readonly byIdempotency = new Map<string, string>();
@@ -68,7 +95,7 @@ export class CaHolderTaskService {
   private readonly now: () => Date;
   private readonly baseCommit: string;
   private readonly liveEnabled: boolean;
-  private readonly sourceFactory: () => PilotTokenAccountSource;
+  private readonly sourceFactory: (executor?: ProviderExecutor) => PilotTokenAccountSource;
 
   constructor(options: CaHolderTaskServiceOptions) {
     this.sourceFactory = options.sourceFactory;
@@ -138,6 +165,13 @@ export class CaHolderTaskService {
       status: "queued",
       requestBudget: this.requestBudget,
       requestsUsed: 0,
+      providerRequestCount: 0,
+      providerOperationCount: 0,
+      pageCount: 0,
+      retryCount: 0,
+      timeoutCount: 0,
+      budgetUsed: 0,
+      providerBudgetExhausted: false,
       startedAt: null,
       endedAt: null,
       warnings: [],
@@ -158,11 +192,22 @@ export class CaHolderTaskService {
     return task;
   }
 
+  private applyMetrics(task: CaHolderTaskRecord, metrics: ProviderExecutorMetrics): void {
+    task.providerRequestCount = metrics.providerRequestCount;
+    task.providerOperationCount = metrics.providerOperationCount;
+    task.pageCount = metrics.pageCount;
+    task.retryCount = metrics.retryCount;
+    task.timeoutCount = metrics.timeoutCount;
+    task.budgetUsed = metrics.budgetUsed;
+    task.requestBudget = metrics.requestBudget;
+    task.providerBudgetExhausted = metrics.providerBudgetExhausted;
+    task.requestsUsed = metrics.providerRequestCount;
+  }
+
   private async runTask(taskId: string): Promise<void> {
     const task = this.tasks.get(taskId);
     if (!task) return;
     if (this.active >= 1) {
-      // Serialize via queue; should not happen, fail closed if it does.
       task.status = "failed";
       task.failureReason = "concurrency_limit";
       task.endedAt = this.now().toISOString();
@@ -174,7 +219,16 @@ export class CaHolderTaskService {
     task.status = "running";
     task.startedAt = this.now().toISOString();
 
+    let metrics: ProviderExecutorMetrics = EMPTY_METRICS(this.requestBudget);
+
     try {
+      // Single task-level budget: every HTTP attempt inside LiveHelius consumes it.
+      const budgeted = createBudgetedSourceFactory(
+        (executor) => this.sourceFactory(executor),
+        { taskId: `operator-api:${taskId}`, budget: this.requestBudget },
+      );
+      metrics = budgeted.executor.metrics;
+
       const batch = await runSolanaCaRealDataCleaningPilot(
         {
           taskId: `operator-api:${taskId}`,
@@ -183,7 +237,7 @@ export class CaHolderTaskService {
           selectedAt: task.startedAt,
           samples: [{ ca: task.mint, selectionReason: "operator_api_manual" }],
         },
-        this.sourceFactory,
+        () => budgeted.source,
         {
           maxPagesPerCa: this.maxPages,
           pageSize: 1_000,
@@ -192,24 +246,50 @@ export class CaHolderTaskService {
         },
       );
 
+      metrics = budgeted.executor.metrics;
+      this.applyMetrics(task, metrics);
+
       if (batch.status === RUNTIME_CREDENTIAL_UNAVAILABLE) {
-        task.status = "failed";
+        task.status = "blocked";
         task.failureReason = "credential_unavailable";
-        task.warnings.push(RUNTIME_CREDENTIAL_UNAVAILABLE);
+        task.warnings = task.warnings.filter((w) => w !== "request_budget_exhausted");
+        if (!task.warnings.includes(RUNTIME_CREDENTIAL_UNAVAILABLE)) {
+          task.warnings.push(RUNTIME_CREDENTIAL_UNAVAILABLE);
+        }
+        // Credential path must report zero provider requests and must not claim budget exhaustion.
+        task.providerRequestCount = 0;
+        task.requestsUsed = 0;
+        task.budgetUsed = 0;
+        task.providerBudgetExhausted = false;
         task.endedAt = this.now().toISOString();
         return;
       }
 
       const result = batch.results[0] ?? null;
-      task.requestsUsed = Number(batch.batchSummary.totalHeliusRequests ?? result?.heliusRequestCount ?? 0);
-      if (task.requestsUsed > task.requestBudget) {
-        task.warnings.push("request_budget_exhausted");
+      const budgetExhausted =
+        budgeted.executor.budgetExhausted
+        || batch.warnings.some((w) => w.includes("budget"))
+        || (result?.warnings.some((w) => w.includes("budget")) ?? false);
+
+      if (budgetExhausted) {
+        task.providerBudgetExhausted = true;
+        if (!task.warnings.includes("request_budget_exhausted")) {
+          task.warnings.push("request_budget_exhausted");
+        }
       }
 
       if (!result) {
-        task.status = "failed";
-        task.failureReason = "empty_result";
-        task.warnings.push(...batch.warnings);
+        if (budgetExhausted) {
+          task.status = "partial";
+          task.failureReason = "request_budget_exhausted";
+          task.accountingEligible = false;
+          task.concentrationEligible = false;
+          task.paginationComplete = false;
+        } else {
+          task.status = "failed";
+          task.failureReason = "empty_result";
+        }
+        task.warnings = [...new Set([...task.warnings, ...batch.warnings])].slice(0, 32);
         task.endedAt = this.now().toISOString();
         return;
       }
@@ -217,33 +297,88 @@ export class CaHolderTaskService {
       task.result = result;
       task.resultStatus = result.status;
       task.paginationComplete = result.paginationComplete;
-      task.accountingEligible = result.cleaning.accountingEligible;
+      // Prefer executor page count when present (enumerate pages); fall back to pilot.
+      if (task.pageCount === 0 && typeof result.heliusRequestCount === "number") {
+        // pageCount already from executor; leave as-is if zero (no pages).
+      }
+      if (budgeted.executor.metrics.pageCount > 0) {
+        task.pageCount = budgeted.executor.metrics.pageCount;
+      }
+
+      if (budgetExhausted || !result.paginationComplete) {
+        task.accountingEligible = false;
+        task.concentrationEligible = false;
+      } else {
+        task.accountingEligible = result.cleaning.accountingEligible;
+        task.concentrationEligible = result.cleaning.concentrationEligible;
+      }
+      if (budgetExhausted) {
+        task.accountingEligible = false;
+        task.concentrationEligible = false;
+        task.paginationComplete = false;
+      }
       task.exclusionCoverage = result.cleaning.exclusionCoverage;
-      task.concentrationEligible = result.cleaning.concentrationEligible;
-      task.warnings = [...new Set([...result.warnings, ...batch.warnings, ...result.cleaning.issues.map((i) => i.code)])].slice(0, 32);
+
+      task.warnings = [...new Set([
+        ...result.warnings,
+        ...batch.warnings,
+        ...result.cleaning.issues.map((i) => i.code),
+        ...task.warnings,
+      ])].slice(0, 32);
+
       task.scrubbedOutputSha = createHash("sha256")
         .update(JSON.stringify({
           mint: result.ca,
           status: result.status,
-          accountingEligible: result.cleaning.accountingEligible,
-          exclusionCoverage: result.cleaning.exclusionCoverage,
-          concentrationEligible: result.cleaning.concentrationEligible,
+          accountingEligible: task.accountingEligible,
+          exclusionCoverage: task.exclusionCoverage,
+          concentrationEligible: task.concentrationEligible,
           residual: result.cleaning.accounting.accountingResidualRaw,
         }))
         .digest("hex");
 
-      if (result.status === "OK") task.status = "completed";
-      else if (result.status === "PARTIAL") task.status = "partial";
-      else {
+      if (budgetExhausted) {
+        task.status = "partial";
+        task.failureReason = "request_budget_exhausted";
+      } else if (result.status === "OK") {
+        task.status = "completed";
+      } else if (result.status === "PARTIAL") {
+        task.status = "partial";
+      } else {
         task.status = "failed";
         task.failureReason = result.warnings[0] ?? "rejected";
       }
       task.endedAt = this.now().toISOString();
     } catch (error) {
       const msg = error instanceof Error ? error.message : "unknown_error";
-      task.status = "failed";
-      task.failureReason = msg.includes("credential") ? "credential_unavailable" : "provider_error";
-      task.warnings.push(task.failureReason);
+      this.applyMetrics(task, metrics);
+
+      if (msg.includes("credential") || msg.includes("helius_runtime_credential")) {
+        task.status = "blocked";
+        task.failureReason = "credential_unavailable";
+        task.providerRequestCount = 0;
+        task.requestsUsed = 0;
+        task.budgetUsed = 0;
+        task.providerBudgetExhausted = false;
+        task.warnings = task.warnings.filter((w) => w !== "request_budget_exhausted");
+        if (!task.warnings.includes("credential_unavailable")) {
+          task.warnings.push("credential_unavailable");
+        }
+      } else if (isBudgetExhaustedError(error) || msg.includes("budget")) {
+        task.status = "partial";
+        task.failureReason = "request_budget_exhausted";
+        task.providerBudgetExhausted = true;
+        task.accountingEligible = false;
+        task.concentrationEligible = false;
+        task.paginationComplete = false;
+        if (!task.warnings.includes("request_budget_exhausted")) {
+          task.warnings.push("request_budget_exhausted");
+        }
+      } else {
+        task.status = "failed";
+        task.failureReason = "provider_error";
+        task.warnings.push(task.failureReason);
+      }
       task.endedAt = this.now().toISOString();
     } finally {
       this.active = 0;
@@ -259,6 +394,13 @@ export function toPublicTaskSummary(task: CaHolderTaskRecord): Record<string, un
     status: task.status,
     requestBudget: task.requestBudget,
     requestsUsed: task.requestsUsed,
+    providerRequestCount: task.providerRequestCount,
+    providerOperationCount: task.providerOperationCount,
+    pageCount: task.pageCount,
+    retryCount: task.retryCount,
+    timeoutCount: task.timeoutCount,
+    budgetUsed: task.budgetUsed,
+    providerBudgetExhausted: task.providerBudgetExhausted,
     startedAt: task.startedAt,
     endedAt: task.endedAt,
     warnings: task.warnings,
@@ -269,21 +411,20 @@ export function toPublicTaskSummary(task: CaHolderTaskRecord): Record<string, un
     paginationComplete: task.paginationComplete,
     resultStatus: task.resultStatus,
     scrubbedOutputSha: task.scrubbedOutputSha,
-    judgmentEligibleDeprecated: task.accountingEligible,
   };
 }
 
 export function toPublicResultSummary(task: CaHolderTaskRecord): Record<string, unknown> | null {
   if (!task.result) return null;
   const c = task.result.cleaning;
+  const concentrationEligible = task.concentrationEligible === true;
   return {
     taskId: task.taskId,
     mint: task.mint,
     status: task.result.status,
-    accountingEligible: c.accountingEligible,
-    exclusionCoverage: c.exclusionCoverage,
-    concentrationEligible: c.concentrationEligible,
-    judgmentEligibleDeprecated: c.judgmentEligible,
+    accountingEligible: task.accountingEligible,
+    exclusionCoverage: task.exclusionCoverage,
+    concentrationEligible,
     accounting: c.accounting,
     ownerCounts: {
       total: c.owners.length,
@@ -297,16 +438,24 @@ export function toPublicResultSummary(task: CaHolderTaskRecord): Record<string, 
         name: m.name,
         numerator: m.numerator,
         denominator: m.denominator,
-        ratio: c.concentrationEligible ? m.ratio : null,
-        verificationStatus: c.concentrationEligible ? "confirmed" : "unverified",
+        ratio: concentrationEligible ? m.ratio : null,
+        verificationStatus: concentrationEligible ? "confirmed" : "unverified",
       })),
     issues: c.issues.slice(0, 32).map((i) => ({
       code: i.code,
       severity: i.severity,
       whetherManualReviewRequired: i.whetherManualReviewRequired,
     })),
-    heliusRequestCount: task.result.heliusRequestCount,
-    paginationComplete: task.result.paginationComplete,
+    providerRequestCount: task.providerRequestCount,
+    providerOperationCount: task.providerOperationCount,
+    pageCount: task.pageCount,
+    retryCount: task.retryCount,
+    timeoutCount: task.timeoutCount,
+    budgetUsed: task.budgetUsed,
+    requestBudget: task.requestBudget,
+    providerBudgetExhausted: task.providerBudgetExhausted,
+    heliusRequestCount: task.providerRequestCount,
+    paginationComplete: task.paginationComplete,
     sourceWatermark: task.result.sourceWatermark,
     caScanPresent: task.result.caScanResponse !== null,
     scrubbedOutputSha: task.scrubbedOutputSha,

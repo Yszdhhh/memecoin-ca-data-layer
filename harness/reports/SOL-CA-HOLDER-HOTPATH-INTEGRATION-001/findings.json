@@ -1,0 +1,49 @@
+{
+  "taskId": "SOL-CA-HOLDER-HOTPATH-INTEGRATION-001",
+  "auditVerdictBeingRepaired": "REQUEST_CHANGES",
+  "p1Repairs": [
+    {
+      "id": "P1-scope",
+      "summary": "Withdraw G2–G8 offline product surfaces from Hotpath PR via reverse-order git revert",
+      "status": "done"
+    },
+    {
+      "id": "P1-provider-http-accounting",
+      "summary": "Every Helius HTTP attempt (page + retry) consumes shared ProviderExecutor budget; providerRequestCount equals real HTTP attempts",
+      "status": "done"
+    },
+    {
+      "id": "P1-loopback-origin",
+      "summary": "Loopback API rejects cross-site Origin/Sec-Fetch-Site, requires application/json, no CORS *, Host fail-closed",
+      "status": "done"
+    },
+    {
+      "id": "P1-wallet-manual-review",
+      "summary": "Console wallets.json manualReview 63 → 9 with fixed summary contract assertions",
+      "status": "done"
+    },
+    {
+      "id": "P1-status-docs",
+      "summary": "CURRENT_WAVE and acceptance state Hotpath Live BLOCKED_BY_LIVE_SMOKE; Live smoke not optional",
+      "status": "done"
+    },
+    {
+      "id": "P1-live-smoke-honesty",
+      "summary": "No fixture-as-Live; credential-absent path records BLOCKED_BY_LIVE_SMOKE",
+      "status": "done"
+    }
+  ],
+  "openBlockers": [
+    {
+      "id": "live-smoke",
+      "reason": "HELIUS_API_KEY not available in runtime for bounded Live smoke",
+      "overall": "BLOCKED_BY_LIVE_SMOKE"
+    }
+  ],
+  "privacyZeros": {
+    "chainfm_out_read": 0,
+    "private_wallet_bulk": 0,
+    "credential_persisted": 0,
+    "raw_provider_payload_committed": 0
+  }
+}

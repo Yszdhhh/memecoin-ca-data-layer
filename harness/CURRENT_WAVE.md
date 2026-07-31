@@ -3,20 +3,32 @@
 ## Objective
 
 Operator Console Shell is **merged**. Deliver CA holder hotpath Operator API
-next. Wallet GMGN full re-fetch and cumulative PnL remain parked.
+(G0) with accurate per-HTTP provider accounting and loopback security.
+Wallet GMGN full re-fetch and cumulative PnL remain parked.
 
-## Status as of 2026-07-30 (post-Shell)
+## Status as of 2026-07-31 (Hotpath repair)
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
-| M0 CA cleaning pilot | DONE / MERGED | PR #4 |
-| **OPERATOR-CONSOLE-SHELL-001** | DONE / **GREEN** / **MERGED** | PR #6; merge `5cc414c` |
-| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** | **ACTIVE** | Loopback Operator API |
+| M0 CA cleaning pilot | DONE / GREEN / MERGED | PR #4 |
+| **OPERATOR-CONSOLE-SHELL-001** | DONE / **MERGED** | PR #6; merge `5cc414c` |
+| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** | **REPAIR IN PROGRESS** | Offline path repairable to GREEN; Live = BLOCKED_BY_LIVE_SMOKE until real execution |
+| Hotpath offline | REPAIR IN PROGRESS | Provider HTTP accounting + loopback browser-origin protection |
+| Hotpath Live | **BLOCKED_BY_LIVE_SMOKE** | Requires runtime `HELIUS_API_KEY` and bounded smoke ≤20 requests |
 
 ## ACTIVE
 
 ```text
 SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
+```
+
+## Overall
+
+```text
+CONTINUE_G0
+Overall ≠ G0–G8 completed
+Overall ≠ Live Wiring done
+Overall ≠ Stability ready
 ```
 
 ## DONE
@@ -26,13 +38,13 @@ OPERATOR-CONSOLE-SHELL-001
 M0-CA-CLEANING-MAIN-INTEGRATION-001
 ```
 
-## NEXT
+## NEXT (after Hotpath merge + independent audit GREEN)
 
 ```text
 OPERATOR-CONSOLE-LIVE-WIRING-001
-or
-SOL-CA-HOLDER-STABILITY-BATCH-001
 ```
+
+Do **not** start Stability Batch until Live Wiring is complete.
 
 ## PARKED
 
@@ -42,6 +54,7 @@ SOL-CA-HOLDER-STABILITY-BATCH-001
 * cron
 * BSC
 * 完整 SOL-E2E
+* G2–G8 offline product surfaces (not part of this Hotpath PR)
 
 ## Authority docs
 
@@ -51,3 +64,5 @@ SOL-CA-HOLDER-STABILITY-BATCH-001
 | Plan | `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
 | Console DS | `docs/contracts/OPERATOR_CONSOLE_DATA_SOURCE_V1.md` |
 | CA Holder API | `docs/contracts/OPERATOR_CA_HOLDER_API_V1.md` |
+| Access layer | `docs/architecture/OPERATOR_CONSOLE_ACCESS_LAYER_CLARIFICATION.md` |
+| Goal blueprint | `docs/blueprints/GOAL_EXECUTION_BLUEPRINT_V1.md` |

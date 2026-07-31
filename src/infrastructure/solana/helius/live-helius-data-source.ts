@@ -11,6 +11,10 @@
 } from "./helius-solana-adapter.js";
 import { SourceDataUnavailableError } from "./helius-solana-adapter.js";
 import { normalizeSolanaAddress } from "../../../domain/solana-address.js";
+import {
+  ProviderBudgetExhaustedError,
+  type ProviderExecutor,
+} from "../../../application/provider-executor/provider-executor.js";
 
 export type HeliusRpcEndpointMode = "mainnet" | "gatekeeper_beta";
 
@@ -22,6 +26,11 @@ export interface LiveHeliusDataSourceOptions {
   requestBudget?: number;
   minRequestIntervalMs?: number;
   timeoutMs?: number;
+  /**
+   * Shared task-level budget. When set, every HTTP attempt (page + retry)
+   * consumes one unit from this executor (single authority).
+   */
+  executor?: ProviderExecutor;
 }
 
 export interface TokenAccountEnumerationResult {
@@ -57,6 +66,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   private readonly requestBudget: number;
   private readonly minRequestIntervalMs: number;
   private readonly timeoutMs: number;
+  private readonly executor: ProviderExecutor | undefined;
   private requestCount = 0;
   private nextRequestStartMs = 0;
   private requestStartQueue: Promise<void> = Promise.resolve();
@@ -68,7 +78,11 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     this.rpcEndpoint = RPC_ENDPOINTS[runtimeRpcEndpointMode(options.rpcEndpointMode)];
     this.fetchImpl = options.fetchImpl ?? fetch;
     this.now = options.now ?? (() => new Date());
-    this.requestBudget = positiveInteger(options.requestBudget ?? DEFAULT_REQUEST_BUDGET, "request budget");
+    this.executor = options.executor;
+    // When a shared executor is present it is the sole budget authority.
+    this.requestBudget = this.executor
+      ? this.executor.budget
+      : positiveInteger(options.requestBudget ?? DEFAULT_REQUEST_BUDGET, "request budget");
     this.minRequestIntervalMs = nonNegativeInteger(
       options.minRequestIntervalMs ?? DEFAULT_MIN_REQUEST_INTERVAL_MS,
       "minimum request interval",
@@ -208,6 +222,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
         }
       }
       pageCount += 1;
+      this.executor?.recordPage();
       const nextCursor = typeof row.cursor === "string" && row.cursor.length > 0 ? row.cursor : undefined;
       const total = row.total;
       if (total !== undefined && (typeof total !== "number" || !Number.isInteger(total) || total < 0)) {
@@ -249,7 +264,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
   }
 
   getRequestCount(): number {
-    return this.requestCount;
+    return this.executor ? this.executor.requestsUsed : this.requestCount;
   }
 
   async getTokenMetadata(ca: string): Promise<SourceResponse<HeliusTokenMetadata | null>> {
@@ -314,7 +329,15 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     const maxAttempts = 2;
     let lastError: SourceDataUnavailableError | undefined;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-      await this.reserveRequest();
+      const isRetry = attempt > 1;
+      try {
+        await this.reserveRequest(isRetry);
+      } catch (error) {
+        if (error instanceof ProviderBudgetExhaustedError) {
+          throw new SourceDataUnavailableError("helius_request_budget_exhausted");
+        }
+        throw error;
+      }
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
       try {
@@ -327,6 +350,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
             cache: "no-store",
             signal: controller.signal,
           };
+        // Never log url (contains api-key query). Transport only.
         const response = await this.fetchImpl(url, init);
         if (!response.ok) {
           const code = `helius_http_${response.status}`;
@@ -350,6 +374,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
         }
       } catch (error) {
         if (error instanceof SourceDataUnavailableError) {
+          if (error.message === "helius_request_budget_exhausted") throw error;
           if (
             attempt < maxAttempts
             && (error.message === "helius_response_malformed"
@@ -366,6 +391,7 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
         const mapped = new SourceDataUnavailableError(
           controller.signal.aborted ? "helius_timeout" : "helius_transport_unavailable",
         );
+        if (controller.signal.aborted) this.executor?.recordTimeout();
         if (attempt < maxAttempts) {
           lastError = mapped;
           await delay(300 * attempt);
@@ -379,9 +405,24 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     throw lastError ?? new SourceDataUnavailableError("helius_transport_unavailable");
   }
 
-  private async reserveRequest(): Promise<void> {
-    if (this.requestCount >= this.requestBudget) throw new SourceDataUnavailableError("helius_request_budget_exhausted");
-    this.requestCount += 1;
+  private async reserveRequest(isRetry = false): Promise<void> {
+    if (this.executor) {
+      try {
+        this.executor.consumeHttpAttempt({ operation: "helius_http", isRetry });
+      } catch (error) {
+        if (error instanceof ProviderBudgetExhaustedError) {
+          throw new SourceDataUnavailableError("helius_request_budget_exhausted");
+        }
+        throw error;
+      }
+      // Keep local counter in sync for getRequestCount fallbacks.
+      this.requestCount = this.executor.requestsUsed;
+    } else {
+      if (this.requestCount >= this.requestBudget) {
+        throw new SourceDataUnavailableError("helius_request_budget_exhausted");
+      }
+      this.requestCount += 1;
+    }
     let release: (() => void) | undefined;
     const previous = this.requestStartQueue;
     this.requestStartQueue = new Promise<void>((resolve) => { release = resolve; });

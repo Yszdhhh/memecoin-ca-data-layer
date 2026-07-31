@@ -154,7 +154,7 @@ test("idempotency and same-mint dedupe", async () => {
   await waitFor(service, a.taskId, (s) => s === "completed" || s === "partial" || s === "failed");
 });
 
-test("credential unavailable maps to failed", async () => {
+test("credential unavailable maps to blocked with zero requests (not budget exhausted)", async () => {
   const service = new CaHolderTaskService({
     liveEnabled: true,
     sourceFactory: () => {
@@ -162,8 +162,15 @@ test("credential unavailable maps to failed", async () => {
     },
   });
   const created = await service.createTask({ mint: OK_MINT });
-  await waitFor(service, created.taskId, (s) => s === "failed");
-  assert.equal(service.getTask(created.taskId)!.failureReason, "credential_unavailable");
+  await waitFor(service, created.taskId, (s) => s === "blocked" || s === "failed");
+  const task = service.getTask(created.taskId)!;
+  assert.equal(task.status, "blocked");
+  assert.equal(task.failureReason, "credential_unavailable");
+  assert.equal(task.providerRequestCount, 0);
+  assert.equal(task.providerBudgetExhausted, false);
+  assert.equal(task.warnings.includes("request_budget_exhausted"), false);
+  const pub = JSON.stringify(toPublicTaskSummary(task));
+  assert.equal(pub.includes("request_budget_exhausted"), false);
 });
 
 test("public summaries never include api keys", async () => {

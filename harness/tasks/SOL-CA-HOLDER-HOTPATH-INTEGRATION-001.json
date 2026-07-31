@@ -6,15 +6,23 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "hot_path",
-  "status": "DONE",
-  "objective": "Local 127.0.0.1 Operator API for single public CA holder analysis using existing cleaning pilot pipeline. Explicit live gate. Memory tasks. Offline tests GREEN. Bounded Live smoke if credential present; otherwise report BLOCKED for live portion only.",
+  "status": "IN_PROGRESS",
+  "objective": "Local 127.0.0.1 Operator API for single public CA holder analysis using existing cleaning pilot pipeline. Explicit live gate. Memory tasks. Offline tests GREEN. Bounded Live smoke required when credential present; otherwise overall BLOCKED_BY_LIVE_SMOKE.",
   "dependencies": ["OPERATOR-CONSOLE-SHELL-001"],
   "write_set": [
     "src/application/operator-api/**",
+    "src/application/provider-executor/**",
+    "src/infrastructure/solana/helius/live-helius-data-source.ts",
     "src/cli/run-operator-api.ts",
     "test/application/operator-api/**",
+    "test/application/provider-executor/**",
+    "apps/operator-console/src/data/fixtures/wallets.json",
+    "apps/operator-console/src/data/fixture-source.test.ts",
     "package.json",
+    "scripts/security-retention-scan.mjs",
     "docs/contracts/OPERATOR_CA_HOLDER_API_V1.md",
+    "docs/blueprints/GOAL_EXECUTION_BLUEPRINT_V1.md",
+    "docs/architecture/OPERATOR_CONSOLE_ACCESS_LAYER_CLARIFICATION.md",
     "harness/CURRENT_WAVE.md",
     "harness/tasks/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001.json",
     "harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001/**"
@@ -22,12 +30,14 @@
   "forbidden_actions": [
     "No GMGN/DexScreener/auto discovery/cron/PG/Redis",
     "No force-push; do not auto-merge main without Owner",
-    "No chainfm_out / DPAPI upload"
+    "No chainfm_out / DPAPI upload",
+    "No fixture-as-Live",
+    "No G2-G8 offline product in Hotpath PR"
   ],
   "baseline": {
     "branch": "feature/sol-ca-holder-hotpath-integration-001",
     "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196"
   },
-  "verdict": "GREEN",
+  "verdict": "BLOCKED_BY_LIVE_SMOKE_UNTIL_SMOKE_RUN",
   "live_smoke": "see live-smoke-summary.json"
 }
