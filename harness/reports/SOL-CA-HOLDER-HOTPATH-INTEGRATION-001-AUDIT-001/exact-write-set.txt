@@ -1,0 +1,4 @@
+harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/acceptance.md
+harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/findings.json
+harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/gate-results.json
+harness/reports/SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001/exact-write-set.txt
