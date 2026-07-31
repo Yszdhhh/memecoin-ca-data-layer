@@ -1,13 +1,18 @@
-{
-  "taskId": "SOL-CA-HOLDER-STABILITY-BATCHES-001",
-  "prNumber": 9,
-  "prUrl": "https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/9",
-  "title": "test(stability): SOL-CA-HOLDER-STABILITY-BATCHES-001",
-  "branch": "feature/sol-ca-holder-stability-batches-001",
-  "baseSha": "4947ac77a50eb7b5f9c488c2b0b5ce1dccc5e5db",
-  "draftAtStart": true,
-  "statusAtCompletion": "Ready for review",
-  "mergeStatus": "NOT_MERGED",
-  "laterMergeMethod": "normal merge commit only",
-  "forbidden": ["squash", "rebase", "force-push"]
+﻿{
+    "taskId":  "SOL-CA-HOLDER-STABILITY-BATCHES-001",
+    "prNumber":  9,
+    "prUrl":  "https://github.com/Yszdhhh/memecoin-ca-data-layer/pull/9",
+    "title":  "test(stability): SOL-CA-HOLDER-STABILITY-BATCHES-001",
+    "branch":  "feature/sol-ca-holder-stability-batches-001",
+    "baseSha":  "4947ac77a50eb7b5f9c488c2b0b5ce1dccc5e5db",
+    "draftAtStart":  true,
+    "statusAtCompletion":  "Ready for review",
+    "mergeStatus":  "NOT_MERGED",
+    "laterMergeMethod":  "normal merge commit only",
+    "forbidden":  [
+                      "squash",
+                      "rebase",
+                      "force-push"
+                  ],
+    "implementationTip":  "f75689edbebd914c443185791c5d922457541a03"
 }
