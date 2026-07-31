@@ -5,10 +5,13 @@ interface so Fixture → HTTP/hotpath swap does not rewrite UI.
 
 ## Modes
 
-| Mode | Class | Shell phase |
+| Mode | Class | Phase |
 | --- | --- | --- |
-| fixture | `FixtureOperatorConsoleDataSource` | **active** |
-| http | `HttpOperatorConsoleDataSource` | scaffold only (`not_configured`) |
+| fixture | `FixtureOperatorConsoleDataSource` | default (no env) |
+| http | `HttpOperatorConsoleDataSource` | G1 Live Wiring when `VITE_OPERATOR_API_BASE=http://127.0.0.1:8787` (loopback only) |
+
+HTTP mode talks only to loopback Operator API (`/api/v1/ca-holder-tasks*`, results).
+Browser never holds `HELIUS_API_KEY`. Wallets/addresses remain fixture in G1.
 
 ## Interface (summary)
 

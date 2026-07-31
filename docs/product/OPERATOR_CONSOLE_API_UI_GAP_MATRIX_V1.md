@@ -1,34 +1,66 @@
 # Operator Console API ↔ UI Gap Matrix V1
 
 **Document:** `OPERATOR_CONSOLE_API_UI_GAP_MATRIX_V1`  
-**Scope:** Contract-level gap analysis between **current main / shell** and **target Operator Console UI**  
-**Honesty rule:** Prefer **MISSING** over invented endpoints. Do not claim Live HTTP exists on main when shell uses fixtures.
+**Scope:** Contract-level gap analysis between **post-Hotpath main** and **target Operator Console UI**  
+**Honesty rule:** Backend CA-holder endpoints **exist** after PR #7 merge `ae60368bcd82ebc3fb9f2655dd82f6d079158401`. Production Console HTTP wiring / Browser Live path are **not** done. Never claim the four ca-holder routes are "missing on main."  
+**Aligned as of:** 2026-07-31 · independent audit GREEN
 
 **Related:**
 
 - `docs/product/OPERATOR_CONSOLE_UI_STATE_MACHINE_V1.md`
 - `docs/product/OPERATOR_CONSOLE_COMPONENT_CONTRACTS_V1.md`
 - `docs/contracts/OPERATOR_CONSOLE_DATA_SOURCE_V1.md`
+- `docs/contracts/OPERATOR_CA_HOLDER_API_V1.md`
 - `docs/contracts/CA_SCAN_RESPONSE_V1.md`
 - Shell app: `apps/operator-console`
-- Next task pointer: `SOL-CA-HOLDER-HOTPATH-INTEGRATION-001` (`docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md`)
+- Active task: `OPERATOR-CONSOLE-LIVE-WIRING-001` (`docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md`)
+
+---
+
+## Binding milestone map (G0–G8)
+
+```text
+G0: Console Shell + Holder Hotpath + bounded Live + merge   [DONE — PR #6 / #7]
+G1: OPERATOR-CONSOLE-LIVE-WIRING-001 + Stability Batches + Observability
+G2: CA Analysis Core v1
+G3: Address Intelligence Store
+G4: Controlled Orchestration
+G5: Wallet Ledger / PnL
+G6: advanced CA intelligence (dev / early buyer / funding / cluster / cross-CA / judgment)
+G7: Liquidity Dashboard
+G8: Replay / Calibration / Alerts / Security / Local Release
+```
+
+Adoption language:
+
+- **ADOPT_UI_PATTERN_NOW** — UI/IA/prototype pattern safe to adopt in design
+- **IMPLEMENT_IN_G<n>** — product/backend implementation belongs in that G lane
 
 ---
 
 ## Executive summary
 
-| Layer | Reality on main (2026-07-31) |
-|-------|------------------------------|
+| Layer | Reality on main (post-Hotpath `ae60368`) |
+|-------|-------------------------------------------|
 | Operator Console UI | **Exists** — React+Vite shell, fixture data source **active** |
-| Data source interface | `listCaScans`, `getCaScan`, `listWallets`, `getWallet`, `listAddressLabels`, `listTasks`, `getTask`, `createLocalDemoTask`, `getDataSourceMeta` |
-| HTTP adapter | **Scaffold only** — `HttpOperatorConsoleDataSource` throws `not_configured` |
-| REST `GET /api/v1/health` | **Not exposed** as Operator Console shell dependency (no in-app health client) |
-| REST `POST/GET …/ca-holder-tasks` | **MISSING on main shell** — design target for M2 hotpath integration |
-| REST `GET …/ca-holder-results/:taskId` | **MISSING on main shell** |
-| Domain card | `CaScanResponse` v1 + pilot cleaning reports exist **in domain/application**, not as console HTTP |
-| Live providers from UI | **Forbidden** in shell; zero Live calls |
+| Data source interface | fixture methods active; HTTP scaffold `not_configured` |
+| HTTP adapter (Console) | **Scaffold only** — not wired to Operator API |
+| Backend Operator API | **Implemented** — loopback `127.0.0.1` (`npm run operator-api`) |
+| REST `GET /api/v1/health` | **Backend implemented** · Console client **not wired** |
+| REST `POST/GET …/ca-holder-tasks` | **Backend implemented** · Console client **not wired** |
+| REST `GET …/ca-holder-results/:taskId` | **Backend implemented** · Console client **not wired** |
+| Live providers from browser | **Forbidden** — keys stay process env / DPAPI |
+| Helius bounded smoke | **Done** (Hotpath ≤20 requests) · PR #7 merged |
 
-**Conclusion:** UI components and state machine can be specified now; **wiring requires new HTTP surface** (or expansion of data-source adapter) under hotpath/orchestrator milestones. Fixture remains source of truth for M1.
+```text
+API Live exists  ≠  Console Live Wiring complete
+Backend endpoint = implemented
+Production Console HTTP wiring = not implemented
+Browser Live path = not wired
+Current next gap = adapter + polling + result VM + states   (G1 Live Wiring)
+```
+
+**Conclusion:** Do **not** invent missing ca-holder endpoints on main. Gap is **Console → loopback Operator API** under `OPERATOR-CONSOLE-LIVE-WIRING-001`. Stability only **after** Live Wiring. Schedules/cron remain parked. Fixture remains source of truth for Console until Live Wiring ships.
 
 ---
 
@@ -43,12 +75,12 @@ Pages
 
 | Interface method | Fixture | HTTP (main) | Target Live mapping (design) |
 |------------------|---------|-------------|------------------------------|
-| `listCaScans()` | `fixtures/ca-scans.json` | MISSING | list latest results / index |
-| `getCaScan(mint)` | fixture by mint | MISSING | `GET …/tokens/:mint/latest` or result by mint |
-| `listWallets()` / `getWallet` | wallets fixture | MISSING | `GET …/wallets/:address` |
-| `listAddressLabels` / `saveLocalDemoLabel` | addresses + localStorage | MISSING | `GET/POST …/addresses` |
-| `listTasks` / `getTask` | tasks fixture + localStorage demos | MISSING | `GET …/ca-holder-tasks/:id` / list |
-| `createLocalDemoTask` | localStorage only | MISSING | `POST …/ca-holder-tasks` |
+| `listCaScans()` | `fixtures/ca-scans.json` | Console not wired | list latest results / index |
+| `getCaScan(mint)` | fixture by mint | Console not wired | `GET …/tokens/:mint/latest` or result by mint |
+| `listWallets()` / `getWallet` | wallets fixture | Console not wired | `GET …/wallets/:address` |
+| `listAddressLabels` / `saveLocalDemoLabel` | addresses + localStorage | Console not wired | `GET/POST …/addresses` |
+| `listTasks` / `getTask` | tasks fixture + localStorage demos | Console not wired (backend tasks exist) | `GET …/ca-holder-tasks/:id` / list |
+| `createLocalDemoTask` | localStorage only | Console not wired (backend POST exists) | `POST …/ca-holder-tasks` |
 | `getDataSourceMeta` | `{ mode: fixture, live: false }` | `{ mode: http, live: false, note }` | `{ live: true }` only when gated |
 
 ---
@@ -67,18 +99,21 @@ Pages
 
 Milestone tags used:
 
-- **M1-SHELL** — Operator Console shell (fixtures)
-- **M2-HOTPATH** — `SOL-CA-HOLDER-HOTPATH-INTEGRATION-001` + stability batches
-- **M3-ADDR** — address intelligence store
-- **M4-ORCH** — research task orchestrator
-- **M5-LIQ** — liquidity dashboard
-- **FUTURE** — contract-only; do not implement backend in this doc’s scope
+- **G0-SHELL** — Operator Console shell (fixtures) — DONE
+- **G0-HOTPATH** — `SOL-CA-HOLDER-HOTPATH-INTEGRATION-001` — DONE / MERGED (`ae60368`)
+- **G1-LIVE-WIRING** — Console adapter + polling + result VM + states
+- **G1 Stability** — stability batches after Live Wiring
+- **G3-ADDR** — address intelligence store
+- **G4-ORCH** — controlled orchestration
+- **G7-LIQ** — liquidity dashboard
+- **G8** — Replay / Calibration / Alerts / Security / Local Release
+- **FUTURE** — contract-only; do not implement in Live Wiring
 
 ---
 
 # Part A — CURRENT main endpoints (contract-level)
 
-> **Note:** There is **no** production Operator HTTP server checked in as the console’s live backend. Rows below describe **target REST names** the product expects, plus **what main actually has** (domain modules, fixtures, or true absence).
+> **Note (post-Hotpath):** The four CA-holder Operator API routes **are implemented** on main (`src/application/operator-api/**`, CLI bind `127.0.0.1`). Console still uses fixtures. Rows separate **backend** vs **Console wiring**.
 
 ---
 
@@ -86,13 +121,13 @@ Milestone tags used:
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** as Operator Console-facing route on main shell. (Other subsystems may have process health; console does not call one.) |
-| **current DTO** | **MISSING on main shell** |
+| **current endpoint** | **Backend: implemented** (loopback Operator API). **Console HTTP wiring: not implemented.** |
+| **current DTO** | Backend health JSON exists; Console still uses `getDataSourceMeta()` only |
 | **target component** | `FixtureLiveIndicator` (ops strip); optional Layout health dot |
-| **missing field** | `status`, `version`, `schemaVersions[]`, `liveGate`, `providers.configured` (boolean only — never secrets), `time` |
-| **temporary UI behavior** | Rely on `getDataSourceMeta()` only; show fixture/http note; no green “API healthy” claim |
-| **backend change needed** | Expose allowlisted health JSON for console base URL; fail-closed if down |
-| **milestone** | M2-HOTPATH (minimum) |
+| **missing field** | Console client map of status / liveDefault / bind host (never secrets) |
+| **temporary UI behavior** | Rely on `getDataSourceMeta()`; no green “API healthy” until adapter + health poll |
+| **backend change needed** | None for basic health (already on main) |
+| **milestone** | G1-LIVE-WIRING |
 
 **Target DTO (contract-only sketch):**
 
@@ -115,46 +150,21 @@ interface HealthResponseV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING on main shell HTTP.** Closest UI action: `createLocalDemoTask(mint)` → localStorage demo task (`provider: "local-demo"`), **no Helius/network**. |
-| **current DTO** | Shell write: `TaskViewModel` locally. Domain: pilot/orchestration modules exist for CA cleaning **CLI/application**, not this REST. |
+| **current endpoint** | **Backend: implemented** on main (loopback Operator API). **Console HTTP wiring: not implemented.** Closest UI action: `createLocalDemoTask(mint)` → localStorage demo (no Helius/network). |
+| **current DTO** | Backend accepts `{ mint, idempotencyKey? }`; rejects unknown/forbidden fields. Shell write today: local `TaskViewModel` only. |
 | **target component** | CA input form; `TaskLifecycle` (`SUBMITTING`→`QUEUED`); `TaskBudgetMeter` |
-| **missing field** | Response: `taskId`, `status`, `requestBudget`, `requestsUsed`, `parentTaskId`, `lineageRootId`, `input.mint`, `createdAt`, `failureReason?`, `warnings[]`, `ruleVersion?` |
-| **temporary UI behavior** | Demo task only; banner “未调用 Helius / 无网络”; map demo status into lifecycle badges without claiming Live |
-| **backend change needed** | Authenticated/local POST; validate mint; enqueue holder task; return durable `taskId`; set budget; support lineage on retry; distinct `blocked` vs `failed` |
-| **milestone** | M2-HOTPATH |
-
-**Target request/response (contract-only):**
-
-```ts
-interface CreateCaHolderTaskRequestV1 {
-  mint: string;
-  chain?: "solana";
-  parentTaskId?: string;
-  lineageRootId?: string;
-  requestBudget?: number; // server may clamp
-}
-
-interface CreateCaHolderTaskResponseV1 {
-  taskId: string;
-  status: "queued" | "blocked" | "failed";
-  input: { mint: string; chain: "solana" };
-  requestBudget: number;
-  requestsUsed: number;
-  parentTaskId?: string | null;
-  lineageRootId?: string | null;
-  warnings: string[];
-  failureReason?: string | null; // credential_unavailable etc.
-  createdAt: string;
-}
-```
+| **missing field (Console)** | Adapter wiring: map 202 response to VM (`taskId`, `status`, `requestBudget`, `requestsUsed`, `failureReason`, `warnings[]`, `providerBudgetExhausted`, …) |
+| **temporary UI behavior** | Demo task only; banner “未调用 Helius / 无网络”; never claim Live |
+| **backend change needed** | **None for G0 ca-holder create** (already on main). Live Wiring is Console adapter only. |
+| **milestone** | G1-LIVE-WIRING |
 
 **UI mapping notes:**
 
 | Response | UI state |
 |----------|----------|
-| 202/200 + `queued` | `QUEUED` |
+| 202 + `queued` | `QUEUED` |
 | `blocked` + credential reason | `BLOCKED_CREDENTIAL` |
-| 400 invalid mint | `INVALID_INPUT` |
+| 400 invalid mint / live_gate_disabled | `INVALID_INPUT` / blocked |
 | 5xx | `FAILED` |
 
 ---
@@ -163,28 +173,27 @@ interface CreateCaHolderTaskResponseV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING on main shell HTTP.** Fixture: `getTask(taskId)` / `listTasks()` from `tasks.json` + demo localStorage. |
-| **current DTO** | `TaskViewModel`: `taskId`, `input.mint?`, `provider`, `status` (`queued|running|completed|partial|failed|blocked`), `requestBudget`, `requestsUsed`, `startedAt`, `endedAt`, `warnings[]`, `outputLink`, `failureReason` |
-| **target component** | `TaskLifecycle`, `TaskBudgetMeter`, Tasks page table, poll driver |
-| **missing field** | `parentTaskId`, `lineageRootId`, `phase`, `deadlineAt`, `freshnessPolicy`, `resultTaskId`/`outputRef`, explicit `status` values: `budget_exhausted`, `timed_out`, `cancelled`, `empty`, `schema_error`; `ruleVersion` |
-| **temporary UI behavior** | Poll fixtures not required (static); badge from fixture status; `blocked`+`credential_unavailable` → credential blocked chrome if UI implements state machine early |
-| **backend change needed** | Durable task store; status machine server-side; budget counters; reason codes; lineage fields; no secret leakage in `failureReason` |
-| **milestone** | M2-HOTPATH |
+| **current endpoint** | **Backend: implemented.** **Console HTTP wiring: not implemented.** Fixture: `getTask` / `listTasks` + localStorage demos. |
+| **current DTO (backend)** | Hotpath task summary: `status` ∈ `queued|running|completed|partial|failed|blocked` plus `failureReason`, `providerBudgetExhausted`, `paginationComplete`, eligibility flags, counters |
+| **target component** | `TaskLifecycle`, `TaskBudgetMeter`, Tasks table, poll driver |
+| **missing field (Console)** | Poll adapter + map backend status+failureReason+warnings → UI badges (`BUDGET_EXHAUSTED`, `BLOCKED_CREDENTIAL`, `STALE_RESULT`, …) |
+| **temporary UI behavior** | Static fixture badges; do not invent separate backend status values that Hotpath does not emit |
+| **backend change needed** | **None for core task GET** (already on main) |
+| **milestone** | G1-LIVE-WIRING |
 
-**Gap detail — status vocabulary:**
+**Status mapping (binding Hotpath DTO):**
 
-| Shell `TaskStatus` | Target API status | UI state |
-|--------------------|-------------------|----------|
-| `queued` | `queued` | `QUEUED` |
-| `running` | `running` | `RUNNING` |
-| `completed` | `succeeded` | `SUCCEEDED` |
-| `partial` | `partial` | `PARTIAL` |
-| `failed` | `failed` | `FAILED` |
-| `blocked` | `blocked` | `BLOCKED_CREDENTIAL` (when credential) |
-| *(missing)* | `budget_exhausted` | `BUDGET_EXHAUSTED` |
-| *(missing)* | `timed_out` | `TIMED_OUT` |
-| *(missing)* | `cancelled` | `CANCELLED` |
-| *(missing)* | `empty` | `EMPTY` |
+| Backend `status` | `failureReason` / flags | UI derived state |
+|-------------------|--------------------------|------------------|
+| `queued` | — | `QUEUED` |
+| `running` | — | `RUNNING` |
+| `completed` | — | `SUCCEEDED` |
+| `partial` | `request_budget_exhausted` or `providerBudgetExhausted=true` | `BUDGET_EXHAUSTED` (banner) + raw status remains `partial` |
+| `partial` | other / exclusion partial | `PARTIAL` |
+| `failed` | — | `FAILED` |
+| `blocked` | credential | `BLOCKED_CREDENTIAL` |
+
+Derived UI states (`BUDGET_EXHAUSTED`, `STALE_RESULT`, `SCHEMA_ERROR`, `EMPTY`) come from **status + failureReason + warnings**, never from inventing a separate backend status enum.
 
 ---
 
@@ -192,25 +201,22 @@ interface CreateCaHolderTaskResponseV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING on main shell HTTP.** Console reads **by mint** via `getCaScan(mint)`, not by `taskId`. Domain has `CaScanResponse` v1 + pilot report shapes. |
-| **current DTO (console)** | `CaScanViewModel` (fixture): trust gates, accounting block, ownerCounts, concentration map, issues, `observedAt`, `sourceWatermark`, `status`, warnings-ish fields |
-| **current DTO (domain, not HTTP)** | `CaScanResponse` v1 envelope: tokenIdentity, marketSnapshot, authorityFacts, holderUniverses, cohortMetrics, walletTokenSignals, … completeness, warnings, sourceProvenance |
-| **target component** | `TrustStrip`, `HolderUniverseTable`, `ConcentrationTable`, `DataQualityTable`, `AddressHitTable`, `WarningList`, `ObservedAt`, `SourceWatermark`, `EvidenceDrawer`, `PartialBanner`, `StaleBanner`, `SchemaErrorBoundary` |
-| **missing field (console-facing)** | Bind `taskId`↔result; `schema`+`version`; full six holder universes as tables (fixture is summary counts, not full rows); per-metric `RatioMetric` provenance; `freshness_status`; `evidence[]` structured; explicit `empty` flag; `lineage`; `verificationStatus` on every metric (fixture has some); `judgmentEvidence[]` |
-| **temporary UI behavior** | Fixture CA detail; `formatRatio(null)→暂不可确认`; concentration UNVERIFIED when `concentrationEligible=false`; fixture banner; no taskId-centric result route required yet |
-| **backend change needed** | Persist result per taskId; validate `ca-scan-response` v1 fail-closed; map cleaning pilot → console view-model **server-side**; never require UI to recompute ratios |
-| **milestone** | M2-HOTPATH (+ stability batches for pagination/residual edge cases) |
+| **current endpoint** | **Backend: implemented.** **Console HTTP wiring: not implemented.** Console still reads **by mint** via fixture `getCaScan(mint)`. |
+| **current DTO (backend)** | Public result summary: accounting, exclusionCoverage, concentrationEligible, concentration metrics with `ratio:null` when ineligible, watermark, scrubbed fields |
+| **target component** | `TrustStrip`, tables, `EvidenceDrawer`, banners, `SchemaErrorBoundary` |
+| **missing field (Console)** | Result VM bound to `taskId`; poll→render path; keep ratio-null non-confirmable; never invent confirmed concentration when ineligible |
+| **temporary UI behavior** | Fixture CA detail; `formatRatio(null)` → 不可确认; concentration unverified when `concentrationEligible=false` |
+| **backend change needed** | **None for G0 result GET** (already on main). Optional later enrichment is G2+ |
+| **milestone** | G1-LIVE-WIRING (+ G1 Stability for load/edge honesty) |
 
-**Critical mapping debt:**
+**Critical mapping debt (Console only):**
 
-| UI need | Fixture today | Target result API |
-|---------|---------------|-------------------|
-| Concentration confirmed gate | `concentrationEligible` boolean | same + per-metric `verificationStatus` |
-| ratio null | supported | mandatory |
-| Holder universe rows | counts only | full universes or paginated rows |
-| Evidence drawer | issues.evidence string arrays partial | structured evidence refs |
-| Stale | not first-class | `freshness_status` / policy |
-| Schema fail-closed | client trusts JSON | `schema`+`version` validated |
+| UI need | Backend today | Console today |
+|---------|---------------|---------------|
+| Concentration gate | `concentrationEligible` + ratio null | fixture partial; not wired to taskId |
+| ratio null | supported | supported in shell formatRatio |
+| taskId binding | results by taskId | fixture by mint only |
+| Budget exhaust mid-flight | partial + request_budget_exhausted | not demonstrated via Live path |
 
 ---
 
@@ -228,7 +234,7 @@ These are **fixture data-source methods**, not REST on main:
 | **missing field** | Live pagination, server search, task linkage |
 | **temporary UI behavior** | Static fixture list; 未找到 → empty (not error) |
 | **backend change needed** | Index of latest results; optional search |
-| **milestone** | M2-HOTPATH / M4-ORCH |
+| **milestone** | G0-HOTPATH / G1-LIVE-WIRING / G4-ORCH |
 
 ### A5.2 Wallets (fixture)
 
@@ -240,7 +246,7 @@ These are **fixture data-source methods**, not REST on main:
 | **missing field** | Real addresses (privacy: fingerprints in fixture), CA hit history, live stats |
 | **temporary UI behavior** | Disclaimer + scrubbed pool; CA hits placeholder text |
 | **backend change needed** | Wallet profile API + verificationStatus honesty |
-| **milestone** | M3-ADDR / FUTURE wallet APIs |
+| **milestone** | G3-ADDR / FUTURE wallet APIs |
 
 ### A5.3 Addresses (fixture + local demo labels)
 
@@ -252,7 +258,7 @@ These are **fixture data-source methods**, not REST on main:
 | **missing field** | Server persistence, trust promotion workflow |
 | **temporary UI behavior** | localStorage demo labels only |
 | **backend change needed** | Address library HTTP aligned to sedimentation |
-| **milestone** | M3-ADDR |
+| **milestone** | G3-ADDR |
 
 ### A5.4 Tasks list (fixture)
 
@@ -264,21 +270,21 @@ These are **fixture data-source methods**, not REST on main:
 | **missing field** | Server list filters, lineage columns |
 | **temporary UI behavior** | Static + local demos |
 | **backend change needed** | Task index API |
-| **milestone** | M2-HOTPATH / M4-ORCH |
+| **milestone** | G0-HOTPATH / G1-LIVE-WIRING / G4-ORCH |
 
 ---
 
 # Part A matrix (compact)
 
-| current endpoint | current DTO (or MISSING on main shell) | target component | missing field | temporary UI behavior | backend change needed | milestone |
+| current endpoint | current DTO (or Console not wired (backend may exist)) | target component | missing field | temporary UI behavior | backend change needed | milestone |
 |------------------|----------------------------------------|------------------|---------------|----------------------|----------------------|-----------|
-| `GET /api/v1/health` | **MISSING** | FixtureLiveIndicator, Layout health | status, liveGate, schemaVersions, credential booleans | Meta from dataSource only; no API healthy claim | Health JSON allowlist | M2-HOTPATH |
-| `POST /api/v1/ca-holder-tasks` | **MISSING** HTTP; local demo task only | TaskLifecycle, form submit | taskId, lineage, budget, blocked vs failed | `createLocalDemoTask`; no network | Enqueue + validate + lineage + budget | M2-HOTPATH |
-| `GET /api/v1/ca-holder-tasks/:taskId` | **MISSING** HTTP; `TaskViewModel` fixture | TaskLifecycle, TaskBudgetMeter, Tasks table | lineage, budget_exhausted/timed_out/cancelled/empty, phase | Static fixture statuses | Durable task status machine | M2-HOTPATH |
-| `GET /api/v1/ca-holder-results/:taskId` | **MISSING** HTTP; `CaScanViewModel` by **mint** fixture; domain `CaScanResponse` v1 not served | TrustStrip, tables, banners, EvidenceDrawer, SchemaErrorBoundary | taskId binding, schema/version, full universes, freshness, evidence graph | Fixture by mint; null ratio → 不可确认; fixture banner | Persist+validate result; server map to VM | M2-HOTPATH |
-| *(dataSource)* `listCaScans` / `getCaScan` | Fixture JSON | CA list/detail | Live/index/task link | Fixture only | Latest-by-mint API | M2-HOTPATH |
-| *(dataSource)* wallets | Fixture pool | Wallet pages | Live profile, hits | Placeholder hits | Wallet API | M3-ADDR |
-| *(dataSource)* addresses | Fixture + localStorage | Addresses page | Server write | Demo labels | Address library API | M3-ADDR |
+| `GET /api/v1/health` | **Backend implemented**; Console not wired | FixtureLiveIndicator | client health map | meta-only until G1 | none (backend done) | G1-LIVE-WIRING |
+| `POST /api/v1/ca-holder-tasks` | **Backend implemented**; Console uses local demo only | TaskLifecycle, form submit | live enqueue wiring | `createLocalDemoTask` | none (backend done) | G1-LIVE-WIRING |
+| `GET /api/v1/ca-holder-tasks/:taskId` | **Backend implemented**; Console fixture/local | TaskLifecycle, TaskBudgetMeter | poll + status map | Static fixture statuses | none (backend done) | G1-LIVE-WIRING |
+| `GET /api/v1/ca-holder-results/:taskId` | **Backend implemented**; Console reads by mint fixture | TrustStrip, tables, EvidenceDrawer | taskId binding result VM | Fixture by mint; null ratio → 不可确认 | none (backend done) | G1-LIVE-WIRING |
+| *(dataSource)* `listCaScans` / `getCaScan` | Fixture JSON | CA list/detail | Live/index/task link | Fixture only | Latest-by-mint API | G0-HOTPATH / G1-LIVE-WIRING |
+| *(dataSource)* wallets | Fixture pool | Wallet pages | Live profile, hits | Placeholder hits | Wallet API | G3-ADDR |
+| *(dataSource)* addresses | Fixture + localStorage | Addresses page | Server write | Demo labels | Address library API | G3-ADDR |
 | *(dataSource)* tasks | Fixture + localStorage | Tasks page | Server list/lineage | Demo tasks | Task index | M2/M4 |
 
 ---
@@ -300,7 +306,7 @@ These are **fixture data-source methods**, not REST on main:
 | **missing field** | `taskKind`, `depth`, `modules[]`, budget class, schedule hook |
 | **temporary UI behavior** | Do not show multi-module create in shell; holder-only path later |
 | **backend change needed** | Orchestrator accepting kinded tasks; default kind=`ca_holder` |
-| **milestone** | M4-ORCH / FUTURE |
+| **milestone** | G4-ORCH / FUTURE |
 
 **Sketch:**
 
@@ -328,7 +334,7 @@ interface CreateCaTaskRequestV1 {
 | **missing field** | polymorphic `kind`, child tasks, cancel API, shared budget pool |
 | **temporary UI behavior** | Use ca-holder task GET when exists; hide generic route or alias |
 | **backend change needed** | Unified task record across holder/macro/research |
-| **milestone** | M4-ORCH / FUTURE |
+| **milestone** | G4-ORCH / FUTURE |
 
 ---
 
@@ -342,7 +348,7 @@ interface CreateCaTaskRequestV1 {
 | **missing field** | stable `resultId`, immutable snapshot, `schema`/`version`, full provenance |
 | **temporary UI behavior** | Fixture mint detail; no replay |
 | **backend change needed** | Immutable result store; validation fail-closed; content hash optional |
-| **milestone** | M2-HOTPATH → M4-ORCH (replay) |
+| **milestone** | G0-HOTPATH / G1-LIVE-WIRING → G4-ORCH (replay) |
 
 **Note:** Product may keep `ca-holder-results/:taskId` as the first read path and later add `ca-results/:resultId` for multi-version history.
 
@@ -352,13 +358,13 @@ interface CreateCaTaskRequestV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** HTTP; fixture `getCaScan(mint)` is the stand-in |
+| **current endpoint** | **Console HTTP not wired**; fixture `getCaScan(mint)` is the stand-in |
 | **current DTO** | `CaScanViewModel` |
 | **target component** | CA detail “latest” view, list row drill-in |
 | **missing field** | `taskId` of latest, `resultId`, `freshness_status`, `isStale`, schema headers |
 | **temporary UI behavior** | Fixture always “as of fixture observedAt”; show fixture indicator — **not** “latest live” |
 | **backend change needed** | Latest pointer per mint; never silently substitute stale without flag |
-| **milestone** | M2-HOTPATH |
+| **milestone** | G0-HOTPATH / G1-LIVE-WIRING |
 
 **Stale rule:** If latest pointer is stale, UI enters `STALE_RESULT` with banner — never badge as newest market terminal.
 
@@ -368,13 +374,13 @@ interface CreateCaTaskRequestV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** HTTP; fixture `getWallet(id)` uses fingerprint ids |
+| **current endpoint** | **Console HTTP not wired**; fixture `getWallet(id)` uses fingerprint ids |
 | **current DTO** | `WalletViewModel` (scrubbed) |
 | **target component** | Wallet detail, VerificationBadge, WarningList |
 | **missing field** | period stats with PARTIAL honesty, labels with Tier-B, CA hits, `observedAt`, `sourceWatermark` |
 | **temporary UI behavior** | Scrubbed fixture; disclaimer; no Live GMGN from UI |
 | **backend change needed** | Profile read from library/stats store; fail-closed on missing periods |
-| **milestone** | M3-ADDR / FUTURE |
+| **milestone** | G3-ADDR / FUTURE |
 
 ---
 
@@ -382,13 +388,13 @@ interface CreateCaTaskRequestV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** HTTP; fixture list + localStorage labels |
+| **current endpoint** | **Console HTTP not wired**; fixture list + localStorage labels |
 | **current DTO** | `AddressLabelViewModel[]` |
 | **target component** | Addresses page, filters, label editor (server) |
 | **missing field** | pagination, query, verification filters, write audit |
 | **temporary UI behavior** | Demo labels local only |
 | **backend change needed** | Address library query API aligned to Postgres sedimentation when authorized |
-| **milestone** | M3-ADDR |
+| **milestone** | G3-ADDR |
 
 ---
 
@@ -396,13 +402,13 @@ interface CreateCaTaskRequestV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** |
+| **current endpoint** | **Console not wired** |
 | **current DTO** | MISSING (macro liquidity designs exist as docs; not console API) |
-| **target component** | Future `/liquidity` page (IA); not M1 shell routes as Live |
+| **target component** | Future `/liquidity` page (IA); not G0 shell routes as Live |
 | **missing field** | pool snapshots, freshness, provenance Tier, warnings |
 | **temporary UI behavior** | Route absent or `NOT_WIRED · FUTURE_MILESTONE · NO_LIVE_DATA` |
 | **backend change needed** | Liquidity observation read models |
-| **milestone** | M5-LIQ / FUTURE |
+| **milestone** | G7-LIQ / FUTURE |
 
 ---
 
@@ -410,13 +416,13 @@ interface CreateCaTaskRequestV1 {
 
 | Column | Content |
 |--------|---------|
-| **current endpoint** | **MISSING** |
+| **current endpoint** | **Console not wired** |
 | **current DTO** | MISSING |
 | **target component** | Future `/schedules` |
 | **missing field** | cron/spec, mint set, budget class, Owner approval flag, idempotency key |
 | **temporary UI behavior** | Not in shell; do not fake recurring Live jobs |
 | **backend change needed** | Scheduler with Owner gates; no unattended credential expansion without policy |
-| **milestone** | M4-ORCH / FUTURE (cron explicitly parked in execution plan) |
+| **milestone** | G4-ORCH / FUTURE (cron explicitly parked in execution plan) |
 
 ---
 
@@ -424,13 +430,13 @@ interface CreateCaTaskRequestV1 {
 
 | future endpoint | current DTO | target component | missing field | temporary UI behavior | backend change needed | milestone |
 |-----------------|-------------|------------------|---------------|----------------------|----------------------|-----------|
-| `POST /api/v1/ca-tasks` | MISSING | unified create form | kind, modules, lineage | hide multi-module | orchestrator create | M4 / FUTURE |
-| `GET /api/v1/tasks/:id` | MISSING | Task detail route | polymorphic task | alias holder task when ready | unified task record | M4 / FUTURE |
-| `GET /api/v1/ca-results/:id` | domain v1 not HTTP | detail/replay/evidence | resultId, immutability, schema | fixture by mint | result store + validate | M2→M4 |
-| `GET /api/v1/tokens/:mint/latest` | fixture CaScan VM | CA latest view | freshness, ids | fixture + not “live latest” | latest pointer | M2-HOTPATH |
+| `POST /api/v1/ca-tasks` | MISSING | unified create form | kind, modules, lineage | hide multi-module | orchestrator create | G4 / FUTURE |
+| `GET /api/v1/tasks/:id` | MISSING | Task detail route | polymorphic task | alias holder task when ready | unified task record | G4 / FUTURE |
+| `GET /api/v1/ca-results/:id` | domain v1 not HTTP | detail/replay/evidence | resultId, immutability, schema | fixture by mint | result store + validate | G1→G4 |
+| `GET /api/v1/tokens/:mint/latest` | fixture CaScan VM | CA latest view | freshness, ids | fixture + not “live latest” | latest pointer | G0-HOTPATH / G1-LIVE-WIRING |
 | `GET /api/v1/wallets/:address` | fixture wallet VM | wallet detail | live stats, hits | scrubbed disclaimer | profile API | M3 / FUTURE |
-| `GET /api/v1/addresses` | fixture labels | addresses | query/persist | localStorage demo | library API | M3-ADDR |
-| `GET /api/v1/liquidity/latest` | MISSING | liquidity page | entire resource | NOT_WIRED | liquidity read model | M5 / FUTURE |
+| `GET /api/v1/addresses` | fixture labels | addresses | query/persist | localStorage demo | library API | G3-ADDR |
+| `GET /api/v1/liquidity/latest` | MISSING | liquidity page | entire resource | NOT_WIRED | liquidity read model | G7 / FUTURE |
 | `POST /api/v1/schedules` | MISSING | schedules page | entire resource | hidden / parked | scheduler + gates | FUTURE (parked cron) |
 
 ---
@@ -495,12 +501,12 @@ HttpOperatorConsoleDataSource (future activation)
 
 | Milestone | User-visible unlock | API prerequisite |
 |-----------|---------------------|------------------|
-| M1-SHELL | Browse fixture CA/wallets/addresses/tasks | none (fixture) |
-| M2-HOTPATH | Submit real CA holder task; poll; view result by task | health + ca-holder-tasks + ca-holder-results (+ optional tokens/latest) |
-| M2 stability | PARTIAL/budget/timeout/residual honesty under load | status reasons + budgets + pagination completeness |
-| M3-ADDR | Address library browser + hits on CA | addresses + wallets APIs |
-| M4-ORCH | Generic tasks, lineage browser, schedules UI (if unparked) | ca-tasks, tasks/:id, schedules |
-| M5-LIQ | Liquidity page | liquidity/latest |
+| G0-SHELL | Browse fixture CA/wallets/addresses/tasks | none (fixture) |
+| G0-HOTPATH / G1-LIVE-WIRING | Submit real CA holder task; poll; view result by task | health + ca-holder-tasks + ca-holder-results (+ optional tokens/latest) |
+| G1 Stability | PARTIAL/budget/timeout/residual honesty under load | status reasons + budgets + pagination completeness |
+| G3-ADDR | Address library browser + hits on CA | addresses + wallets APIs |
+| G4-ORCH | Generic tasks, lineage browser, schedules UI (if unparked) | ca-tasks, tasks/:id, schedules |
+| G7-LIQ | Liquidity page | liquidity/latest |
 
 ---
 
@@ -521,3 +527,20 @@ HttpOperatorConsoleDataSource (future activation)
 | Version | Date | Notes |
 |---------|------|-------|
 | v1 | 2026-07-31 | Gap matrix for main shell vs target ca-holder HTTP and future APIs |
+
+
+---
+
+## Owner Gate refresh (post-Hotpath)
+
+| Gate | Status |
+|------|--------|
+| Helius bounded smoke | **Done** and merged with PR #7 (`ae60368`) |
+| Runtime HELIUS_API_KEY | Still local runtime / security boundary (not “G0 smoke not run”) |
+| Paid Birdeye / GMGN / Bubblemaps | Still later Owner Gate |
+| Stability batches | **Only after** Live Wiring GREEN |
+| Schedules / cron / auto-discovery | **Parked** |
+
+```text
+API Live exists ≠ Console Live Wiring complete
+```

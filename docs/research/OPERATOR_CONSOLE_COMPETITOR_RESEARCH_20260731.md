@@ -31,7 +31,7 @@ This research evaluates competitors against the project trust model. Conclusions
 
 | Code | Meaning |
 |------|---------|
-| `ADOPT_NOW` | Borrow pattern into Operator Console research UX immediately |
+| `ADOPT_UI_PATTERN_NOW` | Borrow pattern into Operator Console research UX immediately |
 | `DESIGN_FOR_LATER` | Valuable, but needs deeper design / API / cost work |
 | `BENCHMARK_ONLY` | Useful for comparison; do not ship as product behavior |
 | `REJECT` | Do not copy; conflicts with trust model or product goals |
@@ -86,7 +86,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 | **API available?** | No first-class public official developer API comparable to Birdeye/DexScreener found; third-party scrapers exist → **not project-usable as Tier-A API** |
 | **Borrowable patterns** | Dense token header; holder structure “four metrics” cluster; activity+traders adjacency to chart |
 | **Misleading risks** | Branding heuristic “insider/rat” as fact; copy-trade CTAs next to research; opaque ratios without conservation proof |
-| **Adopt conclusion** | **BENCHMARK_ONLY** for overall product; **ADOPT_NOW** only for *layout density of concentration metrics* (as Tier-B or Tier-A recomputed) |
+| **Adopt conclusion** | **BENCHMARK_ONLY** for overall product; **ADOPT_UI_PATTERN_NOW** only for *layout density of concentration metrics* (as Tier-B or Tier-A recomputed) |
 | **Reason** | UX density is industry-standard; proprietary labels violate trust-allowed “confirmed insider” language. Recompute Top-10 / dev-holdings from Tier-A where possible; show GMGN-like tags only as external if ever integrated. |
 
 **page claim vs official API doc vs project-usable vs trust-allowed**
@@ -196,7 +196,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 
 | Area | Conclusion |
 |------|------------|
-| Concentration metric cluster UX | **ADOPT_NOW** (recompute Tier-A / label Tier-B) |
+| Concentration metric cluster UX | **ADOPT_UI_PATTERN_NOW** (recompute Tier-A / label Tier-B) |
 | Wallet dossier shell | **DESIGN_FOR_LATER** |
 | Tracker / alerts | **DESIGN_FOR_LATER** |
 | Smart money / insider / rat as confirmed | **REJECT** |
@@ -232,7 +232,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 | **API available?** | **Yes — official API doc** |
 | **Borrowable patterns** | Clean token overview composition; security endpoint separate from overview; multi-market list |
 | **Misleading risks** | Users confuse Birdeye security with full audit; holder lists incomplete beyond cap |
-| **Adopt conclusion** | **ADOPT_NOW** for *overview information architecture*; data as **Tier-B** unless mirrored by Tier-A |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** for *overview information architecture*; data as **Tier-B** unless mirrored by Tier-A |
 | **Reason** | Strong research IA; trust model still forbids treating Birdeye market/security as on-chain confirmation. |
 
 ### 3.B.2 Holders (UI) & distribution
@@ -243,7 +243,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 | **Core user tasks** | Concentration, whale presence, distribution shape |
 | **Key fields** | Holder rank, address, amount, % supply, maybe USD value |
 | **Pagination / window** | UI typically top-N; API documents large but finite caps |
-| **Adopt conclusion** | **ADOPT_NOW** for distribution visualization patterns; **prefer Tier-A recompute** for Operator Console truth |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** for distribution visualization patterns; **prefer Tier-A recompute** for Operator Console truth |
 | **Reason** | Distribution charts are essential; source of truth should be our holder pipeline. |
 
 ### 3.B.3 Wallet tags
@@ -263,7 +263,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 | **Page / feature** | Markets / pairs for a token |
 | **Key fields** | DEX, pair, liquidity, volume, price |
 | **official API doc** | Token all-market list, pair overview endpoints documented |
-| **Adopt conclusion** | **ADOPT_NOW** multi-pool awareness (align with DexScreener) |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** multi-pool awareness (align with DexScreener) |
 | **Reason** | Memecoins fragment across pools; single-pool view misleads. |
 
 ### 3.B.5 API — Token Holder List (critical)
@@ -288,7 +288,7 @@ GMGN positions as a meme trading + research hybrid: new-token monitoring, securi
 | **Misleading risks** | Presenting Birdeye holders as “on-chain confirmed” without our conservation checks; silent truncation if UI doesn’t show “top N of M” |
 | **project-usable** | Yes as **Tier-B observation / cross-check**, not Tier-A truth |
 | **trust-allowed** | External observation; may **benchmark** against Tier-A Helius/RPC holders |
-| **Adopt conclusion** | **DESIGN_FOR_LATER** as optional Tier-B cross-check; **ADOPT_NOW** the *product pattern* “holders endpoint + explicit top-N window” |
+| **Adopt conclusion** | **DESIGN_FOR_LATER** as optional Tier-B cross-check; **ADOPT_UI_PATTERN_NOW** the *product pattern* “holders endpoint + explicit top-N window” |
 | **Reason** | Pattern is correct; dependency must not replace local integrity/pagination/conservation pipeline. |
 
 ### 3.B.6 Related official API surfaces (for Operator Console awareness)
@@ -308,9 +308,9 @@ From public docs listing (not live-called):
 
 | Area | Conclusion |
 |------|------------|
-| Token overview IA | **ADOPT_NOW** |
-| Multi-market list | **ADOPT_NOW** |
-| Holders top-N + window honesty | **ADOPT_NOW** (implement on Tier-A) |
+| Token overview IA | **ADOPT_UI_PATTERN_NOW** |
+| Multi-market list | **ADOPT_UI_PATTERN_NOW** |
+| Holders top-N + window honesty | **ADOPT_UI_PATTERN_NOW** (implement on Tier-A) |
 | Holder API as system of record | **REJECT** (Tier-B only) |
 | Wallet tags as truth | **REJECT** |
 | Full Birdeye dependency | **BENCHMARK_ONLY** / selective Tier-B |
@@ -344,7 +344,7 @@ From public docs listing (not live-called):
 | **API available?** | **Yes — official API doc**, largely free with rate limits |
 | **Borrowable patterns** | Time-bucketed txns/volume/priceChange; multi-pool via token-pairs; nullable-aware fields |
 | **Misleading risks** | **Boosts/ads mistaken for organic traction**; single pair ≠ token; wash volume |
-| **Adopt conclusion** | **ADOPT_NOW** for multi-window market stats IA + multi-pool listing; **REJECT** boosts as quality signal |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** for multi-window market stats IA + multi-pool listing; **REJECT** boosts as quality signal |
 | **Reason** | Best-in-class pair market UX; boosts are advertising. |
 
 ### 4.C.2 Price / liquidity / volume
@@ -353,7 +353,7 @@ From public docs listing (not live-called):
 |-------|------------|
 | **official API doc** | Pair objects document price, liquidity, volume, txns, priceChange |
 | **trust-allowed** | Tier-B market observation only |
-| **Adopt conclusion** | **ADOPT_NOW** display pattern; Tier-B badge in our UI |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** display pattern; Tier-B badge in our UI |
 | **Reason** | Operators need market context; must not be sold as Tier-A. |
 
 ### 4.C.3 Boosts / ads
@@ -367,7 +367,7 @@ From public docs listing (not live-called):
 | **Key fields** | `boosts.active`; ad date/type/duration/impressions |
 | **Label source** | Payment, not fundamentals |
 | **Misleading risks** | Highest — boosts correlate with marketing spend |
-| **Adopt conclusion** | **REJECT** as trust/quality signal; **ADOPT_NOW** only as optional “paid promotion detected” warning if we ever show Dex data |
+| **Adopt conclusion** | **REJECT** as trust/quality signal; **ADOPT_UI_PATTERN_NOW** only as optional “paid promotion detected” warning if we ever show Dex data |
 | **Reason** | Advertising ≠ organic demand. |
 
 ### 4.C.4 Multi-pool
@@ -377,7 +377,7 @@ From public docs listing (not live-called):
 | **Page / feature** | Token → multiple pairs; search; `token-pairs` API |
 | **official API doc** | `GET /token-pairs/v1/{chainId}/{tokenAddress}`; `GET /tokens/v1/{chainId}/{tokenAddresses}`; search `/latest/dex/search` |
 | **Borrowable patterns** | Rank pools by liquidity; show fragmented liquidity; warn if user is on thin pool |
-| **Adopt conclusion** | **ADOPT_NOW** |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** |
 | **Reason** | Memecoin CA research without multi-pool is incomplete. |
 
 ### 4.C.5 API summary (official)
@@ -401,8 +401,8 @@ From public docs listing (not live-called):
 
 | Area | Conclusion |
 |------|------------|
-| Pair stats time windows | **ADOPT_NOW** |
-| Multi-pool | **ADOPT_NOW** |
+| Pair stats time windows | **ADOPT_UI_PATTERN_NOW** |
+| Multi-pool | **ADOPT_UI_PATTERN_NOW** |
 | Free public API for market Tier-B | **DESIGN_FOR_LATER** integration |
 | Boosts as quality | **REJECT** |
 | Ads-driven ranking UX | **REJECT** |
@@ -436,7 +436,7 @@ From public docs listing (not live-called):
 | **API available?** | **Yes — partner/pro**: Data API (holders, transfers, clusters) + iframe embed (**official docs**) |
 | **Borrowable patterns** | Cluster-first visual; supply % in cluster; click-through from holder table to graph |
 | **Misleading risks** | Cluster ≠ single entity; exchange deposit clustering false positives; visual “guilt by proximity” |
-| **Adopt conclusion** | **ADOPT_NOW** for *cluster visual as investigation affordance* with hard disclaimer; data **Tier-B** unless we build graph from Tier-A transfers |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** for *cluster visual as investigation affordance* with hard disclaimer; data **Tier-B** unless we build graph from Tier-A transfers |
 | **Reason** | Best category UX for distribution investigation; must not claim “confirmed related entity.” |
 
 ### 5.D.2 Transfers
@@ -446,7 +446,7 @@ From public docs listing (not live-called):
 | **Page / feature** | Transfer edges on map; API transfers |
 | **official API doc** | Data API exposes holders, transfers, clusters (**docs.bubblemaps.io**) |
 | **trust-allowed** | Edges as observed transfers OK if from Tier-A; Bubblemaps edges = Tier-B unless recomputed |
-| **Adopt conclusion** | **DESIGN_FOR_LATER** full graph; **ADOPT_NOW** “show evidence transfer list when asserting link” |
+| **Adopt conclusion** | **DESIGN_FOR_LATER** full graph; **ADOPT_UI_PATTERN_NOW** “show evidence transfer list when asserting link” |
 | **Reason** | Evidence drill-down > opaque blobs. |
 
 ### 5.D.3 Magic Nodes
@@ -497,8 +497,8 @@ From public docs listing (not live-called):
 
 | Area | Conclusion |
 |------|------------|
-| Cluster visual + % supply | **ADOPT_NOW** (with disclaimers; prefer own graph later) |
-| Evidence transfers on click | **ADOPT_NOW** |
+| Cluster visual + % supply | **ADOPT_UI_PATTERN_NOW** (with disclaimers; prefer own graph later) |
+| Evidence transfers on click | **ADOPT_UI_PATTERN_NOW** |
 | Magic Nodes style expansion | **DESIGN_FOR_LATER** |
 | Time travel history | **DESIGN_FOR_LATER** |
 | Treating clusters as confirmed entities | **REJECT** |
@@ -535,7 +535,7 @@ From public docs listing (not live-called):
 | **API available?** | **Yes** — public swagger; endpoints discussed publicly include token report, insiders graph, wallet risk (**official swagger surface**; exact auth/productization may change) |
 | **Borrowable patterns** | **Itemized risks with names + descriptions + severity**, not only a single score; link each item to evidence |
 | **Misleading risks** | **Opaque composite score as safety warranty**; good score ≠ non-scam; bad score ≠ scam |
-| **Adopt conclusion** | **ADOPT_NOW** itemized risk checklist UX; **REJECT** single opaque score as primary; scores only as Tier-B if shown |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** itemized risk checklist UX; **REJECT** single opaque score as primary; scores only as Tier-B if shown |
 | **Reason** | Checklist matches operator mental model; composite scores invite false confidence. |
 
 **page claim vs API vs trust**
@@ -551,7 +551,7 @@ From public docs listing (not live-called):
 
 | Area | Conclusion |
 |------|------------|
-| Itemized risks + evidence | **ADOPT_NOW** |
+| Itemized risks + evidence | **ADOPT_UI_PATTERN_NOW** |
 | Insider graph as investigation aid | **DESIGN_FOR_LATER** / Tier-B |
 | Primary trust on composite score | **REJECT** |
 | Replacing RPC authority checks | **REJECT** |
@@ -583,7 +583,7 @@ From public docs listing (not live-called):
 | **API available?** | Solscan has API products historically; for Operator Console, **Helius/RPC is Tier-A**, Solscan is UI competitor + optional link-out |
 | **Borrowable patterns** | **Authority section with null/revoked clarity**; every number clickable to account/tx; holders table → address page |
 | **Misleading risks** | Users assume explorer = complete forensic graph; authority null not always “safe token” |
-| **Adopt conclusion** | **ADOPT_NOW** authority presentation + evidence drill-down pattern |
+| **Adopt conclusion** | **ADOPT_UI_PATTERN_NOW** authority presentation + evidence drill-down pattern |
 | **Reason** | Gold standard for trust-aligned research UX; mirrors what we should compute via Tier-A. |
 
 ### 6.E Combined (Rugcheck + Solscan) workflow note
@@ -593,7 +593,7 @@ Operator Console should **invert** that: **Tier-A authority/holders first → it
 
 | Pattern | Conclusion |
 |---------|------------|
-| Evidence-first, score-second | **ADOPT_NOW** |
+| Evidence-first, score-second | **ADOPT_UI_PATTERN_NOW** |
 | Score-first gatekeeping | **REJECT** |
 
 ---
@@ -654,7 +654,7 @@ Operator Console should **invert** that: **Tier-A authority/holders first → it
 
 | Area | Conclusion |
 |------|------------|
-| Entity / label / tag vocabulary clarity | **ADOPT_NOW** (our own wording) |
+| Entity / label / tag vocabulary clarity | **ADOPT_UI_PATTERN_NOW** (our own wording) |
 | Display third-party smart money as fact | **REJECT** |
 | Deep feature parity | **ACCESS_BLOCKED** / **BENCHMARK_ONLY** |
 | Trade-coupled analytics | **REJECT** |
@@ -759,7 +759,7 @@ Operator Console should **invert** that: **Tier-A authority/holders first → it
 
 ## 11. Synthesis for Operator Console
 
-### 11.1 Five patterns to **ADOPT_NOW**
+### 11.1 Five patterns to **ADOPT_UI_PATTERN_NOW**
 
 1. **Evidence-first token header (Solscan × Rugcheck inversion)**  
    On CA paste, immediately show Tier-A: mint validity, decimals/supply, **mint authority**, **freeze authority**, holder count progress, last integrity check status. Itemized risks secondary; no giant “safe/unsafe” stamp.
@@ -820,24 +820,24 @@ Target experience (research/ops, not trade):
 
 | Product / surface | Adopt conclusion |
 |-------------------|------------------|
-| GMGN token concentration layout | **ADOPT_NOW** (recompute) |
+| GMGN token concentration layout | **ADOPT_UI_PATTERN_NOW** (recompute) |
 | GMGN smart money / insider tags | **REJECT** |
 | GMGN trade/copy coupling | **REJECT** |
 | GMGN wallet dossier / tracker | **DESIGN_FOR_LATER** |
 | GMGN as data authority | **BENCHMARK_ONLY** |
-| Birdeye overview + multi-market IA | **ADOPT_NOW** |
+| Birdeye overview + multi-market IA | **ADOPT_UI_PATTERN_NOW** |
 | Birdeye holders API as SoT | **REJECT** (Tier-B only) |
-| Birdeye holder top-N pattern | **ADOPT_NOW** |
+| Birdeye holder top-N pattern | **ADOPT_UI_PATTERN_NOW** |
 | Birdeye wallet tags | **REJECT** as confirmed |
-| DexScreener pair windows + multi-pool | **ADOPT_NOW** |
+| DexScreener pair windows + multi-pool | **ADOPT_UI_PATTERN_NOW** |
 | DexScreener boosts/ads as quality | **REJECT** |
-| Bubblemaps cluster UX | **ADOPT_NOW** (disclaimer) |
+| Bubblemaps cluster UX | **ADOPT_UI_PATTERN_NOW** (disclaimer) |
 | Bubblemaps Magic Nodes / time travel | **DESIGN_FOR_LATER** |
 | Bubblemaps cluster = entity | **REJECT** |
-| Rugcheck itemized risks | **ADOPT_NOW** |
+| Rugcheck itemized risks | **ADOPT_UI_PATTERN_NOW** |
 | Rugcheck hero composite score | **REJECT** |
-| Solscan authority + drill-down | **ADOPT_NOW** |
-| Arkham entity taxonomy (language) | **ADOPT_NOW** |
+| Solscan authority + drill-down | **ADOPT_UI_PATTERN_NOW** |
+| Arkham entity taxonomy (language) | **ADOPT_UI_PATTERN_NOW** |
 | Arkham/Nansen deep labels as truth | **REJECT** |
 | Arkham/Nansen full surfaces | **ACCESS_BLOCKED** / **BENCHMARK_ONLY** |
 | Hotsniper | **ACCESS_BLOCKED** / **SOURCE_NOT_AUTHORITATIVE** |

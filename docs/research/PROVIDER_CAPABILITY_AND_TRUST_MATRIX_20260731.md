@@ -38,7 +38,12 @@ These rules are **non-negotiable** for any page, fixture, HTTP adapter, or judgm
 | BR-6 | **`null` ratios never display as `0`; `PARTIAL` ≠ `SUCCESS`** | Incomplete denominators, missing exclusion coverage, or truncated holder pages yield `ratio: null` + warnings. UI must show “—” / “unavailable” / partial chip, never zero-as-safe. Completeness chips must distinguish `PARTIAL` from full success. |
 | BR-7 | **External labels are FEATURES, never conclusions** | Architecture §3: re-displaying a platform label as *our* conclusion is a drift violation. |
 | BR-8 | **Market enrichment never overrides chain fact** | Constitution market rule: price/liquidity/volume do not rewrite balances, creator, transfers, or supply. |
-| BR-9 | **Current live runtime boundary (Owner)** | As of 2026-07-28 Owner decision: runtime is **Helius-only** for live CA. Multi-provider live fan-out remains Owner-gated even when this matrix says `ADOPT_NOW` for design/fixture contracts. |
+| BR-9 | **Current live runtime boundary (Owner)** | As of 2026-07-28 Owner decision: runtime is **Helius-only** for live CA. Multi-provider live fan-out remains Owner-gated even when this matrix says `ADOPT_UI_PATTERN_NOW` for design/fixture contracts. |
+
+## G0–G8 binding (post-Hotpath)
+
+Hotpath (G0) merged PR #7 `ae60368`. Helius-only live holder path is the Owner boundary. `ADOPT_UI_PATTERN_NOW` never means “enable Birdeye/GMGN live from browser.” Implementation of Console wiring is **IMPLEMENT_IN_G1**.
+
 | BR-10 | **Official free APIs only (Owner)** | No scrapers, no Cloudflare bypass. Free official paths first (Birdeye free, DexScreener free, GMGN free OpenAPI where available, Helius free 1M). Paid upgrades only against proven bottleneck. |
 
 ### 1.1 Project tier shorthand used in matrix columns
@@ -71,14 +76,15 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 | Failure modes | Typical degradation |
 | Fallback | What the product does when this path fails |
 | UI placement | Operator Console surface |
-| Milestone | M0–M5 alignment (`NEXT_STAGE_EXECUTION_PLAN_20260730`) |
-| Recommendation | `ADOPT_NOW` \| `DESIGN_FOR_LATER` \| `BENCHMARK_ONLY` \| `REJECT` \| `ACCESS_BLOCKED` |
+| Milestone | G0–G8 binding map (see executive summary / gap matrix) |
+| Recommendation | `ADOPT_UI_PATTERN_NOW` \| `IMPLEMENT_IN_G<n>` \| `DESIGN_FOR_LATER` \| `BENCHMARK_ONLY` \| `REJECT` \| `ACCESS_BLOCKED` |
 
 ### 1.3 Recommendation meanings
 
 | Code | Use when |
 | --- | --- |
-| **ADOPT_NOW** | Wire into fixture contracts and/or Owner-approved live path; UI already depends on semantics |
+| **ADOPT_UI_PATTERN_NOW** | Adopt UI/IA/fixture semantics now; does **not** authorize paid multi-provider live fan-out |
+| **IMPLEMENT_IN_G<n>** | Ship product/backend work only in the named G lane (G0 Hotpath done; G1 = Live Wiring + Stability + Observability) |
 | **DESIGN_FOR_LATER** | Needed for product vision; adapters/parsers/Owner gate not ready; design + ports only |
 | **BENCHMARK_ONLY** | Useful for offline comparison / research; never drives confirmed UI state |
 | **REJECT** | Wrong trust model or ToS/risk posture for this product |
@@ -122,13 +128,13 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier in our project (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | token identity | `mint`, `decimals`, program id, DAS asset id | A | confirmed after parse + address normalize | slot-fresh | n/a (single account) | plan credits / DAS rps | free 1M + key | high (RPC JSON parsed) | mint account current; creation via history | account+slot watermark | yes (same RPC) | **yes** (local gates) | malformed account, wrong program, timeout | fail closed / unavailable section | CA header | M1–M2 | **ADOPT_NOW** |
-| Solana RPC | token identity | `getAccountInfo` mint jsonParsed | A | same as Helius | slot-fresh | n/a | endpoint-dependent | public or paid RPC | high | same | same | yes | **yes** | public RPC lag/ban | Helius-hosted RPC (Owner) | CA header | M1–M2 | **ADOPT_NOW** (via Helius endpoint) |
-| DexScreener | token identity | `baseToken.address/name/symbol` | B | unverified | seconds–minutes | n/a | ~60 rpm class | free, no key | medium | weak | pair-centric | partial | **no** | wrong chain pair, multi-pair ambiguity | Helius mint | CA header secondary label only | M1 fixture / M2+ live enrich | **ADOPT_NOW** (enrichment only) |
-| GMGN | token identity | token CA, symbol, launchpad flags | B | unverified | seconds | n/a | free-tier fragile | free OpenAPI / Owner | medium–low | limited | token card | partial | **no** | field rename, geo/WAF | Helius | discovery / trenches, not identity truth | M3+ | **DESIGN_FOR_LATER** |
-| Birdeye | token identity | address, symbol, name | B | unverified | seconds | n/a | free-tier limited | free API key | medium | limited | token meta | partial | **no** | 401/429 | Helius | secondary | M2+ | **DESIGN_FOR_LATER** |
-| Rugcheck | token identity | mint in report | B | unverified | minutes | n/a | public API soft limits | free/public | medium | point-in-time report | report blob | no | **no** | report missing | Helius | security panel id only | M2+ | **DESIGN_FOR_LATER** |
-| Bubblemaps | token identity | token address for map | B | unverified | map refresh | n/a | partner/API | often paid | n/a | map history product | visual | no | **no** | no Solana map | omit embed | external link | M5+ | **BENCHMARK_ONLY** |
+| Helius | token identity | `mint`, `decimals`, program id, DAS asset id | A | confirmed after parse + address normalize | slot-fresh | n/a (single account) | plan credits / DAS rps | free 1M + key | high (RPC JSON parsed) | mint account current; creation via history | account+slot watermark | yes (same RPC) | **yes** (local gates) | malformed account, wrong program, timeout | fail closed / unavailable section | CA header | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | token identity | `getAccountInfo` mint jsonParsed | A | same as Helius | slot-fresh | n/a | endpoint-dependent | public or paid RPC | high | same | same | yes | **yes** | public RPC lag/ban | Helius-hosted RPC (Owner) | CA header | G0–G1 | **ADOPT_UI_PATTERN_NOW** (via Helius endpoint) |
+| DexScreener | token identity | `baseToken.address/name/symbol` | B | unverified | seconds–minutes | n/a | ~60 rpm class | free, no key | medium | weak | pair-centric | partial | **no** | wrong chain pair, multi-pair ambiguity | Helius mint | CA header secondary label only | G0 fixture / G1+ live enrich | **ADOPT_UI_PATTERN_NOW** (enrichment only) |
+| GMGN | token identity | token CA, symbol, launchpad flags | B | unverified | seconds | n/a | free-tier fragile | free OpenAPI / Owner | medium–low | limited | token card | partial | **no** | field rename, geo/WAF | Helius | discovery / trenches, not identity truth | G3+ | **DESIGN_FOR_LATER** |
+| Birdeye | token identity | address, symbol, name | B | unverified | seconds | n/a | free-tier limited | free API key | medium | limited | token meta | partial | **no** | 401/429 | Helius | secondary | G1+ | **DESIGN_FOR_LATER** |
+| Rugcheck | token identity | mint in report | B | unverified | minutes | n/a | public API soft limits | free/public | medium | point-in-time report | report blob | no | **no** | report missing | Helius | security panel id only | G1+ | **DESIGN_FOR_LATER** |
+| Bubblemaps | token identity | token address for map | B | unverified | map refresh | n/a | partner/API | often paid | n/a | map history product | visual | no | **no** | no Solana map | omit embed | external link | G7+ | **BENCHMARK_ONLY** |
 | Dune | token identity | not primary | B (macro) | n/a | batch | SQL | API CU | paid/free tiers | query-defined | strong if tables | row | n/a | **no** for CA id | wrong chain filter | — | not CA card | macro only | **REJECT** for CA identity |
 | Solscan | token identity | token meta name/symbol/icon | B | unverified | explorer-fresh | n/a | Pro CU | Pro paid | medium | explorer | meta | partial | **no** as sole truth | 401 without Pro | Helius + Metaplex parse | optional explorer deep-link | — | **ACCESS_BLOCKED** (Pro) / link-out OK |
 
@@ -136,26 +142,26 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | supply | `supplyRaw`, decimals | A | confirmed when mint parse OK | slot | n/a | credits | free plan key | high | current; historical via archives | raw integer string | yes | **yes** | malformed supply string | unavailable / null ratios | CA facts / accounting denom | M1–M2 | **ADOPT_NOW** |
-| Solana RPC | supply | `getTokenSupply` / mint supply | A | same | slot | n/a | endpoint | same | high | current | raw | yes | **yes** | lag | Helius | same | M1–M2 | **ADOPT_NOW** |
+| Helius | supply | `supplyRaw`, decimals | A | confirmed when mint parse OK | slot | n/a | credits | free plan key | high | current; historical via archives | raw integer string | yes | **yes** | malformed supply string | unavailable / null ratios | CA facts / accounting denom | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | supply | `getTokenSupply` / mint supply | A | same | slot | n/a | endpoint | same | high | current | raw | yes | **yes** | lag | Helius | same | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
 | DexScreener | supply | usually absent; FDV implies | B | unverified | n/a | n/a | free | free | n/a | no | weak | no | **no** | inventing supply from FDV | never use for denom | do not show as supply | — | **REJECT** as supply source |
 | GMGN | supply | platform supply/mcap fields | B | unverified | seconds | n/a | free | free | medium | weak | opaque | no | **no** | non-integer display units | Helius supplyRaw | market chrome only | — | **REJECT** as accounting denom |
 | Birdeye | supply | total supply fields | B | unverified | seconds | n/a | free | key | medium | weak | opaque | no | **no** | float precision | Helius | optional badge | — | **REJECT** as accounting denom |
 | Rugcheck | supply | report supply claims | B | unverified | minutes | n/a | public | free | medium | snapshot | report | no | **no** | stale report | Helius | security context only | — | **REJECT** as accounting denom |
 | Bubblemaps | supply | distribution % of “supply” | B | unverified | map | n/a | partner | paid? | n/a | product | visual | no | **no** | unknown supply def | local holders | never accounting | — | **REJECT** as supply |
-| Dune | supply | SQL aggregates | B | unverified unless local B-class macro | batch | SQL | CU | key | query pin | strong | query row | if SQL pinned | macro only | SQL drift | allowlist hash fail closed | macro dashboard | M5 | **DESIGN_FOR_LATER** (macro) |
+| Dune | supply | SQL aggregates | B | unverified unless local B-class macro | batch | SQL | CU | key | query pin | strong | query row | if SQL pinned | macro only | SQL drift | allowlist hash fail closed | macro dashboard | G7 | **DESIGN_FOR_LATER** (macro) |
 | Solscan | supply | token meta supply | B | unverified | explorer | n/a | Pro | paid | medium | explorer | string | partial | **no** alone | Pro required | Helius | link-out | — | **ACCESS_BLOCKED** / not denom |
 
 ### 3.3 Mint / freeze authority
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | mint/freeze authority | mintAuthority, freezeAuthority (jsonParsed / DAS) | A | confirmed after parse | slot | n/a | credits | free key | high | current; history via txs | authority pubkey or null | yes | **yes** | Token-2022 extension miss | mark partial + warning | AuthorityFacts panel | M1–M2 | **ADOPT_NOW** |
-| Solana RPC | mint/freeze authority | same via getAccountInfo | A | confirmed after parse | slot | n/a | endpoint | RPC | high | current | same | yes | **yes** | wrong encoding | Helius | same | M1–M2 | **ADOPT_NOW** |
+| Helius | mint/freeze authority | mintAuthority, freezeAuthority (jsonParsed / DAS) | A | confirmed after parse | slot | n/a | credits | free key | high | current; history via txs | authority pubkey or null | yes | **yes** | Token-2022 extension miss | mark partial + warning | AuthorityFacts panel | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | mint/freeze authority | same via getAccountInfo | A | confirmed after parse | slot | n/a | endpoint | RPC | high | current | same | yes | **yes** | wrong encoding | Helius | same | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
 | DexScreener | mint/freeze | not authoritative | B | n/a | n/a | n/a | free | free | n/a | no | none | no | **no** | N/A | chain parse | do not use | — | **REJECT** |
-| GMGN | mint/freeze / safety | honeypot, tax, authority flags | B | unverified | seconds | n/a | free | free | medium | weak | feature flags | recheck on chain | **no** alone | false positive safety | Helius authorityFacts | security *hints* | M2+ | **DESIGN_FOR_LATER** |
-| Birdeye | security tags | authority-related security fields | B | unverified | seconds | n/a | free | key | medium | weak | tags | recheck chain | **no** | missing free-tier fields | Helius | hints | M2+ | **DESIGN_FOR_LATER** |
-| Rugcheck | mint/freeze report | mintAuthority, freezeAuthority, risks[] | B | unverified | minutes | n/a | public | free | medium | snapshot | report risks | **must** recheck chain | **no** alone | stale vs chain | Helius authorityFacts primary | Security strip (borrowed) | M2+ | **ADOPT_NOW** as **hint only** (design: dual-display chain first) |
+| GMGN | mint/freeze / safety | honeypot, tax, authority flags | B | unverified | seconds | n/a | free | free | medium | weak | feature flags | recheck on chain | **no** alone | false positive safety | Helius authorityFacts | security *hints* | G1+ | **DESIGN_FOR_LATER** |
+| Birdeye | security tags | authority-related security fields | B | unverified | seconds | n/a | free | key | medium | weak | tags | recheck chain | **no** | missing free-tier fields | Helius | hints | G1+ | **DESIGN_FOR_LATER** |
+| Rugcheck | mint/freeze report | mintAuthority, freezeAuthority, risks[] | B | unverified | minutes | n/a | public | free | medium | snapshot | report risks | **must** recheck chain | **no** alone | stale vs chain | Helius authorityFacts primary | Security strip (borrowed) | G1+ | **ADOPT_UI_PATTERN_NOW** as **hint only** (design: dual-display chain first) |
 | Bubblemaps | authority | none | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
 | Dune | authority | rare custom SQL | B | unverified | batch | SQL | CU | key | low | possible | weak | prefer chain | **no** | lag | chain | not CA hot path | — | **REJECT** for hot path |
 | Solscan | authority display | explorer authority UI / meta | B | unverified | explorer | n/a | Pro/UI | paid/free UI | medium | explorer | medium | recheck chain | **no** alone | Pro | Helius | deep-link | — | **BENCHMARK_ONLY** |
@@ -164,11 +170,11 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | metadata | DAS `getAsset` name, symbol, uri, json | A (account) / B (off-chain JSON) | on-chain meta fields confirmable; off-chain uri content unverified | slot + URI fetch | n/a | DAS rps | free key | medium (DAS) | current | asset id + uri | uri may 404 | on-chain fields **yes**; image/social **no** | DAS miss, URI timeout | symbol from mint only | CA header | M1–M2 | **ADOPT_NOW** |
-| Solana RPC | metadata | Metaplex account parse | A / B off-chain | same | slot | n/a | endpoint | RPC | medium | current | account | yes | on-chain **yes** | complex Token-2022 | Helius DAS | same | M2 | **DESIGN_FOR_LATER** (if not via Helius) |
-| DexScreener | metadata | imageUrl, socials, websites | B | unverified | minutes | n/a | free | free | medium | weak | pair info | no | **no** | boosted/spam profiles | Helius/uri | chrome | M1+ | **ADOPT_NOW** (display only) |
-| GMGN | metadata | icons, social scores | B | unverified | seconds | n/a | free | free | low–medium | weak | card | no | **no** | CDN fail | DexScreener/Helius | discovery | M3 | **DESIGN_FOR_LATER** |
-| Birdeye | metadata | logo, extensions | B | unverified | seconds | n/a | free | key | medium | weak | meta | no | **no** | 429 | DexScreener | chrome | M2 | **DESIGN_FOR_LATER** |
+| Helius | metadata | DAS `getAsset` name, symbol, uri, json | A (account) / B (off-chain JSON) | on-chain meta fields confirmable; off-chain uri content unverified | slot + URI fetch | n/a | DAS rps | free key | medium (DAS) | current | asset id + uri | uri may 404 | on-chain fields **yes**; image/social **no** | DAS miss, URI timeout | symbol from mint only | CA header | G0–G1 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | metadata | Metaplex account parse | A / B off-chain | same | slot | n/a | endpoint | RPC | medium | current | account | yes | on-chain **yes** | complex Token-2022 | Helius DAS | same | G1 | **DESIGN_FOR_LATER** (if not via Helius) |
+| DexScreener | metadata | imageUrl, socials, websites | B | unverified | minutes | n/a | free | free | medium | weak | pair info | no | **no** | boosted/spam profiles | Helius/uri | chrome | G0+ | **ADOPT_UI_PATTERN_NOW** (display only) |
+| GMGN | metadata | icons, social scores | B | unverified | seconds | n/a | free | free | low–medium | weak | card | no | **no** | CDN fail | DexScreener/Helius | discovery | G3 | **DESIGN_FOR_LATER** |
+| Birdeye | metadata | logo, extensions | B | unverified | seconds | n/a | free | key | medium | weak | meta | no | **no** | 429 | DexScreener | chrome | G1 | **DESIGN_FOR_LATER** |
 | Rugcheck | metadata | name in report | B | unverified | minutes | n/a | public | free | medium | snapshot | weak | no | **no** | missing | Helius | security card | — | **BENCHMARK_ONLY** |
 | Bubblemaps | metadata | n/a | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
 | Dune | metadata | n/a | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
@@ -178,14 +184,14 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | token accounts | `getTokenAccounts` / DAS pages: address, owner, amount | A | **unverified until** paginationComplete + conservation; then accounting may confirm | slot/index | **cursor pages** (pageSize e.g. 1000; maxPages budget) | credits + rps; free DAS often ~2 rps class | free 1M | medium | snapshot only unless re-pull | per-account + page slots | **yes** (local owner sum) | **accounting yes** if complete; **concentration only with** exclusion+pool gates | truncated pages → PARTIAL; mixed owner; index lag | PARTIAL card; null concentration ratios | Holder universes | M0 done pilot · **M2 hotpath** | **ADOPT_NOW** |
-| Helius | holders (derived) | owner balances after local aggregate | A (derived) | confirmed only if snapshot complete + ruleVersion | as-of snapshot | derived | same | same | local rules stable | recompute on demand | owner rows + evidence | **yes** | **yes** under gates | incomplete exclusion coverage | concentration unverified | cleaned_top_holders | M2 | **ADOPT_NOW** |
-| Solana RPC | token accounts | `getProgramAccounts` / largest accounts | A | same integrity rules | slot | GPA heavy; largest is **top-N only** | public often unusable | RPC cost | high | snapshot | account | yes | top-N alone **cannot** confirm full universe | GPA limits, top20 trap | Helius enumeration | do not use largest-only for cleaned universe | M2 | **ADOPT_NOW** only as complement; **REJECT** largest-only concentration |
+| Helius | token accounts | `getTokenAccounts` / DAS pages: address, owner, amount | A | **unverified until** paginationComplete + conservation; then accounting may confirm | slot/index | **cursor pages** (pageSize e.g. 1000; maxPages budget) | credits + rps; free DAS often ~2 rps class | free 1M | medium | snapshot only unless re-pull | per-account + page slots | **yes** (local owner sum) | **accounting yes** if complete; **concentration only with** exclusion+pool gates | truncated pages → PARTIAL; mixed owner; index lag | PARTIAL card; null concentration ratios | Holder universes | G0 pilot done · G0 hotpath merged · G1 live wiring | **ADOPT_UI_PATTERN_NOW** |
+| Helius | holders (derived) | owner balances after local aggregate | A (derived) | confirmed only if snapshot complete + ruleVersion | as-of snapshot | derived | same | same | local rules stable | recompute on demand | owner rows + evidence | **yes** | **yes** under gates | incomplete exclusion coverage | concentration unverified | cleaned_top_holders | G1 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | token accounts | `getProgramAccounts` / largest accounts | A | same integrity rules | slot | GPA heavy; largest is **top-N only** | public often unusable | RPC cost | high | snapshot | account | yes | top-N alone **cannot** confirm full universe | GPA limits, top20 trap | Helius enumeration | do not use largest-only for cleaned universe | G1 | **ADOPT_UI_PATTERN_NOW** only as complement; **REJECT** largest-only concentration |
 | DexScreener | holders | none reliable | — | — | — | — | free | free | — | — | — | — | **no** | — | Helius | — | — | **REJECT** |
-| GMGN | holders / top holders | top holder list, holder count | B | unverified; `isBorrowedConcentration=true` | seconds | platform page | free fragile | free | low–medium | weak | list without full universe proof | no full recompute | **no** | opaque filters, bots | local Helius universes | optional “platform top” strip | M2+ | **DESIGN_FOR_LATER** (hint) |
-| Birdeye | holders / Top10 | `top10Pct`, holderCount | B | unverified; never override local | seconds | often top-only | free tight | free key | medium | weak | aggregates | **no** | **no** | different universe def | local holders | **never** primary concentration | M1 contract already forbids | **REJECT** as concentration authority; optional hint **DESIGN_FOR_LATER** |
-| Rugcheck | holders / concentration | top holders, risks | B | unverified | minutes | top-N | public | free | medium | snapshot | report | no | **no** | unknown exclusions | local holders | security risks only | M2+ | **REJECT** as concentration authority |
-| Bubblemaps | holders visual | bubble sizes, top N | B | unverified | map refresh | top N visual | partner | often paid | n/a | product history | visual edges | no | **no** | missing wallets | local graph later | external map link | M3–M5 | **BENCHMARK_ONLY** |
+| GMGN | holders / top holders | top holder list, holder count | B | unverified; `isBorrowedConcentration=true` | seconds | platform page | free fragile | free | low–medium | weak | list without full universe proof | no full recompute | **no** | opaque filters, bots | local Helius universes | optional “platform top” strip | G1+ | **DESIGN_FOR_LATER** (hint) |
+| Birdeye | holders / Top10 | `top10Pct`, holderCount | B | unverified; never override local | seconds | often top-only | free tight | free key | medium | weak | aggregates | **no** | **no** | different universe def | local holders | **never** primary concentration | G0 contract already forbids | **REJECT** as concentration authority; optional hint **DESIGN_FOR_LATER** |
+| Rugcheck | holders / concentration | top holders, risks | B | unverified | minutes | top-N | public | free | medium | snapshot | report | no | **no** | unknown exclusions | local holders | security risks only | G1+ | **REJECT** as concentration authority |
+| Bubblemaps | holders visual | bubble sizes, top N | B | unverified | map refresh | top N visual | partner | often paid | n/a | product history | visual edges | no | **no** | missing wallets | local graph later | external map link | G3–G7 | **BENCHMARK_ONLY** |
 | Dune | holders | custom holder SQL | B | unverified | batch hours | SQL | CU | key | query pin | good if table | row | if SQL local | not hot-path confirmed | lag, table lag | Helius snapshot | research | cold path | **BENCHMARK_ONLY** |
 | Solscan | holders | `/token/holders` page_size limited | B | unverified | explorer | page/offset; **not full universe proof** | Pro CU / rpm | **paid Pro** | medium | explorer | account rows | partial | **no** alone | max page caps; Pro required | Helius | optional secondary | — | **ACCESS_BLOCKED** without Pro; else **BENCHMARK_ONLY** |
 
@@ -195,31 +201,31 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | market price | not primary (unless parse pool reserves) | A if reserves decoded | unverified until local pool decode rule | slot | n/a | credits | free | depends IDL | txs | reserves raw | **yes** with pool decoder | price from reserves possible later | IDL churn | DexScreener B | advanced pool panel | M5+ | **DESIGN_FOR_LATER** |
-| Solana RPC | pool reserves | vault token amounts | A | same | slot | n/a | endpoint | RPC | IDL risk | snapshot | raw amounts | yes | with local USD oracle policy | multi-pool | DexScreener | pool evidence | M5 | **DESIGN_FOR_LATER** |
-| DexScreener | market price | `priceUsd`, `priceNative` | **B** | **unverified** | seconds–minutes | multi-pair array | ~60 rpm | **free no key** | medium | weak OHLCV on free | per-pair | no | **no** | multi-pair pick error | Birdeye / null market | MarketSnapshot | M1 fixture · M2+ live | **ADOPT_NOW** (Tier-B enrichment) |
-| DexScreener | market cap / FDV | `marketCap`, `fdv` | **B** | unverified | same | pairs | same | free | medium | weak | per-pair | no | **no** | supply def mismatch | show source-labelled; null if missing | MarketSnapshot | M1–M2 | **ADOPT_NOW** (B) |
-| DexScreener | liquidity | `liquidity.usd/base/quote` | **B** | unverified | same | pairs | same | free | medium | weak | per-pair | partial via reserves | **no** as chain fact | stale liq | null + warning | MarketSnapshot / large-order floor | M1–M2 | **ADOPT_NOW** (B) |
-| DexScreener | volume | `volume.m5/h1/h6/h24`, txns buys/sells | **B** | unverified | same | pairs | same | free | medium | windowed only | per-pair windows | no | **no** | double-count multi-pair | do not sum providers | MarketSnapshot | M1–M2 | **ADOPT_NOW** (B) |
-| DexScreener | pair age | `pairCreatedAt` | **B** | unverified until chain event | same | pairs | same | free | medium | pair birth claim | timestamp | confirm via chain | **no** alone | wrong pair | pool create event | pair strip | M2 | **ADOPT_NOW** as clue |
-| DexScreener | primary pool clue | best liq pairAddress, dexId | **B** | unverified | same | list pairs | same | free | medium | n/a | pair list | local select rule | **no** until A-confirm | boosts/spam pairs | selection_rule_version + warnings | pair selector | M2 / market-select-v1 | **ADOPT_NOW** (clue) |
-| GMGN | market fields | price, mcap, liq, vol on token cards | B | unverified | seconds | n/a | free | free | low–medium | weak | card | no | **no** | schema churn | DexScreener first | optional dual quote | M3 | **DESIGN_FOR_LATER** |
-| Birdeye | market fields | price, liq, v24h, OHLCV | B | unverified | seconds | OHLCV pages | free limited | free key | medium | better OHLCV | candle | no | **no** | 429, plan walls | DexScreener | dual source conflict UI | M2+ | **DESIGN_FOR_LATER** |
-| Rugcheck | market/liq risks | LP locked, liq flags | B | unverified | minutes | n/a | public | free | medium | snapshot | risk codes | recheck chain LP | **no** | false LP status | pool token accounts | security | M2+ | **DESIGN_FOR_LATER** |
+| Helius | market price | not primary (unless parse pool reserves) | A if reserves decoded | unverified until local pool decode rule | slot | n/a | credits | free | depends IDL | txs | reserves raw | **yes** with pool decoder | price from reserves possible later | IDL churn | DexScreener B | advanced pool panel | G7+ | **DESIGN_FOR_LATER** |
+| Solana RPC | pool reserves | vault token amounts | A | same | slot | n/a | endpoint | RPC | IDL risk | snapshot | raw amounts | yes | with local USD oracle policy | multi-pool | DexScreener | pool evidence | G7 | **DESIGN_FOR_LATER** |
+| DexScreener | market price | `priceUsd`, `priceNative` | **B** | **unverified** | seconds–minutes | multi-pair array | ~60 rpm | **free no key** | medium | weak OHLCV on free | per-pair | no | **no** | multi-pair pick error | Birdeye / null market | MarketSnapshot | G0 fixture · G1+ live | **ADOPT_UI_PATTERN_NOW** (Tier-B enrichment) |
+| DexScreener | market cap / FDV | `marketCap`, `fdv` | **B** | unverified | same | pairs | same | free | medium | weak | per-pair | no | **no** | supply def mismatch | show source-labelled; null if missing | MarketSnapshot | G0–G1 | **ADOPT_UI_PATTERN_NOW** (B) |
+| DexScreener | liquidity | `liquidity.usd/base/quote` | **B** | unverified | same | pairs | same | free | medium | weak | per-pair | partial via reserves | **no** as chain fact | stale liq | null + warning | MarketSnapshot / large-order floor | G0–G1 | **ADOPT_UI_PATTERN_NOW** (B) |
+| DexScreener | volume | `volume.m5/h1/h6/h24`, txns buys/sells | **B** | unverified | same | pairs | same | free | medium | windowed only | per-pair windows | no | **no** | double-count multi-pair | do not sum providers | MarketSnapshot | G0–G1 | **ADOPT_UI_PATTERN_NOW** (B) |
+| DexScreener | pair age | `pairCreatedAt` | **B** | unverified until chain event | same | pairs | same | free | medium | pair birth claim | timestamp | confirm via chain | **no** alone | wrong pair | pool create event | pair strip | G1 | **ADOPT_UI_PATTERN_NOW** as clue |
+| DexScreener | primary pool clue | best liq pairAddress, dexId | **B** | unverified | same | list pairs | same | free | medium | n/a | pair list | local select rule | **no** until A-confirm | boosts/spam pairs | selection_rule_version + warnings | pair selector | G1 / market-select-v1 | **ADOPT_UI_PATTERN_NOW** (clue) |
+| GMGN | market fields | price, mcap, liq, vol on token cards | B | unverified | seconds | n/a | free | free | low–medium | weak | card | no | **no** | schema churn | DexScreener first | optional dual quote | G3 | **DESIGN_FOR_LATER** |
+| Birdeye | market fields | price, liq, v24h, OHLCV | B | unverified | seconds | OHLCV pages | free limited | free key | medium | better OHLCV | candle | no | **no** | 429, plan walls | DexScreener | dual source conflict UI | G1+ | **DESIGN_FOR_LATER** |
+| Rugcheck | market/liq risks | LP locked, liq flags | B | unverified | minutes | n/a | public | free | medium | snapshot | risk codes | recheck chain LP | **no** | false LP status | pool token accounts | security | G1+ | **DESIGN_FOR_LATER** |
 | Bubblemaps | market | none | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
-| Dune | market macro | dex volume, TVL-like | B | macro observation | daily/hours | SQL | CU | key | pin SQL | strong | aggregate | yes if SQL ours | not CA price | query drift | allowlist | Macro / liquidity dashboard | **M5** | **ADOPT_NOW** (macro path exists) |
+| Dune | market macro | dex volume, TVL-like | B | macro observation | daily/hours | SQL | CU | key | pin SQL | strong | aggregate | yes if SQL ours | not CA price | query drift | allowlist | Macro / liquidity dashboard | **G7** | **ADOPT_UI_PATTERN_NOW** (macro path exists) |
 | Solscan | markets / price | token price, markets | B | unverified | explorer | pages | Pro | paid | medium | some history | medium | no | **no** | Pro | DexScreener | link-out | — | **ACCESS_BLOCKED** / **BENCHMARK_ONLY** |
 
 ### 3.7 Pool evidence (chain)
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | pool evidence | vault owners, LP mints, swap txs, Pump migrate | A | confirmed when decoded + linked to mint | slot | tx pagination | credits | free | IDL/program risk | Enhanced history | instruction-level | **yes** with decoders | **yes** for vault exclusion | unknown AMM, partial history | concentration stays unverified | exclusion: `excluded_pools` | M2 stability | **ADOPT_NOW** (extend pilot) |
-| Solana RPC | pool evidence | same accounts/txs | A | same | slot | signatures pages | endpoint | RPC | same | same | same | yes | **yes** | history truncation | Helius Enhanced | same | M2 | **ADOPT_NOW** via Helius |
-| DexScreener | pool evidence | pairAddress only (claim) | B | unverified | minutes | n/a | free | free | medium | weak | address claim | confirm on chain | **no** | spoofed pair | Helius vault proof | pair clue → confirm queue | M2 | **ADOPT_NOW** as clue only |
+| Helius | pool evidence | vault owners, LP mints, swap txs, Pump migrate | A | confirmed when decoded + linked to mint | slot | tx pagination | credits | free | IDL/program risk | Enhanced history | instruction-level | **yes** with decoders | **yes** for vault exclusion | unknown AMM, partial history | concentration stays unverified | exclusion: `excluded_pools` | G1 Stability | **ADOPT_UI_PATTERN_NOW** (extend pilot) |
+| Solana RPC | pool evidence | same accounts/txs | A | same | slot | signatures pages | endpoint | RPC | same | same | same | yes | **yes** | history truncation | Helius Enhanced | same | G1 | **ADOPT_UI_PATTERN_NOW** via Helius |
+| DexScreener | pool evidence | pairAddress only (claim) | B | unverified | minutes | n/a | free | free | medium | weak | address claim | confirm on chain | **no** | spoofed pair | Helius vault proof | pair clue → confirm queue | G1 | **ADOPT_UI_PATTERN_NOW** as clue only |
 | GMGN | pool | pair/pool hints | B | unverified | seconds | n/a | free | free | low | weak | weak | recheck | **no** | wrong venue | DexScreener+Helius | — | — | **DESIGN_FOR_LATER** |
-| Birdeye | pool | markets list | B | unverified | seconds | pages | free | key | medium | weak | medium | recheck | **no** | incomplete venues | Helius | — | M2+ | **DESIGN_FOR_LATER** |
-| Rugcheck | LP risk | LP burned/locked flags | B | unverified | minutes | n/a | public | free | medium | snapshot | risk | recheck mint/LP | **no** alone | wrong LP token | Helius | security | M2 | **DESIGN_FOR_LATER** |
+| Birdeye | pool | markets list | B | unverified | seconds | pages | free | key | medium | weak | medium | recheck | **no** | incomplete venues | Helius | — | G1+ | **DESIGN_FOR_LATER** |
+| Rugcheck | LP risk | LP burned/locked flags | B | unverified | minutes | n/a | public | free | medium | snapshot | risk | recheck mint/LP | **no** alone | wrong LP token | Helius | security | G1 | **DESIGN_FOR_LATER** |
 | Bubblemaps | pool | n/a | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
 | Dune | pool | decoded dex tables | B | unverified | batch | SQL | CU | key | table lag | good | row | possible | not hot-path | lag | Helius | research | cold | **BENCHMARK_ONLY** |
 | Solscan | defi activities | pool-related activities | B | unverified | explorer | pages | Pro | paid | medium | explorer | tx list | recheck | **no** alone | Pro | Helius | link-out | — | **ACCESS_BLOCKED** |
@@ -230,15 +236,15 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | wallet PnL (raw) | Enhanced swaps, token transfers, SOL funding | A inputs | PnL **confirmed only** after local swap≠transfer rules + venue decode | history window | signature/cursor pages | **credit heavy** | free 1M ceiling | medium | windowed by pull budget | per-tx | **yes** (cold path) | **yes** for library promotion | budget exhaustion, partial history | PARTIAL PnL / keep Tier-B lead | wallet detail / cold promote | M3–M4 | **ADOPT_NOW** for promote path design; live budget throttle |
-| Solana RPC | wallet history | `getSignaturesForAddress` + txs | A inputs | same | window | pages | public weak | RPC | high | same | per-tx | yes | **yes** with decode | rate ban | Helius Enhanced | same | M3 | **ADOPT_NOW** via Helius |
+| Helius | wallet PnL (raw) | Enhanced swaps, token transfers, SOL funding | A inputs | PnL **confirmed only** after local swap≠transfer rules + venue decode | history window | signature/cursor pages | **credit heavy** | free 1M ceiling | medium | windowed by pull budget | per-tx | **yes** (cold path) | **yes** for library promotion | budget exhaustion, partial history | PARTIAL PnL / keep Tier-B lead | wallet detail / cold promote | G3–G4 | **ADOPT_UI_PATTERN_NOW** for promote path design; live budget throttle |
+| Solana RPC | wallet history | `getSignaturesForAddress` + txs | A inputs | same | window | pages | public weak | RPC | high | same | per-tx | yes | **yes** with decode | rate ban | Helius Enhanced | same | G3 | **ADOPT_UI_PATTERN_NOW** via Helius |
 | DexScreener | wallet PnL/labels | none | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
-| GMGN | wallet PnL | `pnl_7d`, `pnl_30d`, realized, winrate | **B** | **unverified** always as observation | seconds | wallet batch | free fragile; 1433 run ~97% PARTIAL fielding | free OpenAPI | **low–medium** (parser versions already) | 7d/30d stronger than cumulative | period stats | reconstruct later from A | **no** alone | PARTIAL fields, alias churn | leave null; never 0 | wallet table Tier-B columns | M1 show · M3 library | **ADOPT_NOW** as **Tier-B observation** |
-| GMGN | wallet labels | smart_degen, sniper, bundler, rat_trader, renowned, dev | **B** | **unverified** feature only | seconds | n/a | free | free | low–medium | label may flip | tag + time | detectors recompute | **no** alone | silent tag renames | show as `borrowed_label` | wallet / CA signals | M1–M3 | **ADOPT_NOW** (feature); **REJECT** as conclusion |
-| GMGN | dev / sniper / bundler / insider | token-level ratios + wallet tags | **B** | unverified | seconds | n/a | free | free | low–medium | weak | counts/ratios | **yes** later via detectors | **no** alone | inflated sniper % | local bot-sniper-v1 / cluster-fusion-v1 | CA signals strip | M2–M3 | **ADOPT_NOW** feature; confirm offline |
-| Birdeye | wallet labels / PnL | tags, trader metrics (plan-dependent) | **B** | unverified | seconds | pages | **tight** wallet RPM | free/paid | medium | limited free | tags | recompute A | **no** alone | plan wall | GMGN feature + Helius | optional second feature | M3 | **DESIGN_FOR_LATER** |
-| Rugcheck | insider graph / risks | insider networks, risk scores | **B** | unverified | minutes | n/a | public | free | medium | snapshot | graph/report | funding-edge local | **no** alone | opaque graph | local funding clusters | security / cluster *hint* | M2–M3 | **DESIGN_FOR_LATER** |
-| Bubblemaps | cluster labels | magic nodes, linked wallets | **B** | unverified cross-check | map | visual | partner | often paid | n/a | product | visual | funding+transfer local | **no** | false clusters | local cluster-fusion | external benchmark | M3+ | **BENCHMARK_ONLY** |
+| GMGN | wallet PnL | `pnl_7d`, `pnl_30d`, realized, winrate | **B** | **unverified** always as observation | seconds | wallet batch | free fragile; 1433 run ~97% PARTIAL fielding | free OpenAPI | **low–medium** (parser versions already) | 7d/30d stronger than cumulative | period stats | reconstruct later from A | **no** alone | PARTIAL fields, alias churn | leave null; never 0 | wallet table Tier-B columns | G0 show · G3 library | **ADOPT_UI_PATTERN_NOW** as **Tier-B observation** |
+| GMGN | wallet labels | smart_degen, sniper, bundler, rat_trader, renowned, dev | **B** | **unverified** feature only | seconds | n/a | free | free | low–medium | label may flip | tag + time | detectors recompute | **no** alone | silent tag renames | show as `borrowed_label` | wallet / CA signals | G0–G3 | **ADOPT_UI_PATTERN_NOW** (feature); **REJECT** as conclusion |
+| GMGN | dev / sniper / bundler / insider | token-level ratios + wallet tags | **B** | unverified | seconds | n/a | free | free | low–medium | weak | counts/ratios | **yes** later via detectors | **no** alone | inflated sniper % | local bot-sniper-v1 / cluster-fusion-v1 | CA signals strip | G1–G3 | **ADOPT_UI_PATTERN_NOW** feature; confirm offline |
+| Birdeye | wallet labels / PnL | tags, trader metrics (plan-dependent) | **B** | unverified | seconds | pages | **tight** wallet RPM | free/paid | medium | limited free | tags | recompute A | **no** alone | plan wall | GMGN feature + Helius | optional second feature | G3 | **DESIGN_FOR_LATER** |
+| Rugcheck | insider graph / risks | insider networks, risk scores | **B** | unverified | minutes | n/a | public | free | medium | snapshot | graph/report | funding-edge local | **no** alone | opaque graph | local funding clusters | security / cluster *hint* | G1–G3 | **DESIGN_FOR_LATER** |
+| Bubblemaps | cluster labels | magic nodes, linked wallets | **B** | unverified cross-check | map | visual | partner | often paid | n/a | product | visual | funding+transfer local | **no** | false clusters | local cluster-fusion | external benchmark | G3+ | **BENCHMARK_ONLY** |
 | Dune | wallet cohorts | smart money tables (if any) | B | unverified | batch | SQL | CU | key | query | strong | aggregate | possible | **no** for CA labels | definition drift | local library | research | cold | **BENCHMARK_ONLY** |
 | Solscan | wallet activities | transfers, defi acts | B | unverified | explorer | pages | Pro | paid | medium | explorer | tx list | prefer Helius | **no** alone | Pro | Helius | link-out | — | **ACCESS_BLOCKED** / link-out |
 
@@ -248,13 +254,13 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | funding source | first SOL transfer in, Enhanced native transfers | A | confirmed with history completeness + service-funder rules | as-of pull | tx pages | credits | free | medium | windowed | edge list | **yes** | **yes** (`funding-clusters` + evidence) | missing early txs; bridge opacity | partial cluster | cluster / funder panel | M2–M3 | **ADOPT_NOW** |
-| Solana RPC | funding | same raw txs | A | same | same | pages | endpoint | RPC | high | same | edges | yes | **yes** | public RPC history holes | Helius | same | M2–M3 | **ADOPT_NOW** |
+| Helius | funding source | first SOL transfer in, Enhanced native transfers | A | confirmed with history completeness + service-funder rules | as-of pull | tx pages | credits | free | medium | windowed | edge list | **yes** | **yes** (`funding-clusters` + evidence) | missing early txs; bridge opacity | partial cluster | cluster / funder panel | G1–G3 | **ADOPT_UI_PATTERN_NOW** |
+| Solana RPC | funding | same raw txs | A | same | same | pages | endpoint | RPC | high | same | edges | yes | **yes** | public RPC history holes | Helius | same | G1–G3 | **ADOPT_UI_PATTERN_NOW** |
 | DexScreener | funding/cluster | none | — | — | — | — | — | — | — | — | — | — | **no** | — | — | — | — | **REJECT** |
-| GMGN | funding/cluster hints | bundled wallets, insider % | B | unverified | seconds | n/a | free | free | low | weak | opaque | local edges | **no** | marketing definitions | Helius edges | feature only | M3 | **DESIGN_FOR_LATER** |
-| Birdeye | funding tags | limited | B | unverified | seconds | n/a | free | key | medium | weak | tags | local | **no** | sparse free | Helius | feature | M3 | **DESIGN_FOR_LATER** |
-| Rugcheck | insider cluster | insider graph | B | unverified | minutes | n/a | public | free | medium | snapshot | graph | local | **no** | non-reproducible | Helius | hint | M3 | **DESIGN_FOR_LATER** |
-| Bubblemaps | cluster | transfer-linked bubbles, magic nodes | **B** | **unverified external cross-check** | map | top-N | partner | often paid | n/a | product | visual edges | **local funding/transfer graph is authority** | **no** for confirmed concentration | incomplete top-N; CEX hubs | local cluster-fusion-v1 | “Open Bubblemaps” + benchmark note | M3–M5 | **BENCHMARK_ONLY** |
+| GMGN | funding/cluster hints | bundled wallets, insider % | B | unverified | seconds | n/a | free | free | low | weak | opaque | local edges | **no** | marketing definitions | Helius edges | feature only | G3 | **DESIGN_FOR_LATER** |
+| Birdeye | funding tags | limited | B | unverified | seconds | n/a | free | key | medium | weak | tags | local | **no** | sparse free | Helius | feature | G3 | **DESIGN_FOR_LATER** |
+| Rugcheck | insider cluster | insider graph | B | unverified | minutes | n/a | public | free | medium | snapshot | graph | local | **no** | non-reproducible | Helius | hint | G3 | **DESIGN_FOR_LATER** |
+| Bubblemaps | cluster | transfer-linked bubbles, magic nodes | **B** | **unverified external cross-check** | map | top-N | partner | often paid | n/a | product | visual edges | **local funding/transfer graph is authority** | **no** for confirmed concentration | incomplete top-N; CEX hubs | local cluster-fusion-v1 | “Open Bubblemaps” + benchmark note | G3–G7 | **BENCHMARK_ONLY** |
 | Dune | cluster research | custom entity SQL | B | unverified | batch | SQL | CU | key | pin | good | row | yes if SQL | research only | lag | Helius | research | cold | **BENCHMARK_ONLY** |
 | Solscan | funding view | transfer lists | B | unverified | explorer | pages | Pro | paid | medium | explorer | transfers | prefer Helius | **no** alone | Pro | Helius | link-out | — | **ACCESS_BLOCKED** |
 
@@ -262,16 +268,16 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Capability | Example fields | Source tier (A/B) | Verification status | Freshness | Pagination | Rate limit | Pricing/credential | Schema stability | Historical availability | Evidence granularity | Can recompute locally | Can support confirmed | Failure modes | Fallback | UI placement | Milestone | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Helius | historical replay inputs | Enhanced tx history, slot watermarks | A inputs | replay confirmed only with pinned fixtures + complete pulls | historical | heavy pagination | **credit risk** | free 1M | medium | yes with budget | per-tx + watermark | **yes** (product core) | **yes** for chain facts | free tier exhaust | fixture replay harness | cold path / task runs | M4 | **ADOPT_NOW** (budgeted) |
-| Solana RPC | historical | signatures + blocks | A inputs | same | historical | heavy | public weak | RPC | high | archives needed for deep | per-tx | yes | **yes** | prune | Helius | cold | M4 | **ADOPT_NOW** via Helius |
-| DexScreener | historical market | limited free history | B | unverified | windowed | n/a | free | free | medium | **weak** free | pair windows | no full tape | **no** | gaps | append-only local observations | market history chart lite | M2–M5 | **DESIGN_FOR_LATER** |
-| GMGN | historical wallet | period stats not full tape | B | unverified | period | n/a | free | free | low | 7d/30d partial product | period | cold A rebuild | **no** | cumulative incomplete | Helius promote | wallet history B columns | M3 | **ADOPT_NOW** observation only |
-| Birdeye | OHLCV history | candles | B | unverified | candles | time pages | free/paid | key | medium | better than Dex free | candle | no | **no** | plan wall | local observations | charts | M5 | **DESIGN_FOR_LATER** |
+| Helius | historical replay inputs | Enhanced tx history, slot watermarks | A inputs | replay confirmed only with pinned fixtures + complete pulls | historical | heavy pagination | **credit risk** | free 1M | medium | yes with budget | per-tx + watermark | **yes** (product core) | **yes** for chain facts | free tier exhaust | fixture replay harness | cold path / task runs | G4 | **ADOPT_UI_PATTERN_NOW** (budgeted) |
+| Solana RPC | historical | signatures + blocks | A inputs | same | historical | heavy | public weak | RPC | high | archives needed for deep | per-tx | yes | **yes** | prune | Helius | cold | G4 | **ADOPT_UI_PATTERN_NOW** via Helius |
+| DexScreener | historical market | limited free history | B | unverified | windowed | n/a | free | free | medium | **weak** free | pair windows | no full tape | **no** | gaps | append-only local observations | market history chart lite | G1–G7 | **DESIGN_FOR_LATER** |
+| GMGN | historical wallet | period stats not full tape | B | unverified | period | n/a | free | free | low | 7d/30d partial product | period | cold A rebuild | **no** | cumulative incomplete | Helius promote | wallet history B columns | G3 | **ADOPT_UI_PATTERN_NOW** observation only |
+| Birdeye | OHLCV history | candles | B | unverified | candles | time pages | free/paid | key | medium | better than Dex free | candle | no | **no** | plan wall | local observations | charts | G7 | **DESIGN_FOR_LATER** |
 | Rugcheck | historical | report snapshots if stored | B | unverified | point | n/a | public | free | medium | only if we archive | report | no | **no** | lost reports | local observation store | audit trail | cold | **DESIGN_FOR_LATER** |
-| Bubblemaps | historical distribution | token history maps | B | unverified | product | n/a | partner | paid? | n/a | product strength | visual | no | **no** | access | local snapshots | research link | M5 | **BENCHMARK_ONLY** |
-| Dune | historical macro / liquidity | saved query rows, report_day | B (macro B-class when pinned) | execution-evidenced, not CA confirmed | daily/hours | SQL / result pages | API CU | key / CLI | **high if allowlisted hash** | **strong** | query+execution id | yes (SQL) | macro metrics yes; CA no | SQL drift, timeout | fail closed allowlist | **Liquidity / macro dashboard** | **M5** (+ existing macro) | **ADOPT_NOW** (macro) |
-| Solscan | historical explorer | charts, holders over time UI | B | unverified | explorer | pages | Pro | paid | medium | explorer | medium | no | **no** | Pro | Dune+Helius | link-out | M5 | **ACCESS_BLOCKED** / link |
-| *(local product)* | alerts | threshold on liq/price/labels | A/B mix | never silent confirmed | policy | n/a | local | n/a | versioned policy | local store | event | yes | only if A gates | alert spam | DEGRADED quiet | task center / future | M4–M5 | **DESIGN_FOR_LATER** (Owner: no cron yet) |
+| Bubblemaps | historical distribution | token history maps | B | unverified | product | n/a | partner | paid? | n/a | product strength | visual | no | **no** | access | local snapshots | research link | G7 | **BENCHMARK_ONLY** |
+| Dune | historical macro / liquidity | saved query rows, report_day | B (macro B-class when pinned) | execution-evidenced, not CA confirmed | daily/hours | SQL / result pages | API CU | key / CLI | **high if allowlisted hash** | **strong** | query+execution id | yes (SQL) | macro metrics yes; CA no | SQL drift, timeout | fail closed allowlist | **Liquidity / macro dashboard** | **G7** (+ existing macro) | **ADOPT_UI_PATTERN_NOW** (macro) |
+| Solscan | historical explorer | charts, holders over time UI | B | unverified | explorer | pages | Pro | paid | medium | explorer | medium | no | **no** | Pro | Dune+Helius | link-out | G7 | **ACCESS_BLOCKED** / link |
+| *(local product)* | alerts | threshold on liq/price/labels | A/B mix | never silent confirmed | policy | n/a | local | n/a | versioned policy | local store | event | yes | only if A gates | alert spam | DEGRADED quiet | task center / future | G4–G7 | **DESIGN_FOR_LATER** (Owner: no cron yet) |
 
 ---
 
@@ -297,33 +303,33 @@ Market-design trust classes C/D/E map into product tier **B** for UI trust badge
 
 | Provider | Overall recommendation | Primary adopt surface | Do not use for | Owner gate before live multi-use |
 | --- | --- | --- | --- | --- |
-| **Helius** | **ADOPT_NOW** | mint, supply, authorities, token accounts, funding, enhance history, promote-to-library | unconstrained full-history without credit budget | key already; budget/throttle; optional paid plan if free exhausted |
-| **Solana RPC** | **ADOPT_NOW** (via Helius endpoint) | same Tier-A methods | public RPC as production holder GPA | production endpoint selection |
-| **DexScreener** | **ADOPT_NOW** (Tier-B market) | price, liq, vol, pair age, primary pair **clue** | supply denom, concentration, labels | none for free HTTP; still Owner flip for live CA fan-out |
-| **GMGN** | **ADOPT_NOW** observation / **REJECT** as conclusion | wallet 7d/30d, borrowed labels, discovery leads | confirmed smart money, cleaned holders, Alpha tier | OpenAPI terms; no scrape; live CA attach gated |
+| **Helius** | **ADOPT_UI_PATTERN_NOW** | mint, supply, authorities, token accounts, funding, enhance history, promote-to-library | unconstrained full-history without credit budget | key already; budget/throttle; optional paid plan if free exhausted |
+| **Solana RPC** | **ADOPT_UI_PATTERN_NOW** (via Helius endpoint) | same Tier-A methods | public RPC as production holder GPA | production endpoint selection |
+| **DexScreener** | **ADOPT_UI_PATTERN_NOW** (Tier-B market) | price, liq, vol, pair age, primary pair **clue** | supply denom, concentration, labels | none for free HTTP; still Owner flip for live CA fan-out |
+| **GMGN** | **ADOPT_UI_PATTERN_NOW** observation / **REJECT** as conclusion | wallet 7d/30d, borrowed labels, discovery leads | confirmed smart money, cleaned holders, Alpha tier | OpenAPI terms; no scrape; live CA attach gated |
 | **Birdeye** | **DESIGN_FOR_LATER** | dual market quote, optional tags | concentration authority | free API key; rate budget |
 | **Rugcheck** | **DESIGN_FOR_LATER** (hints **ADOPT** in UX copy) | security risk chips; authority **hint** beside chain facts | overriding chain authority or concentration | confirm official API ToS |
 | **Bubblemaps** | **BENCHMARK_ONLY** | external cluster visual cross-check | confirmed concentration / cluster conclusions | partner/API access if embed beyond link-out |
-| **Dune** | **ADOPT_NOW** for **macro/M5**; **REJECT** for CA facts | liquidity dashboard, daily macro, reconciliation | holder concentration, wallet labels | `DUNE_API_KEY` / CLI; saved-query allowlist only |
+| **Dune** | **ADOPT_UI_PATTERN_NOW** for **macro/G7**; **REJECT** for CA facts | liquidity dashboard, daily macro, reconciliation | holder concentration, wallet labels | `DUNE_API_KEY` / CLI; saved-query allowlist only |
 | **Solscan** | **ACCESS_BLOCKED** (Pro bulk) / link-out **ADOPT** | human explorer links | Tier-A replacement; free bulk holders truth | paid Pro if Owner wants secondary API |
 
 ### 5.1 Recommendation by capability family
 
 | Capability family | Recommendation | Notes |
 | --- | --- | --- |
-| token identity / supply / mint-freeze | **ADOPT_NOW** (Helius) | Rugcheck dual-display hint OK later |
-| metadata chrome | **ADOPT_NOW** (Helius + DexScreener B) | |
-| holders + owner aggregation | **ADOPT_NOW** (Helius + local) | PARTIAL ≠ SUCCESS |
-| market price/mcap/liq/vol/pair | **ADOPT_NOW** (DexScreener B) | never confirmed |
-| primary pool clue | **ADOPT_NOW** (DexScreener B) | confirm vaults on Helius before exclusion complete |
-| pool evidence | **ADOPT_NOW** design · continue M2 | blocks concentration confirmed |
-| wallet PnL B | **ADOPT_NOW** (GMGN observation) | |
+| token identity / supply / mint-freeze | **ADOPT_UI_PATTERN_NOW** (Helius) | Rugcheck dual-display hint OK later |
+| metadata chrome | **ADOPT_UI_PATTERN_NOW** (Helius + DexScreener B) | |
+| holders + owner aggregation | **ADOPT_UI_PATTERN_NOW** (Helius + local) | PARTIAL ≠ SUCCESS |
+| market price/mcap/liq/vol/pair | **ADOPT_UI_PATTERN_NOW** (DexScreener B) | never confirmed |
+| primary pool clue | **ADOPT_UI_PATTERN_NOW** (DexScreener B) | confirm vaults on Helius before exclusion complete |
+| pool evidence | **ADOPT_UI_PATTERN_NOW** design · continue G1 | blocks concentration confirmed |
+| wallet PnL B | **ADOPT_UI_PATTERN_NOW** (GMGN observation) | |
 | wallet PnL A promote | **DESIGN_FOR_LATER** cold path | credit budget |
-| labels sniper/bundler/insider/smart | **ADOPT_NOW** as features | detectors confirm later |
-| funding source | **ADOPT_NOW** (Helius path) | service-funder rules |
+| labels sniper/bundler/insider/smart | **ADOPT_UI_PATTERN_NOW** as features | detectors confirm later |
+| funding source | **ADOPT_UI_PATTERN_NOW** (Helius path) | service-funder rules |
 | cluster confirmed | **DESIGN_FOR_LATER** local; Bubblemaps **BENCHMARK_ONLY** | |
-| historical replay | **ADOPT_NOW** fixtures + budgeted Helius | harness replay |
-| liquidity dashboard | **ADOPT_NOW** design **M5** (Dune) | |
+| historical replay | **ADOPT_UI_PATTERN_NOW** fixtures + budgeted Helius | harness replay |
+| liquidity dashboard | **ADOPT_UI_PATTERN_NOW** design **G7** (Dune) | |
 | alerts | **DESIGN_FOR_LATER** | Owner: no auto cron |
 
 ---
@@ -359,7 +365,7 @@ Gates below block **implementation or live enablement**, not offline fixture UX.
 
 ## 7. UI encoding rules (Operator Console)
 
-These are product rules for M1 shell and later live pages.
+These are product rules for G0 shell and later live pages.
 
 ### 7.1 Trust chrome (required)
 
@@ -402,11 +408,11 @@ Every metric tile must be able to show:
 | Milestone | Provider emphasis |
 | --- | --- |
 | **M0** (done) | Helius holder pilot integrity semantics |
-| **M1** Shell | Fixtures encoding Tier A/B, PARTIAL, null ratios; no live multi-provider |
-| **M2** Holder hotpath | Helius enumeration + pool evidence path; DexScreener B market when Owner flips |
-| **M3** Address library | GMGN B observation sediment; Helius confirm on promote |
-| **M4** Task orchestrator | budgeted Helius replay; no silent provider spam |
-| **M5** Liquidity dashboard | Dune allowlist + market observations; Bubblemaps still benchmark |
+| **G0** Shell | Fixtures encoding Tier A/B, PARTIAL, null ratios; no live multi-provider |
+| **G1** Holder hotpath | Helius enumeration + pool evidence path; DexScreener B market when Owner flips |
+| **G3** Address library | GMGN B observation sediment; Helius confirm on promote |
+| **G4** Task orchestrator | budgeted Helius replay; no silent provider spam |
+| **G7** Liquidity dashboard | Dune allowlist + market observations; Bubblemaps still benchmark |
 
 ---
 
@@ -442,7 +448,7 @@ Source-degradation harness expectation: any single provider failure still yields
 | Holder pilot PARTIAL / concentration unverified | `docs/handoffs/STATUS_SYSTEM_20260730.md` |
 | GMGN Tier-B usable pool not smart money | same + `NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
 | Macro Dune allowlist / hash | `src/infrastructure/dune/*`, macro designs |
-| M1–M5 roadmap | `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
+| G0–G7 roadmap | `docs/handoffs/NEXT_STAGE_EXECUTION_PLAN_20260730.md` |
 
 Public rate/price figures in this document are **planning estimates** as of access date **2026-07-31** and must be re-verified in a dedicated provider-pin task before automation.
 

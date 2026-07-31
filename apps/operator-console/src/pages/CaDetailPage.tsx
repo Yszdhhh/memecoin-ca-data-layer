@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { dataSource } from "../data/source";
+import { dataSource, isHttpLiveSource } from "../data/source";
 import type { CaScanViewModel } from "../data/types";
 import { TrustBadge } from "../components/TrustBadge";
 import {
@@ -15,6 +15,8 @@ export function CaDetailPage() {
   const { mint = "" } = useParams();
   const [scan, setScan] = useState<CaScanViewModel | null | undefined>(undefined);
   const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const meta = dataSource.getDataSourceMeta();
 
   useEffect(() => {
     setScan(undefined);
@@ -25,20 +27,44 @@ export function CaDetailPage() {
       .catch((e: Error) => setErr(e.message));
   }, [mint]);
 
+  async function runLive() {
+    setBusy(true);
+    setErr(null);
+    try {
+      const task = await dataSource.createLocalDemoTask(mint);
+      if (isHttpLiveSource(dataSource)) {
+        await dataSource.pollTask(task.taskId, { maxAttempts: 45, intervalMs: 700 });
+      }
+      const next = await dataSource.getCaScan(mint);
+      setScan(next);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "live_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (err) return <div className="error">加载失败：{err}</div>;
   if (scan === undefined) return <div className="loading">加载中…</div>;
   if (scan === null) {
     return (
       <div className="empty">
-        未找到 fixture CA：<span className="mono">{mint}</span>
+        未找到 CA 结果：<span className="mono">{mint}</span>
         <div style={{ marginTop: 10 }}>
-          <Link to="/ca">返回列表</Link>
+          {meta.mode === "http" ? (
+            <button className="primary" type="button" disabled={busy} onClick={() => void runLive()}>
+              {busy ? "Live 分析中…" : "对该 mint 发起 Live 分析"}
+            </button>
+          ) : (
+            <Link to="/ca">返回列表</Link>
+          )}
         </div>
       </div>
     );
   }
 
   const topNames = ["top1", "top5", "top10", "top20", "top50", "top100"] as const;
+  const liveScan = scan.dataSource === "operator-api-live" || meta.live;
 
   return (
     <div>
@@ -46,8 +72,10 @@ export function CaDetailPage() {
         CA 详情 · {scan.symbol ?? "—"}{" "}
         <TrustBadge label={scan.status} />
       </h1>
-      <div className="banner warn">
-        Fixture / scrubbed pilot · source={scan.dataSource} · provider={scan.provider} · Live 未接入
+      <div className={`banner ${liveScan ? "warn" : ""}`}>
+        {liveScan
+          ? `Live / Operator API · source=${scan.dataSource} · provider=${scan.provider} · watermark=${scan.sourceWatermark} · 浏览器无 Helius Key`
+          : `Fixture / scrubbed pilot · source=${scan.dataSource} · provider=${scan.provider} · Live 未接入`}
       </div>
 
       <div className="panel">

@@ -26,7 +26,9 @@ export function Layout() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">Operator Console</div>
-        <div className="brand-sub">memecoin-ca-data-layer · Shell</div>
+        <div className="brand-sub">
+          memecoin-ca-data-layer · {meta.live ? "G1 Live Wiring" : "Shell / Fixture"}
+        </div>
         <nav className="nav">
           <NavLink to="/ca" className={({ isActive }) => (isActive ? "active" : "")}>
             CA 分析
