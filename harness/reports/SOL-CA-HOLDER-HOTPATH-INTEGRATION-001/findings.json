@@ -35,11 +35,18 @@
   ],
   "openBlockers": [
     {
-      "id": "live-smoke",
-      "reason": "HELIUS_API_KEY not available in runtime for bounded Live smoke",
-      "overall": "BLOCKED_BY_LIVE_SMOKE"
+      "id": "independent-audit",
+      "reason": "Implementer does not self-GREEN merge; independent auditor required",
+      "overall": "GREEN_FOR_INDEPENDENT_AUDIT"
     }
   ],
+  "liveSmoke": {
+    "attempted": true,
+    "totalProviderRequests": 11,
+    "totalBudget": 20,
+    "withinBudget": true,
+    "publicCaCount": 2
+  },
   "privacyZeros": {
     "chainfm_out_read": 0,
     "private_wallet_bulk": 0,

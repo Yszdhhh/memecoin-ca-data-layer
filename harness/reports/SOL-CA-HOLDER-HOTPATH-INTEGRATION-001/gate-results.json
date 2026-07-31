@@ -3,11 +3,29 @@
   "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196",
   "commands": {
     "typecheck": "PASS",
-    "hotpathTests": { "pass": 9, "fail": 0 },
-    "rootTest": "see full suite on commit",
-    "consoleCheck": "PASS post-shell-merge"
+    "npm_test": { "pass": 427, "fail": 0, "skipped": 1 },
+    "provider_accounting_tests": { "pass": 4, "fail": 0 },
+    "api_security_tests": { "pass": 7, "fail": 0 },
+    "ca_holder_task_tests": { "pass": 9, "fail": 0 },
+    "build": "PASS",
+    "console:check": "PASS",
+    "console:build": "PASS",
+    "security:scan": "PASS",
+    "harness:doctor": {
+      "status": "FAIL_PREEXISTING",
+      "note": "forbidden tracked files for wallet*.json — apps/operator-console/src/data/fixtures/wallets.json already on main from OPERATOR-CONSOLE-SHELL-001; not introduced by Hotpath repair"
+    },
+    "git_diff_check": "PASS"
   },
   "offline": "GREEN",
-  "liveSmoke": "BLOCKED (no HELIUS_API_KEY in env)",
-  "overall": "GREEN for offline delivery; Live smoke blocked without credential"
+  "liveSmoke": {
+    "attempted": true,
+    "totalProviderRequests": 11,
+    "totalBudget": 20,
+    "withinBudget": true,
+    "publicCaCount": 2,
+    "verdict": "LIVE_SMOKE_EXECUTED"
+  },
+  "overall": "GREEN_FOR_INDEPENDENT_AUDIT",
+  "note": "Implementer does not self-GREEN merge; independent auditor required"
 }

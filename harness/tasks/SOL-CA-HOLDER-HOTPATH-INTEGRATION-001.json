@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "layer": "hot_path",
-  "status": "IN_PROGRESS",
+  "status": "READY_FOR_INDEPENDENT_AUDIT",
   "objective": "Local 127.0.0.1 Operator API for single public CA holder analysis using existing cleaning pilot pipeline. Explicit live gate. Memory tasks. Offline tests GREEN. Bounded Live smoke required when credential present; otherwise overall BLOCKED_BY_LIVE_SMOKE.",
   "dependencies": ["OPERATOR-CONSOLE-SHELL-001"],
   "write_set": [
@@ -38,6 +38,6 @@
     "branch": "feature/sol-ca-holder-hotpath-integration-001",
     "HOTPATH_BASE_MAIN_SHA": "5cc414c83d5b0d602d55eac9bc392953a3161196"
   },
-  "verdict": "BLOCKED_BY_LIVE_SMOKE_UNTIL_SMOKE_RUN",
+  "verdict": "GREEN_FOR_INDEPENDENT_AUDIT",
   "live_smoke": "see live-smoke-summary.json"
 }

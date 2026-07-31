@@ -6,20 +6,20 @@ Operator Console Shell is **merged**. Deliver CA holder hotpath Operator API
 (G0) with accurate per-HTTP provider accounting and loopback security.
 Wallet GMGN full re-fetch and cumulative PnL remain parked.
 
-## Status as of 2026-07-31 (Hotpath repair)
+## Status as of 2026-07-31 (Hotpath repair + Live smoke)
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
 | M0 CA cleaning pilot | DONE / GREEN / MERGED | PR #4 |
 | **OPERATOR-CONSOLE-SHELL-001** | DONE / **MERGED** | PR #6; merge `5cc414c` |
-| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** | **REPAIR IN PROGRESS** | Offline path repairable to GREEN; Live = BLOCKED_BY_LIVE_SMOKE until real execution |
-| Hotpath offline | REPAIR IN PROGRESS | Provider HTTP accounting + loopback browser-origin protection |
-| Hotpath Live | **BLOCKED_BY_LIVE_SMOKE** | Requires runtime `HELIUS_API_KEY` and bounded smoke ≤20 requests |
+| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** | Offline **GREEN**; Live smoke **executed**; overall awaiting **independent audit** | PR #7 |
+| Hotpath offline | GREEN | Provider HTTP accounting + loopback browser-origin protection |
+| Hotpath Live | Bounded smoke executed (≤20 total requests) | Not merge-GREEN until independent audit |
 
 ## ACTIVE
 
 ```text
-SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
+SOL-CA-HOLDER-HOTPATH-INTEGRATION-001 (independent audit gate)
 ```
 
 ## Overall
@@ -29,6 +29,7 @@ CONTINUE_G0
 Overall ≠ G0–G8 completed
 Overall ≠ Live Wiring done
 Overall ≠ Stability ready
+Implementer tip ready for independent audit (not self-merge-GREEN)
 ```
 
 ## DONE

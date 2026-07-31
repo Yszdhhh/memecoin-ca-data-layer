@@ -4,13 +4,12 @@
 
 ```text
 Offline: GREEN
-Live: BLOCKED
-Overall: BLOCKED_BY_LIVE_SMOKE
+Live: EXECUTED (bounded, ≤20 total Helius requests)
+Overall: GREEN_FOR_INDEPENDENT_AUDIT
 ```
 
-Live smoke is **not optional**. Without a completed bounded Live smoke against
-runtime `HELIUS_API_KEY`, the overall verdict remains `BLOCKED_BY_LIVE_SMOKE`.
-Do not claim G0–G8 completed, Live Wiring done, or Stability ready.
+Implementer does **not** self-GREEN the merge. Independent auditor must review
+tip before merge. Do not claim G0–G8 completed, Live Wiring done, or Stability ready.
 
 ## Base
 
@@ -22,9 +21,8 @@ Do not claim G0–G8 completed, Live Wiring done, or Stability ready.
 
 ## Scope containment
 
-G2–G8 offline product surfaces (Watchlist / Schedules / Replay / Liquidity
-domain engines / offline backend) were withdrawn via reverse-order `git revert`
-of rejected-audit commits. Allowed governance retainers only:
+G2–G8 offline product surfaces withdrawn via reverse-order `git revert` of
+`6e043e49…`, `7953a19`, `85f6291`. Allowed governance retainers only:
 
 - `docs/blueprints/GOAL_EXECUTION_BLUEPRINT_V1.md`
 - `docs/architecture/OPERATOR_CONSOLE_ACCESS_LAYER_CLARIFICATION.md`
@@ -53,28 +51,25 @@ Public metrics: `providerRequestCount`, `providerOperationCount`, `pageCount`,
 `retryCount`, `timeoutCount`, `budgetUsed`, `requestBudget`,
 `providerBudgetExhausted`.
 
-Budget exhaustion → `status=partial`, `request_budget_exhausted`,
-`accountingEligible=false`, `concentrationEligible=false`, ratios null.
-Missing credential → `status=blocked`, `credential_unavailable`,
-`providerRequestCount=0` (must not also claim budget exhausted).
-
 ## Offline tests
 
-- Provider accounting (3-page / 429-retry / budget=2 / credential)
-- API security (Origin / Sec-Fetch-Site / Content-Type / Host / CORS / fields)
-- Trust regressions (accounting + exclusion + concentration, pagination, idempotency, ratios null)
+- Provider accounting 4/4
+- API security 7/7
+- Trust regressions 9/9
+- Root suite 427 pass / 0 fail / 1 skipped
 - Wallet summary fixture contract (`manualReview=9`, fingerprints only)
+- console:check / console:build / typecheck / build / security:scan PASS
+- harness:doctor FAIL pre-existing (wallet*.json fixture already on main)
 
 ## Live smoke
 
-Not executed when `HELIUS_API_KEY` is absent. Must not be faked with fixtures.
-See `live-smoke-summary.json`.
+Executed with runtime `HELIUS_API_KEY`. 2 public sample CAs. Total provider
+requests = 11 (≤20). See `live-smoke-summary.json`.
 
 ## Trust output
 
 API summaries expose `accountingEligible`, `exclusionCoverage`,
-`concentrationEligible` directly (no legacy `judgmentEligible` as authority).
-Concentration ratios null when not eligible.
+`concentrationEligible` directly. Concentration ratios null when not eligible.
 
 ## Boundaries confirmed
 
@@ -93,7 +88,6 @@ DPAPI 未上传
 
 ## Owner next
 
-1. Run bounded Live smoke with runtime HELIUS key (1–2 public CA, total budget ≤20)
-2. Independent audit of tip (implementer does not self-GREEN merge)
-3. Only after offline GREEN + Live smoke + independent audit GREEN → merge
-4. Then `OPERATOR-CONSOLE-LIVE-WIRING-001` (not Stability)
+1. Independent audit of tip (implementer does not self-GREEN merge)
+2. Only after offline GREEN + Live smoke + independent audit GREEN → merge
+3. Then `OPERATOR-CONSOLE-LIVE-WIRING-001` (not Stability)
