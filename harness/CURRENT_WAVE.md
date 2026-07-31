@@ -7,15 +7,17 @@ Wire Operator Console shell to live CA holder hotpath Operator API
 fixture-first until Live Wiring GREEN. Wallet GMGN full re-fetch and cumulative
 PnL remain parked. Do **not** start Stability.
 
-## Status as of 2026-07-31 (Hotpath merged)
+## Status as of 2026-07-31 (Hotpath merged + G1 launch)
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
 | M0 CA cleaning pilot | DONE / GREEN / MERGED | PR #4 |
-| **OPERATOR-CONSOLE-SHELL-001** | DONE / **MERGED** | PR #6; merge `5cc414c` |
-| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** | DONE / **GREEN** / **MERGED** | PR #7; merge `ae60368`; independent audit GREEN |
-| Main integration gates | CRITICAL PASS | typecheck/test/build/console/security/hotpath tests PASS; harness:doctor FAIL pre-existing wallets.json P2 |
-| **OPERATOR-CONSOLE-LIVE-WIRING-001** | ACTIVE (branch created) | Console → loopback Operator API |
+| **OPERATOR-CONSOLE-SHELL-001** | DONE / GREEN / MERGED | PR #6; merge `5cc414c` |
+| **SOL-CA-HOLDER-HOTPATH-INTEGRATION-001** (G0) | DONE / GREEN / MERGED | PR #7; merge `ae60368`; independent audit GREEN |
+| Hotpath Live smoke | 2 public CA / 11 total Helius HTTP requests | Historical implementer smoke; accepted in audit package |
+| G0 | DONE | Shell + Holder Hotpath on main |
+| Main integration gates | CRITICAL PASS | typecheck/test/build/console/security PASS; harness:doctor FAIL pre-existing wallets.json P2 |
+| **OPERATOR-CONSOLE-LIVE-WIRING-001** | ACTIVE | Console → loopback Operator API; G1 only |
 
 ## ACTIVE
 
@@ -23,14 +25,31 @@ PnL remain parked. Do **not** start Stability.
 OPERATOR-CONSOLE-LIVE-WIRING-001
 ```
 
+## NEXT
+
+```text
+SOL-CA-HOLDER-STABILITY-BATCHES-001
+```
+
+(Owner-gated; only after Live Wiring GREEN. Do **not** start Stability early.)
+
+## AFTER
+
+```text
+OBSERVABILITY-BASELINE-001
+```
+
 ## Overall
 
 ```text
 CONTINUE_LIVE_WIRING
 Hotpath backend MERGED (PR #7)
-Overall ≠ G0–G8 completed
+G0 = DONE
+Overall ≠ G2–G8 completed
 Overall ≠ Live Wiring done
 Overall ≠ Stability ready
+Overall ≠ research prototype in production
+Overall ≠ wallets chain-verified
 ```
 
 ## DONE
@@ -39,15 +58,8 @@ Overall ≠ Stability ready
 SOL-CA-HOLDER-HOTPATH-INTEGRATION-001
 OPERATOR-CONSOLE-SHELL-001
 M0-CA-CLEANING-MAIN-INTEGRATION-001
+G0
 ```
-
-## NEXT (after Live Wiring GREEN)
-
-```text
-Stability batch only after Live Wiring complete (Owner-gated)
-```
-
-Do **not** start Stability Batch until Live Wiring is complete.
 
 ## PARKED
 
@@ -58,6 +70,10 @@ Do **not** start Stability Batch until Live Wiring is complete.
 * BSC
 * 完整 SOL-E2E
 * G2–G8 offline product surfaces (withdrawn from Hotpath; not in main product path)
+* Watchlist / Schedules / Replay / Liquidity product surfaces
+* PostgreSQL operational path for console
+* Claiming research prototype is production-bound
+* Claiming wallets are chain-verified
 
 ## Authority docs
 

@@ -105,14 +105,23 @@
 
 ```text
 M0：DONE / GREEN / MERGED（PR #4）
-OPERATOR-CONSOLE-SHELL-001：DONE / MERGED（PR #6）
-SOL-CA-HOLDER-HOTPATH-INTEGRATION-001：DONE / GREEN / MERGED（PR #7）
+OPERATOR-CONSOLE-SHELL-001：DONE / GREEN / MERGED（PR #6）
+SOL-CA-HOLDER-HOTPATH-INTEGRATION-001（Holder Hotpath / G0）：DONE / GREEN / MERGED（PR #7）
   Merge：ae60368bcd82ebc3fb9f2655dd82f6d079158401
   Audit：GREEN / ACCEPT_AND_MERGE
+  Hotpath Live smoke：2 public CA / 11 total Helius HTTP requests
   Main critical gates：PASS（harness:doctor wallets.json P2 预存）
+G0：DONE
 
 ACTIVE：OPERATOR-CONSOLE-LIVE-WIRING-001
-NEXT：Stability 仅在 Live Wiring 完成后（Owner-gated）
+NEXT：SOL-CA-HOLDER-STABILITY-BATCHES-001
+AFTER：OBSERVABILITY-BASELINE-001
+
+不得声称：
+Stability 已完成
+G2–G8 已完成
+研究 prototype 已进入生产
+钱包已链上 verified
 
 PARKED：
 1433 全量重抓
@@ -122,6 +131,7 @@ cron
 BSC
 完整 SOL-E2E
 G2–G8 offline product surfaces
+Watchlist / Schedules / Replay / Liquidity
 ```
 
 ---

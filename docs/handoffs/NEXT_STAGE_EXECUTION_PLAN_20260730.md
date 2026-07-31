@@ -8,8 +8,10 @@
 
 ```text
 M0：DONE / GREEN / MERGED（PR #4）
-OPERATOR-CONSOLE-SHELL-001：DONE / MERGED（PR #6）
-SOL-CA-HOLDER-HOTPATH-INTEGRATION-001：DONE / GREEN / MERGED（PR #7）
+OPERATOR-CONSOLE-SHELL-001：DONE / GREEN / MERGED（PR #6）
+SOL-CA-HOLDER-HOTPATH-INTEGRATION-001（Holder Hotpath）：DONE / GREEN / MERGED（PR #7）
+Hotpath Live smoke：2 public CA / 11 total Helius HTTP requests
+G0：DONE
 
 PR：#7
 Merge commit：ae60368bcd82ebc3fb9f2655dd82f6d079158401
@@ -20,8 +22,12 @@ Main critical gates：PASS（harness:doctor wallets.json = pre-existing P2）
 OPERATOR-CONSOLE-LIVE-WIRING-001
 Branch：feature/operator-console-live-wiring-001
 
-NEXT（after Live Wiring GREEN）：
-Stability batch（Owner-gated；不得抢跑）
+NEXT：
+SOL-CA-HOLDER-STABILITY-BATCHES-001
+（Owner-gated；仅 Live Wiring GREEN 后；不得抢跑）
+
+AFTER：
+OBSERVABILITY-BASELINE-001
 
 PARKED：
 1433 全量重抓
@@ -31,6 +37,7 @@ cron
 BSC
 完整 SOL-E2E
 G2–G8 offline product surfaces
+不得声称：Stability/G2–G8 完成、研究 prototype 生产化、钱包链上 verified
 ```
 
 `OPERATOR-CONSOLE-LIVE-WIRING-001` = Console shell 接到 loopback CA holder Operator API（非 Stability、非 G2–G8 扩面）。
