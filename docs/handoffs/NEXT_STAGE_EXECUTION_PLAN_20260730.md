@@ -8,26 +8,29 @@
 
 ```text
 M0：DONE / GREEN / MERGED（PR #4）
-OPERATOR-CONSOLE-SHELL-001：DONE / GREEN / MERGED（PR #6）
+OPERATOR-CONSOLE-SHELL-001（Console Shell）：DONE / GREEN / MERGED（PR #6）
 SOL-CA-HOLDER-HOTPATH-INTEGRATION-001（Holder Hotpath）：DONE / GREEN / MERGED（PR #7）
+OPERATOR-CONSOLE-LIVE-WIRING-001：DONE / GREEN / MERGED（PR #8）
 Hotpath Live smoke：2 public CA / 11 total Helius HTTP requests
+Browser Live smoke：1 public CA / 6 of 10 Helius requests
+Auditor re-smoke：provider_shape_drift after 1 request
 G0：DONE
 
-PR：#7
-Merge commit：ae60368bcd82ebc3fb9f2655dd82f6d079158401
-Independent audit：GREEN（SOL-CA-HOLDER-HOTPATH-INTEGRATION-001-AUDIT-001）
+PR：#8
+Merge commit：22826bc518f26ed0659df07b360f556681f6b663
+Independent audit：GREEN（OPERATOR-CONSOLE-LIVE-WIRING-001-AUDIT-001）
 Main critical gates：PASS（harness:doctor wallets.json = pre-existing P2）
 
 当前 ACTIVE：
-OPERATOR-CONSOLE-LIVE-WIRING-001
-Branch：feature/operator-console-live-wiring-001
+SOL-CA-HOLDER-STABILITY-BATCHES-001
+Branch：feature/sol-ca-holder-stability-batches-001
 
 NEXT：
-SOL-CA-HOLDER-STABILITY-BATCHES-001
-（Owner-gated；仅 Live Wiring GREEN 后；不得抢跑）
+OBSERVABILITY-BASELINE-001
+（Owner-gated；仅 Stability GREEN 后；不得抢跑）
 
 AFTER：
-OBSERVABILITY-BASELINE-001
+MARKET-CONTEXT-ADAPTER-001
 
 PARKED：
 1433 全量重抓
@@ -37,12 +40,12 @@ cron
 BSC
 完整 SOL-E2E
 G2–G8 offline product surfaces
-不得声称：Stability/G2–G8 完成、研究 prototype 生产化、钱包链上 verified
+不得声称：Stability GREEN_FOR_INDEPENDENT_AUDIT、G2–G8 完成、研究 prototype 生产化、钱包链上 verified
 ```
 
-`OPERATOR-CONSOLE-LIVE-WIRING-001` = Console shell 接到 loopback CA holder Operator API（非 Stability、非 G2–G8 扩面）。
+`SOL-CA-HOLDER-STABILITY-BATCHES-001` = 20–30 次公开 CA 真实产品路径稳定性批跑（非 G2 market、非 Observability 扩面）。
 
-不要重复 Hotpath 实现/审计；不要在 Live Wiring 完成前进入 Stability。
+不要重复 Live Wiring / Hotpath 实现/审计；不要在 Stability 完成前进入 Observability / MARKET-CONTEXT。
 
 ---
 
