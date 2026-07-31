@@ -1,0 +1,61 @@
+{
+  "controlledRepeatCount": 3,
+  "domainChecks": [
+    {
+      "mintFingerprint": "1c2c7d3cac226153",
+      "primarySha": "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce",
+      "peerShas": [
+        "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    },
+    {
+      "mintFingerprint": "7f9d842e510fb530",
+      "primarySha": "ffda84b2841f57e969a599da331d570fe64b1e00546aa23858dc28bb5cac7337",
+      "peerShas": [
+        "ffda84b2841f57e969a599da331d570fe64b1e00546aa23858dc28bb5cac7337"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    },
+    {
+      "mintFingerprint": "ebf68724c95a103c",
+      "primarySha": "95c1da4909a808e8293167c1c269dcbe50d68f293e77ae4b3c8c693f696208cc",
+      "peerShas": [
+        "95c1da4909a808e8293167c1c269dcbe50d68f293e77ae4b3c8c693f696208cc"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    },
+    {
+      "mintFingerprint": "1c2c7d3cac226153",
+      "primarySha": "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce",
+      "peerShas": [
+        "8bf6dd45b8683064caa5dcffff5db9ea1ddf7acb3bc42854daf4277245cd08ce"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    },
+    {
+      "mintFingerprint": "7f9d842e510fb530",
+      "primarySha": "ffda84b2841f57e969a599da331d570fe64b1e00546aa23858dc28bb5cac7337",
+      "peerShas": [
+        "ffda84b2841f57e969a599da331d570fe64b1e00546aa23858dc28bb5cac7337"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    },
+    {
+      "mintFingerprint": "ebf68724c95a103c",
+      "primarySha": "95c1da4909a808e8293167c1c269dcbe50d68f293e77ae4b3c8c693f696208cc",
+      "peerShas": [
+        "95c1da4909a808e8293167c1c269dcbe50d68f293e77ae4b3c8c693f696208cc"
+      ],
+      "trustConsistent": true,
+      "note": "live_repeat_allows_chain_delta"
+    }
+  ],
+  "liveRepeatNote": "Live repeats allow slot/holder/supply deltas; compare trust-state and warning drift.",
+  "offlineDomainNote": "Unit tests assert domainDeterminismKey stability on fixed scrubbed inputs."
+}

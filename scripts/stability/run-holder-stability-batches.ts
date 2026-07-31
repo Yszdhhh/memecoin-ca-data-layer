@@ -165,10 +165,20 @@ function scrubRecord(
       residualRatio = acc.accountingResidualRatio as string | number | null;
     } else if ("residualRatio" in acc) {
       residualRatio = acc.residualRatio as string | number | null;
+    } else if ("accountingResidualRaw" in acc && "mintSupplyRaw" in acc) {
+      // keep raw residual presence as string; ratio may be absent
+      residualRatio = null;
     }
   }
-  if (residualRatio === null && result?.concentration && Array.isArray(result.concentration)) {
-    // do not invent residual from concentration
+  // Optional concentration ratio (top1) for fail-closed display check only.
+  let concentrationRatio: string | number | null = null;
+  if (result?.concentration && Array.isArray(result.concentration)) {
+    const top1 = (result.concentration as Array<Record<string, unknown>>).find(
+      (m) => m.name === "top1",
+    );
+    if (top1 && "ratio" in top1) {
+      concentrationRatio = top1.ratio as string | number | null;
+    }
   }
   if (residualRatio === null) {
     nullWithWarning(null, "residualRatio", warnings);
@@ -183,6 +193,7 @@ function scrubRecord(
     accountingEligible,
     concentrationEligible,
     residualRatio,
+    concentrationRatio,
     exclusionCoverage,
     resultStatus: status,
     warnings,
@@ -384,12 +395,20 @@ async function main(): Promise<void> {
     );
 
     const partialMetrics = aggregateStabilityMetrics(records);
-    const shapeCas = new Set(
-      records.filter((r) => r.shapeDrift && r.mint).map((r) => r.mint as string),
+    const hardShape = records.filter(
+      (r) =>
+        r.shapeDrift &&
+        (r.resultStatus === "failed" || r.failureReason === "provider_shape_drift") &&
+        !(r.warningCodes ?? []).includes("provider_shape_drift_partial_skip"),
     );
+    const hardCas = new Set(hardShape.map((r) => r.mint).filter(Boolean) as string[]);
     const pause = shouldPauseBatches({
       ...partialMetrics,
-      affectedShapeDriftCas: shapeCas.size,
+      hardShapeDriftCount: hardShape.length,
+      affectedHardShapeDriftCas: hardCas.size,
+      affectedShapeDriftCas: new Set(
+        records.filter((r) => r.shapeDrift && r.mint).map((r) => r.mint as string),
+      ).size,
     });
     if (pause.pause) {
       paused = true;

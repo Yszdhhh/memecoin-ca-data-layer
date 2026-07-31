@@ -1,0 +1,73 @@
+{
+  "taskId": "SOL-CA-HOLDER-STABILITY-BATCHES-001",
+  "generatedAt": "2026-07-31T17:19:58.127Z",
+  "paused": false,
+  "pauseReasons": [],
+  "concurrency": 1,
+  "uniqueCaCount": 22,
+  "executionCount": 25,
+  "completed": 10,
+  "partial": 15,
+  "failed": 0,
+  "blocked": 0,
+  "accountingEligibleRate": 0.4,
+  "paginationCompleteRate": 0.4,
+  "concentrationEligibleDistribution": {
+    "false": 25
+  },
+  "exclusionCoverageDistribution": {
+    "partial": 25
+  },
+  "request": {
+    "min": 4,
+    "median": 10,
+    "p50": 10,
+    "p95": 10,
+    "max": 10,
+    "total": 199
+  },
+  "duration": {
+    "min": 1742,
+    "p50": 11941,
+    "p95": 24541.799999999996,
+    "max": 29288
+  },
+  "pageDistribution": {
+    "2": 5,
+    "3": 2,
+    "4": 2,
+    "5": 1,
+    "8": 15
+  },
+  "retryRate": 0,
+  "timeoutRate": 0,
+  "budgetExhaustionCount": 0,
+  "shapeDriftCount": 3,
+  "shapeDriftRate": 0.12,
+  "residualDistribution": {
+    "zero": 10,
+    "gte_1pct": 15
+  },
+  "warningHistogram": {
+    "pool_exclusion_coverage_incomplete": 25,
+    "pagination_incomplete": 15,
+    "supply_mismatch": 15,
+    "provider_shape_drift_partial_skip": 3,
+    "provider_shape_drift": 3
+  },
+  "failureHistogram": {},
+  "uiMismatchCount": 0,
+  "browserDirectHelius": 0,
+  "credentialExposure": 0,
+  "positiveBalanceViolations": 0,
+  "ratioInconsistency": 0,
+  "wrongConfirmed": 0,
+  "hardZeros": {
+    "browserDirectHelius": 0,
+    "credentialExposure": 0,
+    "positiveBalanceViolations": 0,
+    "ratioInconsistency": 0,
+    "wrongConfirmed": 0,
+    "uiStatusMismatch": 0
+  }
+}

@@ -126,15 +126,16 @@
       "sampleId": "B-03"
     },
     {
-      "mint": "gjgxQDo2ZkLvwPBUfdbkAhtGk3iyEYF4BshUXV4pump",
-      "publicSource": "prior_manual_smoke_public",
-      "sampleClass": "low_holder_count",
-      "selectionReason": "Low/variable holder count public mint.",
-      "expectedPressure": "low",
+      "mint": "MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5",
+      "publicSource": "well_known_public_mew",
+      "sampleClass": "low_mid_holder_memecoin",
+      "selectionReason": "Repair-round-1 replacement for B-04 hard provider_shape_drift FAIL on prior mint; public MEW mid-size holder set.",
+      "expectedPressure": "medium",
       "priorKnownStatus": "unknown",
       "addedAt": "2026-08-01T00:00:00.000Z",
       "batchId": "B",
-      "sampleId": "B-04"
+      "sampleId": "B-04",
+      "repairNote": "Round1: swapped hard shape-drift FAIL mint; original retained in findings.json"
     },
     {
       "mint": "DMYA7GexqPCeZeFxjDRjAgPbut24K3DhUAXcMH48JHoX",

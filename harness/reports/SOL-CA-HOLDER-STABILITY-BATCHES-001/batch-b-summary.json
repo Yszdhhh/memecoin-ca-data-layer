@@ -1,0 +1,191 @@
+{
+  "batchId": "B",
+  "executionCount": 9,
+  "uniqueCaCount": 9,
+  "completed": 2,
+  "partial": 7,
+  "failed": 0,
+  "blocked": 0,
+  "requestTotal": 78,
+  "requestP50": 10,
+  "requestP95": 10,
+  "requestMax": 10,
+  "durationP50": 12163,
+  "durationP95": 24268.799999999996,
+  "shapeDriftCount": 2,
+  "accountingEligibleRate": 0.2222222222222222,
+  "paginationCompleteRate": 0.2222222222222222,
+  "samples": [
+    {
+      "sampleId": "B-01",
+      "mintFingerprint": "45c0e3c7cc89a210",
+      "taskId": "8585372c-0126-40a6-8459-7c4eab805fc1",
+      "resultStatus": "completed",
+      "failureReason": null,
+      "providerRequestCount": 4,
+      "durationMs": 1742,
+      "accountingEligible": true,
+      "paginationComplete": true,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "6b9d57df7199e6e45f72a3ef69488f32c44d9357ac61ee4064ab36b9ddcac8be",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-02",
+      "mintFingerprint": "1e0c895fb3221aae",
+      "taskId": "a565dfd0-456f-4452-9e19-b778c490064a",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 12163,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "c9990c1026e4a355dc50017aa552cac36a717749d1066caecf8ecfff79583ada",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-03",
+      "mintFingerprint": "ecb8087c8dd21ba9",
+      "taskId": "81bce012-623a-4ccb-97eb-7e9d18f2e6bf",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 10487,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "50a3d4dd3a02eb547e298dce0173b5a057315ac55875391f638f75a7c110516e",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-04",
+      "mintFingerprint": "aa170acfc1906d6a",
+      "taskId": "0b67e5c6-98a0-443c-a34f-0e126aa62c60",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 16740,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "058da2e2460135fb13db0b52b0b39c16836ac31ec0992f0f39ae69efcc27f270",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-05",
+      "mintFingerprint": "7f8b83403f7c2610",
+      "taskId": "384fb97b-1725-492d-b32a-9f2c1ee75cae",
+      "resultStatus": "completed",
+      "failureReason": null,
+      "providerRequestCount": 4,
+      "durationMs": 2373,
+      "accountingEligible": true,
+      "paginationComplete": true,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "575383e00a37831dd519ade0dbdfdd36f4ba28ca425215615868d549352a78ae",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-06",
+      "mintFingerprint": "f249bbf137c2e667",
+      "taskId": "1932fae8-3d09-47c0-8a48-a5e74545b973",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 14467,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "bbb6afba2d579f74a6c55b8f75ac78dd9aa69724cd61bf0fed432f589ee23e2f",
+      "shapeDrift": true,
+      "warningCodes": [
+        "provider_shape_drift_partial_skip",
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete",
+        "provider_shape_drift"
+      ]
+    },
+    {
+      "sampleId": "B-07",
+      "mintFingerprint": "ee6e6ef71e602ddc",
+      "taskId": "2a7b899f-71bd-4dd4-9edb-17fa70567a41",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 29288,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "3640939ab550be75b959612a1b1c17f7f248b24cf283cf56ab1ab93e163e126b",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete"
+      ]
+    },
+    {
+      "sampleId": "B-08",
+      "mintFingerprint": "acd24e2339bcc62a",
+      "taskId": "49d8a0ae-db86-4dc3-9bcc-da3445bf4e3e",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 11941,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "9b8929efbd2cead4cc1471d83396bd1d0b7f2cf3dcae3bca6d8ade9759a40bdc",
+      "shapeDrift": true,
+      "warningCodes": [
+        "provider_shape_drift_partial_skip",
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete",
+        "provider_shape_drift"
+      ]
+    },
+    {
+      "sampleId": "B-09",
+      "mintFingerprint": "9e491a8b301fee00",
+      "taskId": "fcf3a965-2c2d-4b0d-87a6-33b469f48164",
+      "resultStatus": "partial",
+      "failureReason": null,
+      "providerRequestCount": 10,
+      "durationMs": 14572,
+      "accountingEligible": false,
+      "paginationComplete": false,
+      "concentrationEligible": false,
+      "scrubbedOutputSha": "a8a02d0cf1b0fde02cd3998ecd32868568609d5a47c9d1421f76649729b95125",
+      "shapeDrift": false,
+      "warningCodes": [
+        "pagination_incomplete",
+        "supply_mismatch",
+        "pool_exclusion_coverage_incomplete"
+      ]
+    }
+  ]
+}

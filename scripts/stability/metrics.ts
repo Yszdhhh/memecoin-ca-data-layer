@@ -64,11 +64,22 @@ export function nullWithWarning<T>(
   return value;
 }
 
-/** Fail-closed: accounting ineligible forces concentration ineligible. */
+/**
+ * Fail-closed trust rules:
+ * - accounting ineligible → concentration ineligible
+ * - exclusion partial/unavailable → concentration ineligible
+ * - concentration ratios must be null (not 0%) when concentration ineligible
+ *
+ * Accounting residualRatio is independent: a real residual of 0 is valid and
+ * is NOT a ratio inconsistency. ratioInconsistency only flags fabricated
+ * concentration ratios when ineligible (e.g. confirmed 0% concentration).
+ */
 export function applyIneligibilityRules(rec: {
   accountingEligible: boolean | null;
   concentrationEligible: boolean | null;
   residualRatio: string | number | null;
+  /** Optional concentration top-N ratio when present in result. */
+  concentrationRatio?: string | number | null;
   exclusionCoverage: string | null;
   resultStatus: string | null;
   warnings: string[];
@@ -76,11 +87,14 @@ export function applyIneligibilityRules(rec: {
   accountingEligible: boolean | null;
   concentrationEligible: boolean | null;
   residualRatio: string | number | null;
+  concentrationRatio: string | number | null;
   wrongConfirmed: boolean;
   ratioInconsistency: boolean;
 } {
   let concentrationEligible = rec.concentrationEligible;
-  let residualRatio = rec.residualRatio;
+  const residualRatio = rec.residualRatio;
+  let concentrationRatio =
+    rec.concentrationRatio === undefined ? null : rec.concentrationRatio;
   let wrongConfirmed = false;
   let ratioInconsistency = false;
 
@@ -103,17 +117,30 @@ export function applyIneligibilityRules(rec: {
     concentrationEligible = false;
   }
 
-  if (concentrationEligible !== true && residualRatio === 0) {
-    // ratio must not be fabricated 0% when ineligible — null + warning
-    residualRatio = null;
-    rec.warnings.push("ratio_null_when_ineligible");
-    ratioInconsistency = true;
+  // Concentration display: never show 0% when ineligible — force null.
+  if (concentrationEligible !== true) {
+    if (
+      concentrationRatio === 0 ||
+      concentrationRatio === "0" ||
+      concentrationRatio === "0.0" ||
+      concentrationRatio === "0.00"
+    ) {
+      ratioInconsistency = true;
+      rec.warnings.push("ratio_inconsistency:concentration_zero_while_ineligible");
+    }
+    if (concentrationRatio !== null && concentrationRatio !== undefined) {
+      concentrationRatio = null;
+      if (!rec.warnings.includes("concentration_ratio_null_when_ineligible")) {
+        rec.warnings.push("concentration_ratio_null_when_ineligible");
+      }
+    }
   }
 
   return {
     accountingEligible: rec.accountingEligible,
     concentrationEligible,
     residualRatio,
+    concentrationRatio,
     wrongConfirmed,
     ratioInconsistency,
   };
@@ -317,8 +344,16 @@ export function aggregateStabilityMetrics(records: StabilityTaskRecord[]): {
   };
 }
 
+/**
+ * Pause rules (launch §7). Soft shape-drift PARTIAL (provider_shape_drift_partial_skip
+ * with remaining usable fields) is measured but not a hard pause by itself — it is the
+ * fail-closed path for provider field variance (AUD-P2-004 / Stability P2).
+ * Hard shape-drift FAIL (terminal failed + provider_shape_drift) on ≥2 CAs or hard rate
+ * >10% still pauses for finding + bounded repair.
+ */
 export function shouldPauseBatches(metrics: {
   shapeDriftCount: number;
+  hardShapeDriftCount?: number;
   executionCount: number;
   positiveBalanceViolations: number;
   ratioInconsistency: number;
@@ -326,15 +361,15 @@ export function shouldPauseBatches(metrics: {
   credentialExposure: number;
   request: { total: number; max: number | null };
   affectedShapeDriftCas?: number;
+  affectedHardShapeDriftCas?: number;
 }): { pause: boolean; reasons: string[] } {
   const reasons: string[] = [];
-  const rate =
-    metrics.executionCount === 0
-      ? 0
-      : metrics.shapeDriftCount / metrics.executionCount;
-  if (rate > 0.1) reasons.push("shape_drift_rate_gt_10pct");
-  if ((metrics.affectedShapeDriftCas ?? 0) >= 2) {
-    reasons.push("shape_drift_repeat_across_cas");
+  const hard = metrics.hardShapeDriftCount ?? 0;
+  const hardRate =
+    metrics.executionCount === 0 ? 0 : hard / metrics.executionCount;
+  if (hardRate > 0.1) reasons.push("hard_shape_drift_rate_gt_10pct");
+  if ((metrics.affectedHardShapeDriftCas ?? 0) >= 2) {
+    reasons.push("hard_shape_drift_repeat_across_cas");
   }
   if (metrics.positiveBalanceViolations > 0) reasons.push("positive_balance_violation");
   if (metrics.ratioInconsistency > 0) reasons.push("ratio_inconsistency");

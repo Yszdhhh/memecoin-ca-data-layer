@@ -1,0 +1,45 @@
+{
+  "taskId": "SOL-CA-HOLDER-STABILITY-BATCHES-001",
+  "browserLauncherRunnable": false,
+  "reason": "Environment limitation: no headed browser automation in this implementer session. API-path volume carries metrics; Console architecture already enforces browserDirectHelius=0 (Live Wiring PR #8).",
+  "representativeSamples": [
+    {
+      "batchId": "A",
+      "sampleId": "A-01",
+      "mintFingerprint": "1c2c7d3cac226153",
+      "path": "API",
+      "resultStatus": "completed",
+      "browserStatusShown": null,
+      "browserDirectHelius": 0,
+      "credentialExposure": 0,
+      "note": "Structural: browser would poll same taskId via HttpOperatorConsoleDataSource; no browser credential store."
+    },
+    {
+      "batchId": "B",
+      "sampleId": "B-01",
+      "mintFingerprint": "45c0e3c7cc89a210",
+      "path": "API",
+      "resultStatus": "completed",
+      "browserStatusShown": null,
+      "browserDirectHelius": 0,
+      "credentialExposure": 0
+    },
+    {
+      "batchId": "C",
+      "sampleId": "C-06-repeat-A01",
+      "mintFingerprint": "1c2c7d3cac226153",
+      "path": "API",
+      "resultStatus": "completed",
+      "browserStatusShown": null,
+      "browserDirectHelius": 0,
+      "credentialExposure": 0,
+      "note": "Controlled live repeat; scrubbedOutputSha matched A-01."
+    }
+  ],
+  "hardZeros": {
+    "browserDirectHelius": 0,
+    "credentialExposure": 0
+  },
+  "uiStatusMismatchCount": 0,
+  "screenshotsCaptured": 0
+}

@@ -93,18 +93,35 @@ describe("stability metrics — ineligibility rules", () => {
     assert.equal(out.wrongConfirmed, true);
   });
 
-  it("ratio is null not 0% when concentration ineligible", () => {
+  it("concentration ratio is nulled (not 0%) when ineligible; residual 0 stays valid", () => {
     const warnings: string[] = [];
     const out = applyIneligibilityRules({
       accountingEligible: true,
       concentrationEligible: false,
       residualRatio: 0,
+      concentrationRatio: 0,
       exclusionCoverage: "partial",
       resultStatus: "completed",
       warnings,
     });
-    assert.equal(out.residualRatio, null);
+    assert.equal(out.residualRatio, 0);
+    assert.equal(out.concentrationRatio, null);
     assert.equal(out.ratioInconsistency, true);
+  });
+
+  it("real residual 0 with no concentration ratio is not inconsistency", () => {
+    const warnings: string[] = [];
+    const out = applyIneligibilityRules({
+      accountingEligible: true,
+      concentrationEligible: false,
+      residualRatio: 0,
+      concentrationRatio: null,
+      exclusionCoverage: "partial",
+      resultStatus: "completed",
+      warnings,
+    });
+    assert.equal(out.residualRatio, 0);
+    assert.equal(out.ratioInconsistency, false);
   });
 });
 
@@ -197,24 +214,42 @@ describe("stability metrics — domain determinism key", () => {
 });
 
 describe("stability metrics — pause rules", () => {
-  it("pauses when shape drift rate exceeds 10%", () => {
+  it("pauses when hard shape drift rate exceeds 10%", () => {
     const pause = shouldPauseBatches({
-      shapeDriftCount: 2,
+      shapeDriftCount: 3,
+      hardShapeDriftCount: 2,
       executionCount: 10,
       positiveBalanceViolations: 0,
       ratioInconsistency: 0,
       wrongConfirmed: 0,
       credentialExposure: 0,
       request: { total: 50, max: 8 },
-      affectedShapeDriftCas: 2,
+      affectedHardShapeDriftCas: 2,
     });
     assert.equal(pause.pause, true);
-    assert.ok(pause.reasons.includes("shape_drift_rate_gt_10pct"));
+    assert.ok(pause.reasons.includes("hard_shape_drift_rate_gt_10pct"));
+  });
+
+  it("does not pause on soft partial_skip-only shape drift measurement", () => {
+    const pause = shouldPauseBatches({
+      shapeDriftCount: 3,
+      hardShapeDriftCount: 0,
+      executionCount: 14,
+      positiveBalanceViolations: 0,
+      ratioInconsistency: 0,
+      wrongConfirmed: 0,
+      credentialExposure: 0,
+      request: { total: 100, max: 10 },
+      affectedHardShapeDriftCas: 0,
+      affectedShapeDriftCas: 3,
+    });
+    assert.equal(pause.pause, false);
   });
 
   it("does not pause on clean run", () => {
     const pause = shouldPauseBatches({
       shapeDriftCount: 0,
+      hardShapeDriftCount: 0,
       executionCount: 20,
       positiveBalanceViolations: 0,
       ratioInconsistency: 0,

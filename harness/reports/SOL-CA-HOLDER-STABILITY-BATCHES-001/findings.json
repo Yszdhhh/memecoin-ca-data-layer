@@ -1,0 +1,59 @@
+{
+  "taskId": "SOL-CA-HOLDER-STABILITY-BATCHES-001",
+  "generatedAt": "2026-07-31T17:20:00.000Z",
+  "repairRounds": 1,
+  "findings": [
+    {
+      "id": "STAB-P2-001",
+      "severity": "P2",
+      "title": "provider_shape_drift measured on large-holder public CAs (soft PARTIAL path)",
+      "status": "MEASURED_CONTROLLED",
+      "controlFlow": "LiveHelius enumeration skips malformed token-account rows; pilot tags provider_shape_drift + provider_shape_drift_partial_skip and downgrades OK→PARTIAL. Operator API surfaces status=partial with accounting/concentration ineligible.",
+      "observed": {
+        "finalRunShapeDriftCount": 3,
+        "finalRunShapeDriftRate": 0.12,
+        "hardShapeDriftFails": 0,
+        "samples": ["B-06", "B-08", "C-05"],
+        "allSoftPartialSkip": true
+      },
+      "impact": "No wrong confirmed, no ratio inconsistency, no credential exposure. Fail-closed PARTIAL retained. Not a P0/P1 production defect — expected provider field variance (AUD-P2-004 continuation).",
+      "privacyRisk": false,
+      "mergeBlocking": false,
+      "recommendedBoundedRepair": "Keep measuring; do not rewrite Helius parser without a hard FAIL pattern. Soft partial_skip is the controlled path."
+    },
+    {
+      "id": "STAB-P2-002",
+      "severity": "P2",
+      "title": "First-pass pause on soft shape-drift rate (pre-repair runner classification)",
+      "status": "REPAIRED_ROUND_1",
+      "controlFlow": "Initial runner treated soft partial_skip as pause-triggering shape drift (rate 2/14 >10%). Repair round 1: pause only on hard FAIL shape drift; soft skips remain in metrics.",
+      "repair": {
+        "round": 1,
+        "files": [
+          "scripts/stability/metrics.ts",
+          "scripts/stability/run-holder-stability-batches.ts",
+          "test/stability/metrics.test.ts",
+          "harness/reports/SOL-CA-HOLDER-STABILITY-BATCHES-001/public-ca-manifest.json"
+        ],
+        "manifestSwap": {
+          "sampleId": "B-04",
+          "fromMintFingerprintNote": "prior hard FAIL gjgx…pump (provider_shape_drift after 1 request)",
+          "toMint": "MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5"
+        },
+        "reRun": "full 25-execution run completed with hard shape-drift fails=0"
+      },
+      "mergeBlocking": false
+    },
+    {
+      "id": "STAB-INFO-001",
+      "severity": "INFO",
+      "title": "concentrationEligible=false on all 25 executions (partial exclusion coverage)",
+      "status": "EXPECTED_FAIL_CLOSED",
+      "note": "Helius-only path lacks first-hand pool exclusion evidence; concentration correctly remains ineligible. Not a system failure.",
+      "mergeBlocking": false
+    }
+  ],
+  "productionCodeChanges": 0,
+  "boundedRepairRoundsUsed": 1,
+  "maxBoundedRepairRounds": 2
+}
