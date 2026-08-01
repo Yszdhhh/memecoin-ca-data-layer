@@ -1,0 +1,14 @@
+{
+  "schema_version": "input-manifest-v1",
+  "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001",
+  "inputs": {
+    "candidate_addresses_v0_1": {
+      "local_path_hint": "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/candidates_32.json",
+      "count": 32
+    },
+    "verification_pilot_5": {
+      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/"
+    }
+  },
+  "privacy": "Plaintext wallet addresses, GMGN details, raw transactions, and chainfm_out must not enter Git"
+}
