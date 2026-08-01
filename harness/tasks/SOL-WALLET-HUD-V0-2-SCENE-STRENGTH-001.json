@@ -1,0 +1,78 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001",
+  "title": "Solana Wallet HUD v0.2 Scene Strength and Multi-Scenario Evaluation",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "READY",
+  "objective": "Implement Wallet HUD v0.2 for the 32 SOL candidate addresses based on Wallet HUD v0.1: primary and secondary scene classification across 5 first-edition scenes (MULTI_TOKEN_REPEATABILITY, PAYOFF_ASYMMETRY, ACTIVITY_PERSISTENCE, HIGH_FREQUENCY_SIGNAL_VALUE, TRANSFER_ACCOUNTING_RISK), same-scene strength score and percentile (Pxx suppressed when peer_n < 10), peer_n and effective sample count, evidence tier/confidence, recent trend, followability status, full and incremental GMGN notes export, and HUD status/tag change history. Process strictly the 32 candidate addresses only; do not generate global total scores, global ranks, Alpha grades, S/SSR/EX, direct follow or heavy-position advice, or shadow-follow stats when shadow events = 0. Pure offline execution without network requests or background cron.",
+  "dependencies": [
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001",
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "src/domain/rules/wallet-data-quality.ts",
+    "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
+    "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+    "artifacts/wallet_intelligence_v0_1/candidate_distribution_desensitized.json",
+    "harness/inputs/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/manifest.json",
+    "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/candidate_union_v0_1.json",
+    "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/wallet_master_v0_1.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_state.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_history.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_verification_summary.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/profit_concentration_verified.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/followability_evidence.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/shadow_trade_monitoring_status.json"
+  ],
+  "write_set": [
+    "src/application/wallet-intelligence/hud-v0-2.ts",
+    "src/cli/run-sol-wallet-hud-v0-2.ts",
+    "test/application/wallet-intelligence/hud-v0-2.test.ts",
+    "docs/hud_v0_2_methodology.md",
+    "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.json",
+    "harness/dispatches/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.md",
+    "harness/inputs/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/manifest.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/acceptance.md",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/desensitized_metrics.json",
+    "artifacts/wallet_hud_v0_2/",
+    ".gitignore",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue live network requests to GMGN, Helius, Solana RPC, or any third party.",
+    "Do not read credentials or API keys.",
+    "Do not process addresses outside the 32 SOL candidate addresses.",
+    "Do not generate Pxx percentile when same-scene peer_n < 10.",
+    "Do not generate global overall wallet scores or global rankings.",
+    "Do not generate formal Alpha Score, UR/SSR/SR/S/EX grades, direct copy-trade recommendations, or heavy-position conclusions.",
+    "Do not generate simulated win rate, profit factor, latency, or follow percentile when shadow follow events equal 0.",
+    "Do not treat null values as 0.",
+    "Do not start background monitoring processes, cron jobs, or shadow follow daemons.",
+    "Do not commit private wallet addresses, raw GMGN transaction details, on-chain transactions, or chainfm_out files to Git.",
+    "Do not modify Operator Console, CA Hotpath, BSC, Robinhood, liquidity modules, or existing Alpha Score rules."
+  ],
+  "deliverables": [
+    "src/application/wallet-intelligence/hud-v0-2.ts",
+    "src/cli/run-sol-wallet-hud-v0-2.ts",
+    "test/application/wallet-intelligence/hud-v0-2.test.ts",
+    "docs/hud_v0_2_methodology.md",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/acceptance.md",
+    "artifacts/wallet_hud_v0_2/hud_desensitized_summary.json"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check",
+    "npm run wallet:hud:refresh:v0-2"
+  ]
+}
