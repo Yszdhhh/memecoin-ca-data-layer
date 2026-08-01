@@ -17,3 +17,13 @@ harness/logs/*
 apps/operator-console/tsconfig.tsbuildinfo
 apps/operator-console/dist/
 
+# Private wallet intelligence / GMGN payloads (never commit addresses or raw provider rows)
+chainfm_out/
+artifacts/wallet_intelligence_v0_1/wallet_master_v0_1.*
+artifacts/wallet_intelligence_v0_1/candidate_union_v0_1.*
+artifacts/wallet_intelligence_v0_1/candidate_groups/
+artifacts/wallet_intelligence_v0_1/research_packs/
+**/wallet_master_private.*
+**/wallet_master_v0_1.jsonl
+**/wallet_master_v0_1.csv
+

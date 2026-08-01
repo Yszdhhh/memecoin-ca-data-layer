@@ -1,0 +1,83 @@
+{
+  "schema_version": "replay-manifest-v0-1",
+  "task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001",
+  "rule_versions": {
+    "wallet_data_quality": "wallet-data-quality-v3",
+    "candidate_screening": "wallet-candidate-screening-v0-1"
+  },
+  "evaluation_time": "2026-07-29T20:22:55.568Z",
+  "input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+    "gmgn_normalized_profiles_json": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+    "gmgn_summary_json": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D",
+    "address_set_hash": "A6FF9CCCC5384CA2AABBA9AC904A101BDF8585B7D2F847CFC104FF6438F07049"
+  },
+  "metrics": {
+    "totalAddresses": 1433,
+    "uniqueCandidateCount": 32,
+    "researchPackCount": 15,
+    "dataTiers": {
+      "TIER_COMPLETE": 0,
+      "TIER_PARTIAL": 1349,
+      "TIER_SPARSE": 84,
+      "TIER_MISSING": 0
+    },
+    "dataQualityTiers": {
+      "DQ-A": 0,
+      "DQ-B": 0,
+      "DQ-C": 1433,
+      "DQ-D": 0,
+      "DQ-U": 0
+    },
+    "categoryCounts": {
+      "A_ACTIVE_HIGH_PROFIT_LEAD": 12,
+      "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 10,
+      "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 8,
+      "D_RECENT_OUTPERFORMANCE": 8,
+      "E_HISTORICAL_STRONG_RECENT_DECAY": 8,
+      "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 8,
+      "G_LABEL_STAT_CONFLICT": 8,
+      "H_INSUFFICIENT_DATA_HIGH_INTEL": 8
+    },
+    "unionInMaster": 32
+  },
+  "output_files": {
+    "wallet_master_v0_1_jsonl": "wallet_master_v0_1.jsonl",
+    "wallet_master_v0_1_csv": "wallet_master_v0_1.csv",
+    "wallet_data_quality_report_v0_1_json": "wallet_data_quality_report_v0_1.json",
+    "wallet_data_quality_report_v0_1_md": "wallet_data_quality_report_v0_1.md",
+    "candidate_union_v0_1_json": "candidate_union_v0_1.json",
+    "candidate_union_v0_1_jsonl": "candidate_union_v0_1.jsonl",
+    "candidate_union_v0_1_csv": "candidate_union_v0_1.csv",
+    "field_dictionary_v0_1_md": "field_dictionary_v0_1.md",
+    "screening_rules_v0_1_md": "screening_rules_v0_1.md",
+    "run_commands_v0_1_md": "run_commands_v0_1.md",
+    "open_items_v0_1_md": "open_items_v0_1.md",
+    "acceptance_report_v0_1_md": "acceptance_report_v0_1.md",
+    "research_packs_dir": "research_packs/",
+    "candidate_groups_dir": "candidate_groups/"
+  },
+  "output_hashes": {
+    "wallet_master_v0_1.jsonl": "D21D6D768D53E2C50234DB21F92CB6C2EC3BDDBA4A96450224B59D32DE05B027",
+    "wallet_master_v0_1.csv": "FDABEA8B3A35F890A672FD0E53918EF9FFA57D966DAF441CF44A8754499321EF",
+    "wallet_data_quality_report_v0_1.json": "4961AD6934CF16D09E869BABF295C492EFE139EF29AEE81D2217923F8BF3AC31",
+    "wallet_data_quality_report_v0_1.md": "6C127D1FE19D0903011FF701A0777DB0F1A2CE1407BF7145AE6EA3E4141C309E",
+    "candidate_union_v0_1.json": "9633B9A093FDB47D218A733FD25E83611A593213F18D5F80B9BA462A776D0B4A",
+    "candidate_union_v0_1.jsonl": "D55DD592613E461753B1A93A78C6127AD5CE0607E062976A5BC2BC3DE99A898E",
+    "candidate_union_v0_1.csv": "E0FF1BC3D5F3C37F79E0725DD980E410AA5A900DB80618E5F30550AC67CE219C",
+    "field_dictionary_v0_1.md": "F87837A9CC27017C53E289306E9BDF0E9CC1AEDEF50B9395B0FB81807661456B",
+    "screening_rules_v0_1.md": "4E91172D61224BD5C7FF0F0BC3FC42DAAE1345DCC267371CC3B92165F8113BC1"
+  },
+  "privacy": {
+    "note": "Private master/candidate address detail must not be committed to Git",
+    "git_allowed": [
+      "code",
+      "schema",
+      "desensitized summaries",
+      "hashes",
+      "tests",
+      "acceptance without addresses"
+    ]
+  }
+}

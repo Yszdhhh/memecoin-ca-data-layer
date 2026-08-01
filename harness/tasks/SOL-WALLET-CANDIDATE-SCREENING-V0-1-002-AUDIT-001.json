@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001",
+  "title": "Independent re-audit of wallet candidate screening v0.1 after PR #12 (Feature tip)",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently re-run gates and the real offline screening pipeline on Feature tip after YELLOW repair PR #12 merge; verify P1 closures (B EXTREME_*, reason honesty, DEGRADED, research_priority_rank, G claims, action matrix, A–H eligibility tests); verdict GREEN only if merge-ready for PR #10.",
+  "dependencies": [
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001",
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-YELLOW-REPAIR-001",
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-YELLOW-REPAIR-002"
+  ],
+  "inputs": [
+    "feat/sol-wallet-candidate-screening-v0-1 tip 48556a0acd5d3f9d28bb7ecd3600bd5d42ab5c1a",
+    "PR #10 open against main",
+    "PR #12 MERGED into Feature",
+    "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
+    "src/domain/rules/wallet-data-quality.ts",
+    "test/application/wallet-intelligence/candidate-screening-v0-1.test.ts"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001.json",
+    "harness/dispatches/SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001.md",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001/desensitized_metrics.json"
+  ],
+  "forbidden_actions": [
+    "Do not merge PR #10.",
+    "Do not push or modify main.",
+    "Do not squash or rebase Feature history.",
+    "Do not issue live network/provider re-scrapes of GMGN inputs.",
+    "Do not commit plaintext addresses, research pack bodies with addresses, or raw GMGN payloads."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check",
+    "npm run wallet:screening:v0-1"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0
+  },
+  "verdict": "GREEN"
+}

@@ -1,0 +1,22 @@
+{
+  "unique_candidates": 32,
+  "category_membership_counts": {
+    "A_ACTIVE_HIGH_PROFIT_LEAD": 12,
+    "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 10,
+    "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 4,
+    "E_HISTORICAL_STRONG_RECENT_DECAY": 6,
+    "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 4,
+    "D_RECENT_OUTPERFORMANCE": 3,
+    "G_LABEL_STAT_CONFLICT": 2,
+    "H_INSUFFICIENT_DATA_HIGH_INTEL": 2
+  },
+  "recommended_next_action_counts": {
+    "CHAIN_VERIFICATION": 18,
+    "DORMANT_MONITOR": 5,
+    "EXCLUDE_FROM_FOLLOWING": 4,
+    "HUMAN_REVIEW": 1,
+    "GMGN_HISTORY_REVIEW": 2,
+    "INSUFFICIENT_DATA": 2
+  },
+  "note": "Addresses redacted; full private outputs remain under chainfm_out only"
+}

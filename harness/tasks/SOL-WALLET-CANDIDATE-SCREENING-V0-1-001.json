@@ -1,0 +1,68 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001",
+  "title": "Solana wallet candidate screening v0.1 (real master + multi-scenario leads)",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Integrate the fixed 1,433 Solana addresses with GMGN RERUN-002 into a v0.1 master table, fix period_unverified lead scoring so candidates are not wiped, emit 30–50 multi-scenario research candidates and 15 human research packs. No formal Alpha Score or final grades.",
+  "dependencies": [
+    "SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001",
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-REPAIR-AUDIT-003"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "src/domain/rules/wallet-data-quality.ts",
+    "src/domain/rules/alpha-score.ts",
+    "src/application/wallet-intelligence/master-table-builder.ts",
+    "harness/reports/SOL-GMGN-WALLET-STATS-FULL-1433-LIVE-RERUN-002-AUDIT-001/acceptance.md"
+  ],
+  "write_set": [
+    "src/domain/rules/wallet-data-quality.ts",
+    "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
+    "src/cli/run-sol-wallet-candidate-screening-v0-1.ts",
+    "test/application/wallet-intelligence/candidate-screening-v0-1.test.ts",
+    "harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001.json",
+    "harness/dispatches/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001.md",
+    "harness/inputs/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001/manifest.json",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001/acceptance.md",
+    "artifacts/wallet_intelligence_v0_1/",
+    ".gitignore",
+    "package.json"
+  ],
+  "forbidden_actions": [
+    "Do not issue live network requests to GMGN, Helius, Solana RPC, or any third party.",
+    "Do not read credentials or API keys.",
+    "Do not produce formal Alpha Score, UR/SSR/SR/S/EX grades, or confirmed behavior labels.",
+    "Do not commit plaintext wallet addresses, labels, or raw GMGN payloads to Git.",
+    "Do not modify Operator Console, BSC, Robinhood, liquidity modules, or audited RERUN-002 raw outputs.",
+    "Do not push main or merge without independent audit."
+  ],
+  "deliverables": [
+    "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
+    "src/cli/run-sol-wallet-candidate-screening-v0-1.ts",
+    "test/application/wallet-intelligence/candidate-screening-v0-1.test.ts",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001/acceptance.md",
+    "Private local run under chainfm_out/sol/derived/wallet_intelligence_v0_1 (not in Git)"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001.json",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0,
+    "address_processing": 1433
+  }
+}
