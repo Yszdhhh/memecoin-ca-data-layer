@@ -9,7 +9,8 @@
   "status": "READY",
   "objective": "Implement Wallet HUD v0.2 for the 32 SOL candidate addresses based on Wallet HUD v0.1: primary and secondary scene classification across 5 first-edition scenes (MULTI_TOKEN_REPEATABILITY, PAYOFF_ASYMMETRY, ACTIVITY_PERSISTENCE, HIGH_FREQUENCY_SIGNAL_VALUE, TRANSFER_ACCOUNTING_RISK), same-scene strength score and percentile (Pxx suppressed when peer_n < 10), peer_n and effective sample count, evidence tier/confidence, recent trend, followability status, full and incremental GMGN notes export, and HUD status/tag change history. Process strictly the 32 candidate addresses only; do not generate global total scores, global ranks, Alpha grades, S/SSR/EX, direct follow or heavy-position advice, or shadow-follow stats when shadow events = 0. Pure offline execution without network requests or background cron.",
   "dependencies": [
-    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001"
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001",
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001"
   ],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -21,8 +22,14 @@
     "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
     "artifacts/wallet_intelligence_v0_1/candidate_distribution_desensitized.json",
     "harness/inputs/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/manifest.json",
-    "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/",
-    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/"
+    "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/candidate_union_v0_1.json",
+    "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/wallet_master_v0_1.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_state.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_history.jsonl",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_verification_summary.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/profit_concentration_verified.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/followability_evidence.csv",
+    "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/shadow_trade_monitoring_status.json"
   ],
   "write_set": [
     "src/application/wallet-intelligence/hud-v0-2.ts",
