@@ -13,6 +13,12 @@ Implement Wallet HUD v0.2 on top of existing Wallet HUD v0.1 and 32 SOL candidat
 - HIGH_FREQUENCY_SIGNAL_VALUE
 - TRANSFER_ACCOUNTING_RISK
 
+## Private Data Path Resolution
+- Private data root directory priority: read environment variable `CHAINFM_OUT_DIR` first.
+- If `CHAINFM_OUT_DIR` is unset, default to `%USERPROFILE%\chainfm_out` (e.g., `C:\Users\<user>\chainfm_out`).
+- All `sol/derived/...` paths in manifest are relative to this resolved private data root directory.
+- Must NOT default path resolution to `repo_root/chainfm_out`.
+
 ## Boundaries
 - Process strictly 32 SOL candidate addresses only.
 - Suppress Pxx percentile when same-scene peer_n < 10.

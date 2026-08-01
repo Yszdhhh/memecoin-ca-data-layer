@@ -1,51 +1,57 @@
 {
   "schema_version": "input-manifest-v1",
   "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001",
+  "private_root_resolution": {
+    "priority_env_var": "CHAINFM_OUT_DIR",
+    "default_fallback": "%USERPROFILE%\\chainfm_out",
+    "forbidden_fallback": "repo_root/chainfm_out",
+    "notes": "Manifest input local_path_hints (sol/derived/...) are relative to the resolved private root directory."
+  },
   "inputs": {
     "candidate_union_v0_1": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/candidate_union_v0_1.json",
+      "local_path_hint": "sol/derived/wallet_intelligence_v0_1_repair_002/candidate_union_v0_1.json",
       "sha256": "b69c1a7952f1b837d28f3230dffda11f56f334947b52dc8c04db099869ba4f6c",
       "count": 32,
       "version": "candidate-union-v0-1"
     },
     "wallet_master_v0_1": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_intelligence_v0_1_repair_002/wallet_master_v0_1.jsonl",
+      "local_path_hint": "sol/derived/wallet_intelligence_v0_1_repair_002/wallet_master_v0_1.jsonl",
       "sha256": "5dfab5f409461804f1096d67602610f5fa28f3a35d8bec2a2f921a3035b80ad9",
       "count": 1433,
       "version": "wallet-master-v0-1"
     },
     "wallet_hud_state": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_state.jsonl",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/wallet_hud_state.jsonl",
       "sha256": "68d52b7af798c885fbca7cdb19cb8d17789d379a2a01dd2df60cd3f19a4075df",
       "count": 5,
       "version": "wallet-hud-v0.1"
     },
     "wallet_hud_history": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_hud_history.jsonl",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/wallet_hud_history.jsonl",
       "sha256": "766f6722e92aaf0779d550a06d7c6867ce610ce86c76a10ebff9e74b5cc2fea7",
       "count": 5,
       "version": "wallet-hud-history-v0.1"
     },
     "wallet_verification_summary": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/wallet_verification_summary.csv",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/wallet_verification_summary.csv",
       "sha256": "b9bac6d0c675d8ea2494d3962534fbf5fe57ec64ea1069b95a2d60a87545b607",
       "count": 5,
       "version": "verification-pilot-5"
     },
     "profit_concentration_verified": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/profit_concentration_verified.csv",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/profit_concentration_verified.csv",
       "sha256": "48c88d6193d659f78935ab1c5844dd06352f6c57e39c86c401c3dbee56544512",
       "count": 5,
       "version": "verification-pilot-5"
     },
     "followability_evidence": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/followability_evidence.csv",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/followability_evidence.csv",
       "sha256": "d19b616bb84f7f75085315d5e7a3df70fe9454825c3c2c809e2f8bfe1a89b942",
       "count": 5,
       "version": "verification-pilot-5"
     },
     "shadow_trade_monitoring_status": {
-      "local_path_hint": "chainfm_out/sol/derived/wallet_chain_verification_pilot_5/shadow_trade_monitoring_status.json",
+      "local_path_hint": "sol/derived/wallet_chain_verification_pilot_5/shadow_trade_monitoring_status.json",
       "sha256": "b0a681c0b3136d60e6fb4920021b68bf49489940e73232a676624534cc72f35b",
       "count": 5,
       "shadow_event_count": 0,
