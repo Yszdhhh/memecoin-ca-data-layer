@@ -1,0 +1,68 @@
+{
+  "task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-002-AUDIT-001",
+  "feature_tip": "48556a0acd5d3f9d28bb7ecd3600bd5d42ab5c1a",
+  "feature_branch": "feat/sol-wallet-candidate-screening-v0-1",
+  "pr_10_state": "OPEN",
+  "pr_12_state": "MERGED",
+  "gates": {
+    "typecheck": "PASS",
+    "test": "PASS_460_pass_1_skip_0_fail",
+    "build": "PASS",
+    "security_scan": "PASS_classifiedLeaks_0",
+    "git_diff_check": "PASS"
+  },
+  "real_run": {
+    "output_dir_private": "chainfm_out/sol/derived/wallet_intelligence_v0_1_audit_002",
+    "status": "SUCCESS",
+    "address_set_hash": "A6FF9CCCC5384CA2AABBA9AC904A101BDF8585B7D2F847CFC104FF6438F07049",
+    "master_rows": 1433,
+    "unique_candidates": 32,
+    "research_packs_json": 15,
+    "categories_represented": 8,
+    "master_sha256": "5DFAB5F409461804F1096D67602610F5FA28F3A35D8BEC2A2F921A3035B80AD9",
+    "union_sha256": "B69C1A7952F1B837D28F3230DFFDA11F56F334947B52DC8C04DB099869BA4F6C",
+    "bit_identical_to_repair_002_master": true,
+    "bit_identical_to_repair_002_candidate_set": true
+  },
+  "data_tiers": {
+    "TIER_COMPLETE": 0,
+    "TIER_PARTIAL": 1349,
+    "TIER_SPARSE": 84,
+    "TIER_MISSING": 0
+  },
+  "data_quality_tiers": {
+    "DQ-C": 1433
+  },
+  "group_pool_counts": {
+    "A_ACTIVE_HIGH_PROFIT_LEAD": 12,
+    "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 10,
+    "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 8,
+    "D_RECENT_OUTPERFORMANCE": 8,
+    "E_HISTORICAL_STRONG_RECENT_DECAY": 8,
+    "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 8,
+    "G_LABEL_STAT_CONFLICT": 8,
+    "H_INSUFFICIENT_DATA_HIGH_INTEL": 8
+  },
+  "research_pack_category_coverage": {
+    "A_ACTIVE_HIGH_PROFIT_LEAD": 5,
+    "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 5,
+    "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 4,
+    "D_RECENT_OUTPERFORMANCE": 3,
+    "E_HISTORICAL_STRONG_RECENT_DECAY": 4,
+    "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 3,
+    "G_LABEL_STAT_CONFLICT": 1,
+    "H_INSUFFICIENT_DATA_HIGH_INTEL": 1
+  },
+  "p1_closure_checks": {
+    "B_false_reason_NOT_SINGLE_FIELD_ANOMALY_ONLY_count": 0,
+    "B_pool_with_EXTREME_or_ZERO_INCOME_or_WINDOW_or_UNIT_AMBIGUOUS": 0,
+    "B_all_have_NO_HIGH_SEVERITY_ANOMALY_reason": true,
+    "research_priority_rank_present_on_all_candidates": true,
+    "screening_rank_field_absent": true,
+    "C_plus_E_active_primary_CHAIN_VERIFICATION": 3,
+    "formal_scores_non_null": 0,
+    "confirmed_labels_non_null": 0,
+    "win_rate_unit_ambiguous_rows": 2
+  },
+  "verdict": "GREEN"
+}
