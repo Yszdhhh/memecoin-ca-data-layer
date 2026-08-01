@@ -1,0 +1,54 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+  "title": "Independent audit of wallet candidate screening v0.1 (PR #10)",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "solana",
+  "layer": "cold_path",
+  "status": "DONE",
+  "objective": "Independently re-run gates and the real offline screening pipeline, verify 1433/hash/candidate/research-pack/privacy contracts, and assess category reason-code honesty, ranking semantics, and test gaps. Verdict GREEN only if merge-ready.",
+  "dependencies": [
+    "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001"
+  ],
+  "inputs": [
+    "harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001.json",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001/acceptance.md",
+    "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
+    "src/domain/rules/wallet-data-quality.ts",
+    "test/application/wallet-intelligence/candidate-screening-v0-1.test.ts",
+    "feature commit 8ff01bd2f2f415012bba503426e835d038415bad"
+  ],
+  "write_set": [
+    "harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.json",
+    "harness/dispatches/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.md",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001/desensitized_metrics.json"
+  ],
+  "forbidden_actions": [
+    "Do not merge PR #10.",
+    "Do not push or modify main.",
+    "Do not squash or rebase the feature commit.",
+    "Do not issue live network/provider requests.",
+    "Do not commit plaintext addresses, research pack bodies with addresses, or raw GMGN payloads.",
+    "Do not rewrite implementer feature history."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ],
+  "budget": {
+    "network_requests": 0,
+    "provider_requests": 0,
+    "gmgn_cli_invocations": 0,
+    "helius_requests": 0,
+    "credential_reads": 0
+  },
+  "verdict": "YELLOW"
+}
