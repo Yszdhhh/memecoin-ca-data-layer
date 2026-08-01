@@ -1,0 +1,11 @@
+{
+  "schema_version": "crosschain-program-desensitized-metrics-v1",
+  "generated_at": "2026-08-01T00:00:00Z",
+  "sol_wallet_master_rows": 1433,
+  "sol_candidate_count": 32,
+  "sol_chain_sampled_wallet_count": 5,
+  "shadow_event_count": 0,
+  "bsc_private_root_present": true,
+  "bsc_stage_status": "BLOCKED_STAGE",
+  "private_records_in_git": false
+}

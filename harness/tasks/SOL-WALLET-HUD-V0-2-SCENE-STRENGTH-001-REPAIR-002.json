@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+  "title": "SOL Wallet HUD v0.2 Repair-002",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence.",
+  "dependencies": [
+    "CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001/acceptance.md",
+    "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.json"
+  ],
+  "write_set": [
+    "src/application/wallet-intelligence/hud-v0-2.ts",
+    "src/cli/run-sol-wallet-hud-v0-2.ts",
+    "test/application/wallet-intelligence/hud-v0-2.test.ts",
+    "docs/hud_v0_2_methodology.md",
+    "artifacts/wallet_hud_v0_2/",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not change BSC, shadow-trading, Operator Console, or unrelated Wallet HUD semantics.",
+    "Do not claim reproduction, followability, or profitability when evidence thresholds are unmet."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/acceptance.md",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/desensitized_metrics.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/replay_manifest.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/source_hashes.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/deterministic_replay_result.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/test_evidence.md",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check",
+    "npm run wallet:hud:refresh:v0-2"
+  ]
+}

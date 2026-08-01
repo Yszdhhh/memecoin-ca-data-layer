@@ -1,0 +1,58 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001",
+  "title": "Wallet shadow-trade contracts v0.1",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Define offline, chain-neutral shadow-trade contracts and validation rules for normalized signals, order intents, fills, lots, exits, results, metrics, run manifests, and data-quality events. Enforce source_trade_at versus observed_at versus simulated_order_at semantics; do not implement chain parsing or execution.",
+  "dependencies": [
+    "BSC-STAGE-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json"
+  ],
+  "write_set": [
+    "src/domain/shadow-trading/contracts-v0-1.ts",
+    "src/domain/shadow-trading/validation-v0-1.ts",
+    "test/domain/shadow-trading/contracts-v0-1.test.ts",
+    "docs/shadow_trade_contracts_v0_1.md",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not implement a provider, transaction parser, polling loop, real order path, or cross-chain score.",
+    "Every simulated price must be constrained to simulated_order_at or later."
+  ],
+  "deliverables": [
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/acceptance.md",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/desensitized_metrics.json",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/replay_manifest.json",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/source_hashes.json",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/deterministic_replay_result.json",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/test_evidence.md",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
+  "title": "SOL wallet shadow-replay pilot",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "solana",
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Build the Solana-only offline adapter and pilot on authorized historical local inputs: normalize/deduplicate events, price and liquidity as-of lookup, fee model, chain-specific unfillable rules, golden fixtures, negative cases, and deterministic replay evidence.",
+  "dependencies": [
+    "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001",
+    "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/acceptance.md"
+  ],
+  "write_set": [
+    "src/application/shadow-trading/sol-adapter-v0-1.ts",
+    "src/cli/run-sol-wallet-shadow-replay-pilot.ts",
+    "test/application/shadow-trading/sol-adapter-v0-1.test.ts",
+    "docs/sol_shadow_replay_pilot_v0_1.md",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/",
+    "artifacts/sol_shadow_replay_pilot_v0_1/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not start live monitoring, infer a trade from token-account transfer alone, or use price data before simulated_order_at."
+  ],
+  "deliverables": [
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/acceptance.md",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/desensitized_metrics.json",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/replay_manifest.json",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/source_hashes.json",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/deterministic_replay_result.json",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/test_evidence.md",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

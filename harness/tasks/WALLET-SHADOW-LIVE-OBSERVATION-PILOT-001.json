@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001",
+  "title": "Wallet shadow live-observation pilot",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "PARK",
+  "objective": "Remain PARK until contracts, replay engine, one adapter, data-security audit, named provider/budget, and explicit Owner network authorization are all recorded. If activated, observe only, timestamp observed_at, simulate privately, and prepare HUD review files without trading or unattended publishing.",
+  "dependencies": [
+    "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
+    "BSC-WALLET-SHADOW-REPLAY-PILOT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "OWNER_DECISIONS_NEEDED.md"
+  ],
+  "write_set": [
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/",
+    "docs/shadow_live_observation_operating_procedure.md"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not start a resident network monitor or contact any provider before explicit Owner authorization.",
+    "Do not execute or automate trades, signatures, wallet access, risk-parameter changes, or GMGN updates."
+  ],
+  "deliverables": [
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/acceptance.md",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/desensitized_metrics.json",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/replay_manifest.json",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/source_hashes.json",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/deterministic_replay_result.json",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/test_evidence.md",
+    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

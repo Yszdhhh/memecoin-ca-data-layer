@@ -1,0 +1,59 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001",
+  "title": "Wallet shadow-trade replay engine v0.1",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Implement a deterministic offline replay engine using the approved contracts. Support fixed USD nominal entries, mirror exits, 5m/30m/2h/24h windows, fee/slippage/liquidity/tax-aware fill outcomes, no-lookahead price selection, and evidence-bounded followability conclusions.",
+  "dependencies": [
+    "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/acceptance.md"
+  ],
+  "write_set": [
+    "src/application/shadow-trading/replay-engine-v0-1.ts",
+    "src/application/shadow-trading/metrics-v0-1.ts",
+    "test/application/shadow-trading/replay-engine-v0-1.test.ts",
+    "docs/shadow_replay_engine_v0_1.md",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not substitute source execution price or future highs for a user-executable simulated price.",
+    "Do not count unfillable signals as profitable shadow trades."
+  ],
+  "deliverables": [
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/acceptance.md",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/desensitized_metrics.json",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/replay_manifest.json",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/source_hashes.json",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/deterministic_replay_result.json",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/test_evidence.md",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

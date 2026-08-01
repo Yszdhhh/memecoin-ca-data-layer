@@ -1,0 +1,58 @@
+{
+  "schema_version": "program-source-hashes-v1",
+  "generated_at": "2026-08-01T00:00:00Z",
+  "public_inputs": [
+    {
+      "path": "PROJECT_REQUIRED_READING.md",
+      "sha256": "aa1aec788a1bf6ca85ea2de510c8805f0beb53f22b449ccc509c194bd78e175c",
+      "size_bytes": 884
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "3fbecb7ced08e24c4f62a5c81521f821cebf622c6096cb9276bb7106b6ae420e",
+      "size_bytes": 419
+    },
+    {
+      "path": "PROJECT_CONSTITUTION.md",
+      "sha256": "8ba908c9b934cfc1244bf1c4a751c6df37b51a7669c93204cd4d14659eb6ca7f",
+      "size_bytes": 3010
+    },
+    {
+      "path": "PROJECT_ARCHITECTURE.md",
+      "sha256": "c09dc8a65ef3bf33eb77718f47f8427ae1d22d72db572b2cad47a2c3e7daef5a",
+      "size_bytes": 9044
+    },
+    {
+      "path": "PROJECT_OPERATING_PLAYBOOK.md",
+      "sha256": "d4c38f4834bfe33295cc92bf6f83e4e9ebc2a51d035be925c4f8351541011f21",
+      "size_bytes": 3571
+    },
+    {
+      "path": "KNOWN_LIMITATIONS.md",
+      "sha256": "c00346f57a8f5afdf8a747eaf630d7a442b6562d9d8c1da762c5ba439f32482e",
+      "size_bytes": 2329
+    },
+    {
+      "path": "OWNER_DECISIONS_NEEDED.md",
+      "sha256": "abd3b64f211165c5a678255fcf2d8130fa2e2cb90a922373f9c4e4654016f220",
+      "size_bytes": 5385
+    },
+    {
+      "path": "harness/config/project.json",
+      "sha256": "2279ee65cb8d2bc3b91f67cd9fa0cc68375d3275d6ce7303298ac73bf165f056",
+      "size_bytes": 767
+    },
+    {
+      "path": "harness/ledger/tasks.json",
+      "sha256": "6318f8c730dc53f842f5ef9a602d98b02941fab5b4cc5e5d3b72e3bda48a57f3",
+      "size_bytes": 43820
+    },
+    {
+      "path": "harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json",
+      "sha256": "c97f35c0dadb44b64b4a901a1e4f8c20f8756632b4ed2cc72b215525b3ca11cd",
+      "size_bytes": 3339
+    }
+  ],
+  "private_root_hashes_reference": "harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json",
+  "note": "No raw private paths, records, wallet addresses, or transaction identifiers are included."
+}
