@@ -9,10 +9,14 @@ async function main() {
     process.env.SOL_SCREENING_OUTPUT_DIR ??
     "C:\\Users\\10639\\chainfm_out\\sol\\derived\\wallet_intelligence_v0_1";
 
+  const acceptanceMode =
+    process.env.SOL_SCREENING_ACCEPTANCE_MODE === "1" || process.argv.includes("--acceptance");
+
   console.log("Starting SOL-WALLET-CANDIDATE-SCREENING-V0-1-001...");
   console.log(`Input dir: ${inputDir}`);
   console.log(`GMGN dir: ${gmgnOutputDir}`);
   console.log(`Output dir: ${outputDir}`);
+  console.log(`Acceptance mode: ${acceptanceMode}`);
 
   const result = await runCandidateScreeningV01({
     inputDir,
@@ -20,15 +24,28 @@ async function main() {
     outputDir,
   });
 
-  console.log("Screening finished successfully");
   console.log(`Status: ${result.status}`);
   console.log(`Addresses: ${result.metrics.totalAddresses}`);
   console.log(`Address set hash: ${result.addressSetHash}`);
   console.log(`Unique candidates: ${result.metrics.uniqueCandidateCount}`);
+  console.log(`Categories represented: ${result.metrics.categoriesRepresented}`);
   console.log(`Research packs: ${result.metrics.researchPackCount}`);
   console.log(`Data tiers:`, JSON.stringify(result.metrics.dataTier));
   console.log(`DQ tiers:`, JSON.stringify(result.metrics.dataQualityTiers));
   console.log(`Category counts:`, JSON.stringify(result.metrics.categoryCounts, null, 2));
+
+  if (result.status === "DEGRADED") {
+    console.warn("DEGRADED screening coverage:", JSON.stringify(result.degradation, null, 2));
+    console.warn("Artifacts were still written for human inspection.");
+    if (acceptanceMode) {
+      console.error("Acceptance mode: DEGRADED fails acceptance (exit 2).");
+      process.exit(2);
+    }
+  }
+
+  if (result.status === "SUCCESS") {
+    console.log("Screening finished successfully");
+  }
 }
 
 main().catch((err) => {

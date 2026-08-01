@@ -32,6 +32,12 @@ profit_7d, profit_30d, win_rate_7d, win_rate_30d, buy_count, sell_count, trade_c
 | gmgn_lead_reason_codes | reproducible codes |
 | candidate_categories | A–H multi-label |
 | candidate_reason_codes | per selection rule |
+| research_priority_rank | diversity/multi-category research ordering only — NOT profitability, copy-trade priority, or formal Alpha rank |
+| category_count | number of A–H categories assigned |
+| primary_recommended_action | explicit action matrix primary |
+| secondary_recommended_actions | optional secondary actions |
+| action_reason_codes | predicates supporting the action |
+| recommended_next_action | schema alias of primary_recommended_action |
 | human_review_status | PENDING_HUMAN_REVIEW |
 
 ## Forbidden / always null
