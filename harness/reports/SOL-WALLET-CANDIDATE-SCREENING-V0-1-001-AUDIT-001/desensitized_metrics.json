@@ -1,0 +1,82 @@
+{
+  "schema_version": "audit-desensitized-metrics-v1",
+  "audit_task_id": "SOL-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+  "feature_commit": "8ff01bd2f2f415012bba503426e835d038415bad",
+  "verdict": "YELLOW",
+  "allow_merge_pr_10": false,
+  "gates": {
+    "typecheck": "PASS",
+    "test": "PASS_435_pass_1_skip",
+    "build": "PASS",
+    "security_scan": "PASS",
+    "git_diff_check": "PASS",
+    "wallet_screening_v0_1": "PASS"
+  },
+  "input_hashes": {
+    "sol_addresses_txt": "64764807CCFED755A2E4C0316D44FF589ACC49EFF8F2C1F299DC48662997D87C",
+    "sol_address_labels_json": "B0BF00E9D7E90F28EEB5F12E9DFBB467D24C3C341E182304FF43B79EC8FE6FC3",
+    "gmgn_normalized_profiles": "F461061BB7B747D512DF2193D46E0DE02DEA50A86C661E9F8234B6E8F8737EE6",
+    "gmgn_summary": "55DFAB261C1BEADBDD2E16574BB569DC69076463A97A46360F041EDC1024263D",
+    "address_set_hash": "A6FF9CCCC5384CA2AABBA9AC904A101BDF8585B7D2F847CFC104FF6438F07049"
+  },
+  "outputs": {
+    "master_rows": 1433,
+    "unique_addresses": 1433,
+    "unique_candidates": 32,
+    "research_packs_json": 15,
+    "research_packs_md": 15,
+    "master_sha256": "D21D6D768D53E2C50234DB21F92CB6C2EC3BDDBA4A96450224B59D32DE05B027",
+    "reproducible_vs_implementer_private_master": true,
+    "reproducible_candidate_set_and_ranks": true
+  },
+  "distributions": {
+    "data_tier": {
+      "TIER_PARTIAL": 1349,
+      "TIER_SPARSE": 84,
+      "TIER_COMPLETE": 0,
+      "TIER_MISSING": 0
+    },
+    "data_quality_tier": {
+      "DQ-C": 1433
+    },
+    "group_pool_sizes": {
+      "A_ACTIVE_HIGH_PROFIT_LEAD": 12,
+      "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 10,
+      "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 8,
+      "D_RECENT_OUTPERFORMANCE": 8,
+      "E_HISTORICAL_STRONG_RECENT_DECAY": 8,
+      "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 8,
+      "G_LABEL_STAT_CONFLICT": 8,
+      "H_INSUFFICIENT_DATA_HIGH_INTEL": 8
+    },
+    "unique_fingerprints_across_group_pools": 59,
+    "research_pack_category_membership": {
+      "A_ACTIVE_HIGH_PROFIT_LEAD": 6,
+      "B_HIGH_WINRATE_ADEQUATE_SAMPLE": 5,
+      "C_LOW_WINRATE_HIGH_PROFIT_LEAD": 4,
+      "D_RECENT_OUTPERFORMANCE": 2,
+      "E_HISTORICAL_STRONG_RECENT_DECAY": 4,
+      "F_HIGH_FREQ_OR_ANOMALY_SUSPICIOUS": 3,
+      "G_LABEL_STAT_CONFLICT": 1,
+      "H_INSUFFICIENT_DATA_HIGH_INTEL": 1
+    },
+    "win_rate_30d_non_null": {
+      "min": 0,
+      "max": 100,
+      "median": 0,
+      "count_gt_1": 376,
+      "count_in_0_1_exclusive_0": 2
+    },
+    "b_pool_with_extreme_or_zero_income_flags": 2,
+    "b_pool_all_stamped_NOT_SINGLE_FIELD_ANOMALY_ONLY": true,
+    "f_with_chain_verification": 0,
+    "f_intersect_a_or_b": 0
+  },
+  "privacy": {
+    "private_master_or_candidates_in_feature_commit": false,
+    "security_scan_classified_leaks": 0
+  },
+  "p0_count": 0,
+  "p1_count": 6,
+  "p2_count": 7
+}
