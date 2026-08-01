@@ -366,3 +366,40 @@ export function resolveGmgnConfidenceCap(
   }
   return "medium"; // borrowed GMGN is never high-confidence without chain verification
 }
+
+/**
+ * Severity lookup that reuses the codes emitted by `evaluateWalletDataQuality`.
+ * Does not invent a second severity system — only mirrors existing rule severities.
+ */
+export function isHighSeverityAnomalyCode(code: string): boolean {
+  if (code.startsWith("INVALID_COMPLETENESS_")) return true;
+  if (code.startsWith("INVALID_GMGN_STATUS_")) return true;
+  if (code === "EXPECTED_METRICS_UNAVAILABLE") return true;
+  if (code.includes("ZERO_INCOME_HIGH_PROFIT")) return true;
+  return false;
+}
+
+/**
+ * Codes that must not enter the clean high-winrate sample (category B).
+ * Includes all HIGH DQ codes plus explicit extreme / monotonicity / unit flags
+ * that audit P1 requires B to filter (even when DQ severity is MEDIUM).
+ */
+export function disqualifiesCleanHighWinrateSample(code: string): boolean {
+  if (isHighSeverityAnomalyCode(code)) return true;
+  if (code === "EXTREME_PROFIT_OUTLIER") return true;
+  if (code === "EXTREME_TOKEN_NUM") return true;
+  if (code === "EXTREME_BUY_ONLY_RATIO") return true;
+  if (code.startsWith("WINDOW_MONOTONICITY")) return true;
+  if (code === "WIN_RATE_UNIT_AMBIGUOUS") return true;
+  return false;
+}
+
+/**
+ * Win-rate unit ambiguity for values in (0, 1] when bulk population is 0–100.
+ * Does NOT scale the value; callers must keep the original number.
+ * Real 0 stays 0 (not ambiguous). Values > 1 are treated as percent-like.
+ */
+export function isWinRateUnitAmbiguous(winRate: number | null | undefined): boolean {
+  if (winRate === null || winRate === undefined || !Number.isFinite(winRate)) return false;
+  return winRate > 0 && winRate <= 1;
+}

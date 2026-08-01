@@ -11,20 +11,26 @@
 
 ## Category rules (summary)
 - **A** Active + 30d profit ≥ p75 (positive subset) + min trades/tokens
-- **B** High win rate + trades ≥ 15 + profit > 0
-- **C** Win rate ≤ 35 + high profit — *lead only*, not “golden dog hunter”
+- **B** High win rate + trades ≥ 15 + profit > 0 + no HIGH/extreme disqualifying anomalies
+- **C** Win rate ≤ 35 + high profit — *lead only*, not “golden dog hunter”; excludes unit-ambiguous win rates
 - **D** 7d profit ≥ 2× (30d/4.28) with profit_30d > 50 guard
 - **E** Strong 30d + recent decay/inactivity → Dormant research pool
 - **F** High frequency / asymmetric / extreme / residual — **Suspicious only**
-- **G** Source label vs stats conflict; claims stay source_claim
+- **G** Typed source-claim vs stats conflict; CLAIM_SMART_MONEY_UNVERIFIED only from explicit smart-money claims (not top/rank/KOL)
 - **H** Sparse/missing GMGN but rich original intel → Insufficient Data Review
 
-## GMGN period_unverified
-- Lowers confidence_cap
-- Blocks formal Alpha / grades
-- Does **not** wipe gmgn_lead_score or empty the candidate list
+## research_priority_rank
+- Multi-category diversity ordering for research sampling
+- Not profitability, not copy-trade priority, not formal Alpha rank
+
+## Coverage status
+- 30–50 unique candidates AND ≥6 categories → SUCCESS
+- Below min / above max / <6 categories → DEGRADED (artifacts retained)
+- Structural contract errors → FAILED
 
 ## recommended_next_action vocabulary
 HUMAN_REVIEW | GMGN_HISTORY_REVIEW | CHAIN_VERIFICATION | DORMANT_MONITOR | INSUFFICIENT_DATA | EXCLUDE_FROM_FOLLOWING
+
+`recommended_next_action` == `primary_recommended_action`
 
 Forbidden: BUY, SELL, COPY_TRADE
