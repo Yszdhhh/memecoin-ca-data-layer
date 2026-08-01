@@ -296,7 +296,12 @@ export function evaluateWalletDataQuality(
   };
 }
 
-/** Computes a 30d-only borrowed lead score. Missing 30d profit never falls back to 7d. */
+/**
+ * Computes a 30d-only borrowed lead score. Missing 30d profit never falls back to 7d.
+ *
+ * `period_unverified` lowers confidence via data-quality caps / reason codes; it must NOT
+ * null all lead scores or force UNQUALIFIED. Formal Alpha Score remains separate and null.
+ */
 export function calculateBorrowedCandidateScores(
   s7d: GmgnPeriodStatsInput,
   s30d: GmgnPeriodStatsInput,
@@ -305,7 +310,7 @@ export function calculateBorrowedCandidateScores(
 ): BorrowedCandidateScores {
   const p30 = s30d.realizedProfit;
   const p7 = s7d.realizedProfit;
-  if (p30 === null || !isPresent(s30d) || hasUnverifiedPeriod(s30d)) {
+  if (p30 === null || !isPresent(s30d)) {
     return { borrowedProfitabilityLeadScore: null, borrowedActivityLeadScore: null, borrowedConsistencyLeadScore: null, borrowedDataQualityScore: dq.dataQualityScore, borrowedCompositeLeadScore: null, borrowedLeadTier: "UNQUALIFIED" };
   }
 
@@ -315,6 +320,11 @@ export function calculateBorrowedCandidateScores(
     const sampleSize = (s30d.buyCount ?? 0) + (s30d.sellCount ?? 0);
     const confidence = Math.min(1, sampleSize / 20);
     profitability = profitability * (1 - 0.3 * confidence) + winRatePercent * (0.3 * confidence);
+  }
+  // Explicit small-sample penalty (sample < 10 trades).
+  const sampleSize30 = (s30d.buyCount ?? 0) + (s30d.sellCount ?? 0);
+  if (sampleSize30 < 10) {
+    profitability = profitability * Math.max(0.35, sampleSize30 / 10);
   }
   const borrowedProfitabilityLeadScore = Math.round(profitability * 100) / 100;
 
@@ -333,8 +343,26 @@ export function calculateBorrowedCandidateScores(
   const borrowedConsistencyLeadScore = Math.round(consistency * 100) / 100;
 
   const rawComposite = borrowedProfitabilityLeadScore * 0.5 + borrowedActivityLeadScore * 0.2 + borrowedConsistencyLeadScore * 0.3;
-  const borrowedCompositeLeadScore = Math.round(rawComposite * (dq.dataQualityScore / 100) * 100) / 100;
+  // Quality gate already caps period_unverified / partial rows; do not zero scores.
+  const qualityFactor = Math.max(0.25, dq.dataQualityScore / 100);
+  const borrowedCompositeLeadScore = Math.round(rawComposite * qualityFactor * 100) / 100;
   const borrowedLeadTier: BorrowedCandidateScores["borrowedLeadTier"] = borrowedCompositeLeadScore >= 80 ? "TOP_LEAD" : borrowedCompositeLeadScore >= 65 ? "STRONG_LEAD" : borrowedCompositeLeadScore >= 50 ? "MODERATE_LEAD" : borrowedCompositeLeadScore > 20 ? "LOW_LEAD" : "UNQUALIFIED";
 
   return { borrowedProfitabilityLeadScore, borrowedActivityLeadScore, borrowedConsistencyLeadScore, borrowedDataQualityScore: dq.dataQualityScore, borrowedCompositeLeadScore, borrowedLeadTier };
+}
+
+/** Confidence cap for borrowed GMGN rows. Never promotes period_unverified data above medium. */
+export function resolveGmgnConfidenceCap(
+  s7d: GmgnPeriodStatsInput,
+  s30d: GmgnPeriodStatsInput,
+  dq: WalletDataQualityAssessment
+): "low" | "medium" | "none" {
+  if (!isPresent(s7d) && !isPresent(s30d)) return "none";
+  if (hasUnverifiedPeriod(s7d) || hasUnverifiedPeriod(s30d) || dq.dataQualityTier === "DQ-D" || dq.dataQualityTier === "DQ-U") {
+    return "low";
+  }
+  if (s7d.status === "PARTIAL" || s30d.status === "PARTIAL" || hasPartialFields(s7d) || hasPartialFields(s30d) || dq.dataQualityTier === "DQ-C") {
+    return "medium";
+  }
+  return "medium"; // borrowed GMGN is never high-confidence without chain verification
 }
