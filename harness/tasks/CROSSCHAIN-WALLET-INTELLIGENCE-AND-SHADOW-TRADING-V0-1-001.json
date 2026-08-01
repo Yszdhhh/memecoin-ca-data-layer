@@ -51,7 +51,11 @@
     "harness/dispatches/SOL-WALLET-SHADOW-REPLAY-PILOT-001.md",
     "harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001.md",
     "harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.md",
-    "harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001.md"
+    "harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001.md",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
+    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.md",
+    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.md"
   ],
   "forbidden_actions": [
     "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
@@ -71,7 +75,9 @@
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/source_hashes.json",
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/deterministic_replay_result.json",
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/test_evidence.md",
-    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/git_delivery_status.md"
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/git_delivery_status.md",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json"
   ],
   "acceptance_commands": [
     "npm run harness:doctor",

@@ -2,13 +2,13 @@
 
 ## Program graph and write-set replay
 
-- Registered new task specs: 13
-- Registered ledger entries: 13
+- Registered new task specs: 15
+- Registered ledger entries: 15
 - Unknown dependencies: 0
 - Dependency cycles: 0
 - New-task write-set conflicts: 0
 - Governance diff out-of-scope paths: 0
-- Deterministic governance replay: PASS (`4396F5EA552E22AAA408747904F6626837814D104FF45799CA52C9DBD8D63FD8`)
+- Deterministic governance replay: PASS (same-input hash recorded in `deterministic_replay_result.json`)
 
 ## Repository quality commands
 
@@ -19,4 +19,4 @@
 - `git diff --check`: PASS
 - `npm run harness:doctor`: FAIL only because the existing broad `wallet*.json` forbidden-name rule matches three tracked scrubbed fixture/artifact files.
 
-No private source record was read into this report.
+The registered Harness repair must prove a narrow fix that keeps synthetic raw/private wallet-like artifacts rejected. No private source record was read into this report.

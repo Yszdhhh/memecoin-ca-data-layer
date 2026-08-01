@@ -5,11 +5,9 @@
   "tier": "T2",
   "role": "implementer",
   "chain": "solana",
-  "status": "BLOCKED_DEPENDENCY",
-  "objective": "Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence.",
-  "dependencies": [
-    "CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001"
-  ],
+  "status": "READY",
+  "objective": "Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence. Execute only after the Owner has merged the governance task specs; the existing unregistered PR #15 task is an explicit input/precondition.",
+  "dependencies": [],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
     "AGENTS.md",

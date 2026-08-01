@@ -4,10 +4,10 @@
 
 | Check | Result | Evidence |
 |---|---:|---|
-| New task-schema validation | PASS | 13 of 13 task-v1 specs returned GREEN |
+| New task-schema validation | PASS | 15 of 15 task-v1 specs returned GREEN |
 | Dependency graph | PASS | 0 unknown dependencies; 0 cycles |
 | New task write-set conflicts | PASS | 0 pairwise conflicts; Repair-002 is serialized against the historical PR #15 scope by dispatch policy |
-| Governance-only diff scope | PASS | 36 changed files; 0 outside allowed governance paths |
+| Governance-only diff scope | PASS | 0 changed paths outside allowed governance paths |
 | Deterministic governance replay | PASS | Same graph/write-set input reproduced the same SHA-256 result |
 | Typecheck | PASS | `npm run typecheck` |
 | Test | PASS | `npm test`: 460 passed, 1 skipped, 0 failed |
@@ -18,7 +18,7 @@
 
 ## Milestone decision
 
-**M0 is PARK, not GREEN.** The program governance graph is valid and governance-only, but the current repository Harness doctor still fails. The failure is not suppressed or reclassified. It requires a separate, narrowly scoped Harness repair and independent verification.
+**M0 is PARK, not GREEN.** The program governance graph is valid and governance-only, but the current repository Harness doctor still fails. The failure is not suppressed or reclassified. The governance graph now registers `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001` and an independent audit task to resolve it after this governance PR is Owner-merged.
 
 ## Stage decision
 

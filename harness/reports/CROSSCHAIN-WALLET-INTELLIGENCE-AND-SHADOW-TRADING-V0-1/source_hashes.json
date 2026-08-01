@@ -44,8 +44,8 @@
     },
     {
       "path": "harness/ledger/tasks.json",
-      "sha256": "6318f8c730dc53f842f5ef9a602d98b02941fab5b4cc5e5d3b72e3bda48a57f3",
-      "size_bytes": 43820
+      "sha256": "45f1c0d4e0407f36a1006ca503781fac89455b626a174672c7ccd471bbc7f1b5",
+      "size_bytes": 44220
     },
     {
       "path": "harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json",

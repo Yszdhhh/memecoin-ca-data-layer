@@ -1,0 +1,55 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+  "title": "Independent audit of Harness doctor forbidden-path rule repair",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": null,
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Independently audit the Harness doctor repair. Re-run doctor and negative retention tests; assess Harness compliance, code simplicity, architecture, data credibility, observability, security/privacy, Git governance, scope creep, P0/P1/P2, and GREEN/YELLOW/RED. Do not implement fixes.",
+  "dependencies": [
+    "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/cli.ts",
+    "test/harness.test.ts",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/acceptance.md"
+  ],
+  "write_set": [
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/"
+  ],
+  "forbidden_actions": [
+    "Do not weaken secret, credential, raw export, wallet-address, transaction, or private-data retention controls.",
+    "Do not allowlist arbitrary directories or wildcard names without narrowly tested scrubbed-artifact justification.",
+    "Do not modify product source, provider behavior, runtime credential handling, chain configuration, or package scripts.",
+    "Do not push main, merge, squash, rebase, or rewrite pushed history.",
+    "Do not modify source, tests, configuration, task statuses, or implementation artifacts.",
+    "The auditor must not be the repair implementer."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/acceptance.md",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/desensitized_metrics.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/replay_manifest.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/source_hashes.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/deterministic_replay_result.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/test_evidence.md",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

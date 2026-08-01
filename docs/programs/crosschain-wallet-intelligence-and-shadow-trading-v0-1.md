@@ -16,6 +16,8 @@ This is a governance-only program dispatch. It does not activate BSC or cross-ch
 
 ```mermaid
 graph TD
+  D["Harness doctor narrow repair"] --> DA["Independent Harness audit"]
+  DA --> M0["M0 eligible for GREEN"]
   H["SOL HUD base task / PR #15"] --> R["Repair-002"] --> A["Independent HUD audit"]
   S["Solana E2E + Owner BSC activation"] --> I["BSC source inventory"] --> M["BSC master"] --> C["BSC candidates"] --> V["BSC chain pilot"]
   S --> K["Shadow contracts"] --> E["Replay engine"] --> SA["SOL replay adapter"]
@@ -32,7 +34,7 @@ graph TD
 
 | Milestone | Acceptance boundary | Current state |
 |---|---|---|
-| M0 Program Harness | Valid specs, acyclic graph, non-overlapping new write sets, governance-only diff | PARK pending the existing Harness doctor false-positive repair |
+| M0 Program Harness | Valid specs, acyclic graph, non-overlapping new write sets, governance-only diff, and independently audited doctor repair | PARK; the narrow repair and audit are registered but not yet authorized |
 | M1 SOL HUD v0.2 | Repair-002 plus independent GREEN audit on PR #15 | BLOCKED_DEPENDENCY |
 | M2 BSC master | Owner BSC activation, inventory, deterministic clean/replay | BLOCKED_STAGE |
 | M3 BSC candidates/chain pilot | Explainable candidates and positive/risk/counterexample validation | BLOCKED_STAGE |
@@ -47,8 +49,9 @@ The program registers one feature PR per implementation task. SOL and BSC replay
 ## Planned branches and PRs
 
 1. `chore/crosschain-wallet-shadow-program-spec` — governance only; current draft.
-2. `fix/sol-wallet-hud-v0-2-repair-002` — only after its task is READY; applies commits to the existing PR #15 branch as required by the repair policy.
-3. `feat/bsc-wallet-source-inventory-v0-1` and later BSC branches — only after BSC stage activation.
-4. `feat/wallet-shadow-trade-contracts-v0-1`, `feat/wallet-shadow-replay-engine-v0-1`, and distinct SOL/BSC adapter branches — only after dependencies and Owner gates permit.
+2. `fix/harness-doctor-forbidden-path-rule-repair-001` — narrow Harness gate repair after governance merge; independent audit required.
+3. `fix/sol-wallet-hud-v0-2-repair-002` — only after its task is READY; applies commits to the existing PR #15 branch as required by the repair policy.
+4. `feat/bsc-wallet-source-inventory-v0-1` and later BSC branches — only after BSC stage activation.
+5. `feat/wallet-shadow-trade-contracts-v0-1`, `feat/wallet-shadow-replay-engine-v0-1`, and distinct SOL/BSC adapter branches — only after dependencies and Owner gates permit.
 
 No agent may merge any PR. A GREEN independent audit is necessary before an Owner may merge using a merge commit.

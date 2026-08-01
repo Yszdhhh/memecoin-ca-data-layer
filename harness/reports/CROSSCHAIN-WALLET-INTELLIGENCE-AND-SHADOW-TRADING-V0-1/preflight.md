@@ -20,6 +20,6 @@ The repository has existing Solana wallet-intelligence/HUD conventions and Harne
 ## Risk register
 1. BSC/cross-chain activation would violate the current Solana-first gate without Owner action.
 2. PR #15 lacks an independent GREEN audit.
-3. Existing Harness doctor has a broad filename-pattern false positive affecting scrubbed artifacts; M0 cannot be called GREEN until a separate narrow repair verifies the rule.
+3. Existing Harness doctor has a broad filename-pattern false positive affecting scrubbed artifacts; registered task `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001` plus its independent audit are required before M0 can be GREEN.
 4. Shadow-event count is zero in current SOL HUD evidence, so no followability conclusion is allowed.
 5. Private data provenance and field coverage cannot be inferred from directory existence.

@@ -7,5 +7,7 @@
   "shadow_event_count": 0,
   "bsc_private_root_present": true,
   "bsc_stage_status": "BLOCKED_STAGE",
-  "private_records_in_git": false
+  "private_records_in_git": false,
+  "registered_task_spec_count": 15,
+  "harness_doctor_repair_task_registered": true
 }

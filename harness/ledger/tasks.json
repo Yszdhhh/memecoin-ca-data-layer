@@ -1125,7 +1125,7 @@
     {
       "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
       "spec": "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json",
-      "status": "BLOCKED_DEPENDENCY"
+      "status": "READY"
     },
     {
       "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001",
@@ -1181,6 +1181,16 @@
       "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001",
       "spec": "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001.json",
       "status": "PARK"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

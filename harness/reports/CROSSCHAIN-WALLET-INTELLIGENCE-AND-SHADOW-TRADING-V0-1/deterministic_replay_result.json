@@ -1,12 +1,12 @@
 {
   "schema_version": "program-governance-replay-v1",
   "generated_at": "2026-08-01T00:00:00Z",
-  "task_spec_count": 13,
-  "ledger_registered_task_count": 13,
+  "task_spec_count": 15,
+  "ledger_registered_task_count": 15,
   "unknown_dependencies": [],
   "dependency_cycles": [],
   "new_task_write_set_conflicts": [],
-  "changed_file_count": 36,
+  "changed_file_count": 16,
   "out_of_scope_changed_files": [],
   "result": "PASS"
 }

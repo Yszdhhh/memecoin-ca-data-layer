@@ -7,10 +7,10 @@ Repair the existing PR #15 implementation without rebuilding it: prevent activit
 Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the exact task spec: `harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json`.
 
 ## Current status
-`BLOCKED_DEPENDENCY`. This task is blocked until the governance task is accepted and the Owner merges the governance PR using a merge commit. The unregistered historical PR #15 task remains an explicit input/precondition, not a ledger dependency.
+`READY`. Execute only after the Owner merges the governance PR using a merge commit. The unregistered historical PR #15 task remains an explicit input/precondition, not a ledger dependency.
 
 ## Dependencies
-- `CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001`
+- Owner merge of the governance PR is an external dispatch prerequisite.
 
 ## Write boundary
 - `src/application/wallet-intelligence/hud-v0-2.ts`
