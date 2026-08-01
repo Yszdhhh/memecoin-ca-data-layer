@@ -11,7 +11,7 @@
 
 ## Category rules (summary)
 - **A** Active + 30d profit ≥ p75 (positive subset) + min trades/tokens
-- **B** High win rate + trades ≥ 15 + profit > 0 + no HIGH/extreme disqualifying anomalies
+- **B** High win rate + trades ≥ 15 + profit > 0 + no HIGH, EXTREME_*, window conflict, or win-rate unit ambiguity (low residuals may still be disclosed)
 - **C** Win rate ≤ 35 + high profit — *lead only*, not “golden dog hunter”; excludes unit-ambiguous win rates
 - **D** 7d profit ≥ 2× (30d/4.28) with profit_30d > 50 guard
 - **E** Strong 30d + recent decay/inactivity → Dormant research pool

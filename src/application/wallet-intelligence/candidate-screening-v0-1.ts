@@ -602,6 +602,247 @@ export function assessScreeningCoverage(args: {
   };
 }
 
+/** Population thresholds used by category eligibility (computed once per run). */
+export interface CategoryEligibilityThresholds {
+  profitP75: number;
+  winP75: number;
+  tradeP95: number;
+}
+
+export function notSevereMissingData(r: Pick<WalletMasterV01Record, "data_tier" | "gmgn_30d_status">): boolean {
+  return r.data_tier !== "TIER_MISSING" && r.gmgn_30d_status !== "UNAVAILABLE" && r.gmgn_30d_status !== "ABSENT";
+}
+
+/** A: active + high profit percentile + min sample */
+export function isEligibleCategoryA(
+  r: Pick<
+    WalletMasterV01Record,
+    | "data_tier"
+    | "gmgn_30d_status"
+    | "activity_tier"
+    | "profit_30d"
+    | "profit_percentile_30d"
+    | "trade_count_proxy"
+    | "token_count"
+  >
+): boolean {
+  return (
+    notSevereMissingData(r) &&
+    (r.activity_tier === "ACTIVE_7D" || r.activity_tier === "ACTIVE_30D_ONLY") &&
+    r.profit_30d !== null &&
+    r.profit_30d > 0 &&
+    (r.profit_percentile_30d ?? 0) >= 75 &&
+    (r.trade_count_proxy ?? 0) >= 5 &&
+    (r.token_count ?? 0) >= 2
+  );
+}
+
+/**
+ * B: high winrate + sample ≥15 + positive profit + no HIGH / EXTREME_* / window / unit-ambiguous flags.
+ * Low residuals may still appear on the row; they are disclosed, not auto-excluded.
+ */
+export function isEligibleCategoryB(
+  r: Pick<
+    WalletMasterV01Record,
+    | "data_tier"
+    | "gmgn_30d_status"
+    | "win_rate_30d"
+    | "trade_count_proxy"
+    | "profit_30d"
+    | "anomaly_flags"
+  >,
+  winP75: number
+): boolean {
+  return (
+    notSevereMissingData(r) &&
+    r.win_rate_30d !== null &&
+    !isWinRateUnitAmbiguous(r.win_rate_30d) &&
+    !r.anomaly_flags.includes("WIN_RATE_UNIT_AMBIGUOUS") &&
+    r.win_rate_30d >= Math.max(winP75, 35) &&
+    (r.trade_count_proxy ?? 0) >= 15 &&
+    r.profit_30d !== null &&
+    r.profit_30d > 0 &&
+    !r.anomaly_flags.some((f) => disqualifiesCleanHighWinrateSample(f))
+  );
+}
+
+/** C: low winrate high profit lead (not golden-dog confirmation). */
+export function isEligibleCategoryC(
+  r: Pick<
+    WalletMasterV01Record,
+    | "data_tier"
+    | "gmgn_30d_status"
+    | "win_rate_30d"
+    | "profit_30d"
+    | "trade_count_proxy"
+    | "anomaly_flags"
+  >,
+  profitP75: number
+): boolean {
+  return (
+    notSevereMissingData(r) &&
+    r.win_rate_30d !== null &&
+    !isWinRateUnitAmbiguous(r.win_rate_30d) &&
+    !r.anomaly_flags.includes("WIN_RATE_UNIT_AMBIGUOUS") &&
+    r.win_rate_30d > 0 &&
+    r.win_rate_30d <= 35 &&
+    r.profit_30d !== null &&
+    r.profit_30d >= Math.max(profitP75, 1) &&
+    (r.trade_count_proxy ?? 0) >= 8
+  );
+}
+
+/** D: 7d outperformance vs 30d weekly avg with small-denominator guard. */
+export function isEligibleCategoryD(
+  r: Pick<WalletMasterV01Record, "data_tier" | "gmgn_30d_status" | "profit_7d" | "profit_30d" | "trade_count_proxy">
+): boolean {
+  if (!notSevereMissingData(r)) return false;
+  if (r.profit_7d === null || r.profit_30d === null) return false;
+  if (r.profit_30d <= 50) return false;
+  if ((r.trade_count_proxy ?? 0) < 5) return false;
+  const weeklyAvg = r.profit_30d / 4.28;
+  if (weeklyAvg <= 0) return false;
+  const ratio = r.profit_7d / weeklyAvg;
+  return ratio >= 2.0 && r.profit_7d > 0;
+}
+
+/** E: historically strong 30d + recent decay/inactivity. */
+export function isEligibleCategoryE(
+  r: Pick<
+    WalletMasterV01Record,
+    "data_tier" | "gmgn_30d_status" | "profit_30d" | "profit_7d" | "activity_tier"
+  >,
+  profitP75: number
+): boolean {
+  if (!notSevereMissingData(r)) return false;
+  if (r.profit_30d === null || r.profit_30d < Math.max(profitP75, 1)) return false;
+  return (
+    r.activity_tier === "INACTIVE" ||
+    r.activity_tier === "ACTIVE_30D_ONLY" ||
+    (r.profit_7d !== null && r.profit_7d <= 0) ||
+    (r.profit_7d !== null && r.profit_30d !== null && r.profit_7d < r.profit_30d / 10)
+  );
+}
+
+/** F: high frequency / extreme / residual suspicious pool (not confirmed bot/wash). */
+export function isEligibleCategoryF(
+  r: Pick<
+    WalletMasterV01Record,
+    "anomaly_flags" | "trade_count_proxy" | "buy_count" | "sell_count" | "token_count"
+  >,
+  tradeP95: number
+): boolean {
+  if (
+    r.anomaly_flags.some(
+      (f) =>
+        f.includes("EXTREME") ||
+        f.includes("ZERO_INCOME") ||
+        f.includes("WINDOW_MONOTONICITY") ||
+        f.includes("ACCOUNTING_RESIDUAL")
+    )
+  ) {
+    return true;
+  }
+  if ((r.trade_count_proxy ?? 0) >= Math.max(tradeP95, 500)) return true;
+  if (r.buy_count !== null && r.sell_count !== null) {
+    if (r.buy_count > 50 && r.sell_count === 0) return true;
+    if (r.sell_count > 50 && r.buy_count === 0) return true;
+  }
+  if ((r.token_count ?? 0) > 1000) return true;
+  return false;
+}
+
+/**
+ * G eligibility + reason codes.
+ * CLAIM_SMART_MONEY_UNVERIFIED only when explicit_smart_money_claim is true.
+ */
+export function evaluateCategoryG(
+  r: Pick<
+    WalletMasterV01Record,
+    | "existing_labels"
+    | "existing_note"
+    | "activity_tier"
+    | "profit_30d"
+    | "data_tier"
+    | "trade_count_proxy"
+    | "anomaly_flags"
+    | "win_rate_30d"
+  >
+): { eligible: boolean; reasonCodes: string[] } {
+  const kw = classifyLabelClaims(r.existing_labels, r.existing_note);
+  const hasClaim =
+    kw.explicit_smart_money_claim ||
+    kw.bot_claim ||
+    kw.whale_claim ||
+    kw.sniper_claim ||
+    kw.high_win_claim ||
+    kw.kol_claim ||
+    kw.ranking_claim;
+  if (!hasClaim) return { eligible: false, reasonCodes: [] };
+
+  let conflict = false;
+  if (
+    kw.explicit_smart_money_claim &&
+    (r.activity_tier === "INACTIVE" ||
+      (r.profit_30d !== null && r.profit_30d < 0) ||
+      r.data_tier === "TIER_MISSING" ||
+      ((r.trade_count_proxy ?? 0) === 0 && (r.profit_30d === null || r.profit_30d === 0)))
+  ) {
+    conflict = true;
+  }
+  if (kw.bot_claim && (r.trade_count_proxy ?? 0) < 20 && !r.anomaly_flags.some((f) => f.includes("EXTREME"))) {
+    conflict = true;
+  }
+  if (kw.whale_claim && (r.profit_30d === null || Math.abs(r.profit_30d) < 1000) && (r.trade_count_proxy ?? 0) < 10) {
+    conflict = true;
+  }
+  if (
+    kw.high_win_claim &&
+    r.win_rate_30d !== null &&
+    !isWinRateUnitAmbiguous(r.win_rate_30d) &&
+    r.win_rate_30d < 30 &&
+    (r.trade_count_proxy ?? 0) >= 10
+  ) {
+    conflict = true;
+  }
+  if (
+    (kw.kol_claim || kw.ranking_claim) &&
+    (r.activity_tier === "INACTIVE" ||
+      r.data_tier === "TIER_MISSING" ||
+      ((r.trade_count_proxy ?? 0) === 0 && (r.profit_30d === null || r.profit_30d <= 0)))
+  ) {
+    conflict = true;
+  }
+  if (!conflict) return { eligible: false, reasonCodes: [] };
+
+  const reasons = ["SOURCE_CLAIM_NOT_CONFIRMED", "LABEL_STAT_DIVERGENCE"];
+  if (kw.explicit_smart_money_claim) reasons.push("CLAIM_SMART_MONEY_UNVERIFIED");
+  if (kw.kol_claim) reasons.push("CLAIM_KOL_UNVERIFIED");
+  if (kw.ranking_claim) reasons.push("CLAIM_RANKING_UNVERIFIED");
+  if (kw.bot_claim) reasons.push("CLAIM_BOT_UNSUPPORTED_BY_STATS");
+  if (kw.whale_claim) reasons.push("CLAIM_WHALE_LACKS_SUPPORTING_METRICS");
+  if (kw.high_win_claim) reasons.push("CLAIM_HIGH_WINRATE_CONFLICTS_WITH_GMGN");
+  if (kw.sniper_claim) reasons.push("CLAIM_SNIPER_UNVERIFIED");
+  return { eligible: true, reasonCodes: reasons };
+}
+
+/** H: sparse/missing GMGN + high-intel labels (count ≥3 or explicit smart-money). */
+export function isEligibleCategoryH(
+  r: Pick<
+    WalletMasterV01Record,
+    "data_tier" | "gmgn_30d_status" | "existing_labels" | "existing_note"
+  >
+): boolean {
+  const sparse =
+    r.data_tier === "TIER_MISSING" ||
+    r.data_tier === "TIER_SPARSE" ||
+    r.gmgn_30d_status === "UNAVAILABLE" ||
+    r.gmgn_30d_status === "ABSENT";
+  if (!sparse) return false;
+  const kw = classifyLabelClaims(r.existing_labels, r.existing_note);
+  return r.existing_labels.length >= 3 || kw.explicit_smart_money_claim;
+}
+
 function csvEscape(val: unknown): string {
   if (val === null || val === undefined) return "";
   const str = typeof val === "object" ? JSON.stringify(val) : String(val);
@@ -909,21 +1150,9 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
     return groupReasons.get(addr)!;
   };
 
-  const notSevereMissing = (r: WalletMasterV01Record) =>
-    r.data_tier !== "TIER_MISSING" && r.gmgn_30d_status !== "UNAVAILABLE" && r.gmgn_30d_status !== "ABSENT";
-
   // A: active + high profit percentile + min sample
   {
-    const pool = records.filter(
-      (r) =>
-        notSevereMissing(r) &&
-        (r.activity_tier === "ACTIVE_7D" || r.activity_tier === "ACTIVE_30D_ONLY") &&
-        r.profit_30d !== null &&
-        r.profit_30d > 0 &&
-        (r.profit_percentile_30d ?? 0) >= 75 &&
-        (r.trade_count_proxy ?? 0) >= 5 &&
-        (r.token_count ?? 0) >= 2
-    );
+    const pool = records.filter((r) => isEligibleCategoryA(r));
     const top = pickTop(pool, (r) => (r.profit_percentile_30d ?? 0) * 0.6 + (r.gmgn_lead_score ?? 0) * 0.4, 12);
     groupMembers.A_ACTIVE_HIGH_PROFIT_LEAD = top;
     for (const r of top) {
@@ -936,24 +1165,12 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
     }
   }
 
-  // B: high win rate + adequate sample + no disqualifying HIGH/extreme anomalies
+  // B: high win rate + adequate sample + no HIGH / EXTREME_* / window / unit ambiguity
   {
-    const pool = records.filter(
-      (r) =>
-        notSevereMissing(r) &&
-        r.win_rate_30d !== null &&
-        !isWinRateUnitAmbiguous(r.win_rate_30d) &&
-        !r.anomaly_flags.includes("WIN_RATE_UNIT_AMBIGUOUS") &&
-        r.win_rate_30d >= Math.max(winP75, 35) &&
-        (r.trade_count_proxy ?? 0) >= 15 &&
-        r.profit_30d !== null &&
-        r.profit_30d > 0 &&
-        !r.anomaly_flags.some((f) => disqualifiesCleanHighWinrateSample(f))
-    );
+    const pool = records.filter((r) => isEligibleCategoryB(r, winP75));
     const top = pickTop(pool, (r) => (r.win_rate_30d ?? 0) * 0.5 + Math.min(50, (r.trade_count_proxy ?? 0) / 2) * 0.5, 10);
     groupMembers.B_HIGH_WINRATE_ADEQUATE_SAMPLE = top;
     for (const r of top) {
-      // Every reason code is backed by a predicate above.
       ensureReasons(r.address).set("B_HIGH_WINRATE_ADEQUATE_SAMPLE", [
         "HIGH_WINRATE_30D",
         "ADEQUATE_TRADE_SAMPLE_GE_15",
@@ -965,18 +1182,7 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
 
   // C: low winrate high profit lead (asymmetric payoff clue — NOT "golden dog hunter")
   {
-    const pool = records.filter(
-      (r) =>
-        notSevereMissing(r) &&
-        r.win_rate_30d !== null &&
-        !isWinRateUnitAmbiguous(r.win_rate_30d) &&
-        !r.anomaly_flags.includes("WIN_RATE_UNIT_AMBIGUOUS") &&
-        r.win_rate_30d > 0 &&
-        r.win_rate_30d <= 35 &&
-        r.profit_30d !== null &&
-        r.profit_30d >= Math.max(profitP75, 1) &&
-        (r.trade_count_proxy ?? 0) >= 8
-    );
+    const pool = records.filter((r) => isEligibleCategoryC(r, profitP75));
     const top = pickTop(pool, (r) => (r.profit_30d ?? 0) / (1 + (r.win_rate_30d ?? 1)), 8);
     groupMembers.C_LOW_WINRATE_HIGH_PROFIT_LEAD = top;
     for (const r of top) {
@@ -990,16 +1196,7 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
 
   // D: recent outperformance (7d vs 30d weekly avg) with small-denominator guard
   {
-    const pool = records.filter((r) => {
-      if (!notSevereMissing(r)) return false;
-      if (r.profit_7d === null || r.profit_30d === null) return false;
-      if (r.profit_30d <= 50) return false; // small denominator guard
-      if ((r.trade_count_proxy ?? 0) < 5) return false;
-      const weeklyAvg = r.profit_30d / 4.28;
-      if (weeklyAvg <= 0) return false;
-      const ratio = r.profit_7d / weeklyAvg;
-      return ratio >= 2.0 && r.profit_7d > 0;
-    });
+    const pool = records.filter((r) => isEligibleCategoryD(r));
     const top = pickTop(pool, (r) => (r.profit_7d! / (r.profit_30d! / 4.28)), 8);
     groupMembers.D_RECENT_OUTPERFORMANCE = top;
     for (const r of top) {
@@ -1013,16 +1210,7 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
 
   // E: historically strong, recently decaying
   {
-    const pool = records.filter(
-      (r) =>
-        notSevereMissing(r) &&
-        r.profit_30d !== null &&
-        r.profit_30d >= Math.max(profitP75, 1) &&
-        (r.activity_tier === "INACTIVE" ||
-          r.activity_tier === "ACTIVE_30D_ONLY" ||
-          (r.profit_7d !== null && r.profit_7d <= 0) ||
-          (r.profit_7d !== null && r.profit_30d !== null && r.profit_7d < r.profit_30d / 10))
-    );
+    const pool = records.filter((r) => isEligibleCategoryE(r, profitP75));
     const top = pickTop(pool, (r) => r.profit_30d ?? 0, 8);
     groupMembers.E_HISTORICAL_STRONG_RECENT_DECAY = top;
     for (const r of top) {
@@ -1036,17 +1224,7 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
 
   // F: high frequency / mechanical / anomaly — mark Suspicious only
   {
-    const pool = records.filter((r) => {
-      if (r.anomaly_flags.some((f) => f.includes("EXTREME") || f.includes("ZERO_INCOME") || f.includes("WINDOW_MONOTONICITY") || f.includes("ACCOUNTING_RESIDUAL")))
-        return true;
-      if ((r.trade_count_proxy ?? 0) >= Math.max(tradeP95, 500)) return true;
-      if (r.buy_count !== null && r.sell_count !== null) {
-        if (r.buy_count > 50 && r.sell_count === 0) return true;
-        if (r.sell_count > 50 && r.buy_count === 0) return true;
-      }
-      if ((r.token_count ?? 0) > 1000) return true;
-      return false;
-    });
+    const pool = records.filter((r) => isEligibleCategoryF(r, tradeP95));
     const top = pickTop(
       pool,
       (r) =>
@@ -1067,49 +1245,7 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
 
   // G: original label vs current stats conflict (typed claims)
   {
-    const pool = records.filter((r) => {
-      const kw = classifyLabelClaims(r.existing_labels, r.existing_note);
-      const hasClaim =
-        kw.explicit_smart_money_claim ||
-        kw.bot_claim ||
-        kw.whale_claim ||
-        kw.sniper_claim ||
-        kw.high_win_claim ||
-        kw.kol_claim ||
-        kw.ranking_claim;
-      if (!hasClaim) return false;
-      // Explicit smart-money claim vs weak/inactive stats
-      if (
-        kw.explicit_smart_money_claim &&
-        (r.activity_tier === "INACTIVE" ||
-          (r.profit_30d !== null && r.profit_30d < 0) ||
-          r.data_tier === "TIER_MISSING" ||
-          ((r.trade_count_proxy ?? 0) === 0 && (r.profit_30d === null || r.profit_30d === 0)))
-      ) {
-        return true;
-      }
-      if (kw.bot_claim && (r.trade_count_proxy ?? 0) < 20 && !r.anomaly_flags.some((f) => f.includes("EXTREME"))) return true;
-      if (kw.whale_claim && (r.profit_30d === null || Math.abs(r.profit_30d) < 1000) && (r.trade_count_proxy ?? 0) < 10) return true;
-      if (
-        kw.high_win_claim &&
-        r.win_rate_30d !== null &&
-        !isWinRateUnitAmbiguous(r.win_rate_30d) &&
-        r.win_rate_30d < 30 &&
-        (r.trade_count_proxy ?? 0) >= 10
-      ) {
-        return true;
-      }
-      // KOL / ranking claims conflict only when recent metrics are empty/negative (not auto smart-money)
-      if (
-        (kw.kol_claim || kw.ranking_claim) &&
-        (r.activity_tier === "INACTIVE" ||
-          r.data_tier === "TIER_MISSING" ||
-          ((r.trade_count_proxy ?? 0) === 0 && (r.profit_30d === null || r.profit_30d <= 0)))
-      ) {
-        return true;
-      }
-      return false;
-    });
+    const pool = records.filter((r) => evaluateCategoryG(r).eligible);
     const top = pickTop(
       pool,
       (r) => {
@@ -1124,32 +1260,13 @@ export async function runCandidateScreeningV01(options: ScreeningOptions): Promi
     );
     groupMembers.G_LABEL_STAT_CONFLICT = top;
     for (const r of top) {
-      const kw = classifyLabelClaims(r.existing_labels, r.existing_note);
-      const reasons = ["SOURCE_CLAIM_NOT_CONFIRMED", "LABEL_STAT_DIVERGENCE"];
-      // Only explicit smart-money claims may use CLAIM_SMART_MONEY_UNVERIFIED
-      if (kw.explicit_smart_money_claim) reasons.push("CLAIM_SMART_MONEY_UNVERIFIED");
-      if (kw.kol_claim) reasons.push("CLAIM_KOL_UNVERIFIED");
-      if (kw.ranking_claim) reasons.push("CLAIM_RANKING_UNVERIFIED");
-      if (kw.bot_claim) reasons.push("CLAIM_BOT_UNSUPPORTED_BY_STATS");
-      if (kw.whale_claim) reasons.push("CLAIM_WHALE_LACKS_SUPPORTING_METRICS");
-      if (kw.high_win_claim) reasons.push("CLAIM_HIGH_WINRATE_CONFLICTS_WITH_GMGN");
-      if (kw.sniper_claim) reasons.push("CLAIM_SNIPER_UNVERIFIED");
-      ensureReasons(r.address).set("G_LABEL_STAT_CONFLICT", reasons);
+      ensureReasons(r.address).set("G_LABEL_STAT_CONFLICT", evaluateCategoryG(r).reasonCodes);
     }
   }
 
   // H: insufficient data but high intel value from original labels
   {
-    const pool = records.filter((r) => {
-      const sparse =
-        r.data_tier === "TIER_MISSING" ||
-        r.data_tier === "TIER_SPARSE" ||
-        r.gmgn_30d_status === "UNAVAILABLE" ||
-        r.gmgn_30d_status === "ABSENT";
-      if (!sparse) return false;
-      const kw = classifyLabelClaims(r.existing_labels, r.existing_note);
-      return r.existing_labels.length >= 3 || kw.explicit_smart_money_claim;
-    });
+    const pool = records.filter((r) => isEligibleCategoryH(r));
     const top = pickTop(
       pool,
       (r) =>
@@ -1908,7 +2025,7 @@ function buildRulesDoc(): string {
 
 ## Category rules (summary)
 - **A** Active + 30d profit ≥ p75 (positive subset) + min trades/tokens
-- **B** High win rate + trades ≥ 15 + profit > 0 + **no HIGH/extreme disqualifying anomalies** (reason codes fully predicated)
+- **B** High win rate + trades ≥ 15 + profit > 0 + **no HIGH, EXTREME_*, window-monotonicity, or win-rate unit ambiguity** (other low residuals may still be disclosed)
 - **C** Win rate ≤ 35 + high profit — *lead only*, not “golden dog hunter”; excludes unit-ambiguous win rates
 - **D** 7d profit ≥ 2× (30d/4.28) with profit_30d > 50 guard
 - **E** Strong 30d + recent decay/inactivity → Dormant research pool

@@ -10,6 +10,14 @@ import {
   classifyLabelClaims,
   resolveRecommendedActions,
   assessScreeningCoverage,
+  isEligibleCategoryA,
+  isEligibleCategoryB,
+  isEligibleCategoryC,
+  isEligibleCategoryD,
+  isEligibleCategoryE,
+  isEligibleCategoryF,
+  evaluateCategoryG,
+  isEligibleCategoryH,
   CANDIDATE_SCREENING_TASK_ID,
   type CandidateCategory,
   type WalletMasterV01Record,
@@ -158,17 +166,210 @@ test("null vs real 0 are distinct for win rate and profit", () => {
   assert.equal(sNull.winRate, null);
 });
 
-// ---- B anomaly disqualification ----
-test("B disqualifiers include HIGH codes and explicit extreme flags", () => {
+// ---- B anomaly disqualification (all EXTREME_* via prefix) ----
+test("B disqualifiers: all EXTREME_* plus HIGH/window/unit; residuals not auto-excluded", () => {
   assert.equal(isHighSeverityAnomalyCode("ZERO_INCOME_HIGH_PROFIT_30D"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("ZERO_INCOME_HIGH_PROFIT_30D"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_PROFIT_OUTLIER"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_TOKEN_NUM"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_BUY_ONLY_RATIO"), true);
+  assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_SELL_ONLY_RATIO"), true);
+  assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_TRADE_FREQUENCY"), true);
+  assert.equal(disqualifiesCleanHighWinrateSample("EXTREME_ANYTHING_FUTURE"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("WINDOW_MONOTONICITY_VIOLATION"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("WIN_RATE_UNIT_AMBIGUOUS"), true);
   assert.equal(disqualifiesCleanHighWinrateSample("ACCOUNTING_RESIDUAL_OBSERVED_30D"), false);
   assert.equal(disqualifiesCleanHighWinrateSample("PROVIDER_DATA_INCOMPLETE"), false);
+});
+
+// ---- A–H category eligibility (membership, not only actions) ----
+test("A eligibility boundaries", () => {
+  const base = stubRecord({
+    activity_tier: "ACTIVE_7D",
+    profit_30d: 10000,
+    profit_percentile_30d: 80,
+    trade_count_proxy: 10,
+    token_count: 5,
+  });
+  assert.equal(isEligibleCategoryA(base), true);
+  assert.equal(isEligibleCategoryA(stubRecord({ ...base, activity_tier: "INACTIVE" })), false);
+  assert.equal(isEligibleCategoryA(stubRecord({ ...base, profit_percentile_30d: 74 })), false);
+  assert.equal(isEligibleCategoryA(stubRecord({ ...base, profit_30d: 0 })), false);
+  assert.equal(isEligibleCategoryA(stubRecord({ ...base, trade_count_proxy: 4 })), false);
+  assert.equal(isEligibleCategoryA(stubRecord({ ...base, token_count: 1 })), false);
+});
+
+test("B eligibility boundaries including all EXTREME_*", () => {
+  const clean = stubRecord({
+    win_rate_30d: 70,
+    trade_count_proxy: 15,
+    profit_30d: 100,
+    anomaly_flags: ["PROVIDER_DATA_INCOMPLETE", "ACCOUNTING_RESIDUAL_OBSERVED_30D"],
+  });
+  assert.equal(isEligibleCategoryB(clean, 40), true);
+  assert.equal(isEligibleCategoryB(stubRecord({ ...clean, trade_count_proxy: 14 }), 40), false);
+  assert.equal(isEligibleCategoryB(stubRecord({ ...clean, profit_30d: 0 }), 40), false);
+  assert.equal(isEligibleCategoryB(stubRecord({ ...clean, profit_30d: -1 }), 40), false);
+  assert.equal(
+    isEligibleCategoryB(stubRecord({ ...clean, anomaly_flags: ["EXTREME_SELL_ONLY_RATIO"] }), 40),
+    false
+  );
+  assert.equal(
+    isEligibleCategoryB(stubRecord({ ...clean, anomaly_flags: ["EXTREME_TRADE_FREQUENCY"] }), 40),
+    false
+  );
+  assert.equal(
+    isEligibleCategoryB(stubRecord({ ...clean, anomaly_flags: ["WIN_RATE_UNIT_AMBIGUOUS"], win_rate_30d: 0.39 }), 40),
+    false
+  );
+  assert.equal(isEligibleCategoryB(stubRecord({ ...clean, win_rate_30d: 0.39 }), 40), false);
+});
+
+test("C eligibility boundaries", () => {
+  const base = stubRecord({
+    win_rate_30d: 35,
+    trade_count_proxy: 8,
+    profit_30d: 5000,
+    anomaly_flags: [],
+  });
+  assert.equal(isEligibleCategoryC(base, 1000), true);
+  assert.equal(isEligibleCategoryC(stubRecord({ ...base, win_rate_30d: 36 }), 1000), false);
+  assert.equal(isEligibleCategoryC(stubRecord({ ...base, trade_count_proxy: 7 }), 1000), false);
+  assert.equal(isEligibleCategoryC(stubRecord({ ...base, win_rate_30d: 0.39 }), 1000), false);
+  assert.equal(isEligibleCategoryC(stubRecord({ ...base, win_rate_30d: 1 }), 1000), false);
+});
+
+test("D eligibility boundaries (denominator and ratio)", () => {
+  // weeklyAvg = profit_30d / 4.28; need profit_7d / weeklyAvg >= 2 and profit_30d > 50
+  // profit_30d=51 → weekly≈11.915; need profit_7d >= 23.83
+  const ok = stubRecord({ profit_30d: 51, profit_7d: 24, trade_count_proxy: 5 });
+  assert.equal(isEligibleCategoryD(ok), true);
+  assert.equal(isEligibleCategoryD(stubRecord({ profit_30d: 50, profit_7d: 100, trade_count_proxy: 5 })), false);
+  assert.equal(isEligibleCategoryD(stubRecord({ profit_30d: 100, profit_7d: 10, trade_count_proxy: 5 })), false); // ratio < 2
+  assert.equal(isEligibleCategoryD(stubRecord({ profit_30d: 100, profit_7d: 50, trade_count_proxy: 4 })), false);
+});
+
+test("E eligibility: decay required; stable active high profit alone is not enough", () => {
+  const decay = stubRecord({
+    profit_30d: 10000,
+    profit_7d: 0,
+    activity_tier: "ACTIVE_7D",
+  });
+  assert.equal(isEligibleCategoryE(decay, 1000), true);
+  const inactiveStrong = stubRecord({
+    profit_30d: 10000,
+    profit_7d: 500,
+    activity_tier: "INACTIVE",
+  });
+  assert.equal(isEligibleCategoryE(inactiveStrong, 1000), true);
+  const stableActive = stubRecord({
+    profit_30d: 10000,
+    profit_7d: 3000, // > 30d/10, still active 7d
+    activity_tier: "ACTIVE_7D",
+  });
+  assert.equal(isEligibleCategoryE(stableActive, 1000), false);
+});
+
+test("F eligibility: EXTREME flags enter; residual alone also enters by current rule; partial-only does not", () => {
+  assert.equal(isEligibleCategoryF(stubRecord({ anomaly_flags: ["EXTREME_TRADE_FREQUENCY"] }), 2000), true);
+  assert.equal(isEligibleCategoryF(stubRecord({ anomaly_flags: ["EXTREME_SELL_ONLY_RATIO"] }), 2000), true);
+  // Current rule includes ACCOUNTING_RESIDUAL in F pool
+  assert.equal(isEligibleCategoryF(stubRecord({ anomaly_flags: ["ACCOUNTING_RESIDUAL_OBSERVED_30D"] }), 2000), true);
+  // Ordinary provider incomplete alone does not match F flags/thresholds
+  assert.equal(
+    isEligibleCategoryF(
+      stubRecord({
+        anomaly_flags: ["PROVIDER_DATA_INCOMPLETE"],
+        trade_count_proxy: 10,
+        buy_count: 5,
+        sell_count: 5,
+        token_count: 3,
+      }),
+      2000
+    ),
+    false
+  );
+});
+
+test("G eligibility: smart-money conflict vs KOL/rank non-conflict and conflict reasons", () => {
+  const smartConflict = stubRecord({
+    existing_labels: ["聪明钱"],
+    existing_note: "",
+    activity_tier: "INACTIVE",
+    profit_30d: 0,
+    trade_count_proxy: 0,
+  });
+  const g1 = evaluateCategoryG(smartConflict);
+  assert.equal(g1.eligible, true);
+  assert.ok(g1.reasonCodes.includes("CLAIM_SMART_MONEY_UNVERIFIED"));
+
+  const kolNoConflict = stubRecord({
+    existing_labels: ["KOL样例", "Top052"],
+    existing_note: "",
+    activity_tier: "ACTIVE_7D",
+    profit_30d: 5000,
+    trade_count_proxy: 40,
+    data_tier: "TIER_PARTIAL",
+  });
+  assert.equal(evaluateCategoryG(kolNoConflict).eligible, false);
+
+  const rankConflict = stubRecord({
+    existing_labels: ["Rank073"],
+    existing_note: "",
+    activity_tier: "INACTIVE",
+    profit_30d: 0,
+    trade_count_proxy: 0,
+  });
+  const gRank = evaluateCategoryG(rankConflict);
+  assert.equal(gRank.eligible, true);
+  assert.ok(gRank.reasonCodes.includes("CLAIM_RANKING_UNVERIFIED"));
+  assert.ok(!gRank.reasonCodes.includes("CLAIM_SMART_MONEY_UNVERIFIED"));
+
+  const noLabels = stubRecord({ existing_labels: [], existing_note: "" });
+  assert.equal(evaluateCategoryG(noLabels).eligible, false);
+});
+
+test("H eligibility: sparse+intel enters; complete data does not; sparse without intel does not", () => {
+  assert.equal(
+    isEligibleCategoryH(
+      stubRecord({
+        data_tier: "TIER_SPARSE",
+        gmgn_30d_status: "UNAVAILABLE",
+        existing_labels: ["a", "b", "c"],
+      })
+    ),
+    true
+  );
+  assert.equal(
+    isEligibleCategoryH(
+      stubRecord({
+        data_tier: "TIER_SPARSE",
+        gmgn_30d_status: "UNAVAILABLE",
+        existing_labels: ["聪明钱"],
+      })
+    ),
+    true
+  );
+  assert.equal(
+    isEligibleCategoryH(
+      stubRecord({
+        data_tier: "TIER_PARTIAL",
+        gmgn_30d_status: "PARTIAL",
+        existing_labels: ["a", "b", "c", "d", "e"],
+      })
+    ),
+    false
+  );
+  assert.equal(
+    isEligibleCategoryH(
+      stubRecord({
+        data_tier: "TIER_SPARSE",
+        gmgn_30d_status: "UNAVAILABLE",
+        existing_labels: ["tag1"],
+      })
+    ),
+    false
+  );
 });
 
 // ---- Label claim classification ----

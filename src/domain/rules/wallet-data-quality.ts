@@ -381,14 +381,16 @@ export function isHighSeverityAnomalyCode(code: string): boolean {
 
 /**
  * Codes that must not enter the clean high-winrate sample (category B).
- * Includes all HIGH DQ codes plus explicit extreme / monotonicity / unit flags
- * that audit P1 requires B to filter (even when DQ severity is MEDIUM).
+ * - All HIGH DQ codes
+ * - Any EXTREME_* code (prefix match — do not hand-list subsets)
+ * - WINDOW_MONOTONICITY*
+ * - WIN_RATE_UNIT_AMBIGUOUS
+ * Low-signal residuals (ACCOUNTING_RESIDUAL_*, PROVIDER_DATA_INCOMPLETE) are NOT auto-excluded
+ * but remain disclosed on the row.
  */
 export function disqualifiesCleanHighWinrateSample(code: string): boolean {
   if (isHighSeverityAnomalyCode(code)) return true;
-  if (code === "EXTREME_PROFIT_OUTLIER") return true;
-  if (code === "EXTREME_TOKEN_NUM") return true;
-  if (code === "EXTREME_BUY_ONLY_RATIO") return true;
+  if (code.startsWith("EXTREME_")) return true;
   if (code.startsWith("WINDOW_MONOTONICITY")) return true;
   if (code === "WIN_RATE_UNIT_AMBIGUOUS") return true;
   return false;
