@@ -1,0 +1,57 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001",
+  "title": "BSC wallet master cleaning and ranking v0.1 independent audit",
+  "tier": "T2",
+  "role": "auditor",
+  "chain": "bsc",
+  "status": "BLOCKED_STAGE",
+  "objective": "Independently audit BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001. Evaluate Harness adherence, code simplicity, architecture, data credibility, product closure, tests and observability, security and privacy, and Git/task governance. State principal strengths, principal issues, over-implementation assessment, P0/P1/P2 findings, and exactly one verdict: GREEN, YELLOW, or RED. This report-only task must not modify implementation outputs. A non-GREEN verdict blocks all downstream tasks that depend on this audit.",
+  "dependencies": [
+    "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001"
+  ],
+  "inputs": [
+    "AGENTS.md",
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001.json",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001/acceptance.md"
+  ],
+  "write_set": [
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not modify product source, tests, configuration, task status, implementation artifacts, or the audited task specification.",
+    "The auditor must not be the BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001 implementer."
+  ],
+  "deliverables": [
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/audit.md",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/desensitized_metrics.json",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/replay_manifest.json",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/source_hashes.json",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/deterministic_replay_result.json",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/test_evidence.md",
+    "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

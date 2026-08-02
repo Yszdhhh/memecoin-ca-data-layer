@@ -1,0 +1,40 @@
+{
+  "schema_version": "crosschain-write-set-collision-v1",
+  "generated_at": "2026-08-02T07:15:33.930Z",
+  "task_count": 27,
+  "execution_task_count": 26,
+  "scope": "execution-task write sets; parent governance registration excluded; exact project-config overlap is serialized by the BSC activation dependency on the Harness Doctor audit",
+  "parallel_collision_count": 0,
+  "parallel_collisions": [],
+  "serialized_overlap_count": 1,
+  "serialized_overlaps": [
+    {
+      "left": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+      "right": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
+      "left_path": "harness/config/project.json",
+      "right_path": "harness/config/project.json"
+    }
+  ],
+  "assertions": {
+    "json_parse_task_count": 27,
+    "json_parse_failure_count": 0,
+    "acceptance_command_must_prefix_count": 0,
+    "acceptance_command_non_executable_cli_count": 0,
+    "unknown_dependency_count": 0,
+    "dependency_cycle_count": 0,
+    "audit_write_sets_report_only": true,
+    "audit_write_sets_overlap_product_source": false,
+    "private_root_in_write_sets": false,
+    "self_validation_first": true,
+    "obsolete_program_report_root_count": 0,
+    "literal_backslash_n_count": 0,
+    "governance_diff_out_of_scope_count": 0,
+    "task_ledger_graph_status_consistency_required": true,
+    "task_ledger_graph_status_consistency_count": 27,
+    "task_ledger_graph_status_mismatch_count": 0,
+    "private_offline_cli_requirements": 9,
+    "crosschain_hud_has_no_live_observation_input": true
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA."
+}

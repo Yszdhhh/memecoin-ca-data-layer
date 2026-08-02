@@ -1,0 +1,332 @@
+{
+  "schema_version": "crosschain-program-dag-v1",
+  "generated_at": "2026-08-02T07:15:33.930Z",
+  "task_count": 27,
+  "nodes": [
+    {
+      "task_id": "CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001",
+      "role": "coordinator",
+      "status": "IN_PROGRESS",
+      "chain": null
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+      "role": "implementer",
+      "status": "READY",
+      "chain": null
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+      "role": "implementer",
+      "status": "READY",
+      "chain": "solana"
+    },
+    {
+      "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": "solana"
+    },
+    {
+      "task_id": "BSC-WALLET-SOURCE-INVENTORY-001",
+      "role": "researcher",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001",
+      "role": "implementer",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001",
+      "role": "implementer",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001",
+      "role": "implementer",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001",
+      "role": "implementer",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001",
+      "role": "implementer",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
+      "role": "implementer",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": "solana"
+    },
+    {
+      "task_id": "BSC-WALLET-SHADOW-REPLAY-PILOT-001",
+      "role": "implementer",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001",
+      "role": "coordinator",
+      "status": "PARK",
+      "chain": null
+    },
+    {
+      "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001",
+      "role": "implementer",
+      "status": "PARK",
+      "chain": null
+    },
+    {
+      "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
+      "role": "coordinator",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    },
+    {
+      "task_id": "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": "solana"
+    },
+    {
+      "task_id": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_STAGE",
+      "chain": "bsc"
+    },
+    {
+      "task_id": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001",
+      "role": "auditor",
+      "status": "PARK",
+      "chain": null
+    },
+    {
+      "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001",
+      "role": "auditor",
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+      "to": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001"
+    },
+    {
+      "from": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+      "to": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001"
+    },
+    {
+      "from": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
+      "to": "BSC-WALLET-SOURCE-INVENTORY-001"
+    },
+    {
+      "from": "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001",
+      "to": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001"
+    },
+    {
+      "from": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001",
+      "to": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001"
+    },
+    {
+      "from": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+      "to": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001"
+    },
+    {
+      "from": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "to": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001"
+    },
+    {
+      "from": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001",
+      "to": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001"
+    },
+    {
+      "from": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
+      "to": "SOL-WALLET-SHADOW-REPLAY-PILOT-001"
+    },
+    {
+      "from": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001",
+      "to": "SOL-WALLET-SHADOW-REPLAY-PILOT-001"
+    },
+    {
+      "from": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
+      "to": "BSC-WALLET-SHADOW-REPLAY-PILOT-001"
+    },
+    {
+      "from": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
+      "to": "BSC-WALLET-SHADOW-REPLAY-PILOT-001"
+    },
+    {
+      "from": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
+      "to": "BSC-WALLET-SHADOW-REPLAY-PILOT-001"
+    },
+    {
+      "from": "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "to": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001"
+    },
+    {
+      "from": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "to": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001"
+    },
+    {
+      "from": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
+    },
+    {
+      "from": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
+    },
+    {
+      "from": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
+    },
+    {
+      "from": "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
+    },
+    {
+      "from": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
+    },
+    {
+      "from": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "to": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001"
+    },
+    {
+      "from": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
+      "to": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001"
+    },
+    {
+      "from": "BSC-WALLET-SOURCE-INVENTORY-001",
+      "to": "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001"
+    },
+    {
+      "from": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001",
+      "to": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001"
+    },
+    {
+      "from": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001",
+      "to": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001"
+    },
+    {
+      "from": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001",
+      "to": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001"
+    },
+    {
+      "from": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001",
+      "to": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001"
+    },
+    {
+      "from": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001",
+      "to": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001"
+    },
+    {
+      "from": "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
+      "to": "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001"
+    },
+    {
+      "from": "BSC-WALLET-SHADOW-REPLAY-PILOT-001",
+      "to": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001"
+    },
+    {
+      "from": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001",
+      "to": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001"
+    },
+    {
+      "from": "CROSSCHAIN-WALLET-HUD-V0-3-001",
+      "to": "CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001"
+    }
+  ],
+  "external_gates": [
+    {
+      "gate": "Owner merge commit of Draft PR #16",
+      "effect": "Makes the registered governance graph available on origin/main; it does not itself activate BSC."
+    },
+    {
+      "gate": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001 = GREEN",
+      "effect": "Unblocks Shadow Contracts and the serialized BSC Offline Research Stage Activation task."
+    },
+    {
+      "gate": "Owner merge commit of the separately audited BSC Offline Research Stage Activation PR",
+      "effect": "Allows BSC Source Inventory to transition from BLOCKED_STAGE to READY under the activated offline-local-research stage."
+    },
+    {
+      "gate": "Owner explicit authorization, provider/budget definition, and all listed audits GREEN",
+      "effect": "Required before the PARKed Live Observation Pilot may start."
+    }
+  ],
+  "assertions": {
+    "unknown_dependencies": 0,
+    "dependency_cycles": 0,
+    "crosschain_hud_hard_depends_on_live_observation": false,
+    "shadow_core_depends_on_bsc_stage": false,
+    "task_spec_is_status_source_of_truth": true,
+    "task_ledger_graph_status_consistency_required": true,
+    "task_ledger_graph_status_consistency_count": 27,
+    "task_ledger_graph_status_mismatch_count": 0,
+    "crosschain_hud_live_observation_is_optional_enhancement": true,
+    "edges_derived_from_task_spec_dependencies": true,
+    "edge_count": 32
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA."
+}

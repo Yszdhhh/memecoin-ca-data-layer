@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "BSC-WALLET-SOURCE-INVENTORY-001",
+  "title": "BSC wallet source inventory",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": "bsc",
+  "status": "BLOCKED_STAGE",
+  "objective": "Inventory only authorized local BSC sources after BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the separately scoped activation implementation has been Owner merge-committed. This task has no Solana E2E dependency and is limited to offline-local research: establish source schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until the governing stage configuration is activated by that audited, Owner-merged activation.",
+  "dependencies": [
+    "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "docs/LOCAL_WORKSPACE_PATHS.md"
+  ],
+  "write_set": [
+    "harness/inputs/BSC-WALLET-SOURCE-INVENTORY-001/",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/",
+    "docs/bsc_source_inventory.md",
+    "docs/bsc_acquisition_plan.md"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not fetch BSC data from the network or hardcode contract addresses from memory.",
+    "If BSC data is insufficient, produce a precise PARK acquisition plan; do not fabricate a master wallet database.",
+    "Do not activate BSC Live capability, any Live provider, resident listener, automated GMGN workflow, or production database write.",
+    "Do not treat Solana E2E completion as a dependency or gate for this BSC offline-local-research task."
+  ],
+  "deliverables": [
+    "docs/bsc_source_inventory.md",
+    "docs/bsc_acquisition_plan.md",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/acceptance.md",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/desensitized_metrics.json",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/replay_manifest.json",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/source_hashes.json",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/deterministic_replay_result.json",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/test_evidence.md",
+    "harness/reports/BSC-WALLET-SOURCE-INVENTORY-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}
