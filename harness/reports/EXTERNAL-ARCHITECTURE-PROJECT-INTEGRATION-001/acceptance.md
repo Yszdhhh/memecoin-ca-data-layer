@@ -1,60 +1,65 @@
-﻿# Acceptance preflight — EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001
+# Completion acceptance — EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001
 
-## Scope
+## Completion record
 
-This is a governance-only task. It authorizes external research synthesis and decision reports; it does not authorize product code, PR #15, PR #16, existing product Task Specs, dependencies, network collection, live observation, real transactions, or POC implementation.
+- Execution date: 2026-08-02
+- Generated at: 2026-08-02T18:31:19+08:00
+- Execution Agent: Luna Worker
+- Source main baseline: `5978f448a2d00ee4ea5b0b937a580e5e3e68348e`
+- EXTERNAL_RESEARCH_ROOT: resolved and existing (`Test-Path=True`); repository record uses the sanitized root identifier only.
+- Privacy rule: no G:\ absolute paths or private contents are committed; output paths below are complete logical paths rooted at `EXTERNAL_RESEARCH_ROOT`.
 
-## Prerequisite evidence
+## Synthesis outputs
 
-- PR #16 head: `eb1d4979e87fd448355fe103c016ce011e1843a3`
-- PR #16 merge commit: `96d2368f8b236b8a9a8ef3db75deea286ece1451`
-- Main must be synchronized to the merge commit before Luna dispatch.
-- `EXTERNAL_RESEARCH_ROOT` must resolve in both Process and User environment scopes.
+| logical complete path | SHA-256 | size_bytes |
+|---|---|---:|
+| `EXTERNAL_RESEARCH_ROOT\synthesis\project-capability-overlap.md` | `56F3FAFD12F08C6F55E374C32881DF3A59CE8276A1C6697B4EA3DB5D3656693D` | 4279 |
+| `EXTERNAL_RESEARCH_ROOT\synthesis\verified-architecture-decisions.md` | `33A889CF780AFE9A211C5F18CFB09D51712096ADB5CC9640EC3505B331A780EF` | 4038 |
+| `EXTERNAL_RESEARCH_ROOT\synthesis\poc-decision-matrix.md` | `7476898AB9FD764022BCF77C72AC25CA621F79B99D3BFA12EC6757B061C316BD` | 11665 |
+| `EXTERNAL_RESEARCH_ROOT\synthesis\existing-task-impact.md` | `44F5B4FE7EA9C8F7A08C29C428A58A3C323310FF3B485996DA66FE707613AF1C` | 2401 |
+| `EXTERNAL_RESEARCH_ROOT\synthesis\implementation-sequence.md` | `B7004E69B5D238E1E155B745EFEE9819D3499A405670F7DF3ADEA68A0EF17C89` | 3279 |
+| `EXTERNAL_RESEARCH_ROOT\synthesis\open-questions.md` | `A0D5A1453246935B2E4557A002341A13707025DCE99C2DB485D8D83F9FDB7DA0` | 2847 |
 
-## Declared files
+- `SIX_OUTPUTS_PRESENT=PASS`
+- `SYNTHESIS_ACCEPTANCE=PASS`
+- All six files are external outputs; no synthesis body is committed to the main project.
 
-| Category | Paths |
-|---|---|
-| Task | `harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json` |
-| Dispatch | `harness/dispatches/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.md` |
-| Acceptance | `harness/reports/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001/acceptance.md` |
-| Ledger | `harness/ledger/tasks.json` |
-| External outputs | `%EXTERNAL_RESEARCH_ROOT%\synthesis\` six named Markdown reports; not committed here |
+## POC acceptance
 
-## Governance checks
+- `SOL-PARSER-COMPARISON-POC-001`: 13 required fields present.
+- `SHADOW-REPLAY-MINIMUM-LOOP-POC-001`: 13 required fields present.
+- `BSC-EXISTING-DATA-INVENTORY-POC-001`: 13 required fields present.
+- Required hard boundaries are present: no Yellowstone now; `ethereum-etl` external supplement only; `sol-parser-sdk` behind the project Parser Interface; Sybil detector reference/later only; no forced Rust, DuckDB, Parquet, indexer, or trading engine.
 
-- Task JSON standard parse: PENDING until final commit verification.
-- Task schema and `npm run harness:task -- validate ...`: PENDING.
-- Ledger/task status consistency and dependency existence: PENDING.
-- No dependency cycle, active write-set collision, or out-of-scope repository write: PENDING.
-- `npm run harness:doctor`: PENDING; only the already-known wallet fixture baseline may remain.
-- `npm run typecheck`, `npm test`, `npm run build`, `npm run security:scan`, `git diff --check`: PENDING.
-- No product source, existing Task Spec, dependency, PR #15, or PR #16 modification: PENDING.
-- No forbidden external path or private data read: PENDING.
+## Harness and repository verification
 
-## Luna execution contract
+| check | result | evidence |
+|---|---|---|
+| committed-HEAD JSON.parse | PASS | `git show HEAD:harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json` parsed by standard JSON parser |
+| task validate | GREEN | `npm run harness:task -- validate harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json` |
+| ledger/task status consistency | PASS | task and ledger updated to `DONE`; target dependency remains valid |
+| typecheck | PASS | `npm run typecheck` |
+| test | PASS | 461 tests; 460 passed; 0 failed; 1 skipped |
+| build | PASS | `npm run build` |
+| security scan | PASS | `classifiedLeaks: 0` |
+| diff check | PASS | `git diff --check` |
+| Harness Doctor | BASELINE ONLY | only the existing three tracked `wallet*.json` files; no task-specific warning |
 
-The executing Luna Worker must write exactly these external files and must not implement any POC:
+Harness Doctor baseline files:
 
-1. `project-capability-overlap.md`
-2. `verified-architecture-decisions.md`
-3. `poc-decision-matrix.md`
-4. `existing-task-impact.md`
-5. `implementation-sequence.md`
-6. `open-questions.md`
+- `apps/operator-console/src/data/fixtures/wallets.json`
+- `artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json`
+- `artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json`
 
-Each POC entry must include the 13 required scope fields from the Dispatch. Missing data must be `unknown` or `unfillable` rather than inferred.
+## Safety and scope
 
-## Completion update
+- `chainfm_out` was not accessed or enumerated.
+- No real wallet addresses, transaction details, GMGN private export, credentials, cookies, login state, private keys, or mnemonics were accessed.
+- Product code was not modified.
+- PR #15, PR #16, PR #17, existing product Task Specs, dependencies, database, configuration, and tests were not modified by the synthesis execution.
+- No third-party repository code was run.
+- No network collection, live observation, Yellowstone connection, real trade, or POC implementation occurred.
 
-The coordinator fills this section only after verifying the final committed HEAD and running the declared commands. Do not alter hashed governance files after evidence is generated.
+## Final verdict
 
-- Final committed HEAD: PENDING
-- JSON parse: PENDING
-- Task validate: PENDING
-- Ledger/DAG/write-set/containment: PENDING
-- Harness doctor: PENDING
-- Typecheck/test/build/security/diff: PENDING
-- External root: PENDING
-- Six synthesis outputs: PENDING
-- Verdict: PENDING
+**GREEN — COMPLETED.** The six external synthesis outputs are present, hash-verified, privacy-safe, and accepted against the formal Task Spec. The task specification and ledger completion status are both recorded as `DONE`; no product code or synthesis body was modified.
