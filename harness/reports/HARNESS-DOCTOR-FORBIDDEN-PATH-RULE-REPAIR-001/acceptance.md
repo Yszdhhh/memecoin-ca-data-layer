@@ -4,7 +4,8 @@
 
 - Branch: `chore/harness-doctor-forbidden-path-rule-repair`
 - Required base: `fce42eeb560c85e4924399bdf08419f9ea7ba642` (`origin/main` resolves to this commit after `git fetch origin main`)
-- Current local commit before final evidence amendment: `dfd30fca67ad6f8e9a676c3cb1316ff5f78b6060`
+- Provenance anchor / final code HEAD used for acceptance: `d5230971b98539989e0c8cad427b92ddddbc6661`
+- Final HEAD: `d5230971b98539989e0c8cad427b92ddddbc6661` (evidence files bind to this code commit; the final evidence-only commit follows it).
 - Task spec is present at `origin/main:harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json`; `task validate` is GREEN.
 - Repair is limited to `harness/cli.ts`, `test/harness.test.ts`, and this report directory.
 - `harness/config/project.json` is byte-for-byte unchanged; its governed fields are asserted by tests. No product runtime file, dependency, package script, `chainfm_out`, or private data was changed.

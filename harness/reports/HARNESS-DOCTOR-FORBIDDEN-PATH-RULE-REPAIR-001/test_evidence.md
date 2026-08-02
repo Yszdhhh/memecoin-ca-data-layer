@@ -11,3 +11,5 @@
 - Negative cases: 2 synthetic raw/private wallet-like paths rejected.
 - Positive cases: 3 exact documented scrubbed public artifacts accepted.
 - Governed project config fields changed: 0.
+
+- Final HEAD / current_commit provenance anchor: `d5230971b98539989e0c8cad427b92ddddbc6661`.

@@ -3,7 +3,8 @@
   "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
   "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
   "branch": "chore/harness-doctor-forbidden-path-rule-repair",
-  "current_commit": "dfd30fca67ad6f8e9a676c3cb1316ff5f78b6060",
+  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
   "rule": "wallet*.json with exact-path exemption for three documented scrubbed public artifacts",
   "cases": [
     {

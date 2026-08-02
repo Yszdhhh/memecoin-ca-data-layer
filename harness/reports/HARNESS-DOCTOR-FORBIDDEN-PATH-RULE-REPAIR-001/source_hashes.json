@@ -1,7 +1,8 @@
 {
   "schema_version": "source-hashes-v2",
   "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
-  "current_commit": "dfd30fca67ad6f8e9a676c3cb1316ff5f78b6060",
+  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
   "branch": "chore/harness-doctor-forbidden-path-rule-repair",
   "files": {
     "harness/cli.ts": "bd35c19d383d92d4588397948bb6e303cb7b2f0a604e3538da63715e39c52656",

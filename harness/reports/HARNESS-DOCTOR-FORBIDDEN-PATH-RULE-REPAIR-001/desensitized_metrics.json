@@ -1,5 +1,7 @@
 {
   "schema_version": "desensitized-metrics-v2",
+  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
   "forbidden_rule": "wallet*.json",
   "documented_scrubbed_public_artifacts_exempted": 3,
   "synthetic_raw_or_private_wallet_like_cases_rejected": 2,

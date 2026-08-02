@@ -1,5 +1,8 @@
 {
   "schema_version": "deterministic-replay-result-v2",
+  "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
   "runs": 2,
   "identical": true,
   "result_sha256": "d7609181461cd397d54a262ba5afc1515bf5e96bbe6c55201ddb280f628b4d80",
