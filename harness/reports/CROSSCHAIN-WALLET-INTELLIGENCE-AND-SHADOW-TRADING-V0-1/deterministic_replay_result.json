@@ -1,29 +1,34 @@
 {
   "schema_version": "crosschain-program-deterministic-replay-v1",
-  "generated_at": "2026-08-02T00:00:00Z",
-  "status": "PASS",
-  "input_hash_sha256": "ec26d5b089166f64d1801d1a7d533775c2cfaf344a9ab9fdebf475e04d6a6464",
-  "repeat_input_hash_sha256": "ec26d5b089166f64d1801d1a7d533775c2cfaf344a9ab9fdebf475e04d6a6464",
-  "same_input_same_output": true,
-  "task_spec_count": 27,
-  "task_ledger_graph_status_consistency": {
-    "status": "PASS",
-    "checked": 27,
-    "passed": 27,
-    "mismatches": 0,
-    "source_of_truth": "harness/tasks/*.json"
-  },
-  "unknown_dependencies": 0,
-  "dependency_cycles": 0,
-  "parallel_write_set_collisions": 0,
-  "serialized_write_set_overlaps": 1,
+  "generated_at": "2026-08-02T04:07:26.126Z",
+  "verification_commit_sha": "69fee761bf182cd952817d7bd429813add3bb920",
+  "input_scope": "27 Program Task Specs, program ledger, dependency graph, write-set declarations, and governance evidence only; no private data was read.",
+  "replay_runs": 2,
+  "same_input_same_output_hash": true,
+  "output_sha256": "7ff88dd8c0d67fe9410f0213c8a98dafcc0cc20c354252d4adbb6af593c3d75a",
   "assertions": {
-    "shadow_core_depends_on_bsc_stage": false,
-    "replay_engine_depends_only_on_shadow_contracts_audit": true,
-    "sol_adapter_depends_on_bsc_stage": false,
-    "crosschain_hud_hard_depends_on_live_observation": false,
-    "crosschain_hud_live_observation_acceptance_input_present": false,
-    "bsc_source_inventory_depends_on_solana_e2e": false,
-    "private_offline_cli_requirement_count": 9
-  }
+    "task_spec_json_parse": {
+      "passed": 27,
+      "failed": 0
+    },
+    "task_validation": {
+      "passed": 27,
+      "failed": 0
+    },
+    "task_ledger_graph_status_consistency": {
+      "passed": 27,
+      "failed": 0
+    },
+    "unknown_dependencies": 0,
+    "dependency_cycles": 0,
+    "parallel_write_set_collisions": 0,
+    "serialized_write_set_overlaps": 1,
+    "deliverables_outside_write_set": 0,
+    "acceptance_commands_must_prefix": 0,
+    "acceptance_commands_non_executable_cli": 0,
+    "crosschain_hud_live_hard_input": false,
+    "bsc_source_inventory_solana_gate": false,
+    "private_data_in_git": false
+  },
+  "result": "PASS"
 }

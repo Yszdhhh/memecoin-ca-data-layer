@@ -1,6 +1,7 @@
 {
   "schema_version": "crosschain-program-desensitized-metrics-v1",
-  "generated_at": "2026-08-02T00:00:00Z",
+  "generated_at": "2026-08-02T04:07:26.126Z",
+  "verification_commit_sha": "69fee761bf182cd952817d7bd429813add3bb920",
   "task_spec_count": 27,
   "coordinator_or_implementer_count": 14,
   "independent_auditor_count": 13,
@@ -29,6 +30,8 @@
   },
   "private_input_acceptance": {
     "data_processing_implementer_task_count": 9,
+    "acceptance_commands_are_shell_commands": true,
+    "acceptance_command_must_prefix_count": 0,
     "requires_double_run": true,
     "requires_output_hash_match": true,
     "requires_record_count_verification": true,

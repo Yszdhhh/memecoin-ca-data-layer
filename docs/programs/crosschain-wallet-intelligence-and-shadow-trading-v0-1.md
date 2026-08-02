@@ -82,3 +82,8 @@ The nine data-processing implementation tasks — SOL HUD Repair-002, BSC Master
 Milestone 0 remains **PARK**, not GREEN: `npm run harness:doctor` has a pre-existing failure from the broad `wallet*.json` forbidden-name rule. The measured three files and rule are recorded in the program reports. This PR does not waive or alter the rule; `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001` is bounded to a narrow, tested repair and an independent audit.
 
 All program reports are rooted exclusively at `harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/`. No Program deliverable may use the obsolete `...V0-1-001/` report root.
+
+## Latest governance evidence
+
+- Verified governance-repair commit: `69fee761bf182cd952817d7bd429813add3bb920`.
+- Program scope is **27 Task Specs**; all RED-remediation governance checks pass.

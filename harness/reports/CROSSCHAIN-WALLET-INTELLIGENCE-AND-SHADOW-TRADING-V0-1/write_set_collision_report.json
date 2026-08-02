@@ -1,6 +1,6 @@
 {
   "schema_version": "crosschain-write-set-collision-v1",
-  "generated_at": "2026-08-02T00:00:00Z",
+  "generated_at": "2026-08-02T04:07:26.126Z",
   "task_count": 27,
   "execution_task_count": 26,
   "scope": "execution-task write sets; parent governance registration excluded; exact project-config overlap is serialized by the BSC activation dependency on the Harness Doctor audit",
@@ -16,6 +16,10 @@
     }
   ],
   "assertions": {
+    "json_parse_task_count": 27,
+    "json_parse_failure_count": 0,
+    "acceptance_command_must_prefix_count": 0,
+    "acceptance_command_non_executable_cli_count": 0,
     "unknown_dependency_count": 0,
     "dependency_cycle_count": 0,
     "audit_write_sets_report_only": true,
