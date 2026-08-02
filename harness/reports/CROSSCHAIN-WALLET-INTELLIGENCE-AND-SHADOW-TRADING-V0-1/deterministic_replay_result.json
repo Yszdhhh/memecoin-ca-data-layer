@@ -1,0 +1,38 @@
+{
+  "schema_version": "crosschain-program-deterministic-replay-v1",
+  "generated_at": "2026-08-02T07:15:33.930Z",
+  "input_scope": "27 Program Task Specs, program ledger, dependency graph, write-set declarations, and governance evidence only; no private data was read.",
+  "replay_runs": 2,
+  "same_input_same_output_hash": true,
+  "output_sha256": "7ff88dd8c0d67fe9410f0213c8a98dafcc0cc20c354252d4adbb6af593c3d75a",
+  "assertions": {
+    "task_spec_json_parse": {
+      "passed": 27,
+      "failed": 0
+    },
+    "task_validation": {
+      "passed": 27,
+      "failed": 0
+    },
+    "task_ledger_graph_status_consistency": {
+      "passed": 27,
+      "failed": 0
+    },
+    "unknown_dependencies": 0,
+    "dependency_cycles": 0,
+    "parallel_write_set_collisions": 0,
+    "serialized_write_set_overlaps": 1,
+    "deliverables_outside_write_set": 0,
+    "acceptance_commands_must_prefix": 0,
+    "acceptance_commands_non_executable_cli": 0,
+    "crosschain_hud_live_hard_input": false,
+    "bsc_source_inventory_solana_gate": false,
+    "private_data_in_git": false,
+    "objective_line_break_files": 0,
+    "git_blob_hash_mismatches": 0
+  },
+  "result": "PASS",
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA.",
+  "committed_content_method": "git show SELF:<task-file> -> standard Node.js JSON.parse"
+}

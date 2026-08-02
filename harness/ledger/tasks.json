@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-07-29T22:02:30Z",
+  "updated_at_utc": "2026-08-02T04:07:26.126Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1116,6 +1116,141 @@
       "task_id": "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001",
       "spec": "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001",
+      "spec": "harness/tasks/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.json",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+      "spec": "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001",
+      "spec": "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-WALLET-SOURCE-INVENTORY-001",
+      "spec": "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001",
+      "spec": "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001",
+      "spec": "harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001",
+      "spec": "harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001",
+      "spec": "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001",
+      "spec": "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
+      "spec": "harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-WALLET-SHADOW-REPLAY-PILOT-001",
+      "spec": "harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001",
+      "spec": "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001",
+      "spec": "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+      "status": "READY"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
+      "spec": "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001",
+      "spec": "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
+      "spec": "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "spec": "harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+      "spec": "harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json",
+      "status": "BLOCKED_STAGE"
+    },
+    {
+      "task_id": "WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001",
+      "spec": "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json",
+      "status": "PARK"
+    },
+    {
+      "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001",
+      "spec": "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.json",
+      "status": "BLOCKED_DEPENDENCY"
     }
   ]
 }

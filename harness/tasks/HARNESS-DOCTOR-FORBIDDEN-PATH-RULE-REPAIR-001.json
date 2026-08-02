@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+  "title": "Harness doctor forbidden-path rule repair",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": null,
+  "status": "READY",
+  "objective": "Repair the existing Harness doctor false positive with the narrowest auditable forbidden-path rule. In harness/config/project.json, modify only forbidden_repository_patterns; active_stage, active_chains, blocked_chains, rule_versions, quality_commands, and future_stage_gate must remain byte-for-byte equivalent to the baseline. Add tests proving those fields do not change, preserve synthetic raw/private wallet-like rejection, and distinguish only documented scrubbed public fixture/aggregate artifacts. Do not silently waive the doctor gate.",
+  "dependencies": [],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/cli.ts",
+    "test/harness.test.ts",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/acceptance.md"
+  ],
+  "write_set": [
+    "harness/cli.ts",
+    "test/harness.test.ts",
+    "harness/config/project.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Within harness/config/project.json, do not modify any field except forbidden_repository_patterns.",
+    "Do not change active_stage, active_chains, blocked_chains, rule_versions, quality_commands, or future_stage_gate.",
+    "Do not allowlist arbitrary directories or wildcard names without narrowly tested scrubbed-artifact justification.",
+    "Do not simply remove wallet*.json or disable the forbidden-file check.",
+    "Do not rename or delete existing evidence files merely to hide the failure.",
+    "Do not modify product source, provider behavior, runtime credential handling, chain configuration, or package scripts."
+  ],
+  "deliverables": [
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/acceptance.md",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/desensitized_metrics.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/replay_manifest.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/source_hashes.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/deterministic_replay_result.json",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/test_evidence.md",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001",
+  "title": "BSC wallet chain-verification pilot",
+  "tier": "T2",
+  "role": "implementer",
+  "chain": "bsc",
+  "status": "BLOCKED_STAGE",
+  "objective": "Select a representative 5–10 address BSC candidate pilot and validate only sampled chain evidence. Report swaps/transfers, cost basis, fees/taxes, concentration, repeatability, timing, exit-copy feasibility, address-type and cluster risks with sample-level scopes. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
+  "dependencies": [
+    "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_REQUIRED_READING.md",
+    "AGENTS.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/reports/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001/desensitized_metrics.json"
+  ],
+  "write_set": [
+    "src/application/wallet-intelligence/bsc-chain-verification-pilot.ts",
+    "src/cli/run-bsc-wallet-chain-verification-pilot.ts",
+    "test/application/wallet-intelligence/bsc-chain-verification-pilot.test.ts",
+    "docs/bsc_chain_verification_pilot.md",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/",
+    "artifacts/bsc_wallet_chain_verification_pilot/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not describe limited-token samples as whole-wallet profitability.",
+    "Do not call transferred-in inventory profit without verifiable cost basis."
+  ],
+  "deliverables": [
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/acceptance.md",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/desensitized_metrics.json",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/replay_manifest.json",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/source_hashes.json",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/deterministic_replay_result.json",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/test_evidence.md",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check",
+    "tsx src/cli/run-bsc-wallet-chain-verification-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_candidate_replay_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_chain_verification_pilot/\""
+  ]
+}

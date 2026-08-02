@@ -1,0 +1,63 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
+  "title": "BSC offline research stage activation",
+  "tier": "T3",
+  "role": "coordinator",
+  "chain": null,
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Apply the Owner decision to activate BSC offline-local-research only. Update the constitutional, Owner-decision, Harness config, and ledger records to permit BSC source inventory, master cleaning, candidate screening, local chain verification, and historical replay. Solana remains the only Live/production delivery chain. BSC network collection, Live providers, resident listeners, GMGN automation, real trades, and production database writes remain prohibited. Robinhood remains BLOCKED_STAGE. This task may execute only after the governance PR that registers it is Owner-merged and HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001 is GREEN; BSC Source Inventory becomes READY only after this task receives an independent GREEN audit and its implementation PR is Owner-merged with a merge commit.",
+  "dependencies": [
+    "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001"
+  ],
+  "inputs": [
+    "AGENTS.md",
+    "PROJECT_REQUIRED_READING.md",
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json"
+  ],
+  "write_set": [
+    "PROJECT_CONSTITUTION.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/"
+  ],
+  "forbidden_actions": [
+    "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
+    "Do not read seed phrases, private keys, browser cookies, login sessions, DPAPI material, or trading API keys.",
+    "Do not automate a logged-in GMGN page; only consume user-provided offline exports from the private root.",
+    "Do not commit wallet addresses, transaction hashes, raw GMGN exports, chainfm_out contents, or private manifests containing raw records.",
+    "Do not treat null, unknown, or missing values as zero.",
+    "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
+    "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
+    "Do not activate BSC Live, production, network collection, Live providers, resident monitoring, GMGN automation, real trading, or production database writes.",
+    "Do not activate Robinhood or alter its BLOCKED_STAGE state.",
+    "Do not change product source, package scripts, provider configuration, or unrelated task specifications.",
+    "Do not mark BSC Source Inventory READY before the independent activation audit is GREEN and the Owner merge-commits this activation PR."
+  ],
+  "deliverables": [
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/acceptance.md",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/desensitized_metrics.json",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/replay_manifest.json",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/source_hashes.json",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/deterministic_replay_result.json",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/test_evidence.md",
+    "harness/reports/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001/git_delivery_status.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}

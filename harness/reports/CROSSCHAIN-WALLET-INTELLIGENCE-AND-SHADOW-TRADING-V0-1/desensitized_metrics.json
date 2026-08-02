@@ -1,0 +1,112 @@
+{
+  "schema_version": "crosschain-program-desensitized-metrics-v1",
+  "generated_at": "2026-08-02T07:15:33.930Z",
+  "task_spec_count": 27,
+  "coordinator_or_implementer_count": 14,
+  "independent_auditor_count": 13,
+  "statuses": {
+    "IN_PROGRESS": 1,
+    "READY": 2,
+    "BLOCKED_DEPENDENCY": 11,
+    "BLOCKED_STAGE": 10,
+    "PARK": 3
+  },
+  "stage": {
+    "solana_live_production_chain_count": 1,
+    "bsc_live_production_activated": false,
+    "bsc_offline_activation_registered": true,
+    "robinhood_blocked": true
+  },
+  "shadow": {
+    "core_depends_on_bsc_stage": false,
+    "replay_engine_depends_only_on_shadow_contracts_audit": true,
+    "sol_adapter_depends_on_bsc_stage": false
+  },
+  "hud": {
+    "hard_depends_on_live_observation": false,
+    "live_observation_acceptance_input_present": false,
+    "audit_acceptance_input_count": 5
+  },
+  "private_input_acceptance": {
+    "data_processing_implementer_task_count": 9,
+    "acceptance_commands_are_shell_commands": true,
+    "acceptance_command_must_prefix_count": 0,
+    "requires_double_run": true,
+    "requires_output_hash_match": true,
+    "requires_record_count_verification": true,
+    "requires_replay_manifest_and_source_hashes": true,
+    "requires_chainfm_out_untracked": true
+  },
+  "privacy": {
+    "raw_private_records_committed": 0,
+    "raw_wallet_addresses_committed": 0,
+    "raw_transaction_identifiers_committed": 0
+  },
+  "harness_doctor": {
+    "baseline_forbidden_matches": 3,
+    "newly_introduced_matches": 0,
+    "status": "EXPECTED_BASELINE_FAIL"
+  },
+  "role_counts": {
+    "coordinator_or_implementer": 14,
+    "independent_auditor": 13
+  },
+  "status_counts": {
+    "IN_PROGRESS": 1,
+    "READY": 2,
+    "BLOCKED_DEPENDENCY": 11,
+    "BLOCKED_STAGE": 10,
+    "PARK": 3
+  },
+  "dependency_integrity": {
+    "unknown_dependencies": 0,
+    "cycles": 0,
+    "task_ledger_graph_status_consistency_total": 27,
+    "task_ledger_graph_status_consistency_passed": 27,
+    "task_ledger_graph_status_mismatches": 0
+  },
+  "write_set_review": {
+    "parallel_collisions": 0,
+    "intentionally_serialized_overlaps": 1,
+    "out_of_scope_deliverables": 0
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA.",
+  "committed_head_validation": {
+    "method": "git show SELF:<task-file> -> standard Node.js JSON.parse",
+    "task_spec_count": 27,
+    "json_parse_passed": 27,
+    "json_parse_failed": 0,
+    "task_validate_passed": 27,
+    "task_validate_failed": 0,
+    "decoded_objective_line_break_files": [],
+    "physical_bare_newline_files": [],
+    "task_spec_files_modified_for_repair": 0,
+    "explicit_checks": {
+      "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json": "PASS_SINGLE_LINE_OBJECTIVE",
+      "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001.json": "PASS_SINGLE_LINE_OBJECTIVE"
+    }
+  },
+  "source_hash_provenance": {
+    "algorithm": "sha256",
+    "byte_source": "Git blob bytes",
+    "working_tree_bytes_used": false,
+    "prior_mismatch_corrected": "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json"
+  },
+  "repository_checks": {
+    "harness_doctor": "EXPECTED_BASELINE_FAIL_EXACTLY_3",
+    "typecheck": "PASS",
+    "tests": {
+      "passed": 460,
+      "failed": 0,
+      "skipped": 1,
+      "total": 461
+    },
+    "build": "PASS",
+    "security_scan": {
+      "matched_policy_lines": 312,
+      "classified_leaks": 0
+    },
+    "diff_check": "PASS"
+  }
+}

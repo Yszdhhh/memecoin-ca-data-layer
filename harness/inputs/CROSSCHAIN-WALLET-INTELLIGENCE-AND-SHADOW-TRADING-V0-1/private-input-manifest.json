@@ -1,0 +1,53 @@
+{
+    "schema_version":  "crosschain-private-input-manifest-v1",
+    "generated_at":  "2026-08-01T00:00:00Z",
+    "privacy_classification":  "PRIVATE_AGGREGATE_ONLY",
+    "entries":  [
+                    {
+                        "private_root_resolution":  "CHAINFM_PRIVATE_ROOT (if explicitly set) -\u003e %USERPROFILE%\\chainfm_out; repo_root\\chainfm_out is prohibited",
+                        "relative_path":  "sol",
+                        "file_count":  482,
+                        "size_bytes":  66695470,
+                        "extension_counts":  {
+                                                 ".csv":  76,
+                                                 ".json":  237,
+                                                 ".jsonl":  23,
+                                                 ".md":  137,
+                                                 ".py":  4,
+                                                 ".pyc":  2,
+                                                 ".txt":  3
+                                             },
+                        "latest_modified_at":  "2026-08-01T17:04:02.210940Z",
+                        "sha256":  "b6f75fcda60bd712e80e8889e8f0f484cc9235751e0dfebe4370f05c581f0e43",
+                        "record_count":  null,
+                        "record_count_status":  "unknown_without_parsing_private_records",
+                        "schema_version":  "private-root-aggregate-v1",
+                        "generated_at":  "2026-08-01T00:00:00Z",
+                        "source_period":  "unknown; stage-gated",
+                        "privacy_classification":  "PRIVATE_AGGREGATE_ONLY"
+                    },
+                    {
+                        "private_root_resolution":  "CHAINFM_PRIVATE_ROOT (if explicitly set) -\u003e %USERPROFILE%\\chainfm_out; repo_root\\chainfm_out is prohibited",
+                        "relative_path":  "bsc",
+                        "file_count":  5,
+                        "size_bytes":  673773,
+                        "extension_counts":  {
+                                                 ".csv":  1,
+                                                 ".json":  1,
+                                                 ".txt":  3
+                                             },
+                        "latest_modified_at":  "2026-07-28T16:49:49.367558Z",
+                        "sha256":  "c2784835aaf6c959c1804d0317d611b3c9f6c5f503791a6a7419b7df9e98c0c3",
+                        "record_count":  null,
+                        "record_count_status":  "unknown_without_parsing_private_records",
+                        "schema_version":  "private-root-aggregate-v1",
+                        "generated_at":  "2026-08-01T00:00:00Z",
+                        "source_period":  "unknown; stage-gated",
+                        "privacy_classification":  "PRIVATE_AGGREGATE_ONLY"
+                    }
+                ],
+    "notes":  [
+                  "This committed manifest contains only directory-level aggregate metadata and an aggregate-metadata hash; it contains no private filenames, wallet addresses, transaction identifiers, exports, or record contents.",
+                  "Task-specific exact source hashes remain under the private root and must not enter Git."
+              ]
+}
