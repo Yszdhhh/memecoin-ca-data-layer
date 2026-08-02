@@ -31,6 +31,12 @@ import { applyReadinessUpdates, deriveLifecyclePlan, validateLedger, validateTas
 
 const CONFIG_PATH = "harness/config/project.json";
 const LEDGER_PATH = "harness/ledger/tasks.json";
+
+const DOCUMENTED_SCRUBBED_PUBLIC_WALLET_ARTIFACTS = new Set([
+  "apps/operator-console/src/data/fixtures/wallets.json",
+  "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+  "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+]);
 const REQUIRED_FILES = [
   "AGENTS.md",
   "PROJECT_REQUIRED_READING.md",
@@ -74,6 +80,15 @@ export function secretContentRulesFor(text: string): string[] {
     }
     return [];
   });
+}
+
+export function isDocumentedScrubbedPublicWalletArtifact(file: string): boolean {
+  return DOCUMENTED_SCRUBBED_PUBLIC_WALLET_ARTIFACTS.has(file.replaceAll("\\", "/"));
+}
+
+export function forbiddenTrackedFileMatches(pattern: string, file: string): boolean {
+  if (pattern === "wallet*.json" && isDocumentedScrubbedPublicWalletArtifact(file)) return false;
+  return globMatches(pattern, path.basename(file)) || globMatches(pattern, file);
 }
 
 function decodeGitPath(file: string): string {
@@ -143,8 +158,7 @@ async function doctor(): Promise<number> {
     }
     const tracked = gitTrackedFiles().map(decodeGitPath);
     for (const pattern of config.forbidden_repository_patterns) {
-      const matches = tracked.filter((file) =>
-        globMatches(pattern, path.basename(file)) || globMatches(pattern, file));
+      const matches = tracked.filter((file) => forbiddenTrackedFileMatches(pattern, file));
       if (matches.length > 0) errors.push(`forbidden tracked files for ${pattern}: ${matches.join(", ")}`);
     }
     for (const match of await forbiddenTrackedContent(tracked)) {
@@ -279,8 +293,7 @@ async function verifyRun(runDirArg: string): Promise<number> {
     !spec.write_set.some((pattern) => globMatches(pattern, changed)));
   const tracked = gitTrackedFiles().map(decodeGitPath);
   const secretFileMatches = tracked.filter((file) =>
-    config.forbidden_repository_patterns.some((pattern) =>
-      globMatches(pattern, path.basename(file)) || globMatches(pattern, file)));
+    config.forbidden_repository_patterns.some((pattern) => forbiddenTrackedFileMatches(pattern, file)));
   const secretContentMatches = await forbiddenTrackedContent(tracked);
 
   const acceptance: RunManifest["acceptance"] = [];

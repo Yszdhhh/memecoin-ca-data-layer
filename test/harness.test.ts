@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import type { FinishedRunEvidence, ProjectConfig, TaskLedger, TaskSpec } from "../harness/lib/contracts.js";
 import { globMatches } from "../harness/lib/files.js";
-import { secretContentRulesFor } from "../harness/cli.js";
+import {
+  forbiddenTrackedFileMatches,
+  isDocumentedScrubbedPublicWalletArtifact,
+  secretContentRulesFor,
+} from "../harness/cli.js";
 import {
   applyReadinessUpdates,
   deriveLifecyclePlan,
@@ -311,6 +316,59 @@ test("apply-readiness flips BLOCKED_DEPENDENCY to READY when deps are DONE", asy
   assert.ok(result.applied.includes("SOL-NEXT-002:BLOCKED_DEPENDENCY->READY"));
   assert.ok(written.includes("SOL-NEXT-002:READY"));
   assert.ok(written.includes("ledger:READY"));
+});
+
+test("forbidden wallet rule exempts only documented scrubbed public artifacts", () => {
+  const documented = [
+    "apps/operator-console/src/data/fixtures/wallets.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+  ];
+  for (const file of documented) {
+    assert.equal(isDocumentedScrubbedPublicWalletArtifact(file), true);
+    assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), false);
+  }
+  assert.equal(
+    forbiddenTrackedFileMatches("wallet*.json", "private/exports/wallets.json"),
+    true,
+  );
+  assert.equal(
+    forbiddenTrackedFileMatches("wallet*.json", "artifacts/wallet_intelligence_v0_1/wallet_master.json"),
+    true,
+  );
+});
+
+test("project config preserves the governed baseline fields", async () => {
+  const project = JSON.parse(await readFile("harness/config/project.json", "utf8")) as ProjectConfig;
+  assert.deepEqual(
+    {
+      schema_version: project.schema_version,
+      project: project.project,
+      active_stage: project.active_stage,
+      active_chains: project.active_chains,
+      blocked_chains: project.blocked_chains,
+      verdicts: project.verdicts,
+      rule_versions: project.rule_versions,
+      quality_commands: project.quality_commands,
+      future_stage_gate: project.future_stage_gate,
+    },
+    {
+      schema_version: "harness-v1",
+      project: "memecoin-ca-data-layer",
+      active_stage: "solana-pumpfun-e2e",
+      active_chains: ["solana"],
+      blocked_chains: ["bsc", "robinhood"],
+      verdicts: ["GREEN", "GREEN_WITH_ADVISORY", "PARK", "FAIL", "QUARANTINED"],
+      rule_versions: {
+        real_holders: "v1",
+        funding_clusters: "v1",
+        dev_behavior: "v1",
+        wallet_quality: "v1",
+      },
+      quality_commands: ["npm run typecheck", "npm test", "npm run build"],
+      future_stage_gate: "Solana fixture + authorized live CA E2E must be GREEN before activating BSC; Robinhood remains after BSC.",
+    },
+  );
 });
 
 test("content secret scan returns only rule identifiers", () => {

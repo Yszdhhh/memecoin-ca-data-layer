@@ -1,0 +1,28 @@
+{
+  "schema_version": "deterministic-replay-result-v2",
+  "runs": 2,
+  "identical": true,
+  "result_sha256": "d7609181461cd397d54a262ba5afc1515bf5e96bbe6c55201ddb280f628b4d80",
+  "result": [
+    {
+      "file": "apps/operator-console/src/data/fixtures/wallets.json",
+      "forbidden": false
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+      "forbidden": false
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+      "forbidden": false
+    },
+    {
+      "file": "private/exports/wallets.json",
+      "forbidden": true
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_master.json",
+      "forbidden": true
+    }
+  ]
+}

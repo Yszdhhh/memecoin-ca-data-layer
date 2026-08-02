@@ -1,0 +1,17 @@
+{
+  "schema_version": "source-hashes-v2",
+  "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "current_commit": "dfd30fca67ad6f8e9a676c3cb1316ff5f78b6060",
+  "branch": "chore/harness-doctor-forbidden-path-rule-repair",
+  "files": {
+    "harness/cli.ts": "bd35c19d383d92d4588397948bb6e303cb7b2f0a604e3538da63715e39c52656",
+    "test/harness.test.ts": "614c52d6ef4a8b06e2b3631e027154ae833232f26917989211c228fcb15dcbac",
+    "harness/config/project.json": "2279ee65cb8d2bc3b91f67cd9fa0cc68375d3275d6ce7303298ac73bf165f056",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json": "904da8d372c6f1a8a0e023181f3b10cda58d347459bf429fabba62aa4b7aa970",
+    "apps/operator-console/src/data/fixtures/wallets.json": "905b6bc380f9cd1e34ff6da8e0130a734fda2d1c2989c1757cb126dd9b58d335",
+    "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json": "e370daa6fc2c65e961e7eac1308b7947806e62c50446b2d0aa5dec8efae2324f",
+    "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json": "897f62e46fce7591ce4665959658d82f99957f5c935548d06762563a7259e075"
+  },
+  "config_diff": "harness/config/project.json is byte-for-byte unchanged; only matcher behavior changed in harness/cli.ts.",
+  "private_data_policy": "Hashes only; no wallet addresses, transaction hashes, raw exports, credentials, or private manifests included."
+}

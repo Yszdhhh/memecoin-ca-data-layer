@@ -1,0 +1,32 @@
+{
+  "schema_version": "replay-manifest-v2",
+  "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+  "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "branch": "chore/harness-doctor-forbidden-path-rule-repair",
+  "current_commit": "dfd30fca67ad6f8e9a676c3cb1316ff5f78b6060",
+  "rule": "wallet*.json with exact-path exemption for three documented scrubbed public artifacts",
+  "cases": [
+    {
+      "file": "apps/operator-console/src/data/fixtures/wallets.json",
+      "forbidden": false
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+      "forbidden": false
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+      "forbidden": false
+    },
+    {
+      "file": "private/exports/wallets.json",
+      "forbidden": true
+    },
+    {
+      "file": "artifacts/wallet_intelligence_v0_1/wallet_master.json",
+      "forbidden": true
+    }
+  ],
+  "result_sha256": "d7609181461cd397d54a262ba5afc1515bf5e96bbe6c55201ddb280f628b4d80",
+  "private_data_policy": "No wallet addresses, transaction hashes, raw exports, or private manifests are included."
+}

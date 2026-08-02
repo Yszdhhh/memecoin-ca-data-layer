@@ -1,0 +1,27 @@
+{
+  "schema_version": "desensitized-metrics-v2",
+  "forbidden_rule": "wallet*.json",
+  "documented_scrubbed_public_artifacts_exempted": 3,
+  "synthetic_raw_or_private_wallet_like_cases_rejected": 2,
+  "unrelated_wallet_like_paths_allowlisted": 0,
+  "config_immutable_fields_changed": 0,
+  "product_runtime_files_changed_by_task": 0,
+  "secrets_or_raw_wallet_records_in_evidence": 0,
+  "doctor_errors_after_repair": 0,
+  "doctor_warnings_after_repair": 0,
+  "task_validate": "GREEN",
+  "typecheck": "PASS",
+  "tests": {
+    "discovered": 463,
+    "passed": 462,
+    "skipped": 1,
+    "failed": 0
+  },
+  "build": "PASS",
+  "security_scan": {
+    "status": "PASS",
+    "classifiedLeaks": 0,
+    "matchedLines": 317
+  },
+  "diff_check": "PASS"
+}
