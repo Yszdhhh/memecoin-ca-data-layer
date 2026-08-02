@@ -1,0 +1,33 @@
+{
+    "schema_version":  "sol-wallet-hud-v0-2-repair-002-desensitized-metrics",
+    "task_id":  "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+    "contains_addresses":  false,
+    "network_requests":  0,
+    "live_observation":  false,
+    "shadow_event_count":  0,
+    "wallet_count":  32,
+    "scene_eligible_n":  {
+                             "MULTI_TOKEN_REPEATABILITY":  14,
+                             "PAYOFF_ASYMMETRY":  11,
+                             "ACTIVITY_PERSISTENCE":  30,
+                             "HIGH_FREQUENCY_SIGNAL_VALUE":  8,
+                             "TRANSFER_ACCOUNTING_RISK":  32
+                         },
+    "primary_scene_count":  {
+                                "MULTI_TOKEN_REPEATABILITY":  11,
+                                "PAYOFF_ASYMMETRY":  11,
+                                "ACTIVITY_PERSISTENCE":  4,
+                                "HIGH_FREQUENCY_SIGNAL_VALUE":  3,
+                                "TRANSFER_ACCOUNTING_RISK":  0
+                            },
+    "full_import_count":  32,
+    "delta_import_count":  0,
+    "changed_wallet_count":  0,
+    "reproduction_thresholds":  {
+                                    "MULTI_TOKEN_REPEATABILITY":  3,
+                                    "PAYOFF_ASYMMETRY":  2
+                                },
+    "source_snapshot_hash":  "4a20f4db72fb14d403cb22085fec8884cc29be428015045a31dfe03a6a727d91",
+    "latest_refresh_delta_import_count":  1,
+    "latest_refresh_changed_wallet_count":  1
+}

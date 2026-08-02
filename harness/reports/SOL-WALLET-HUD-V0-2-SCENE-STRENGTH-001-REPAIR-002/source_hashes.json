@@ -1,0 +1,16 @@
+{
+  "schema_version": "sol-wallet-hud-v0-2-repair-002-source-hashes",
+  "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+  "contains_addresses": false,
+  "source_snapshot_hash": "4a20f4db72fb14d403cb22085fec8884cc29be428015045a31dfe03a6a727d91",
+  "input_hashes": {
+    "candidate_union_v0_1": "b69c1a7952f1b837d28f3230dffda11f56f334947b52dc8c04db099869ba4f6c",
+    "followability_evidence": "d19b616bb84f7f75085315d5e7a3df70fe9454825c3c2c809e2f8bfe1a89b942",
+    "profit_concentration_verified": "48c88d6193d659f78935ab1c5844dd06352f6c57e39c86c401c3dbee56544512",
+    "shadow_trade_monitoring_status": "b0a681c0b3136d60e6fb4920021b68bf49489940e73232a676624534cc72f35b",
+    "wallet_hud_history": "766f6722e92aaf0779d550a06d7c6867ce610ce86c76a10ebff9e74b5cc2fea7",
+    "wallet_hud_state": "68d52b7af798c885fbca7cdb19cb8d17789d379a2a01dd2df60cd3f19a4075df",
+    "wallet_master_v0_1": "5dfab5f409461804f1096d67602610f5fa28f3a35d8bec2a2f921a3035b80ad9",
+    "wallet_verification_summary": "b9bac6d0c675d8ea2494d3962534fbf5fe57ec64ea1069b95a2d60a87545b607"
+  }
+}

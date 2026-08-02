@@ -1,0 +1,18 @@
+{
+  "schema_version": "sol-wallet-hud-v0-2-repair-002-replay-manifest",
+  "task_id": "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002",
+  "contains_addresses": false,
+  "network_requests": 0,
+  "live_observation": false,
+  "run_a": {
+    "exit_code": 0,
+    "label": "offline_replay_a"
+  },
+  "run_b": {
+    "exit_code": 0,
+    "label": "offline_replay_b"
+  },
+  "source_snapshot_hash": "4a20f4db72fb14d403cb22085fec8884cc29be428015045a31dfe03a6a727d91",
+  "deterministic_output_hash_match": true,
+  "append_only_history_verified": true
+}

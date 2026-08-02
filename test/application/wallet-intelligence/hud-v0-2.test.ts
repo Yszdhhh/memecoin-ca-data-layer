@@ -445,3 +445,19 @@ test("GMGN names use T/E units and stay concise", () => {
   assert.match(tokenName, /T/);
   assert.equal(tokenName.length <= 28, true);
 });
+
+
+test("activity strength does not collapse when provider event count is unknown", () => {
+  const result = run([candidate(0)], [master(0, true, { activity_tier: "ACTIVE_7D", trade_count_proxy: null, token_count: null })]);
+  const state = result.wallets[0]!.state;
+  assert.equal(state.primary_scene, "ACTIVITY_PERSISTENCE");
+  assert.notEqual(state.scene_scores.ACTIVITY_PERSISTENCE.raw_score, null);
+  assert.match(state.scene_scores.ACTIVITY_PERSISTENCE.reason_codes.join("|"), /ACTIVITY_EVENT_COUNT_UNKNOWN/);
+});
+
+test("loss-only chain sample cannot satisfy reproduction threshold", () => {
+  const evidence = new Map<string, any>([["synthetic-0", { verification: { address: "synthetic-0", fingerprint12: "fingerprint-0", verified_profit_token_count: "0", verified_loss_token_count: "5", reconstructed_pnl_status: "PNL_PARTIAL" }, concentration: null, followability: null, v01State: null }]]);
+  const result = run([candidate(0)], [master(0, true, { activity_tier: "INACTIVE", token_count: 0 })], evidence);
+  assert.equal(result.wallets[0]!.state.scene_scores.MULTI_TOKEN_REPEATABILITY.raw_score, null);
+  assert.equal(result.wallets[0]!.state.primary_scene, null);
+});

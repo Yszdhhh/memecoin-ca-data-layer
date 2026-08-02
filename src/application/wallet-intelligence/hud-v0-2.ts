@@ -17,6 +17,10 @@ export const SCENE_IDS = [
   "HIGH_FREQUENCY_SIGNAL_VALUE",
   "TRANSFER_ACCOUNTING_RISK",
 ] as const;
+export const REPRODUCTION_TOKEN_THRESHOLDS = {
+  MULTI_TOKEN_REPEATABILITY: 3,
+  PAYOFF_ASYMMETRY: 2,
+} as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 export type EvidenceTier = "BORROWED_PROVIDER" | "CHAIN_SAMPLED";
 export type SceneScoreSource =
@@ -24,6 +28,16 @@ export type SceneScoreSource =
 export type Confidence = "LOW" | "MEDIUM";
 export type FollowabilityStatus = "LOW" | "UNKNOWN" | "RESEARCHABLE";
 export type RecentTrend = "ENHANCING" | "STABLE" | "DECAYING" | "UNKNOWN";
+
+type LastEmittedGmgnBaseline = {
+  name: string;
+  primary_scene: SceneId | null;
+  scene_percentile: number | null;
+  sample_n: number | null;
+  recent_trend: RecentTrend;
+  primary_risk: string;
+  followability_status: FollowabilityStatus;
+};
 
 export interface SceneScore {
   scene_id: SceneId;
@@ -63,6 +77,8 @@ export interface WalletHudV02State {
   reason_codes: string[];
   pending_primary_scene?: SceneId | null;
   pending_primary_scene_cycles?: number;
+  source_snapshot_hash?: string;
+  last_emitted_gmgn_baseline?: LastEmittedGmgnBaseline;
 }
 export interface HudRefreshOptions {
   privateRoot?: string;
@@ -82,6 +98,8 @@ export interface HudRefreshResult {
   deltaImportCount: number;
   changedWalletCount: number;
   shadowEventCount: number;
+  sourceSnapshotHashes: Record<string, string>;
+  sourceSnapshotHash: string;
   outputHashes: Record<string, string>;
 }
 
@@ -114,6 +132,7 @@ type InternalWallet = {
   evidenceConfidence: Confidence;
   events: number | null;
   tokens: number | null;
+  reproductionTokens: number | null;
   transferScore: number | null;
   transferLabel: string;
   trend: RecentTrend;
@@ -226,6 +245,13 @@ function writeJsonl(file: string, rows: unknown[]): void {
     "utf8",
   );
 }
+function appendJsonl(file: string, rows: unknown[]): void {
+  if (!rows.length) return;
+  fs.appendFileSync(file, rows.map((row) => JSON.stringify(row)).join("\n") + "\n", "utf8");
+}
+function hashObject(value: unknown): string {
+  return crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
+}
 function rowByFp(rows: Row[], fp: string): Row | null {
   return rows.find((row) => row.fingerprint12 === fp) ?? null;
 }
@@ -327,21 +353,21 @@ function getTrend(master: WalletMasterV01Record): RecentTrend {
 function counts(
   master: WalletMasterV01Record,
   chain: ChainEvidence,
-): { events: number | null; tokens: number | null } {
+): { events: number | null; tokens: number | null; reproductionTokens: number | null } {
   const events = num(master.trade_count_proxy);
   if (!isChain(chain)) {
     const tokens = num(master.token_count);
-    return { events, tokens: tokens !== null && tokens > 0 ? tokens : null };
+    const normalized = tokens !== null && tokens > 0 ? tokens : null;
+    return { events, tokens: normalized, reproductionTokens: normalized };
   }
-  const profitTokens = num(
-    str(chain.verification, "verified_profit_token_count"),
-  );
+  const profitTokens = num(str(chain.verification, "verified_profit_token_count"));
   const lossTokens = num(str(chain.verification, "verified_loss_token_count"));
-  const tokens =
-    profitTokens !== null && lossTokens !== null
-      ? profitTokens + lossTokens
-      : profitTokens;
-  return { events, tokens: tokens !== null && tokens > 0 ? tokens : null };
+  const tokens = profitTokens !== null && lossTokens !== null ? profitTokens + lossTokens : profitTokens;
+  return {
+    events,
+    tokens: tokens !== null && tokens > 0 ? tokens : null,
+    reproductionTokens: profitTokens !== null && profitTokens > 0 ? profitTokens : null,
+  };
 }
 function activityScore(master: WalletMasterV01Record): {
   value: number | null;
@@ -357,8 +383,19 @@ function activityScore(master: WalletMasterV01Record): {
       : Math.max(-20, Math.min(10, (c - 1) * 40));
   return {
     value: Math.round(Math.max(0, Math.min(100, base + adj))),
-    reasons: ["GMGN_ACTIVITY_TIER_PROXY"],
+    reasons: [
+      "GMGN_ACTIVITY_TIER_PROXY",
+      ...(num(master.trade_count_proxy) === null ? ["ACTIVITY_EVENT_COUNT_UNKNOWN"] : []),
+    ],
   };
+}
+function reproductionEvidenceReady(
+  chain: ChainEvidence,
+  tokenN: number | null,
+  scene: keyof typeof REPRODUCTION_TOKEN_THRESHOLDS,
+): boolean {
+  if (tokenN === null || tokenN < REPRODUCTION_TOKEN_THRESHOLDS[scene]) return false;
+  return true;
 }
 function multiScore(
   master: WalletMasterV01Record,
@@ -367,7 +404,7 @@ function multiScore(
   transfer: number | null,
 ): { value: number | null; reasons: string[] } {
   const profit = num(master.profit_30d);
-  if (tokenN === null || tokenN < 2 || profit === null || profit <= 0)
+  if (tokenN === null || !reproductionEvidenceReady(chain, tokenN, "MULTI_TOKEN_REPEATABILITY") || profit === null || profit <= 0)
     return { value: null, reasons: ["INSUFFICIENT_MULTI_TOKEN_SAMPLE"] };
   const breadth = Math.min(100, tokenN * 10);
   const win = num(master.win_rate_30d);
@@ -393,29 +430,18 @@ function multiScore(
 }
 function payoffScore(
   master: WalletMasterV01Record,
+  chain: ChainEvidence,
   tokenN: number | null,
 ): { value: number | null; reasons: string[] } {
   const profit = num(master.profit_30d);
   const win = num(master.win_rate_30d);
-  if (profit === null || profit <= 0 || win === null || win >= 70)
-    return {
-      value: null,
-      reasons: ["LOW_WINRATE_HIGH_PAYOFF_PATTERN_NOT_PRESENT"],
-    };
+  if (!reproductionEvidenceReady(chain, tokenN, "PAYOFF_ASYMMETRY")) return { value: null, reasons: ["INSUFFICIENT_PAYOFF_REPRODUCTION_SAMPLE"] };
+  if (profit === null || profit <= 0 || win === null || win >= 70) return { value: null, reasons: ["LOW_WINRATE_HIGH_PAYOFF_PATTERN_NOT_PRESENT"] };
   const pp = num(master.profit_percentile_30d);
   const asym = Math.max(0, 100 - win);
   const sampleAdj = tokenN !== null && tokenN >= 2 ? 10 : -10;
-  const value = Math.round(
-    Math.max(0, Math.min(100, asym * 0.55 + (pp ?? 50) * 0.45 + sampleAdj)),
-  );
-  return {
-    value,
-    reasons: [
-      "LOW_WINRATE",
-      "POSITIVE_PROFIT_PROXY",
-      pp === null ? "PROFIT_PERCENTILE_UNKNOWN" : "PROFIT_PERCENTILE_BORROWED",
-    ],
-  };
+  const value = Math.round(Math.max(0, Math.min(100, asym * 0.55 + (pp ?? 50) * 0.45 + sampleAdj)));
+  return { value, reasons: ["LOW_WINRATE", "POSITIVE_PROFIT_PROXY", pp === null ? "PROFIT_PERCENTILE_UNKNOWN" : "PROFIT_PERCENTILE_BORROWED"] };
 }
 function hfScore(
   master: WalletMasterV01Record,
@@ -447,36 +473,17 @@ function hfScore(
 function sceneEligible(
   scene: SceneId,
   master: WalletMasterV01Record,
-  c: { events: number | null; tokens: number | null },
+  chain: ChainEvidence,
+  c: { events: number | null; tokens: number | null; reproductionTokens: number | null },
   transfer: { score: number | null },
   threshold: number | null,
 ): boolean {
   const profit = num(master.profit_30d);
   const win = num(master.win_rate_30d);
-  if (scene === "MULTI_TOKEN_REPEATABILITY")
-    return (
-      c.tokens !== null &&
-      c.tokens >= 3 &&
-      profit !== null &&
-      profit > 0 &&
-      win !== null &&
-      win >= 50
-    );
-  if (scene === "PAYOFF_ASYMMETRY")
-    return (
-      c.tokens !== null &&
-      c.tokens >= 2 &&
-      profit !== null &&
-      profit > 0 &&
-      win !== null &&
-      win < 50
-    );
-  if (scene === "HIGH_FREQUENCY_SIGNAL_VALUE")
-    return hfScore(master, c.events, threshold).value !== null;
-  if (scene === "ACTIVITY_PERSISTENCE")
-    return (
-      activityScore(master).value !== null && c.events !== null && c.events > 0
-    );
+  if (scene === "MULTI_TOKEN_REPEATABILITY") return reproductionEvidenceReady(chain, c.reproductionTokens, "MULTI_TOKEN_REPEATABILITY") && profit !== null && profit > 0 && win !== null && win >= 50;
+  if (scene === "PAYOFF_ASYMMETRY") return reproductionEvidenceReady(chain, c.reproductionTokens, "PAYOFF_ASYMMETRY") && profit !== null && profit > 0 && win !== null && win < 50;
+  if (scene === "HIGH_FREQUENCY_SIGNAL_VALUE") return hfScore(master, c.events, threshold).value !== null;
+  if (scene === "ACTIVITY_PERSISTENCE") return activityScore(master).value !== null;
   return transfer.score !== null;
 }
 function sceneSource(scene: SceneId, chain: ChainEvidence): SceneScoreSource {
@@ -501,15 +508,15 @@ function score(
   scene: SceneId,
   master: WalletMasterV01Record,
   chain: ChainEvidence,
-  c: { events: number | null; tokens: number | null },
+  c: { events: number | null; tokens: number | null; reproductionTokens: number | null },
   transfer: { score: number | null; reasons: string[] },
   threshold: number | null,
   evaluatedAt: string,
 ): SceneScore {
   let result: { value: number | null; reasons: string[] };
   if (scene === "MULTI_TOKEN_REPEATABILITY")
-    result = multiScore(master, chain, c.tokens, transfer.score);
-  else if (scene === "PAYOFF_ASYMMETRY") result = payoffScore(master, c.tokens);
+    result = multiScore(master, chain, c.reproductionTokens, transfer.score);
+  else if (scene === "PAYOFF_ASYMMETRY") result = payoffScore(master, chain, c.reproductionTokens);
   else if (scene === "ACTIVITY_PERSISTENCE") result = activityScore(master);
   else if (scene === "HIGH_FREQUENCY_SIGNAL_VALUE")
     result = hfScore(master, c.events, threshold);
@@ -518,7 +525,7 @@ function score(
     scene === "ACTIVITY_PERSISTENCE" || scene === "HIGH_FREQUENCY_SIGNAL_VALUE"
       ? "events"
       : "tokens";
-  const sample = unit === "events" ? c.events : c.tokens;
+  const sample = unit === "events" ? c.events : c.reproductionTokens;
   const source = sceneSource(scene, chain);
   const lowReason = result.reasons.some(
     (reason) => reason.includes("UNKNOWN") || reason.includes("INSUFFICIENT"),
@@ -658,7 +665,7 @@ function buildInternal(
   const transfer = transferRisk(chain, master);
   const eligible = new Set(
     SCENE_IDS.filter((scene) =>
-      sceneEligible(scene, master, c, transfer, threshold),
+      sceneEligible(scene, master, chain, c, transfer, threshold),
     ),
   );
   const scores = Object.fromEntries(
@@ -748,6 +755,7 @@ function buildInternal(
     evidenceConfidence: conf,
     events: c.events,
     tokens: c.tokens,
+    reproductionTokens: c.reproductionTokens,
     transferScore: transfer.score,
     transferLabel: transfer.label,
     trend,
@@ -786,48 +794,71 @@ function isMajorRisk(value: string | null): boolean {
     value === "LOW_WINRATE_SAMPLE_DEPENDENCE"
   );
 }
+function baselineFromState(old: Record<string, unknown> | null): LastEmittedGmgnBaseline | null {
+  if (!old) return null;
+  const raw = old.last_emitted_gmgn_baseline;
+  if (raw && typeof raw === "object") {
+    const value = raw as Record<string, unknown>;
+    const sceneText = typeof value.primary_scene === "string" ? value.primary_scene : null;
+    return {
+      name: typeof value.name === "string" ? value.name : (stateStr(old, "gmgn_name") ?? ""),
+      primary_scene: SCENE_IDS.includes(sceneText as SceneId) ? sceneText as SceneId : null,
+      scene_percentile: num(value.scene_percentile),
+      sample_n: num(value.sample_n),
+      recent_trend: (value.recent_trend as RecentTrend) ?? "UNKNOWN",
+      primary_risk: typeof value.primary_risk === "string" ? value.primary_risk : (stateStr(old, "primary_risk") ?? ""),
+      followability_status: (value.followability_status as FollowabilityStatus) ?? "UNKNOWN",
+    };
+  }
+  const sceneText = stateStr(old, "primary_scene");
+  const scene = SCENE_IDS.includes(sceneText as SceneId) ? sceneText as SceneId : null;
+  const score = scene ? oldSceneScore(old, scene) : null;
+  return {
+    name: stateStr(old, "gmgn_name") ?? "",
+    primary_scene: scene,
+    scene_percentile: num(score?.scene_percentile),
+    sample_n: num(score?.sample_n),
+    recent_trend: (stateStr(old, "recent_trend") as RecentTrend) ?? "UNKNOWN",
+    primary_risk: stateStr(old, "primary_risk") ?? "",
+    followability_status: (stateStr(old, "followability_status") as FollowabilityStatus) ?? "UNKNOWN",
+  };
+}
+function currentBaseline(wallet: InternalWallet): LastEmittedGmgnBaseline {
+  const score = wallet.primary ? wallet.state.scene_scores[wallet.primary] : null;
+  return { name: wallet.state.gmgn_name, primary_scene: wallet.state.primary_scene, scene_percentile: score?.scene_percentile ?? null, sample_n: score?.sample_n ?? null, recent_trend: wallet.trend, primary_risk: wallet.risk, followability_status: wallet.followability };
+}
 function deltaReasons(
   wallet: InternalWallet,
   old: Record<string, unknown> | null,
+  baseline: LastEmittedGmgnBaseline | null = baselineFromState(old),
 ): string[] {
   if (old === null) return ["INITIAL_V0_2_STATE"];
-  if (stateStr(old, "label_version") !== HUD_V02_LABEL_VERSION)
-    return ["SCENE_MODEL_MIGRATION_V0_2"];
+  if (stateStr(old, "label_version") !== HUD_V02_LABEL_VERSION) return ["SCENE_MODEL_MIGRATION_V0_2"];
+  if (!baseline) return ["SCENE_MODEL_MIGRATION_V0_2"];
   const reasons: string[] = [];
-  const oldPrimary = stateStr(old, "primary_scene");
-  if (oldPrimary !== wallet.state.primary_scene)
-    reasons.push("PRIMARY_SCENE_CHANGED");
-  const scene = wallet.primary;
-  const nextScore = scene === null ? null : wallet.state.scene_scores[scene];
-  const priorScore = scene === null ? null : oldSceneScore(old, scene);
-  const oldPxx = num(priorScore?.scene_percentile);
+  if (baseline.primary_scene !== wallet.state.primary_scene) reasons.push("PRIMARY_SCENE_CHANGED");
+  const nextScore = wallet.primary === null ? null : wallet.state.scene_scores[wallet.primary];
+  const oldPxx = baseline.scene_percentile;
   const newPxx = nextScore?.scene_percentile ?? null;
-  if (percentileBucket(oldPxx) !== percentileBucket(newPxx))
-    reasons.push("PERCENTILE_BUCKET_CROSSED");
-  if (oldPxx !== null && newPxx !== null && Math.abs(oldPxx - newPxx) >= 10)
-    reasons.push("PERCENTILE_CHANGE_GE_10");
-  const oldSample = num(priorScore?.sample_n);
+  if (percentileBucket(oldPxx) !== percentileBucket(newPxx)) reasons.push("PERCENTILE_BUCKET_CROSSED");
+  if (oldPxx !== null && newPxx !== null && Math.abs(oldPxx - newPxx) >= 10) reasons.push("PERCENTILE_CHANGE_GE_10");
+  const oldSample = baseline.sample_n;
   const newSample = nextScore?.sample_n ?? null;
-  if (oldSample !== null && newSample !== null && newSample - oldSample >= 5)
-    reasons.push("EFFECTIVE_SAMPLE_INCREASE_GE_5");
-  const oldTrend = stateStr(old, "recent_trend");
-  const reverse =
-    (oldTrend === "ENHANCING" && wallet.trend === "DECAYING") ||
-    (oldTrend === "DECAYING" && wallet.trend === "ENHANCING");
+  if (oldSample !== null && newSample !== null && newSample - oldSample >= 5) reasons.push("EFFECTIVE_SAMPLE_INCREASE_GE_5");
+  const reverse = (baseline.recent_trend === "ENHANCING" && wallet.trend === "DECAYING") || (baseline.recent_trend === "DECAYING" && wallet.trend === "ENHANCING");
   if (reverse) reasons.push("TREND_REVERSED");
-  const oldRisk = stateStr(old, "primary_risk");
-  if (!isMajorRisk(oldRisk) && isMajorRisk(wallet.risk))
-    reasons.push("NEW_MAJOR_RISK");
-  const oldFollow = stateStr(old, "followability_status");
-  if (oldFollow !== wallet.followability) reasons.push("FOLLOWABILITY_CHANGED");
+  if (!isMajorRisk(baseline.primary_risk) && isMajorRisk(wallet.risk)) reasons.push("NEW_MAJOR_RISK");
+  if (baseline.followability_status !== wallet.followability) reasons.push("FOLLOWABILITY_CHANGED");
   return reasons;
 }
+
 export function computeHudV02(
   candidates: CandidateUnionEntry[],
   masters: WalletMasterV01Record[],
   evidence: Map<string, ChainEvidence>,
   previous: Map<string, Record<string, unknown>>,
   evaluatedAt = HUD_V02_EVALUATED_AT,
+  sourceSnapshotHash = "UNAVAILABLE",
 ): {
   wallets: InternalWallet[];
   history: Array<Record<string, unknown>>;
@@ -904,52 +935,23 @@ export function computeHudV02(
   const previews: Array<Record<string, unknown>> = [];
   for (const wallet of wallets) {
     const old = previous.get(wallet.master.address) ?? null;
-    const oldName = stateStr(old, "gmgn_name") ?? "";
-    const reasons = deltaReasons(wallet, old);
+    const priorBaseline = baselineFromState(old);
+    const oldName = priorBaseline?.name ?? stateStr(old, "gmgn_name") ?? "";
+    const reasons = deltaReasons(wallet, old, priorBaseline);
     const changed = reasons.length > 0;
     const reason = reasons[0] ?? "NO_DELTA_THRESHOLD";
-    const snapshot = crypto
-      .createHash("sha256")
-      .update(
-        JSON.stringify({
-          fingerprint12: wallet.state.fingerprint12,
-          quality: wallet.master.data_quality_score,
-          evaluatedAt,
-        }),
-      )
-      .digest("hex");
-    history.push({
-      record_type: "wallet_hud_history_v0_2",
-      schema_version: "wallet-hud-v0.2",
-      address: wallet.master.address,
-      fingerprint12: wallet.state.fingerprint12,
-      evaluated_at: evaluatedAt,
-      previous_state: old,
-      new_state: wallet.state,
-      reason_codes: [reason, ...reasons.slice(1), ...wallet.state.reason_codes],
-      source_snapshot_hash: snapshot,
-      label_version: HUD_V02_LABEL_VERSION,
-    });
-    const primaryScore =
-      wallet.primary === null
-        ? null
-        : wallet.state.scene_scores[wallet.primary];
-    previews.push({
-      address: wallet.master.address,
-      fingerprint12: wallet.state.fingerprint12,
-      old_name: oldName,
-      new_name: wallet.state.gmgn_name,
-      changed,
-      change_reason: reason,
-      primary_scene: wallet.state.primary_scene ?? "",
-      scene_percentile: primaryScore?.scene_percentile ?? null,
-      peer_n: primaryScore?.peer_n ?? null,
-      sample_n: primaryScore?.sample_n ?? null,
-      sample_unit: primaryScore?.sample_unit ?? null,
-      score_source: primaryScore?.score_source ?? "BORROWED_PROXY",
-      evidence_tier: primaryScore?.evidence_tier ?? wallet.state.evidence_tier,
-      confidence: primaryScore?.confidence ?? wallet.state.evidence_confidence,
-    });
+    const baseline = changed ? currentBaseline(wallet) : (priorBaseline ?? currentBaseline(wallet));
+    if (!changed && oldName && wallet.state.gmgn_name !== oldName) {
+      wallet.state.reason_codes = [...wallet.state.reason_codes, "GMGN_NAME_HELD_FOR_CUMULATIVE_DEBOUNCE"];
+      wallet.state.gmgn_name = oldName;
+    }
+    if (sourceSnapshotHash !== "UNAVAILABLE") {
+      wallet.state.source_snapshot_hash = sourceSnapshotHash;
+      wallet.state.last_emitted_gmgn_baseline = baseline;
+    }
+    history.push({ record_type: "wallet_hud_history_v0_2", schema_version: "wallet-hud-v0.2", address: wallet.master.address, fingerprint12: wallet.state.fingerprint12, evaluated_at: evaluatedAt, previous_state: old, new_state: wallet.state, reason_codes: [reason, ...reasons.slice(1), ...wallet.state.reason_codes], source_snapshot_hash: sourceSnapshotHash, delta_emitted: changed, last_emitted_gmgn_baseline: baseline, label_version: HUD_V02_LABEL_VERSION });
+    const primaryScore = wallet.primary === null ? null : wallet.state.scene_scores[wallet.primary];
+    previews.push({ address: wallet.master.address, fingerprint12: wallet.state.fingerprint12, old_name: oldName, new_name: wallet.state.gmgn_name, changed, change_reason: reason, primary_scene: wallet.state.primary_scene ?? "", scene_percentile: primaryScore?.scene_percentile ?? null, peer_n: primaryScore?.peer_n ?? null, sample_n: primaryScore?.sample_n ?? null, sample_unit: primaryScore?.sample_unit ?? null, score_source: primaryScore?.score_source ?? "BORROWED_PROXY", evidence_tier: primaryScore?.evidence_tier ?? wallet.state.evidence_tier, confidence: primaryScore?.confidence ?? wallet.state.evidence_confidence });
   }
   return { wallets, history, previews };
 }
@@ -1099,6 +1101,8 @@ export async function runWalletHudV02(
   if (shadow.event_count !== 0) throw new Error("shadow events must be zero");
   const out =
     options.outputDir ?? path.join(root, "sol", "derived", "wallet_hud_v0_2");
+  const sourceSnapshotHashes = Object.fromEntries(Object.entries(manifest.inputs).sort(([a], [b]) => a.localeCompare(b)).map(([name, spec]) => [name, spec.sha256]));
+  const sourceSnapshotHash = hashObject(sourceSnapshotHashes);
   const previous = new Map<string, Record<string, unknown>>();
   const previousFile = path.join(out, "wallet_hud_state_v0_2.jsonl");
   const priorRows = fs.existsSync(previousFile)
@@ -1119,9 +1123,8 @@ export async function runWalletHudV02(
   const previousSource = currentSchema ? previousFile : files.wallet_hud_state;
   for (const state of readJsonl<Record<string, unknown>>(previousSource))
     if (typeof state.address === "string") previous.set(state.address, state);
-  const at = options.evaluatedAt;
-  if (!at) throw new Error("evaluatedAt is required for operational refresh");
-  const computed = computeHudV02(candidates, masters, maps.map, previous, at);
+  const at = options.evaluatedAt ?? HUD_V02_EVALUATED_AT;
+  const computed = computeHudV02(candidates, masters, maps.map, previous, at, sourceSnapshotHash);
   fs.mkdirSync(out, { recursive: true });
   const stateFile = path.join(out, "wallet_hud_state_v0_2.jsonl");
   const historyFile = path.join(out, "wallet_hud_history_v0_2.jsonl");
@@ -1133,9 +1136,11 @@ export async function runWalletHudV02(
   const reviewFile = path.join(out, "label_change_review_v0_2.csv");
   const methodFile = path.join(out, "wallet_hud_v0_2_methodology.md");
   const replayFile = path.join(out, "replay_manifest.json");
+  const sourceHashesFile = path.join(out, "source_hashes.json");
   const states = computed.wallets.map((w) => w.state);
   writeJsonl(stateFile, states);
-  writeJsonl(historyFile, computed.history);
+  appendJsonl(historyFile, computed.history);
+  fs.writeFileSync(sourceHashesFile, JSON.stringify({ schema_version: "wallet-hud-v0.2-source-hashes", task_id: HUD_V02_TASK_ID, source_snapshot_hash: sourceSnapshotHash, input_hashes: sourceSnapshotHashes, contains_addresses: false }, null, 2) + "\n", "utf8");
   const eligibleN = Object.fromEntries(
     SCENE_IDS.map((scene) => [
       scene,
@@ -1297,6 +1302,8 @@ export async function runWalletHudV02(
     deltaImportCount: changed.length,
     changedWalletCount: changed.length,
     shadowEventCount: shadow.event_count,
+    sourceSnapshotHashes,
+    sourceSnapshotHash,
     outputHashes: {},
   };
   fs.writeFileSync(methodFile, methodology(result, at), "utf8");
@@ -1310,6 +1317,7 @@ export async function runWalletHudV02(
     deltaFile,
     reviewFile,
     methodFile,
+    sourceHashesFile,
   ];
   result.outputHashes = Object.fromEntries(
     outputFiles.map((file) => [path.basename(file), sha(file)]),
@@ -1321,9 +1329,9 @@ export async function runWalletHudV02(
         schema_version: "wallet-hud-v0.2-replay-manifest",
         task_id: HUD_V02_TASK_ID,
         evaluated_at: at,
-        input_hashes: Object.fromEntries(
-          Object.entries(files).map(([name, file]) => [name, sha(file)]),
-        ),
+        source_snapshot_hash: sourceSnapshotHash,
+        input_hashes: sourceSnapshotHashes,
+        history_append_only: true,
         output_hashes: result.outputHashes,
         counts: {
           candidate_addresses: candidates.length,

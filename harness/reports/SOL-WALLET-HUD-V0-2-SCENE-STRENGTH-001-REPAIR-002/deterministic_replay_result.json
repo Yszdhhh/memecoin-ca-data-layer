@@ -1,0 +1,16 @@
+{
+  "schema_version": "sol-wallet-hud-v0-2-repair-002-deterministic-evidence",
+  "deterministic": true,
+  "source_snapshot_hash": "4a20f4db72fb14d403cb22085fec8884cc29be428015045a31dfe03a6a727d91",
+  "replay_a_exit": 0,
+  "replay_b_exit": 0,
+  "output_hashes_match": true,
+  "history_append_only": true,
+  "history_size_increased_without_content_read": true,
+  "exact_specified_cli_blocked": "CHAINFM_OUT_DIR_UNSET",
+  "equivalent_explicit_private_root_cli_passed": true,
+  "task_validate_formal_worktree": "BLOCKED_MISSING_REPAIR_002_TASK_JSON",
+  "task_validate_origin_main_temporary_export": "PASS",
+  "doctor": "FAIL_PREEXISTING_FORBIDDEN_TRACKED_WALLET_FILES",
+  "final_commit_binding_strategy": "Verify this report directory is present in the final commit tree with git show <final_commit_sha>:harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/; final_commit_sha is recorded by the delivery command after commit."
+}

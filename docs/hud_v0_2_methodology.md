@@ -26,3 +26,10 @@ Every refresh records the previous state, new state, reason codes, source snapsh
 ## Scope boundary
 
 This is a scene-strength HUD, not a formal Alpha Score, global ranking, direct follow recommendation, or trading instruction. Private addresses, raw provider responses, raw transactions, and `chainfm_out` outputs remain outside Git.
+
+## Repair-002 controls
+
+- `ACTIVITY_PERSISTENCE` eligibility follows a non-inactive provider activity tier even when `trade_count_proxy` is null; the score emits `ACTIVITY_EVENT_COUNT_UNKNOWN` instead of collapsing to zero.
+- Reproduction thresholds use verified profit-token counts for chain-sampled rows: `MULTI_TOKEN_REPEATABILITY >= 3` and `PAYOFF_ASYMMETRY >= 2`. Loss-only samples do not satisfy either threshold.
+- GMGN delta debounce compares against the last emitted baseline; below-threshold movement is held with `GMGN_NAME_HELD_FOR_CUMULATIVE_DEBOUNCE`.
+- State history is append-only. A deterministic `source_snapshot_hash` and redacted `source_hashes.json` are emitted; no raw addresses or provider payloads are included in evidence reports.
