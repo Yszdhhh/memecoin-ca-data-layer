@@ -96,37 +96,37 @@
     {
       "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
       "role": "coordinator",
-      "status": "READY",
-      "chain": "bsc"
+      "status": "BLOCKED_DEPENDENCY",
+      "chain": null
     },
     {
       "task_id": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
       "role": "auditor",
       "status": "BLOCKED_DEPENDENCY",
-      "chain": "bsc"
+      "chain": null
     },
     {
       "task_id": "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001",
       "role": "auditor",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "BLOCKED_STAGE",
       "chain": "bsc"
     },
     {
       "task_id": "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001",
       "role": "auditor",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "BLOCKED_STAGE",
       "chain": "bsc"
     },
     {
       "task_id": "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001",
       "role": "auditor",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "BLOCKED_STAGE",
       "chain": "bsc"
     },
     {
       "task_id": "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
       "role": "auditor",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "BLOCKED_STAGE",
       "chain": "bsc"
     },
     {
@@ -150,7 +150,7 @@
     {
       "task_id": "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
       "role": "auditor",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "BLOCKED_STAGE",
       "chain": "bsc"
     },
     {
@@ -248,6 +248,10 @@
       "to": "CROSSCHAIN-WALLET-HUD-V0-3-001"
     },
     {
+      "from": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001",
+      "to": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001"
+    },
+    {
       "from": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001",
       "to": "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001"
     },
@@ -314,6 +318,13 @@
     "unknown_dependencies": 0,
     "dependency_cycles": 0,
     "crosschain_hud_hard_depends_on_live_observation": false,
-    "shadow_core_depends_on_bsc_stage": false
+    "shadow_core_depends_on_bsc_stage": false,
+    "task_spec_is_status_source_of_truth": true,
+    "task_ledger_graph_status_consistency_required": true,
+    "task_ledger_graph_status_consistency_count": 27,
+    "task_ledger_graph_status_mismatch_count": 0,
+    "crosschain_hud_live_observation_is_optional_enhancement": true,
+    "edges_derived_from_task_spec_dependencies": true,
+    "edge_count": 32
   }
 }

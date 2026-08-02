@@ -23,7 +23,11 @@
     "KNOWN_LIMITATIONS.md",
     "OWNER_DECISIONS_NEEDED.md",
     "harness/config/project.json",
-    "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/acceptance.md"
+    "harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001/acceptance.md",
+    "harness/reports/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001/acceptance.md",
+    "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001/acceptance.md",
+    "harness/reports/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001/acceptance.md",
+    "harness/reports/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001/acceptance.md"
   ],
   "write_set": [
     "src/application/wallet-intelligence/crosschain-hud-v0-3.ts",
@@ -59,6 +63,7 @@
     "npm test",
     "npm run build",
     "npm run security:scan",
-    "git diff --check"
+    "git diff --check",
+    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-crosschain-wallet-hud-v0-3.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
   ]
 }

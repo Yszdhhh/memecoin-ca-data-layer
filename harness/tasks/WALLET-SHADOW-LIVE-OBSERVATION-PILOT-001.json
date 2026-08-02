@@ -19,8 +19,7 @@
     "PROJECT_OPERATING_PLAYBOOK.md",
     "KNOWN_LIMITATIONS.md",
     "OWNER_DECISIONS_NEEDED.md",
-    "harness/config/project.json",
-    "OWNER_DECISIONS_NEEDED.md"
+    "harness/config/project.json"
   ],
   "write_set": [
     "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/",

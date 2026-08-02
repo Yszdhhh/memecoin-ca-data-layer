@@ -16,3 +16,7 @@
 3. SOL Shadow Replay Pilot depends on Replay Engine Audit GREEN and SOL HUD Audit GREEN.
 4. BSC work remains offline-stage gated through BSC Offline Activation Audit GREEN and Owner merge.
 5. HUD v0.3 depends on the named audited research/replay outputs, not Live Observation.
+
+## Status consistency repair — 2026-08-02
+
+Task Specs are the single status source of truth. The Program ledger and DAG are synchronized to all 27 Program Task Specs; BSC Offline Activation remains `BLOCKED_DEPENDENCY`, BSC Source Inventory remains `BLOCKED_STAGE`, and BSC Source Inventory Audit remains `BLOCKED_STAGE`.

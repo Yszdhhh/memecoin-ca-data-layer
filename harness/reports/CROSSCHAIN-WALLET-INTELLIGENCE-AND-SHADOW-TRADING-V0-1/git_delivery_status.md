@@ -1,9 +1,8 @@
-# Git delivery status
+# Git Delivery Status — CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1
 
 - Branch: `chore/crosschain-wallet-shadow-program-spec`
 - Base branch: `main`
-- PR: #16 — Draft / OPEN (must remain unmerged by this agent)
-- Governance repair commit: `5a2ccbdd30131116ea5209be0414db5f66d44dff` (`chore: repair crosschain program task graph`)
-- This append-only evidence update is a separate delivery-status commit; it does not rewrite the governance repair commit.
-- Push target: `origin/chore/crosschain-wallet-shadow-program-spec`. PR description update and remote-state verification occur after push.
-- No merge, squash, rebase, history rewrite, product-source edit, or private-data commit is authorized.
+- Existing pull request: Draft PR #16
+- Delivery state at evidence generation: governance repair changes are validated and awaiting the required append-only commit and push to the existing Draft PR.
+- Prohibited actions observed: no direct push to `main`, no new PR, no merge, no squash, and no rebase.
+- Private-data boundary: no `chainfm_out` content, wallet address data, transaction identifiers, GMGN raw data, credentials, or production configuration are part of this delivery.

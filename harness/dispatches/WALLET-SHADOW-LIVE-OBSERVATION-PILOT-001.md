@@ -1,8 +1,7 @@
 # Dispatch: WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001
 
 ## Scope
-Remain PARK until contracts, replay engine, one adapter, data-security audit, named provider/budget, and explicit Owner network authorization are all recorded. If activated, observe only, timestamp observed_at, simulate privately, and prepare HUD review files without trading or unattended publishing.
-
+Remain PARK until contracts, replay engine, one adapter, data-security audit, named provider/budget, and explicit Owner network authorization are all recorded. If activated, observe only, timestamp observed_at, simulate privately, and prepare HUD review files without trading or unattended publishing. This future pilot may enhance HUD evidence but is not a Cross-chain HUD v0.3 input or dependency.
 ## Required reading
 Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json`.
 

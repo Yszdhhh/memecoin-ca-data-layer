@@ -22,6 +22,7 @@
   ],
   "write_set": [
     "src/domain/shadow-trading/contracts-v0-1.ts",
+    "src/cli/run-wallet-shadow-trade-contracts-v0-1.ts",
     "src/domain/shadow-trading/validation-v0-1.ts",
     "test/domain/shadow-trading/contracts-v0-1.test.ts",
     "docs/shadow_trade_contracts_v0_1.md",
@@ -54,6 +55,7 @@
     "npm test",
     "npm run build",
     "npm run security:scan",
-    "git diff --check"
+    "git diff --check",
+    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-wallet-shadow-trade-contracts-v0-1.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/shadow/shadow_event_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/shadow/shadow_trade_contracts_v0_1/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
   ]
 }

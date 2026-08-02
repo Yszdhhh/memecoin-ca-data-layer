@@ -24,6 +24,11 @@
     "self_validation_first": true,
     "obsolete_program_report_root_count": 0,
     "literal_backslash_n_count": 0,
-    "governance_diff_out_of_scope_count": 0
+    "governance_diff_out_of_scope_count": 0,
+    "task_ledger_graph_status_consistency_required": true,
+    "task_ledger_graph_status_consistency_count": 27,
+    "task_ledger_graph_status_mismatch_count": 0,
+    "private_offline_cli_requirements": 9,
+    "crosschain_hud_has_no_live_observation_input": true
   }
 }

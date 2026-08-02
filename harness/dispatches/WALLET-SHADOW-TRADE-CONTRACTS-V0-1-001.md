@@ -24,3 +24,14 @@ Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it na
 - Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
 - Keep raw private data outside Git.
 - Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.
+## Acceptance commands
+- `npm run harness:task -- validate harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json`
+- `npm run harness:doctor`
+- `npm run typecheck`
+- `npm test`
+- `npm run build`
+- `npm run security:scan`
+- `git diff --check`
+- `MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-wallet-shadow-trade-contracts-v0-1.ts --private-root "$CHAINFM_OUT_DIR" --input-manifest "$CHAINFM_OUT_DIR/shadow/shadow_event_input_manifest.json" --output-private "$CHAINFM_OUT_DIR/shadow/shadow_trade_contracts_v0_1/"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git.`
+## Private offline replay requirement
+The task-specific offline CLI above is a future implementation obligation. Before a DONE claim, run it against authorized real private input twice with the identical input; verify input and output record counts and equal output SHA-256; retain a private replay manifest and source hashes; and prove that `chainfm_out` is not tracked by Git.

@@ -19,8 +19,21 @@
   },
   "shadow": {
     "core_depends_on_bsc_stage": false,
-    "replay_engine_depends_on_shadow_contracts_audit": true,
+    "replay_engine_depends_only_on_shadow_contracts_audit": true,
     "sol_adapter_depends_on_bsc_stage": false
+  },
+  "hud": {
+    "hard_depends_on_live_observation": false,
+    "live_observation_acceptance_input_present": false,
+    "audit_acceptance_input_count": 5
+  },
+  "private_input_acceptance": {
+    "data_processing_implementer_task_count": 9,
+    "requires_double_run": true,
+    "requires_output_hash_match": true,
+    "requires_record_count_verification": true,
+    "requires_replay_manifest_and_source_hashes": true,
+    "requires_chainfm_out_untracked": true
   },
   "privacy": {
     "raw_private_records_committed": 0,
@@ -45,7 +58,10 @@
   },
   "dependency_integrity": {
     "unknown_dependencies": 0,
-    "cycles": 0
+    "cycles": 0,
+    "task_ledger_graph_status_consistency_total": 27,
+    "task_ledger_graph_status_consistency_passed": 27,
+    "task_ledger_graph_status_mismatches": 0
   },
   "write_set_review": {
     "parallel_collisions": 0,

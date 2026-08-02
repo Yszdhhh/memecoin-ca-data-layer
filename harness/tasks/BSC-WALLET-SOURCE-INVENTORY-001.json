@@ -6,7 +6,7 @@
   "role": "researcher",
   "chain": "bsc",
   "status": "BLOCKED_STAGE",
-  "objective": "When the Solana gate and Owner activation permit BSC, inventory only authorized local BSC sources and establish their schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the Owner merge-commits that activation.",
+  "objective": "Inventory only authorized local BSC sources after BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the Owner merge-commits the separately scoped activation implementation. This task has no Solana E2E dependency and is limited to offline-local research: establish source schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until the governing stage configuration is activated by that audited, Owner-merged activation.",
   "dependencies": [
     "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001"
   ],
@@ -36,7 +36,9 @@
     "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
     "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
     "Do not fetch BSC data from the network or hardcode contract addresses from memory.",
-    "If BSC data is insufficient, produce a precise PARK acquisition plan; do not fabricate a master wallet database."
+    "If BSC data is insufficient, produce a precise PARK acquisition plan; do not fabricate a master wallet database.",
+    "Do not activate BSC Live capability, any Live provider, resident listener, automated GMGN workflow, or production database write.",
+    "Do not treat Solana E2E completion as a dependency or gate for this BSC offline-local-research task."
   ],
   "deliverables": [
     "docs/bsc_source_inventory.md",

@@ -2,10 +2,17 @@
   "schema_version": "crosschain-program-deterministic-replay-v1",
   "generated_at": "2026-08-02T00:00:00Z",
   "status": "PASS",
-  "input_hash_sha256": "182a627f476c5fb91931758cacf9dd8c2e227e2e6fd05d57418ed72c62a982e6",
-  "repeat_input_hash_sha256": "182a627f476c5fb91931758cacf9dd8c2e227e2e6fd05d57418ed72c62a982e6",
+  "input_hash_sha256": "ec26d5b089166f64d1801d1a7d533775c2cfaf344a9ab9fdebf475e04d6a6464",
+  "repeat_input_hash_sha256": "ec26d5b089166f64d1801d1a7d533775c2cfaf344a9ab9fdebf475e04d6a6464",
   "same_input_same_output": true,
   "task_spec_count": 27,
+  "task_ledger_graph_status_consistency": {
+    "status": "PASS",
+    "checked": 27,
+    "passed": 27,
+    "mismatches": 0,
+    "source_of_truth": "harness/tasks/*.json"
+  },
   "unknown_dependencies": 0,
   "dependency_cycles": 0,
   "parallel_write_set_collisions": 0,
@@ -14,6 +21,9 @@
     "shadow_core_depends_on_bsc_stage": false,
     "replay_engine_depends_only_on_shadow_contracts_audit": true,
     "sol_adapter_depends_on_bsc_stage": false,
-    "crosschain_hud_hard_depends_on_live_observation": false
+    "crosschain_hud_hard_depends_on_live_observation": false,
+    "crosschain_hud_live_observation_acceptance_input_present": false,
+    "bsc_source_inventory_depends_on_solana_e2e": false,
+    "private_offline_cli_requirement_count": 9
   }
 }
