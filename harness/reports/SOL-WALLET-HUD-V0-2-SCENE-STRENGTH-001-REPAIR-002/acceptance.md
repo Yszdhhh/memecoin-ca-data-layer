@@ -2,7 +2,9 @@
 
 - Task: SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002
 - Branch: feat/sol-wallet-hud-v0-2-scene-strength
-- Base/current pre-commit HEAD: 6d76a947b38dcd1d5f6c101812ed8aa10f5414c6
+- Implementation/provenance anchor: 81dc506f65050487e15e1a9d04483d644f624047
+- Implementation anchor parent/base: 6d76a947b38dcd1d5f6c101812ed8aa10f5414c6
+- Finalization policy: the next delivery commit is evidence-only, a direct child of the implementation anchor, and changes only this report directory; code/product logic remains exactly at the implementation anchor.
 - PR #15: verified MERGED; no new PR, merge, rebase, squash, or history rewrite.
 - Scope: HUD source, CLI, HUD tests, methodology, and the permitted report directory only; no harness task/fixture/source files changed.
 

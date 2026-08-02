@@ -29,5 +29,6 @@
                                 },
     "source_snapshot_hash":  "4a20f4db72fb14d403cb22085fec8884cc29be428015045a31dfe03a6a727d91",
     "latest_refresh_delta_import_count":  1,
-    "latest_refresh_changed_wallet_count":  1
+    "latest_refresh_changed_wallet_count":  1,
+    "implementation_provenance_anchor":  "81dc506f65050487e15e1a9d04483d644f624047"
 }

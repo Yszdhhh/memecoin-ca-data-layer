@@ -16,3 +16,8 @@
 ## Reproduction
 
 Two explicit-private-root offline replays completed at the fixed evaluation timestamp with identical source snapshot and output hashes. A repeat run increased the history file byte length, confirming append-only write behavior without reading private raw content.
+
+## Provenance
+
+- Implementation/provenance anchor: `81dc506f65050487e15e1a9d04483d644f624047`
+- Finalization commit policy: evidence-only child commit; final delivery head adds only this report directory and does not change code.
