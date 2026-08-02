@@ -1,0 +1,46 @@
+{
+  "schema_version": "synthesis-manifest-v1",
+  "task_id": "EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001",
+  "external_root": "EXTERNAL_RESEARCH_ROOT",
+  "generated_at": "2026-08-02T18:31:19+08:00",
+  "files": [
+    {
+      "relative_path": "synthesis/project-capability-overlap.md",
+      "sha256": "56F3FAFD12F08C6F55E374C32881DF3A59CE8276A1C6697B4EA3DB5D3656693D",
+      "size_bytes": 4279
+    },
+    {
+      "relative_path": "synthesis/verified-architecture-decisions.md",
+      "sha256": "33A889CF780AFE9A211C5F18CFB09D51712096ADB5CC9640EC3505B331A780EF",
+      "size_bytes": 4038
+    },
+    {
+      "relative_path": "synthesis/poc-decision-matrix.md",
+      "sha256": "7476898AB9FD764022BCF77C72AC25CA621F79B99D3BFA12EC6757B061C316BD",
+      "size_bytes": 11665
+    },
+    {
+      "relative_path": "synthesis/existing-task-impact.md",
+      "sha256": "44F5B4FE7EA9C8F7A08C29C428A58A3C323310FF3B485996DA66FE707613AF1C",
+      "size_bytes": 2401
+    },
+    {
+      "relative_path": "synthesis/implementation-sequence.md",
+      "sha256": "B7004E69B5D238E1E155B745EFEE9819D3499A405670F7DF3ADEA68A0EF17C89",
+      "size_bytes": 3279
+    },
+    {
+      "relative_path": "synthesis/open-questions.md",
+      "sha256": "A0D5A1453246935B2E4557A002341A13707025DCE99C2DB485D8D83F9FDB7DA0",
+      "size_bytes": 2847
+    }
+  ],
+  "poc_ids": [
+    "SOL-PARSER-COMPARISON-POC-001",
+    "SHADOW-REPLAY-MINIMUM-LOOP-POC-001",
+    "BSC-EXISTING-DATA-INVENTORY-POC-001"
+  ],
+  "privacy_status": "PASS_NO_FORBIDDEN_DATA",
+  "product_code_modified": false,
+  "private_data_accessed": false
+}

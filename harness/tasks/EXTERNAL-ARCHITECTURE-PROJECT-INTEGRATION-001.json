@@ -5,7 +5,7 @@
   "tier": "T1",
   "role": "researcher",
   "chain": null,
-  "status": "READY",
+  "status": "DONE",
   "objective": "Read the verified external research package and the landed local project architecture, Harness, PR #15 evidence, and PR #16 program files. Produce six decision reports that map existing capability overlap, adopt or reject external approaches, identify architecture conflicts and overengineering, defer Live Observation work, and define three minimum non-implementing POCs: SOL-PARSER-COMPARISON-POC-001, SHADOW-REPLAY-MINIMUM-LOOP-POC-001, and BSC-EXISTING-DATA-INVENTORY-POC-001. Optimize for Windows-local, low-cost, second-to-minute research, about one thousand addresses with dozens of focus wallets, no real trades, and explicit unknown or unfillable outputs. Do not modify product code, PR #15, PR #16, existing product task specs, dependencies, or implement any POC.",
   "dependencies": [
     "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001"
@@ -56,7 +56,6 @@
     "src/infrastructure/solana/dev/solana-dev-history-service.ts",
     "src/application/wallet-intelligence/candidate-screening-v0-1.ts",
     "src/application/wallet-intelligence/master-table-builder.ts",
-    "src/application/wallet-intelligence/hud-v0-2.ts",
     "src/infrastructure/market/observation-market-data-provider.ts",
     "db/migrations/007_market_observations.sql",
     "db/migrations/008_address_library_and_observations.sql",
@@ -65,12 +64,7 @@
     "test/fixtures/solana/helius/adapter-fixture.json",
     "test/fixtures/solana/pump/manifest.json",
     "test/fixtures/solana/dev/complete-history.json",
-    "EXTERNAL_RESEARCH_ROOT/raw-reports",
-    "EXTERNAL_RESEARCH_ROOT/source-catalog",
-    "EXTERNAL_RESEARCH_ROOT/verified-findings",
-    "EXTERNAL_RESEARCH_ROOT/repos/sol-parser-sdk",
-    "EXTERNAL_RESEARCH_ROOT/repos/ethereum-etl",
-    "EXTERNAL_RESEARCH_ROOT/repos/onchain-sybil-detector"
+    "harness/reports/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001/synthesis_manifest.json"
   ],
   "write_set": [
     "harness/reports/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001/acceptance.md"

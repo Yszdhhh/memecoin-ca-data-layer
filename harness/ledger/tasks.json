@@ -1255,7 +1255,7 @@
     {
       "task_id": "EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001",
       "spec": "harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json",
-      "status": "READY"
+      "status": "DONE"
     }
   ]
 }
