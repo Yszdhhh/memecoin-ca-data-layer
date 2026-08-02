@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "status": "READY",
-  "objective": "Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence. After this governance PR is Owner-merged, checkout feat/sol-wallet-hud-v0-2-scene-strength directly, append commits, and push the existing PR #15. Do not create a replacement branch or PR.",
+  "objective": "Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence. After this governance PR is Owner-merged, checkout feat/sol-wallet-hud-v0-2-scene-strength directly, append commits, and push the existing PR #15. Do not create a replacement branch or PR. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -58,6 +58,6 @@
     "npm run security:scan",
     "git diff --check",
     "npm run wallet:hud:refresh:v0-2",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-sol-wallet-hud-v0-2.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/sol/sol_wallet_hud_v0_2_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/sol/wallet_hud_v0_2/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-sol-wallet-hud-v0-2.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/sol/sol_wallet_hud_v0_2_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/sol/wallet_hud_v0_2/\""
   ]
 }

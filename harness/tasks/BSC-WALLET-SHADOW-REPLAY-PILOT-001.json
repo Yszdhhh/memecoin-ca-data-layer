@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "bsc",
   "status": "BLOCKED_STAGE",
-  "objective": "Build the BSC-only offline replay adapter after BSC activation and verification. Cover fee-on-transfer, sell-blocked/honeypot evidence, router and multi-hop logs, BNB/WBNB, pool migration, decimals anomalies, tax uncertainty, and deterministic no-lookahead replay. It remains BSC-offline-only and BLOCKED_STAGE until the activation audit is GREEN and Owner-merged.",
+  "objective": "Build the BSC-only offline replay adapter after BSC activation and verification. Cover fee-on-transfer, sell-blocked/honeypot evidence, router and multi-hop logs, BNB/WBNB, pool migration, decimals anomalies, tax uncertainty, and deterministic no-lookahead replay. It remains BSC-offline-only and BLOCKED_STAGE until the activation audit is GREEN and Owner-merged. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [
     "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001",
     "BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001",
@@ -58,6 +58,6 @@
     "npm run build",
     "npm run security:scan",
     "git diff --check",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-bsc-wallet-shadow-replay-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_shadow_replay_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_shadow_replay_pilot_v0_1/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-bsc-wallet-shadow-replay-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_shadow_replay_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_shadow_replay_pilot_v0_1/\""
   ]
 }

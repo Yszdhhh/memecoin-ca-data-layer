@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "bsc",
   "status": "BLOCKED_STAGE",
-  "objective": "Select a representative 5–10 address BSC candidate pilot and validate only sampled chain evidence. Report swaps/transfers, cost basis, fees/taxes, concentration, repeatability, timing, exit-copy feasibility, address-type and cluster risks with sample-level scopes.",
+  "objective": "Select a representative 5–10 address BSC candidate pilot and validate only sampled chain evidence. Report swaps/transfers, cost basis, fees/taxes, concentration, repeatability, timing, exit-copy feasibility, address-type and cluster risks with sample-level scopes. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [
     "BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001"
   ],
@@ -57,6 +57,6 @@
     "npm run build",
     "npm run security:scan",
     "git diff --check",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-bsc-wallet-chain-verification-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_candidate_replay_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_chain_verification_pilot/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-bsc-wallet-chain-verification-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_candidate_replay_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_chain_verification_pilot/\""
   ]
 }

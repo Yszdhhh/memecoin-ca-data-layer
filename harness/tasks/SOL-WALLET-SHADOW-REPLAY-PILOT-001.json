@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "solana",
   "status": "BLOCKED_DEPENDENCY",
-  "objective": "Build the Solana-only offline adapter and pilot on authorized historical local inputs: normalize/deduplicate events, price and liquidity as-of lookup, fee model, chain-specific unfillable rules, golden fixtures, negative cases, and deterministic replay evidence. This Solana adapter must not be blocked by BSC stage activation.",
+  "objective": "Build the Solana-only offline adapter and pilot on authorized historical local inputs: normalize/deduplicate events, price and liquidity as-of lookup, fee model, chain-specific unfillable rules, golden fixtures, negative cases, and deterministic replay evidence. This Solana adapter must not be blocked by BSC stage activation. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [
     "WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001",
     "SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001"
@@ -57,6 +57,6 @@
     "npm run build",
     "npm run security:scan",
     "git diff --check",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-sol-wallet-shadow-replay-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/sol/sol_shadow_replay_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/sol/sol_shadow_replay_pilot_v0_1/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-sol-wallet-shadow-replay-pilot.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/sol/sol_shadow_replay_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/sol/sol_shadow_replay_pilot_v0_1/\""
   ]
 }

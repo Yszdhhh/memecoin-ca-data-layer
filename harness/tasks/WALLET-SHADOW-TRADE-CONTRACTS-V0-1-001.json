@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": null,
   "status": "BLOCKED_DEPENDENCY",
-  "objective": "Define offline, chain-neutral shadow-trade contracts and validation rules for normalized signals, order intents, fills, lots, exits, results, metrics, run manifests, and data-quality events. Enforce source_trade_at versus observed_at versus simulated_order_at semantics; do not implement chain parsing or execution. This common contract is chain-neutral and must not be blocked by BSC stage activation.",
+  "objective": "Define offline, chain-neutral shadow-trade contracts and validation rules for normalized signals, order intents, fills, lots, exits, results, metrics, run manifests, and data-quality events. Enforce source_trade_at versus observed_at versus simulated_order_at semantics; do not implement chain parsing or execution. This common contract is chain-neutral and must not be blocked by BSC stage activation. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [
     "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001"
   ],
@@ -56,6 +56,6 @@
     "npm run build",
     "npm run security:scan",
     "git diff --check",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-wallet-shadow-trade-contracts-v0-1.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/shadow/shadow_event_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/shadow/shadow_trade_contracts_v0_1/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-wallet-shadow-trade-contracts-v0-1.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/shadow/shadow_event_input_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/shadow/shadow_trade_contracts_v0_1/\""
   ]
 }

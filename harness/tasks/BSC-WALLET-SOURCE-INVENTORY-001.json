@@ -6,7 +6,7 @@
   "role": "researcher",
   "chain": "bsc",
   "status": "BLOCKED_STAGE",
-  "objective": "Inventory only authorized local BSC sources after BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the Owner merge-commits the separately scoped activation implementation. This task has no Solana E2E dependency and is limited to offline-local research: establish source schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until the governing stage configuration is activated by that audited, Owner-merged activation.",
+  "objective": "Inventory only authorized local BSC sources after BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the separately scoped activation implementation has been Owner merge-committed. This task has no Solana E2E dependency and is limited to offline-local research: establish source schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until the governing stage configuration is activated by that audited, Owner-merged activation.",
   "dependencies": [
     "BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001"
   ],

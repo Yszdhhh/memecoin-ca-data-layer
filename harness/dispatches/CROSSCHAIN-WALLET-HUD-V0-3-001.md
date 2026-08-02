@@ -36,6 +36,6 @@ Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it na
 - `npm run build`
 - `npm run security:scan`
 - `git diff --check`
-- `MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-crosschain-wallet-hud-v0-3.ts --private-root "$CHAINFM_OUT_DIR" --input-manifest "$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3_input_manifest.json" --output-private "$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3/"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git.`
+- `tsx src/cli/run-crosschain-wallet-hud-v0-3.ts --private-root "$CHAINFM_OUT_DIR" --input-manifest "$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3_input_manifest.json" --output-private "$CHAINFM_OUT_DIR/crosschain/crosschain_wallet_hud_v0_3/"`
 ## Private offline replay requirement
 The task-specific offline CLI above is a future implementation obligation. Before a DONE claim, run it against authorized real private input twice with the identical input; verify input and output record counts and equal output SHA-256; retain a private replay manifest and source hashes; and prove that `chainfm_out` is not tracked by Git.

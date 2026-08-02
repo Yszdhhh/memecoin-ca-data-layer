@@ -6,7 +6,7 @@
   "role": "implementer",
   "chain": "bsc",
   "status": "BLOCKED_STAGE",
-  "objective": "Profile the BSC master first, then create evidence-scoped BSC scene eligibility and candidate research packs. Keep behavior signals, risk overlays, evidence confidence, and unknowns separate; do not copy Solana thresholds or issue smart-money/follow/heavy-position labels.",
+  "objective": "Profile the BSC master first, then create evidence-scoped BSC scene eligibility and candidate research packs. Keep behavior signals, risk overlays, evidence confidence, and unknowns separate; do not copy Solana thresholds or issue smart-money/follow/heavy-position labels. Before DONE, execute this task-specific offline CLI against authorized real private input twice with identical inputs; verify input and output record counts and identical output SHA-256; generate replay_manifest.json and source_hashes.json; and verify that chainfm_out is not tracked by Git.",
   "dependencies": [
     "BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001"
   ],
@@ -56,6 +56,6 @@
     "npm run build",
     "npm run security:scan",
     "git diff --check",
-    "MUST IMPLEMENT AND EXECUTE before DONE: tsx src/cli/run-bsc-wallet-candidate-screening-v0-1.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_cleaning_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_candidates_v0_1/\"; use authorized real private input, run twice with identical input, verify input/output record counts and identical output SHA-256, write replay_manifest.json and source_hashes.json, and verify chainfm_out is not tracked by Git."
+    "tsx src/cli/run-bsc-wallet-candidate-screening-v0-1.ts --private-root \"$CHAINFM_OUT_DIR\" --input-manifest \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_cleaning_manifest.json\" --output-private \"$CHAINFM_OUT_DIR/bsc/bsc_wallet_candidates_v0_1/\""
   ]
 }
