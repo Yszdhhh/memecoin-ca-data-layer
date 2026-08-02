@@ -1,16 +1,16 @@
 # Dispatch: HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001
 
 ## Scope
-Repair the existing Harness doctor false positive with the narrowest auditable rule: preserve raw/private-data detection, distinguish only documented scrubbed public fixture/aggregate artifacts, and prove that synthetic raw wallet-like files remain rejected. Do not silently waive the doctor gate.
+Repair the existing Harness doctor false positive with the narrowest auditable forbidden-path rule. In harness/config/project.json, modify only forbidden_repository_patterns; active_stage, active_chains, blocked_chains, rule_versions, quality_commands, and future_stage_gate must remain byte-for-byte equivalent to the baseline. Add tests proving those fields do not change, preserve synthetic raw/private wallet-like rejection, and distinguish only documented scrubbed public fixture/aggregate artifacts. Do not silently waive the doctor gate.
 
 ## Required reading
-Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow only `harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json`.
+Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json`.
 
 ## Current status
-`READY`. The task must execute only after the governance PR containing this dispatch has been merged by the Owner using a merge commit.
+`READY`. READY only after this governance PR is Owner-merged with a merge commit. Do not self-merge.
 
 ## Dependencies
-- Owner merge of the governance PR is an external dispatch prerequisite.
+- None
 
 ## Write boundary
 - `harness/cli.ts`
@@ -19,6 +19,7 @@ Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow only `
 - `harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/`
 
 ## Required evidence
-- Test both preserved rejection of a synthetic raw/private wallet artifact and acceptance only of explicitly scrubbed intended artifacts.
-- Produce `acceptance.md`, `desensitized_metrics.json`, `replay_manifest.json`, `source_hashes.json`, `deterministic_replay_result.json`, `test_evidence.md`, and `git_delivery_status.md`.
-- Keep private input out of Git.
+- Run every acceptance command in the declared order.
+- Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
+- Keep raw private data outside Git.
+- Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.

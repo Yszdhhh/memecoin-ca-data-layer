@@ -6,9 +6,9 @@
   "role": "implementer",
   "chain": null,
   "status": "BLOCKED_DEPENDENCY",
-  "objective": "Define offline, chain-neutral shadow-trade contracts and validation rules for normalized signals, order intents, fills, lots, exits, results, metrics, run manifests, and data-quality events. Enforce source_trade_at versus observed_at versus simulated_order_at semantics; do not implement chain parsing or execution.",
+  "objective": "Define offline, chain-neutral shadow-trade contracts and validation rules for normalized signals, order intents, fills, lots, exits, results, metrics, run manifests, and data-quality events. Enforce source_trade_at versus observed_at versus simulated_order_at semantics; do not implement chain parsing or execution. This common contract is chain-neutral and must not be blocked by BSC stage activation.",
   "dependencies": [
-    "BSC-STAGE-001"
+    "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001"
   ],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -48,6 +48,7 @@
     "harness/reports/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001/git_delivery_status.md"
   ],
   "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json",
     "npm run harness:doctor",
     "npm run typecheck",
     "npm test",

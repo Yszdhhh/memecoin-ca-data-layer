@@ -6,9 +6,9 @@
   "role": "implementer",
   "chain": null,
   "status": "BLOCKED_DEPENDENCY",
-  "objective": "Implement a deterministic offline replay engine using the approved contracts. Support fixed USD nominal entries, mirror exits, 5m/30m/2h/24h windows, fee/slippage/liquidity/tax-aware fill outcomes, no-lookahead price selection, and evidence-bounded followability conclusions.",
+  "objective": "Implement a deterministic offline replay engine using the approved contracts. Support fixed USD nominal entries, mirror exits, 5m/30m/2h/24h windows, fee/slippage/liquidity/tax-aware fill outcomes, no-lookahead price selection, and evidence-bounded followability conclusions. This chain-neutral engine depends only on audited shadow contracts, not BSC stage activation.",
   "dependencies": [
-    "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001"
+    "WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001"
   ],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -49,6 +49,7 @@
     "harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/git_delivery_status.md"
   ],
   "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
     "npm run harness:doctor",
     "npm run typecheck",
     "npm test",

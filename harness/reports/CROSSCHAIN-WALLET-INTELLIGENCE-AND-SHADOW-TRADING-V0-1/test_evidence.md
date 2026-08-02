@@ -1,22 +1,19 @@
-# Test evidence
+# Test Evidence — CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1
 
-## Program graph and write-set replay
+Executed in the Program governance worktree on 2026-08-02.
 
-- Registered new task specs: 15
-- Registered ledger entries: 15
-- Unknown dependencies: 0
-- Dependency cycles: 0
-- New-task write-set conflicts: 0
-- Governance diff out-of-scope paths: 0
-- Deterministic governance replay: PASS (same-input hash recorded in `deterministic_replay_result.json`)
+| Check | Result | Evidence |
+|---|---|---|
+| All Program Task Spec validations | PASS | 27/27 task-v1 specs validated by `npm run harness:task -- validate` |
+| Dependency unknown check | PASS | 0 unknown dependencies |
+| Dependency cycle check | PASS | 0 cycles |
+| Write-set collision check | PASS | 0 parallel collisions; 1 explicitly serialized `harness/config/project.json` overlap |
+| Deliverable/write-set containment | PASS | 0 out-of-scope deliverables |
+| `npm run harness:doctor` | Expected baseline FAIL | Exactly the pre-existing three forbidden tracked `wallet*.json` paths; 0 newly introduced matches |
+| `npm run typecheck` | PASS | Exit code 0 |
+| `npm test` | PASS | 461 tests: 460 passed, 0 failed, 1 skipped |
+| `npm run build` | PASS | Exit code 0 |
+| `npm run security:scan` | PASS | Exit code 0; no classified leak reported |
+| `git diff --check` | PASS | Exit code 0 |
 
-## Repository quality commands
-
-- `npm run typecheck`: PASS
-- `npm test`: PASS — 460 passed, 1 skipped, 0 failed
-- `npm run build`: PASS
-- `npm run security:scan`: PASS — `classifiedLeaks: 0`
-- `git diff --check`: PASS
-- `npm run harness:doctor`: FAIL only because the existing broad `wallet*.json` forbidden-name rule matches three tracked scrubbed fixture/artifact files.
-
-The registered Harness repair must prove a narrow fix that keeps synthetic raw/private wallet-like artifacts rejected. No private source record was read into this report.
+The Doctor baseline is deliberately not suppressed in this governance PR. The registered narrow repair task is the sole path for changing `forbidden_repository_patterns` after independent audit.

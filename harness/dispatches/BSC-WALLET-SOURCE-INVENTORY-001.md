@@ -1,16 +1,16 @@
 # Dispatch: BSC-WALLET-SOURCE-INVENTORY-001
 
 ## Scope
-When the Solana gate and Owner activation permit BSC, inventory only authorized local BSC sources and establish their schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection.
+When the Solana gate and Owner activation permit BSC, inventory only authorized local BSC sources and establish their schemas, period credibility, EOA/contract uncertainty, replay feasibility, accounting risks, and minimum acquisition gaps without network collection. It remains BLOCKED_STAGE until BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001 is GREEN and the Owner merge-commits that activation.
 
 ## Required reading
-Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the exact task spec: `harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json`.
+Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json`.
 
 ## Current status
-`BLOCKED_STAGE`. Do not begin implementation unless the Harness lifecycle state is moved to `READY` by an authorized coordinator.
+`BLOCKED_STAGE`. BLOCKED_STAGE. Do not start until the offline-stage activation audit is GREEN, its implementation PR is Owner-merged with a merge commit, and the ledger lifecycle is authorized to READY.
 
 ## Dependencies
-- `BSC-STAGE-001`
+- `BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001`
 
 ## Write boundary
 - `harness/inputs/BSC-WALLET-SOURCE-INVENTORY-001/`
@@ -19,7 +19,7 @@ Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the ex
 - `docs/bsc_acquisition_plan.md`
 
 ## Required evidence
-- Run the task acceptance commands.
-- Run once against authorized private input and replay the same input deterministically where applicable.
-- Produce `acceptance.md`, `desensitized_metrics.json`, `replay_manifest.json`, `source_hashes.json`, `deterministic_replay_result.json`, `test_evidence.md`, and `git_delivery_status.md` in the task report area.
-- Keep all raw private data outside Git.
+- Run every acceptance command in the declared order.
+- Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
+- Keep raw private data outside Git.
+- Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.

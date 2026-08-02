@@ -1,25 +1,18 @@
 # Program preflight
 
-## Scope
-Governance-only preflight for `CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1`.
+- **Recorded at:** 2026-08-02T00:00:00Z
+- **Branch:** `chore/crosschain-wallet-shadow-program-spec`
+- **Draft PR:** #16 (open; not merged)
+- **Repository fact:** PR #15 remains open on `feat/sol-wallet-hud-v0-2-scene-strength`; no agent merge is authorized.
+- **Program registration:** 27 task-v1 specs, including 13 report-only independent audit specs.
+- **Private inputs:** aggregate-only manifest retained at `harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json`; no raw private records were added to Git.
+- **Stage fact:** Solana is the sole Live/production chain. This governance PR registers, but does not execute, the separately audited BSC offline activation path; its config write is serialized after the Harness Doctor audit to avoid concurrent project-config edits.
+- **Harness Doctor baseline:** the broad `wallet*.json` rule reports the same three tracked scrubbed fixture/aggregate files; this remains an unwaived PARK condition pending the narrow repair task.
 
-## Repository facts
-- The active repository stage is Solana-only. BSC is explicitly blocked until the documented Solana E2E/Owner gate changes.
-- PR #15 is open and unmerged; its historical HUD task is not currently registered in the ledger. Repair-002 retains the PR #15 task as an explicit input/precondition and is blocked by this governance task until the Owner merges the governance PR.
-- No task here authorizes trades, credentials, browser sessions, live monitoring, or GMGN automation.
+## Corrected preconditions
 
-## Private input availability (aggregate only)
-See the committed aggregate-only input manifest. Both `sol` and `bsc` roots exist. The BSC root alone is not evidence that BSC implementation is currently authorized.
-
-## BSC data gap
-BSC files are present, but their schema, time coverage, source provenance, address type, complete cost basis, transfer accounting, and offline replay completeness remain unverified. The inventory task must resolve these after stage activation; no BSC master is fabricated.
-
-## Reusable components
-The repository has existing Solana wallet-intelligence/HUD conventions and Harness validation. No shadow-trading product component is claimed reusable until the contract task proves the boundary.
-
-## Risk register
-1. BSC/cross-chain activation would violate the current Solana-first gate without Owner action.
-2. PR #15 lacks an independent GREEN audit.
-3. Existing Harness doctor has a broad filename-pattern false positive affecting scrubbed artifacts; registered task `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001` plus its independent audit are required before M0 can be GREEN.
-4. Shadow-event count is zero in current SOL HUD evidence, so no followability conclusion is allowed.
-5. Private data provenance and field coverage cannot be inferred from directory existence.
+1. Chain-neutral Shadow Contracts depend on Harness Doctor Repair Audit GREEN, not BSC stage activation.
+2. Replay Engine depends on Shadow Contracts Audit GREEN.
+3. SOL Shadow Replay Pilot depends on Replay Engine Audit GREEN and SOL HUD Audit GREEN.
+4. BSC work remains offline-stage gated through BSC Offline Activation Audit GREEN and Owner merge.
+5. HUD v0.3 depends on the named audited research/replay outputs, not Live Observation.

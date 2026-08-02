@@ -1,16 +1,16 @@
 # Dispatch: WALLET-SHADOW-REPLAY-ENGINE-V0-1-001
 
 ## Scope
-Implement a deterministic offline replay engine using the approved contracts. Support fixed USD nominal entries, mirror exits, 5m/30m/2h/24h windows, fee/slippage/liquidity/tax-aware fill outcomes, no-lookahead price selection, and evidence-bounded followability conclusions.
+Implement a deterministic offline replay engine using the approved contracts. Support fixed USD nominal entries, mirror exits, 5m/30m/2h/24h windows, fee/slippage/liquidity/tax-aware fill outcomes, no-lookahead price selection, and evidence-bounded followability conclusions. This chain-neutral engine depends only on audited shadow contracts, not BSC stage activation.
 
 ## Required reading
-Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the exact task spec: `harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json`.
+Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json`.
 
 ## Current status
-`BLOCKED_DEPENDENCY`. Do not begin implementation unless the Harness lifecycle state is moved to `READY` by an authorized coordinator.
+`BLOCKED_DEPENDENCY`. BLOCKED_DEPENDENCY. Do not start until every named dependency has an independent GREEN verdict where an audit task is named.
 
 ## Dependencies
-- `WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001`
+- `WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001`
 
 ## Write boundary
 - `src/application/shadow-trading/replay-engine-v0-1.ts`
@@ -20,7 +20,7 @@ Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the ex
 - `harness/reports/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001/`
 
 ## Required evidence
-- Run the task acceptance commands.
-- Run once against authorized private input and replay the same input deterministically where applicable.
-- Produce `acceptance.md`, `desensitized_metrics.json`, `replay_manifest.json`, `source_hashes.json`, `deterministic_replay_result.json`, `test_evidence.md`, and `git_delivery_status.md` in the task report area.
-- Keep all raw private data outside Git.
+- Run every acceptance command in the declared order.
+- Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
+- Keep raw private data outside Git.
+- Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.

@@ -1,12 +1,19 @@
 {
-  "schema_version": "program-governance-replay-v1",
-  "generated_at": "2026-08-01T00:00:00Z",
-  "task_spec_count": 15,
-  "ledger_registered_task_count": 15,
-  "unknown_dependencies": [],
-  "dependency_cycles": [],
-  "new_task_write_set_conflicts": [],
-  "changed_file_count": 16,
-  "out_of_scope_changed_files": [],
-  "result": "PASS"
+  "schema_version": "crosschain-program-deterministic-replay-v1",
+  "generated_at": "2026-08-02T00:00:00Z",
+  "status": "PASS",
+  "input_hash_sha256": "182a627f476c5fb91931758cacf9dd8c2e227e2e6fd05d57418ed72c62a982e6",
+  "repeat_input_hash_sha256": "182a627f476c5fb91931758cacf9dd8c2e227e2e6fd05d57418ed72c62a982e6",
+  "same_input_same_output": true,
+  "task_spec_count": 27,
+  "unknown_dependencies": 0,
+  "dependency_cycles": 0,
+  "parallel_write_set_collisions": 0,
+  "serialized_write_set_overlaps": 1,
+  "assertions": {
+    "shadow_core_depends_on_bsc_stage": false,
+    "replay_engine_depends_only_on_shadow_contracts_audit": true,
+    "sol_adapter_depends_on_bsc_stage": false,
+    "crosschain_hud_hard_depends_on_live_observation": false
+  }
 }

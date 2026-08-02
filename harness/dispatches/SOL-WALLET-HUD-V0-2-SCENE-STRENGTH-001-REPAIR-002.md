@@ -1,16 +1,16 @@
 # Dispatch: SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002
 
 ## Scope
-Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence.
+Repair the existing PR #15 implementation without rebuilding it: prevent activity-strength collapse, enforce defensible reproduction thresholds, maintain last-emitted GMGN baseline and cumulative-delta debounce, retain append-only history, persist source snapshot hashes, and synchronize acceptance evidence. After this governance PR is Owner-merged, checkout feat/sol-wallet-hud-v0-2-scene-strength directly, append commits, and push the existing PR #15. Do not create a replacement branch or PR.
 
 ## Required reading
-Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the exact task spec: `harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json`.
+Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json`.
 
 ## Current status
-`READY`. Execute only after the Owner merges the governance PR using a merge commit. The unregistered historical PR #15 task remains an explicit input/precondition, not a ledger dependency.
+`READY`. READY only after this governance PR is Owner-merged with a merge commit. Do not self-merge.
 
 ## Dependencies
-- Owner merge of the governance PR is an external dispatch prerequisite.
+- None
 
 ## Write boundary
 - `src/application/wallet-intelligence/hud-v0-2.ts`
@@ -20,8 +20,11 @@ Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the ex
 - `artifacts/wallet_hud_v0_2/`
 - `harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/`
 
+## Git lane
+Checkout `feat/sol-wallet-hud-v0-2-scene-strength` directly, append commits to that existing branch, and push the update to existing PR #15. Do not create `fix/sol-wallet-hud-v0-2-repair-002`, a replacement branch, or a replacement PR. Do not merge, squash, or rebase.
+
 ## Required evidence
-- Run the task acceptance commands.
-- Run once against authorized private input and replay the same input deterministically where applicable.
-- Produce acceptance, desensitized metrics, replay manifest, source-hash evidence, security result, and Git delivery status.
-- Keep all raw private data outside Git.
+- Run every acceptance command in the declared order.
+- Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
+- Keep raw private data outside Git.
+- Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.

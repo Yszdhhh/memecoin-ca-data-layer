@@ -1,13 +1,55 @@
 {
   "schema_version": "crosschain-program-desensitized-metrics-v1",
-  "generated_at": "2026-08-01T00:00:00Z",
-  "sol_wallet_master_rows": 1433,
-  "sol_candidate_count": 32,
-  "sol_chain_sampled_wallet_count": 5,
-  "shadow_event_count": 0,
-  "bsc_private_root_present": true,
-  "bsc_stage_status": "BLOCKED_STAGE",
-  "private_records_in_git": false,
-  "registered_task_spec_count": 15,
-  "harness_doctor_repair_task_registered": true
+  "generated_at": "2026-08-02T00:00:00Z",
+  "task_spec_count": 27,
+  "coordinator_or_implementer_count": 14,
+  "independent_auditor_count": 13,
+  "statuses": {
+    "IN_PROGRESS": 1,
+    "READY": 2,
+    "BLOCKED_DEPENDENCY": 11,
+    "BLOCKED_STAGE": 10,
+    "PARK": 3
+  },
+  "stage": {
+    "solana_live_production_chain_count": 1,
+    "bsc_live_production_activated": false,
+    "bsc_offline_activation_registered": true,
+    "robinhood_blocked": true
+  },
+  "shadow": {
+    "core_depends_on_bsc_stage": false,
+    "replay_engine_depends_on_shadow_contracts_audit": true,
+    "sol_adapter_depends_on_bsc_stage": false
+  },
+  "privacy": {
+    "raw_private_records_committed": 0,
+    "raw_wallet_addresses_committed": 0,
+    "raw_transaction_identifiers_committed": 0
+  },
+  "harness_doctor": {
+    "baseline_forbidden_matches": 3,
+    "newly_introduced_matches": 0,
+    "status": "EXPECTED_BASELINE_FAIL"
+  },
+  "role_counts": {
+    "coordinator_or_implementer": 14,
+    "independent_auditor": 13
+  },
+  "status_counts": {
+    "IN_PROGRESS": 1,
+    "READY": 2,
+    "BLOCKED_DEPENDENCY": 11,
+    "BLOCKED_STAGE": 10,
+    "PARK": 3
+  },
+  "dependency_integrity": {
+    "unknown_dependencies": 0,
+    "cycles": 0
+  },
+  "write_set_review": {
+    "parallel_collisions": 0,
+    "intentionally_serialized_overlaps": 1,
+    "out_of_scope_deliverables": 0
+  }
 }

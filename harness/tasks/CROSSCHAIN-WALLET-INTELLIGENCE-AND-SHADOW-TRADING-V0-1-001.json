@@ -6,7 +6,7 @@
   "role": "coordinator",
   "chain": null,
   "status": "IN_PROGRESS",
-  "objective": "Create an evidence-bound program graph and governance-only dispatch set. Preserve the repository's Solana-first gate: BSC and cross-chain implementation remain blocked until the documented Owner stage decision changes.",
+  "objective": "Create and repair an evidence-bound program graph and governance-only dispatch set. This Draft PR records the BSC offline-stage activation task but does not change active-stage configuration. Solana remains the only Live/production chain until the activation task is independently audited GREEN and Owner-merged with a merge commit.",
   "dependencies": [],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -18,7 +18,6 @@
     "OWNER_DECISIONS_NEEDED.md",
     "harness/config/project.json",
     "docs/LOCAL_WORKSPACE_PATHS.md",
-    "harness/tasks/BSC-STAGE-001.json",
     "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.json"
   ],
   "write_set": [
@@ -55,7 +54,31 @@
     "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
     "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
     "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.md",
-    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.md"
+    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.md",
+    "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json",
+    "harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.md",
+    "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.json",
+    "harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.md",
+    "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.json",
+    "harness/dispatches/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.md",
+    "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.json",
+    "harness/dispatches/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.md",
+    "harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.json",
+    "harness/dispatches/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.md",
+    "harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.json",
+    "harness/dispatches/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.md",
+    "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json",
+    "harness/dispatches/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.md",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json",
+    "harness/dispatches/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.md",
+    "harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json",
+    "harness/dispatches/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md",
+    "harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json",
+    "harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md",
+    "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json",
+    "harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.md",
+    "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.json",
+    "harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.md"
   ],
   "forbidden_actions": [
     "Do not execute real trades, sign transactions, broadcast transactions, or connect a trading wallet.",
@@ -65,23 +88,28 @@
     "Do not treat null, unknown, or missing values as zero.",
     "Do not create a cross-chain global wallet score or assume SOL and BSC addresses identify the same entity.",
     "Do not squash, rebase, rewrite pushed history, push to main, or merge a PR.",
-    "Do not modify product source, package scripts, active-stage configuration, or private-data ignore rules in this governance task."
+    "Do not modify product source, package scripts, active-stage configuration, or private-data ignore rules in this governance task.",
+    "Do not activate BSC in this PR; only register the separately audited BSC offline-stage activation task."
   ],
   "deliverables": [
     "docs/programs/crosschain-wallet-intelligence-and-shadow-trading-v0-1.md",
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/preflight.md",
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/desensitized_metrics.json",
     "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/acceptance.md",
-    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/source_hashes.json",
-    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/deterministic_replay_result.json",
-    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/test_evidence.md",
-    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001/git_delivery_status.md",
-    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
-    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json"
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/source_hashes.json",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/deterministic_replay_result.json",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/test_evidence.md",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/git_delivery_status.md",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/dependency_graph.json",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/write_set_collision_report.json"
   ],
   "acceptance_commands": [
-    "npm run harness:doctor",
     "npm run harness:task -- validate harness/tasks/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
     "git diff --check"
   ]
 }

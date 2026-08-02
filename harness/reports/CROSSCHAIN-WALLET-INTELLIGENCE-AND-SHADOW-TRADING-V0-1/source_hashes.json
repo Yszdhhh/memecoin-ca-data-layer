@@ -1,58 +1,71 @@
 {
-  "schema_version": "program-source-hashes-v1",
-  "generated_at": "2026-08-01T00:00:00Z",
-  "public_inputs": [
-    {
-      "path": "PROJECT_REQUIRED_READING.md",
-      "sha256": "aa1aec788a1bf6ca85ea2de510c8805f0beb53f22b449ccc509c194bd78e175c",
-      "size_bytes": 884
-    },
-    {
-      "path": "AGENTS.md",
-      "sha256": "3fbecb7ced08e24c4f62a5c81521f821cebf622c6096cb9276bb7106b6ae420e",
-      "size_bytes": 419
-    },
-    {
-      "path": "PROJECT_CONSTITUTION.md",
-      "sha256": "8ba908c9b934cfc1244bf1c4a751c6df37b51a7669c93204cd4d14659eb6ca7f",
-      "size_bytes": 3010
-    },
-    {
-      "path": "PROJECT_ARCHITECTURE.md",
-      "sha256": "c09dc8a65ef3bf33eb77718f47f8427ae1d22d72db572b2cad47a2c3e7daef5a",
-      "size_bytes": 9044
-    },
-    {
-      "path": "PROJECT_OPERATING_PLAYBOOK.md",
-      "sha256": "d4c38f4834bfe33295cc92bf6f83e4e9ebc2a51d035be925c4f8351541011f21",
-      "size_bytes": 3571
-    },
-    {
-      "path": "KNOWN_LIMITATIONS.md",
-      "sha256": "c00346f57a8f5afdf8a747eaf630d7a442b6562d9d8c1da762c5ba439f32482e",
-      "size_bytes": 2329
-    },
-    {
-      "path": "OWNER_DECISIONS_NEEDED.md",
-      "sha256": "abd3b64f211165c5a678255fcf2d8130fa2e2cb90a922373f9c4e4654016f220",
-      "size_bytes": 5385
-    },
-    {
-      "path": "harness/config/project.json",
-      "sha256": "2279ee65cb8d2bc3b91f67cd9fa0cc68375d3275d6ce7303298ac73bf165f056",
-      "size_bytes": 767
-    },
-    {
-      "path": "harness/ledger/tasks.json",
-      "sha256": "45f1c0d4e0407f36a1006ca503781fac89455b626a174672c7ccd471bbc7f1b5",
-      "size_bytes": 44220
-    },
-    {
-      "path": "harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json",
-      "sha256": "c97f35c0dadb44b64b4a901a1e4f8c20f8756632b4ed2cc72b215525b3ca11cd",
-      "size_bytes": 3339
-    }
-  ],
-  "private_root_hashes_reference": "harness/inputs/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/private-input-manifest.json",
-  "note": "No raw private paths, records, wallet addresses, or transaction identifiers are included."
+  "generated_at": "2026-08-02",
+  "algorithm": "sha256",
+  "scope": "Program governance artifacts; excludes source_hashes.json itself to avoid a recursive hash.",
+  "files": {
+    "docs/programs/crosschain-wallet-intelligence-and-shadow-trading-v0-1.md": "3ac2b25a7ba9eba1bbeb9e0037ba9d6bd2f0b35d255c2a4b120730f9409ea20d",
+    "harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.md": "1dabb20d0d5d33eb9e5fc4bbf077a5f13c30574212724e7c5cd35ae49a915925",
+    "harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.md": "1b7bf941d617a3d36ea92d8993c19b06d7b0d69fa666fa27adb1c0eb7e93ad5c",
+    "harness/dispatches/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.md": "36d7c7c566ebb3bb4fdfedb191b0a6bc6d05cf9fcacdbf8e3eae5358c5aaa1b0",
+    "harness/dispatches/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001.md": "96586f1978adfa45be0574d8240ce1624e6e09d1ba4a2028d82966e2445ec769",
+    "harness/dispatches/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.md": "47ae6e0a4a549634f87925ef33df2ae563541f0dff17acdf2c474be0e50af6ad",
+    "harness/dispatches/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001.md": "19225fadd23e470fa482e47b3d93431fdae7c7719e6b79336f868721d7c27dbb",
+    "harness/dispatches/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.md": "95bb00ad8026b36d909099248bf42a897c18e378ddf0f80b09b7026997449e34",
+    "harness/dispatches/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001.md": "301bb2e5f131072532da052ec148b379c330825f3cf5a4e319cd55d0af71ea8f",
+    "harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md": "fa535e8cf44e14797ca266a44d11f04520eea0237a60d671796169735410b525",
+    "harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001.md": "27c8b4ce0fa1dbac14d4d2665cc51d6d3faf81a06af86cdba63b6a6c29f736cf",
+    "harness/dispatches/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.md": "b5d5863196f8bb61978f34830abf0b222c584c0328978efa427369f172f30ef0",
+    "harness/dispatches/BSC-WALLET-SOURCE-INVENTORY-001.md": "810d101a6f428bdc1d365a01e0a9326f839fc7841c9503fec5d77da1ed6bbd93",
+    "harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.md": "8af1c884d2b352245b19b59691552f80836f8052ba4354b9c5490fbf40c1f8e0",
+    "harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001.md": "3ea1e58fede6aa4c26da052cba76e439ce408820dc52c6365930f09546357eac",
+    "harness/dispatches/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.md": "a5df0d25f4d9488bb8ef6a7ac95f4507b83bb96f15252c873ca2232e05ae2a8a",
+    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.md": "7069f3458f8d61ae8f93ec9859df43af4667b2428e7af09781ddf3fa966b8526",
+    "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.md": "2e96b92e950ebc06d1deb4dc79b38b6c6e67632e1daa0bd318cb148d480e0395",
+    "harness/dispatches/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.md": "3becd94a44c279252ebb1ab94d4b604a79d167c38d2c188cb1b75c39ba25c159",
+    "harness/dispatches/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001.md": "f44919afd4bb8e91ae23c980de326d371cc0c40f631152615c2eaa08c033cff7",
+    "harness/dispatches/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md": "95716a307ccc053e0e1bed4b34d9fdfec971930a21150b942a2738b134940803",
+    "harness/dispatches/SOL-WALLET-SHADOW-REPLAY-PILOT-001.md": "e7e8b1f7a18e1caf17a925a2f92c7d25883bd12747c3f48d905a9f5992e31697",
+    "harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.md": "dbcbe4f5b22bbc6eb4ae9b3183ccf6c64daa2cceee8ed17ad39f45c8c09589b1",
+    "harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.md": "bc7e2100ab5c402f619956022c9ab82301539897071d1bbee1366b32088cfcaf",
+    "harness/dispatches/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.md": "589fa675b3810aa21c01172addcd049928f215785b418f9556b0ec6844c563be",
+    "harness/dispatches/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.md": "2d18812cc43f7ae7d714fd671005de1bb13c57ff53aa1a7e6094c8b6246356d6",
+    "harness/dispatches/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.md": "5ce8795f191c17d7f520d446f1f7eb9f565d6985d1154deccc3ee5550dc1f9bb",
+    "harness/dispatches/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.md": "573328c1e1c9a71b1b3fba97fa6dc40910cd6852bc72dd00c500e2835a5c2ce9",
+    "harness/ledger/tasks.json": "4003c775972851f416fab3ede44bda2ba365c0fd535e3d164bf9844e83237b39",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/acceptance.md": "adedc027b786c1166ccafd2d34152b5ec69248e0edf4a989fd1f1c7be52d1a12",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/dependency_graph.json": "3ed9789bbfd4b8ea009ca9d73fe3d906aceb6483a744009570eae96c1dc7c191",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/desensitized_metrics.json": "e5ba805ced7452f83ce72d914f5a2c1326854a9cf47d9351455e16a6c6397586",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/deterministic_replay_result.json": "9c62dc23cf9f7f4193d3edae3d1f27307a173283a6acd408a2247a7bd6ff0abc",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/git_delivery_status.md": "212b70a8123e741ad46a29e7b241c5577863147eecf58134ef58f87a0600b6b7",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/preflight.md": "f0e003c358be426c7c94cb7bc21ce0a8d24f314ad1f78bdfddb2c279c21b6741",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/test_evidence.md": "43d7f5180ed8e6a33becbf3aa224d2bae6f8eb5110cb60b2da01ae82b702cf3c",
+    "harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/write_set_collision_report.json": "c9fa220824fbebdc6fd85c37d7ebfece90dda93e4cd0ef8c6080510f18f1da74",
+    "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.json": "1b1b15cd0c81ef7b2fd479d7f32fbc65b243cd5a14f62e206e7fa7cec5cfa86b",
+    "harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json": "2b0821427e1ee907d15a69190f9f76bd657ae7cc096f25e11bb669931b6c6ed4",
+    "harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.json": "66256924ff8b0af2dd1cf1f742a9bcaa063b5d3b493c036b1ca14909766818e8",
+    "harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001.json": "2d25efbefa0a075785fdb4e3c0351dc128ae757122a2f74b7c099fa5fe06cd0a",
+    "harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.json": "1f2a0f42c965b244b2ca3779cea1641e42473a563f2c78698ee04e3d9d7510ab",
+    "harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001.json": "2bffb9d7282d620a07d69ca05e7977b73ac9fdbf7442363b96a6c3317f250765",
+    "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.json": "8106a7c075bc84f89bd145b01febd795d15d23e42083881fa2706d7ffebd0ad8",
+    "harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001.json": "45ad180426b46a73f50b4bca225d65a5440a72efe97df7edc19b99d37fb329b2",
+    "harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json": "478e06d35e63398be6995604c23a0c33d4b84d6e622271998332ea852f1a231c",
+    "harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001.json": "4bedc554b133a90e15ebfc665da00f00a3e4bf6a5b774799cb1b302b4915d841",
+    "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.json": "bdfe6c45370685e7fe80e50c59bc09f145d7a4ef3dbdec8bb1cfbde865f16570",
+    "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json": "4e4d373002d9acb725af57a597cb7d9c8d4e8e23db0b03eaa89e40e59cd55388",
+    "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.json": "26af59f36cad20e83c66116eed9f84b7390eaebf4f1cec1816848e5b6d5475e3",
+    "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001.json": "48ac5253bece1de041038e5122061e690f1fb47013e57e01fd6f87db86e94cfa",
+    "harness/tasks/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.json": "aed90dec4cc39d781178f0d7815a0e8b02e046357485f25c128f08d0818ce95a",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json": "c28bc57206480f1ed395dd01b0719606c78dbb14895ae763e23a8c316aad3a79",
+    "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json": "16b0204a7bfeda2d1a8c5b6b1a02b31b4f0a9c47b48c591c91b97119203d55a0",
+    "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002.json": "4f2e99ea35055c5d8458f7072a115a766fcf0ea5a5e866571ddfbd1ff7c1bd9f",
+    "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-002-AUDIT-001.json": "b1424c8ace42a31f77b62d197eeb34a9357796b36a07c1b13b3ccc8d976c8dc4",
+    "harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json": "38668064a6b0669506c86abfb96cb950040141efbb275510aeed700479bff613",
+    "harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001.json": "5b0ad8069f29d3caf7b2a9ecb5df50c1727d77a6505bdec39fab3db8117c5c85",
+    "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json": "8233ab96b455ee6a49d16ea02d125afd05c9e02a57a9455456bbe4b21307aa54",
+    "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json": "725741cd60f1fa8922418cfddb531e629fd5fa0312f1bb09d969d4a982a85755",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json": "d8377ebe2a11c3e27948a929482a448727150bcdf774a07c8435bbab9fcd6707",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json": "2d27363d8edb44fac005b1ac632a039e9ad8790d37f25ac31b2c6eda2d97dd74",
+    "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json": "5d6f611982a6e1d62705a21db5666ed4cb208e521f8102bf150e02e76d49b20b",
+    "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json": "236b4a17dd9237496fd2ccb0b2cc21ac3758a67532d79831e78a6ab8b89e8233"
+  }
 }

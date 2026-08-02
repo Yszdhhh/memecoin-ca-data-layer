@@ -1,13 +1,13 @@
 # Dispatch: CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001
 
 ## Scope
-Create an evidence-bound program graph and governance-only dispatch set. Preserve the repository's Solana-first gate: BSC and cross-chain implementation remain blocked until the documented Owner stage decision changes.
+Create and repair an evidence-bound program graph and governance-only dispatch set. This Draft PR records the BSC offline-stage activation task but does not change active-stage configuration. Solana remains the only Live/production chain until the activation task is independently audited GREEN and Owner-merged with a merge commit.
 
 ## Required reading
-Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the exact task spec: `harness/tasks/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.json`.
+Read `AGENTS.md`, then `PROJECT_REQUIRED_READING.md` and every shared file it names, then the exact task spec `harness/tasks/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1-001.json`.
 
 ## Current status
-`IN_PROGRESS`. Do not begin implementation unless the Harness lifecycle state is moved to `READY` by an authorized coordinator.
+`IN_PROGRESS`. READY only after this governance PR is Owner-merged with a merge commit. Do not self-merge.
 
 ## Dependencies
 - None
@@ -43,9 +43,37 @@ Read `PROJECT_REQUIRED_READING.md` in full before inspecting code. Follow the ex
 - `harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001.md`
 - `harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.md`
 - `harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001.md`
+- `harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json`
+- `harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json`
+- `harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.md`
+- `harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.md`
+- `harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.json`
+- `harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001.md`
+- `harness/tasks/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.json`
+- `harness/dispatches/BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001-AUDIT-001.md`
+- `harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.json`
+- `harness/dispatches/BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001.md`
+- `harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.json`
+- `harness/dispatches/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001-AUDIT-001.md`
+- `harness/tasks/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.json`
+- `harness/dispatches/BSC-WALLET-CANDIDATE-SCREENING-V0-1-001-AUDIT-001.md`
+- `harness/tasks/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.json`
+- `harness/dispatches/BSC-WALLET-CHAIN-VERIFICATION-PILOT-001-AUDIT-001.md`
+- `harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json`
+- `harness/dispatches/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.md`
+- `harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json`
+- `harness/dispatches/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.md`
+- `harness/tasks/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json`
+- `harness/dispatches/SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md`
+- `harness/tasks/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.json`
+- `harness/dispatches/BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001.md`
+- `harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json`
+- `harness/dispatches/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.md`
+- `harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.json`
+- `harness/dispatches/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.md`
 
 ## Required evidence
-- Run the task acceptance commands.
-- Run once against authorized private input and replay the same input deterministically where applicable.
-- Produce `acceptance.md`, `desensitized_metrics.json`, `replay_manifest.json`, `source_hashes.json`, `deterministic_replay_result.json`, `test_evidence.md`, and `git_delivery_status.md` in the task report area.
-- Keep all raw private data outside Git.
+- Run every acceptance command in the declared order.
+- Record exact inputs, source hashes, output counts, deterministic replay evidence, security-scan result, and Git delivery status.
+- Keep raw private data outside Git.
+- Report task_id, role, UTC time, changed paths, command exit codes, evidence, verdict, and unresolved items.

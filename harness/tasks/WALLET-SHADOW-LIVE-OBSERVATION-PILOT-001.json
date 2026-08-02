@@ -8,8 +8,8 @@
   "status": "PARK",
   "objective": "Remain PARK until contracts, replay engine, one adapter, data-security audit, named provider/budget, and explicit Owner network authorization are all recorded. If activated, observe only, timestamp observed_at, simulate privately, and prepare HUD review files without trading or unattended publishing.",
   "dependencies": [
-    "SOL-WALLET-SHADOW-REPLAY-PILOT-001",
-    "BSC-WALLET-SHADOW-REPLAY-PILOT-001"
+    "SOL-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001",
+    "BSC-WALLET-SHADOW-REPLAY-PILOT-001-AUDIT-001"
   ],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -47,6 +47,7 @@
     "harness/reports/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001/git_delivery_status.md"
   ],
   "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json",
     "npm run harness:doctor",
     "npm run typecheck",
     "npm test",

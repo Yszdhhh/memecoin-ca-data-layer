@@ -8,8 +8,7 @@
   "status": "BLOCKED_STAGE",
   "objective": "Build a deterministic, auditable BSC wallet master from approved BSC inventory inputs. Normalize chain 56 addresses, retain address-type uncertainty, separate swaps from transfers, preserve unknowns, and record source lineage, rejection reasons, cost-basis completeness, accounting risk, bot/cluster risk, and data quality.",
   "dependencies": [
-    "BSC-STAGE-001",
-    "BSC-WALLET-SOURCE-INVENTORY-001"
+    "BSC-WALLET-SOURCE-INVENTORY-001-AUDIT-001"
   ],
   "inputs": [
     "PROJECT_REQUIRED_READING.md",
@@ -51,6 +50,7 @@
     "harness/reports/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001/git_delivery_status.md"
   ],
   "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/BSC-WALLET-MASTER-CLEAN-RANK-V0-1-001.json",
     "npm run harness:doctor",
     "npm run typecheck",
     "npm test",

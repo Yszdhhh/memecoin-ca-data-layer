@@ -1,57 +1,78 @@
 # Cross-chain Wallet Intelligence and Shadow Trading v0.1
 
-## Status as of 2026-08-01
+## Governance state — 2026-08-02
 
-This is a governance-only program dispatch. It does not activate BSC or cross-chain implementation. The repository configuration declares `solana-pumpfun-e2e` as the active stage and lists BSC as blocked. `PROJECT_CONSTITUTION.md`, `harness/config/project.json`, and `OWNER_DECISIONS_NEEDED.md` therefore override any immediate BSC start request. BSC tasks are registered as `BLOCKED_STAGE`; cross-chain contracts and later capabilities remain dependency- or Owner-gated.
+- **Draft PR #16** remains governance-only: no product source, active-stage configuration, private records, provider configuration, or runtime credentials are changed here.
+- The Program registers **27 task-v1 specifications**: 14 implementer/coordinator tasks and 13 independent auditor tasks.
+- **Solana remains the only Live/production delivery chain.** BSC is not activated by this PR. The separate `BSC-OFFLINE-RESEARCH-STAGE-ACTIVATION-001` task is the only authorized path to offline-local-research activation, subject to independent GREEN audit and an Owner merge commit.
+- BSC offline scope, after that future activation only: source inventory, master cleaning, candidate screening, local chain verification, and historical replay. BSC network collection, Live providers, resident listeners, GMGN automation, real trades, and production database writes remain prohibited. Robinhood remains `BLOCKED_STAGE`.
+- Chain-neutral shadow contracts, the offline replay engine, and the SOL replay adapter are not blocked by BSC stage activation.
+- Existing SOL HUD work remains **PR #15** on `feat/sol-wallet-hud-v0-2-scene-strength`. Repair-002 must checkout that branch directly, append commits, and update PR #15; no replacement branch/PR, merge, squash, or rebase is allowed.
 
-## Verified baseline
+## Corrected dependency graph
 
-- `origin/main`: `f5ee5c25d62dde270e1ff055cfd61f36100f5de5`.
-- The existing SOL HUD task was present but omitted from the task ledger; this governance PR restores only its ledger registration so Repair-002 has a real dependency.\n- Open SOL HUD PR: #15, branch `feat/sol-wallet-hud-v0-2-scene-strength`, head `6d76a947b38dcd1d5f6c101812ed8aa10f5414c6`; it has no recorded independent GREEN audit and must not be merged by an agent.
-- Existing desensitized SOL HUD evidence reports 1,433 master rows, 32 candidates, 5 chain-sampled wallets, and 0 shadow events.
-- Private-root aggregate availability was verified for both `sol` and `bsc`; no private records were placed in Git.
-- Baseline typecheck, test, build, security scan, and diff check passed on the PR #15 worktree. Harness doctor did not pass because its broad `wallet*.json` prohibited-name rule matched three tracked desensitized fixture/artifact files. This is a separate Harness-quality blocker, not waived by this program.
-
-## Dependency graph
+Every implementation handoff below is through the named **independent audit GREEN** result, rather than only an implementer completion. A solid node is a registered task; external Owner merge gates are annotations, not fabricated task IDs.
 
 ```mermaid
 graph TD
-  D["Harness doctor narrow repair"] --> DA["Independent Harness audit"]
-  DA --> M0["M0 eligible for GREEN"]
-  H["SOL HUD base task / PR #15"] --> R["Repair-002"] --> A["Independent HUD audit"]
-  S["Solana E2E + Owner BSC activation"] --> I["BSC source inventory"] --> M["BSC master"] --> C["BSC candidates"] --> V["BSC chain pilot"]
-  S --> K["Shadow contracts"] --> E["Replay engine"] --> SA["SOL replay adapter"]
-  V --> BA["BSC replay adapter"]
-  SA --> L["Live observation (PARK)"]
-  BA --> L
-  A --> X["Cross-chain HUD v0.3 (PARK)"]
-  V --> X
-  E --> X
-  L --> X
+  G["PR #16 governance Owner merge"] --> D["Harness Doctor Repair"]
+  D --> DA["Harness Doctor Audit GREEN"]
+  DA --> SC["Shadow Contracts"]
+  SC --> SCA["Shadow Contracts Audit GREEN"]
+  SCA --> RE["Replay Engine"]
+  RE --> REA["Replay Engine Audit GREEN"]
+
+  H["PR #15 Repair-002 on existing branch"] --> HA["SOL HUD Audit GREEN"]
+  REA --> SP["SOL Shadow Replay Pilot"]
+  HA --> SP
+  SP --> SPA["SOL Shadow Replay Audit GREEN"]
+
+  DA --> BA["BSC Offline Activation"]
+  BA --> BAA["BSC Offline Activation Audit GREEN"]
+  BAA --> BS["BSC Source Inventory"]
+  BS --> BSA["BSC Source Audit GREEN"]
+  BSA --> BM["BSC Master Clean/Rank"]
+  BM --> BMA["BSC Master Audit GREEN"]
+  BMA --> BC["BSC Candidate Screening"]
+  BC --> BCA["BSC Candidate Audit GREEN"]
+  BCA --> BV["BSC Chain Verification"]
+  BV --> BVA["BSC Chain Verification Audit GREEN"]
+  BAA --> BP["BSC Shadow Replay Pilot"]
+  BVA --> BP
+  REA --> BP
+  BP --> BPA["BSC Shadow Replay Audit GREEN"]
+
+  HA --> HUD["Cross-chain HUD v0.3 (PARK)"]
+  BVA --> HUD
+  REA --> HUD
+  SPA --> HUD
+  BPA --> HUD
+  SPA --> LIVE["Live Observation Pilot (PARK)"]
+  BPA --> LIVE
 ```
 
-## Phased acceptance matrix
+The detailed machine-readable edge list is in `harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/dependency_graph.json`. The HUD v0.3 has **no hard Live Observation dependency**; Live Observation remains a later enhancement and stays PARK.
 
-| Milestone | Acceptance boundary | Current state |
-|---|---|---|
-| M0 Program Harness | Valid specs, acyclic graph, non-overlapping new write sets, governance-only diff, and independently audited doctor repair | PARK; the narrow repair and audit are registered but not yet authorized |
-| M1 SOL HUD v0.2 | Repair-002 plus independent GREEN audit on PR #15 | BLOCKED_DEPENDENCY |
-| M2 BSC master | Owner BSC activation, inventory, deterministic clean/replay | BLOCKED_STAGE |
-| M3 BSC candidates/chain pilot | Explainable candidates and positive/risk/counterexample validation | BLOCKED_STAGE |
-| M4 Shadow replay | Contracts and deterministic no-lookahead engine independently audited | BLOCKED_DEPENDENCY |
-| M5 Chain replay pilots | Per-chain adapter reports; small samples remain DATA_INSUFFICIENT | BLOCKED_DEPENDENCY / BLOCKED_STAGE |
-| M6 Cross-chain HUD | Separate dimensions and a valid shadow-event batch | PARK |
+## Lifecycle and audit pairing
 
-## Write-set governance
+| Implementation / coordinator task | Independent audit task | Current state |
+| --- | --- | --- |
+| Harness Doctor Repair | Harness Doctor Repair Audit | READY / BLOCKED_DEPENDENCY |
+| SOL HUD Repair-002 (PR #15) | SOL HUD Audit | READY / BLOCKED_DEPENDENCY |
+| BSC Offline Stage Activation | BSC Offline Stage Activation Audit | BLOCKED_DEPENDENCY / BLOCKED_DEPENDENCY |
+| BSC Source Inventory | BSC Source Inventory Audit | BLOCKED_STAGE / BLOCKED_DEPENDENCY |
+| BSC Master Clean/Rank | BSC Master Audit | BLOCKED_STAGE / BLOCKED_DEPENDENCY |
+| BSC Candidate Screening | BSC Candidate Audit | BLOCKED_STAGE / BLOCKED_DEPENDENCY |
+| BSC Chain Verification | BSC Chain Verification Audit | BLOCKED_STAGE / BLOCKED_DEPENDENCY |
+| Shadow Trade Contracts | Shadow Contracts Audit | BLOCKED_DEPENDENCY / BLOCKED_DEPENDENCY |
+| Shadow Replay Engine | Shadow Replay Engine Audit | BLOCKED_DEPENDENCY / BLOCKED_DEPENDENCY |
+| SOL Shadow Replay Pilot | SOL Shadow Replay Audit | BLOCKED_DEPENDENCY / BLOCKED_DEPENDENCY |
+| BSC Shadow Replay Pilot | BSC Shadow Replay Audit | BLOCKED_STAGE / BLOCKED_DEPENDENCY |
+| Live Observation Pilot | Live Observation Audit | PARK / PARK |
+| Cross-chain HUD v0.3 | Cross-chain HUD Audit | PARK / BLOCKED_DEPENDENCY |
 
-The program registers one feature PR per implementation task. SOL and BSC replay adapters have separate source, CLI, test, documentation, report, and artifact directories. Audits are report-only and must be performed by an agent distinct from the corresponding implementer. Repair-002 is the sole serialized continuation of the existing HUD task and works on PR #15 rather than replacing it.
+## Acceptance posture
 
-## Planned branches and PRs
+Milestone 0 remains **PARK**, not GREEN: `npm run harness:doctor` has a pre-existing failure from the broad `wallet*.json` forbidden-name rule. The measured three files and rule are recorded in the program reports. This PR does not waive or alter the rule; `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001` is bounded to a narrow, tested repair and an independent audit.
 
-1. `chore/crosschain-wallet-shadow-program-spec` — governance only; current draft.
-2. `fix/harness-doctor-forbidden-path-rule-repair-001` — narrow Harness gate repair after governance merge; independent audit required.
-3. `fix/sol-wallet-hud-v0-2-repair-002` — only after its task is READY; applies commits to the existing PR #15 branch as required by the repair policy.
-4. `feat/bsc-wallet-source-inventory-v0-1` and later BSC branches — only after BSC stage activation.
-5. `feat/wallet-shadow-trade-contracts-v0-1`, `feat/wallet-shadow-replay-engine-v0-1`, and distinct SOL/BSC adapter branches — only after dependencies and Owner gates permit.
-
-No agent may merge any PR. A GREEN independent audit is necessary before an Owner may merge using a merge commit.
+All program reports are rooted exclusively at `harness/reports/CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1/`. No Program deliverable may use the obsolete `...V0-1-001/` report root.
