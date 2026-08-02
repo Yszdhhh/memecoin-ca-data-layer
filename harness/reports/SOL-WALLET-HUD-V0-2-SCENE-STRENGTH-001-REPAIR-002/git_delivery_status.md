@@ -1,14 +1,14 @@
 # Git delivery status
 
-- Branch: eat/sol-wallet-hud-v0-2-scene-strength
-- **Implementation/provenance anchor:** $impl
-- Implementation anchor parent/base: $parent
-- This anchor is the code-bearing Repair-002 implementation commit already pushed to the existing branch.
-- Finalization strategy: create one evidence-only finalization commit as a direct child of the implementation/provenance anchor. The finalization commit changes only harness/reports/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001-REPAIR-002/; it does not alter HUD code, CLI code, tests, methodology, harness files, or product logic.
-- Final delivery head relation: the new evidence-only finalization commit becomes the final delivery head, with $impl as its parent; therefore the implementation/provenance anchor remains the code state and the final delivery head adds report provenance only.
-- Final delivery SHA: recorded by Git after the evidence-only commit and reported with the push result; it is not substituted for the implementation/provenance anchor.
+- Branch: feat/sol-wallet-hud-v0-2-scene-strength
+- Implementation/provenance anchor: 81dc506f65050487e15e1a9d04483d644f624047
+- Implementation anchor parent/base: 6d76a947b38dcd1d5f6c101812ed8aa10f5414c6
+- Code-bearing implementation commit: 81dc506f65050487e15e1a9d04483d644f624047; this is the provenance anchor for all HUD logic, CLI, tests, and methodology changes.
+- Evidence-only finalization strategy: append a report-only commit after the implementation anchor. The previously pushed evidence-only finalization commit was 07888df522b9ff24c81db413a5bb11003931c7be; any correction commit remains report-only and is a descendant of that finalization commit.
+- Final delivery head relation: the final delivery head is the newest evidence-only descendant; the cumulative diff from implementation/provenance anchor 81dc506f65050487e15e1a9d04483d644f624047 contains only this Repair-002 report directory and does not change code, tests, methodology, harness files, or product logic.
+- Final delivery SHA: recorded by Git after the latest evidence-only commit and reported with the push result; it is not substituted for the implementation/provenance anchor.
 - Push target: origin/feat/sol-wallet-hud-v0-2-scene-strength.
-- PR #15: MERGED at $parent; no replacement PR may be created.
+- PR #15: MERGED at 6d76a947b38dcd1d5f6c101812ed8aa10f5414c6; no replacement PR may be created.
 - Merge: not performed. No squash, rebase, or history rewrite.
 - Harness files: no task/fixture/harness source edits; the Repair-002 task spec used for validation was exported read-only to a system temporary path from origin/main and was not copied into the repository.
 - Sensitive data: no private keys, seed phrases, cookies, login material, raw chainfm_out contents, or addresses copied into reports.
