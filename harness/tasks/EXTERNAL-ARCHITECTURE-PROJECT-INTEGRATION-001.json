@@ -1,0 +1,75 @@
+{
+  "schema_version": "task-v1",
+  "task_id": "EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001",
+  "title": "External architecture research integration: capability overlap and POC decision matrix",
+  "tier": "T1",
+  "role": "researcher",
+  "chain": null,
+  "status": "BLOCKED_DEPENDENCY",
+  "objective": "Read the landed external research verification package, current project architecture, PR #15 acceptance evidence, and PR #16 governance files; then produce six integration-decision reports covering capability overlap, architecture decisions, POC decision matrix, existing-task impact, implementation sequence, and open questions. Propose three minimum POCs (SOL-PARSER-COMPARISON-POC-001, SHADOW-REPLAY-MINIMUM-LOOP-POC-001, BSC-EXISTING-DATA-INVENTORY-POC-001) scoped to the Owner's daily-use constraints: thousands-address library, dozens of focus wallets, Windows-local, low-cost, second-to-minute latency, no live transactions, no microsecond performance requirement. Do not implement any POC. Do not modify existing task specs or product source code.",
+  "dependencies": [
+    "SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001"
+  ],
+  "inputs": [
+    "PROJECT_CONSTITUTION.md",
+    "PROJECT_ARCHITECTURE.md",
+    "PROJECT_OPERATING_PLAYBOOK.md",
+    "KNOWN_LIMITATIONS.md",
+    "OWNER_DECISIONS_NEEDED.md",
+    "AGENTS.md",
+    "docs/LOCAL_WORKSPACE_PATHS.md",
+    "harness/schemas/task-spec.schema.json",
+    "harness/config/project.json",
+    "harness/ledger/tasks.json",
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-001.json",
+    "harness/tasks/SOL-WALLET-INTELLIGENCE-MASTER-CLEAN-RANK-AUDIT-001.json",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-001.json",
+    "harness/tasks/SOL-CA-REAL-DATA-CLEANING-PILOT-REPAIR-002.json",
+    "harness/tasks/SOL-WALLET-HUD-V0-2-SCENE-STRENGTH-001.json",
+    "harness/tasks/SOL-WALLET-CANDIDATE-SCREENING-V0-1-001.json",
+    "src/domain/interfaces/parser-interface.ts",
+    "src/infrastructure/solana/helius/helius-solana-adapter.ts",
+    "src/infrastructure/solana/pump/pump-instruction-decoder.ts",
+    "src/infrastructure/solana/holders/solana-holder-snapshot-service.ts",
+    "src/infrastructure/solana/dev/solana-dev-history-service.ts",
+    "src/application/wallet-intelligence/wallet-intelligence-service.ts",
+    "src/application/wallet-intelligence/wallet-cleaning-service.ts",
+    "src/domain/rules/wallet-quality-rules.ts",
+    "EXTERNAL_RESEARCH_ROOT/raw-reports",
+    "EXTERNAL_RESEARCH_ROOT/source-catalog",
+    "EXTERNAL_RESEARCH_ROOT/verified-findings",
+    "EXTERNAL_RESEARCH_ROOT/repos/sol-parser-sdk",
+    "EXTERNAL_RESEARCH_ROOT/repos/ethereum-etl",
+    "EXTERNAL_RESEARCH_ROOT/repos/onchain-sybil-detector"
+  ],
+  "write_set": [
+    "harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json",
+    "harness/dispatches/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.md",
+    "harness/reports/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001/acceptance.md",
+    "harness/ledger/tasks.json"
+  ],
+  "forbidden_actions": [
+    "Do not read chainfm_out, GMGN private exports, real wallet addresses or transaction details, private keys, mnemonics, cookies, or browser or wallet login state.",
+    "Do not read any local directory not listed in inputs or reachable via EXTERNAL_RESEARCH_ROOT with the permitted relative paths.",
+    "Do not write outside the declared write_set; external synthesis output is authorized via the dispatch and EXTERNAL_RESEARCH_ROOT env var, not via repository write_set.",
+    "Do not modify PR #15 or PR #16, any existing task spec, or any product source file.",
+    "Do not add third-party dependencies, run third-party code, or make network requests.",
+    "Do not execute live transactions or interact with real wallets.",
+    "Do not commit the external research workspace into this repository.",
+    "Do not copy third-party repositories into this project.",
+    "Do not implement any POC task; only describe its scope and acceptance criteria.",
+    "Do not modify existing task specs other than this file."
+  ],
+  "deliverables": [
+    "harness/reports/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001/acceptance.md"
+  ],
+  "acceptance_commands": [
+    "npm run harness:task -- validate harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json",
+    "npm run harness:doctor",
+    "npm run typecheck",
+    "npm test",
+    "npm run build",
+    "npm run security:scan",
+    "git diff --check"
+  ]
+}
