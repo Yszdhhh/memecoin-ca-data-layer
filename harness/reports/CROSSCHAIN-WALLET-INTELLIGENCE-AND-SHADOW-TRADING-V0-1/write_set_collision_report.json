@@ -1,6 +1,6 @@
 {
   "schema_version": "crosschain-write-set-collision-v1",
-  "generated_at": "2026-08-02T04:07:26.126Z",
+  "generated_at": "2026-08-02T07:15:33.930Z",
   "task_count": 27,
   "execution_task_count": 26,
   "scope": "execution-task write sets; parent governance registration excluded; exact project-config overlap is serialized by the BSC activation dependency on the Harness Doctor audit",
@@ -34,5 +34,7 @@
     "task_ledger_graph_status_mismatch_count": 0,
     "private_offline_cli_requirements": 9,
     "crosschain_hud_has_no_live_observation_input": true
-  }
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA."
 }

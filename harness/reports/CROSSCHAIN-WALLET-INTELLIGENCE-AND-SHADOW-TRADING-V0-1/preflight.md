@@ -1,7 +1,8 @@
 # Preflight — CROSSCHAIN-WALLET-INTELLIGENCE-AND-SHADOW-TRADING-V0-1
 
-- Verified commit: `69fee761bf182cd952817d7bd429813add3bb920`
+- Verification commit reference: `SELF` (SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA.)
 - Program task scope: **27** Task Specs.
-- Governance repair scope: legal JSON serialization, executable-only acceptance commands, status/DAG/ledger synchronization, and final evidence regeneration.
+- Required committed-content method: `git show SELF:<task-file>` followed by standard Node.js `JSON.parse`.
+- Governance repair scope: committed-blob JSON validation, objective line-break scan, task validation, and Git-blob-based evidence regeneration.
 - Product code, package manifests, active-stage configuration, private input roots, and live/production capabilities were not modified.
 - BSC remains offline-stage-gated; SOL remains the sole live/production delivery chain.

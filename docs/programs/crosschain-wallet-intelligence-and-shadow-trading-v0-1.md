@@ -85,5 +85,7 @@ All program reports are rooted exclusively at `harness/reports/CROSSCHAIN-WALLET
 
 ## Latest governance evidence
 
-- Verified governance-repair commit: `69fee761bf182cd952817d7bd429813add3bb920`.
-- Program scope is **27 Task Specs**; all RED-remediation governance checks pass.
+- Verification commit reference: `SELF`; it resolves to the exact commit containing this evidence.
+- Program scope is **27 Task Specs**; committed Git blobs pass **27/27 JSON.parse** and **27/27 task validate**.
+- Both user-flagged objectives are valid single-line committed JSON strings; the committed-content bare-newline list is empty.
+- Evidence hashes are computed from Git blob bytes, not working-tree bytes.

@@ -1,6 +1,6 @@
 {
   "schema_version": "crosschain-program-dag-v1",
-  "generated_at": "2026-08-02T04:07:26.126Z",
+  "generated_at": "2026-08-02T07:15:33.930Z",
   "task_count": 27,
   "nodes": [
     {
@@ -326,5 +326,7 @@
     "crosschain_hud_live_observation_is_optional_enhancement": true,
     "edges_derived_from_task_spec_dependencies": true,
     "edge_count": 32
-  }
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA."
 }

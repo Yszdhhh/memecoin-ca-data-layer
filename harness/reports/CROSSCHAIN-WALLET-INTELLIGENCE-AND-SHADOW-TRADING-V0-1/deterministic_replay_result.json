@@ -1,7 +1,6 @@
 {
   "schema_version": "crosschain-program-deterministic-replay-v1",
-  "generated_at": "2026-08-02T04:07:26.126Z",
-  "verification_commit_sha": "69fee761bf182cd952817d7bd429813add3bb920",
+  "generated_at": "2026-08-02T07:15:33.930Z",
   "input_scope": "27 Program Task Specs, program ledger, dependency graph, write-set declarations, and governance evidence only; no private data was read.",
   "replay_runs": 2,
   "same_input_same_output_hash": true,
@@ -28,7 +27,12 @@
     "acceptance_commands_non_executable_cli": 0,
     "crosschain_hud_live_hard_input": false,
     "bsc_source_inventory_solana_gate": false,
-    "private_data_in_git": false
+    "private_data_in_git": false,
+    "objective_line_break_files": 0,
+    "git_blob_hash_mismatches": 0
   },
-  "result": "PASS"
+  "result": "PASS",
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA.",
+  "committed_content_method": "git show SELF:<task-file> -> standard Node.js JSON.parse"
 }

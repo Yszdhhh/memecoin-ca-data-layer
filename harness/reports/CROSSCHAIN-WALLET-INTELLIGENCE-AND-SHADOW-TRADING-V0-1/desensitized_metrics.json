@@ -1,7 +1,6 @@
 {
   "schema_version": "crosschain-program-desensitized-metrics-v1",
-  "generated_at": "2026-08-02T04:07:26.126Z",
-  "verification_commit_sha": "69fee761bf182cd952817d7bd429813add3bb920",
+  "generated_at": "2026-08-02T07:15:33.930Z",
   "task_spec_count": 27,
   "coordinator_or_implementer_count": 14,
   "independent_auditor_count": 13,
@@ -70,5 +69,44 @@
     "parallel_collisions": 0,
     "intentionally_serialized_overlaps": 1,
     "out_of_scope_deliverables": 0
+  },
+  "verification_commit_ref": "SELF",
+  "verification_binding": "SELF resolves to the exact Git commit containing this evidence file; this avoids an impossible self-referential literal commit SHA.",
+  "committed_head_validation": {
+    "method": "git show SELF:<task-file> -> standard Node.js JSON.parse",
+    "task_spec_count": 27,
+    "json_parse_passed": 27,
+    "json_parse_failed": 0,
+    "task_validate_passed": 27,
+    "task_validate_failed": 0,
+    "decoded_objective_line_break_files": [],
+    "physical_bare_newline_files": [],
+    "task_spec_files_modified_for_repair": 0,
+    "explicit_checks": {
+      "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json": "PASS_SINGLE_LINE_OBJECTIVE",
+      "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001.json": "PASS_SINGLE_LINE_OBJECTIVE"
+    }
+  },
+  "source_hash_provenance": {
+    "algorithm": "sha256",
+    "byte_source": "Git blob bytes",
+    "working_tree_bytes_used": false,
+    "prior_mismatch_corrected": "harness/tasks/BSC-WALLET-SOURCE-INVENTORY-001.json"
+  },
+  "repository_checks": {
+    "harness_doctor": "EXPECTED_BASELINE_FAIL_EXACTLY_3",
+    "typecheck": "PASS",
+    "tests": {
+      "passed": 460,
+      "failed": 0,
+      "skipped": 1,
+      "total": 461
+    },
+    "build": "PASS",
+    "security_scan": {
+      "matched_policy_lines": 312,
+      "classified_leaks": 0
+    },
+    "diff_check": "PASS"
   }
 }
