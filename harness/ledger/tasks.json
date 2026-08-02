@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-08-02T04:07:26.126Z",
+  "updated_at_utc": "2026-08-02T08:45:00Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1251,6 +1251,11 @@
       "task_id": "CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001",
       "spec": "harness/tasks/CROSSCHAIN-WALLET-HUD-V0-3-001-AUDIT-001.json",
       "status": "BLOCKED_DEPENDENCY"
+    },
+    {
+      "task_id": "EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001",
+      "spec": "harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json",
+      "status": "READY"
     }
   ]
 }
