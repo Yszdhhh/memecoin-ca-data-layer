@@ -1,4 +1,4 @@
-# Acceptance evidence â€” HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001
+# Acceptance evidence â€?HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001
 
 ## Scope and provenance
 
@@ -41,6 +41,6 @@ Synthetic `private/exports/wallets.json` and `artifacts/wallet_intelligence_v0_1
 ## Audit and delivery status
 
 - Independent audit: **PENDING**. A different Agent must audit before GREEN is declared for merge eligibility.
-- Push: pending at the time this evidence was generated.
-- Draft/Open PR: pending at the time this evidence was generated.
+- Push: complete to `origin/chore/harness-doctor-forbidden-path-rule-repair`.
+- Draft/Open PR: #19, OPEN and DRAFT.
 - Merge/rebase/squash: not performed.
