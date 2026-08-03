@@ -3,7 +3,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import type { FinishedRunEvidence, ProjectConfig, TaskLedger, TaskSpec } from "../harness/lib/contracts.js";
 import { globMatches } from "../harness/lib/files.js";
+import { gitTrackedFiles } from "../harness/lib/git.js";
 import {
+  classifyForbiddenTrackedFile,
+  findForbiddenTrackedFiles,
   forbiddenTrackedFileMatches,
   isDocumentedScrubbedPublicWalletArtifact,
   secretContentRulesFor,
@@ -344,11 +347,11 @@ test("forbidden wallet rule is exact-path allowlisted and fail-closed on case va
     "artifacts/wallet_intelligence_v0_1/wallet_master.json",
     "wallets.json",
     "other/wallet_backup.json",
-    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
   ]);
 
   for (const file of allowCases) {
     assert.equal(isDocumentedScrubbedPublicWalletArtifact(file), true, file);
+    assert.equal(classifyForbiddenTrackedFile(["wallet*.json"], file), "public_wallet_artifact", file);
     assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), false, file);
   }
   for (const file of denyCases) {
@@ -357,6 +360,52 @@ test("forbidden wallet rule is exact-path allowlisted and fail-closed on case va
   }
 });
 
+test("repository forbidden classification shares one helper across doctor and run-verify", async () => {
+  const source = await readFile("harness/cli.ts", "utf8");
+  assert.match(source, /const forbiddenFiles = findForbiddenTrackedFiles\(config\.forbidden_repository_patterns, tracked\)/);
+  assert.match(source, /const secretFileMatches = findForbiddenTrackedFiles\(config\.forbidden_repository_patterns, tracked\)/);
+  assert.equal((source.match(/findForbiddenTrackedFiles\(/g) ?? []).length, 3);
+  assert.doesNotMatch(source, /NON_WALLET_TASK_SPEC_PATHS\.has\(file\)/);
+});
+
+test("tracked repository classification excludes only exact governed Task Specs", () => {
+  const patterns = ["wallet*.json"];
+  const governedTaskSpecs = [
+    "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json",
+    "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json",
+    "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json",
+    "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json",
+  ];
+  for (const file of governedTaskSpecs) {
+    for (const candidate of [file, file.replaceAll("/", "\\")]) {
+      assert.equal(classifyForbiddenTrackedFile(patterns, candidate), "governed_task_spec", candidate);
+      assert.equal(forbiddenTrackedFileMatches("wallet*.json", candidate), false, candidate);
+    }
+  }
+
+  const variants = governedTaskSpecs.flatMap((file) => {
+    const filenameCase = file.replace("WALLET-SHADOW", "wallet-shadow");
+    const directoryCase = file.replace("harness/tasks", "harness/TASKS");
+    const dotRelative = `./${file}`;
+    const traversal = `harness/tasks/../tasks/${file.slice("harness/tasks/".length)}`;
+    return [filenameCase, directoryCase, dotRelative, traversal].flatMap((candidate) => [
+      candidate,
+      candidate.replaceAll("/", "\\"),
+    ]);
+  });
+  for (const file of variants) {
+    assert.equal(classifyForbiddenTrackedFile(patterns, file), "forbidden", file);
+    assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), true, file);
+  }
+});
+
+test("current tracked repository has no forbidden files under the unified classifier", async () => {
+  const project = JSON.parse(await readFile("harness/config/project.json", "utf8")) as ProjectConfig;
+  const tracked = gitTrackedFiles();
+  assert.deepEqual(findForbiddenTrackedFiles(project.forbidden_repository_patterns, tracked), []);
+});
 test("project config preserves the governed baseline fields", async () => {
   const project = JSON.parse(await readFile("harness/config/project.json", "utf8")) as ProjectConfig;
   assert.deepEqual(

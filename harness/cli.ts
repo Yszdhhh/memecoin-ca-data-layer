@@ -94,6 +94,12 @@ export function isDocumentedScrubbedPublicWalletArtifact(file: string): boolean 
   return DOCUMENTED_SCRUBBED_PUBLIC_WALLET_ARTIFACTS.has(file.replaceAll("\\", "/"));
 }
 
+type ForbiddenTrackedFileClassification =
+  | "forbidden"
+  | "public_wallet_artifact"
+  | "governed_task_spec"
+  | "allowed";
+
 function forbiddenPatternMatches(pattern: string, file: string): boolean {
   const normalizedPattern = pattern.replaceAll("\\", "/").toLowerCase();
   const normalizedFile = file.replaceAll("\\", "/");
@@ -102,10 +108,33 @@ function forbiddenPatternMatches(pattern: string, file: string): boolean {
   return globMatches(normalizedPattern, basename) || globMatches(normalizedPattern, caseFoldedFile);
 }
 
-export function forbiddenTrackedFileMatches(pattern: string, file: string): boolean {
+export function classifyForbiddenTrackedFile(patterns: string[], file: string): ForbiddenTrackedFileClassification {
   const normalizedFile = file.replaceAll("\\", "/");
-  if (pattern === "wallet*.json" && isDocumentedScrubbedPublicWalletArtifact(normalizedFile)) return false;
-  return forbiddenPatternMatches(pattern, normalizedFile);
+  let matchedPublicArtifact = false;
+  let matchedGovernedTaskSpec = false;
+  for (const pattern of patterns) {
+    if (!forbiddenPatternMatches(pattern, normalizedFile)) continue;
+    if (pattern === "wallet*.json" && isDocumentedScrubbedPublicWalletArtifact(normalizedFile)) {
+      matchedPublicArtifact = true;
+      continue;
+    }
+    if (pattern === "wallet*.json" && NON_WALLET_TASK_SPEC_PATHS.has(normalizedFile)) {
+      matchedGovernedTaskSpec = true;
+      continue;
+    }
+    return "forbidden";
+  }
+  if (matchedPublicArtifact) return "public_wallet_artifact";
+  if (matchedGovernedTaskSpec) return "governed_task_spec";
+  return "allowed";
+}
+
+export function forbiddenTrackedFileMatches(pattern: string, file: string): boolean {
+  return classifyForbiddenTrackedFile([pattern], file) === "forbidden";
+}
+
+export function findForbiddenTrackedFiles(patterns: string[], files: string[]): string[] {
+  return files.filter((file) => classifyForbiddenTrackedFile(patterns, file) === "forbidden");
 }
 
 function decodeGitPath(file: string): string {
@@ -174,14 +203,8 @@ async function doctor(): Promise<number> {
       errors.push(`cannot validate ledger: ${String(error)}`);
     }
     const tracked = gitTrackedFiles().map(decodeGitPath);
-    for (const pattern of config.forbidden_repository_patterns) {
-      const matches = tracked.filter((file) =>
-        pattern === "wallet*.json" && NON_WALLET_TASK_SPEC_PATHS.has(file)
-          ? false
-          : forbiddenTrackedFileMatches(pattern, file),
-      );
-      if (matches.length > 0) errors.push(`forbidden tracked files for ${pattern}: ${matches.join(", ")}`);
-    }
+    const forbiddenFiles = findForbiddenTrackedFiles(config.forbidden_repository_patterns, tracked);
+    if (forbiddenFiles.length > 0) errors.push(`forbidden tracked files: ${forbiddenFiles.join(", ")}`);
     for (const match of await forbiddenTrackedContent(tracked)) {
       errors.push(`forbidden tracked content: ${match}`);
     }
@@ -313,8 +336,7 @@ async function verifyRun(runDirArg: string): Promise<number> {
   const outOfScope = changedPaths.filter((changed) =>
     !spec.write_set.some((pattern) => globMatches(pattern, changed)));
   const tracked = gitTrackedFiles().map(decodeGitPath);
-  const secretFileMatches = tracked.filter((file) =>
-    config.forbidden_repository_patterns.some((pattern) => forbiddenTrackedFileMatches(pattern, file)));
+  const secretFileMatches = findForbiddenTrackedFiles(config.forbidden_repository_patterns, tracked);
   const secretContentMatches = await forbiddenTrackedContent(tracked);
 
   const acceptance: RunManifest["acceptance"] = [];
