@@ -5,7 +5,7 @@
 - Task ID: `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001`
 - Role: `coordinator / governance`
 - Implementer agent: `coordinator-harness-doctor-clean-redelivery-governance-001`
-- Baseline: `fce42eeb560c85e4924399bdf08419f9ea7ba642`
+- Required baseline: `fce42eeb560c85e4924399bdf08419f9ea7ba642`
 - Legacy PR: `#19`
 - Legacy PR HEAD: `0159af6a89968f01c1d220a3890acb4c169e1f69`
 - Original audit manifest: `e6b7140d4d9fc73a02d14e64cf744d4f3eee85abd3bb4119d73725ac99ece749`
@@ -25,6 +25,16 @@ Create and verify only the governance Task Specs, dispatch, input manifest, acce
 6. The later Delivery requires a different independent auditor. Only `GREEN` or `GREEN_WITH_ADVISORY` from that auditor may permit Ready, and the final integration must be a two-parent merge commit.
 7. Only after the later clean-room PR exists may a superseded comment be posted on PR #19 and PR #19 be closed. The legacy branch is not deleted and its existing audit comment is not modified.
 
+## Harness Doctor baseline diagnostic contract
+
+- `npm run harness:doctor` is required for this governance task as a baseline diagnostic.
+- It is not a pass/fail acceptance gate for either governance Task Spec. The task-specific acceptance commands below therefore omit it.
+- This exception is intentional: the governance task exists to authorize repair of the pre-existing forbidden-path issue that currently causes the doctor to fail on `main`.
+- Run the diagnostic independently at the exact base SHA `fce42eeb560c85e4924399bdf08419f9ea7ba642` and again at the PR #20 final delivery state.
+- Both runs must report only the same three existing forbidden tracked files: `apps/operator-console/src/data/fixtures/wallets.json`, `artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json`, and `artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json`.
+- Confirm equal exit codes, equal error sets, equal warning sets, zero new doctor errors, and no reduction or expansion of the forbidden-path rules.
+- The governance write set forbids changes to the Harness Doctor runtime, `harness/config/project.json`, and all three existing forbidden tracked wallet artifacts.
+
 ## Audit handoff
 
 The independent audit Task `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001` is created in `READY` state for `codex-independent-auditor-harness-doctor-002`. The auditor may write only its own report and an external PR comment; it may not alter this governance implementation or its ledger entry.
@@ -38,6 +48,6 @@ The independent audit Task `HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-
 - `harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001/acceptance.md`
 - `harness/ledger/tasks.json`
 
-## Required checks
+## Required acceptance commands
 
-Run the acceptance commands in the Task Spec. Record only repository-relative paths and the normalized privacy result `private_absolute_path_matches=0` in Git evidence.
+Implementation and Audit Task Specs must each list only task-specific commands that exit `0`, including their relevant `harness:task validate`, `npm run typecheck`, `npm test`, `npm run build`, `npm run security:scan`, and `git diff --check` commands. The Harness Doctor runs and their output comparison are independent non-gate diagnostics, not acceptance commands. Record only repository-relative paths and the normalized privacy result `private_absolute_path_matches=0` in Git evidence.

@@ -42,5 +42,40 @@
                     "real_paths_in_git_artifacts":  false,
                     "secrets":  false,
                     "plaintext_addresses":  false
-                }
+                },
+    "doctor_baseline_non_regression":  [
+                                           {
+                                               "harness_doctor_role":  "required_non_gate_baseline_diagnostic",
+                                               "command":  "npm run harness:doctor",
+                                               "acceptance_gate":  false,
+                                               "base_sha":  "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+                                               "delivery_state":  "PR #20 final HEAD",
+                                               "baseline_doctor_exit":  1,
+                                               "delivery_doctor_exit":  1,
+                                               "baseline_error_set":  [
+                                                                          "apps/operator-console/src/data/fixtures/wallets.json",
+                                                                          "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+                                                                          "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json"
+                                                                      ],
+                                               "delivery_error_set":  [
+                                                                          "apps/operator-console/src/data/fixtures/wallets.json",
+                                                                          "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+                                                                          "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json"
+                                                                      ],
+                                               "baseline_warning_set":  [
+
+                                                                        ],
+                                               "delivery_warning_set":  [
+
+                                                                        ],
+                                               "baseline_error_set_equals_delivery_error_set":  true,
+                                               "baseline_warning_set_equals_delivery_warning_set":  true,
+                                               "new_doctor_errors":  0,
+                                               "forbidden_path_rule_set_unchanged":  true,
+                                               "doctor_runtime_unchanged":  true,
+                                               "project_config_unchanged":  true,
+                                               "wallet_artifacts_unchanged":  true
+                                           },
+                                           "NoteProperty"
+                                       ]
 }

@@ -7,7 +7,7 @@
     "chain":  null,
     "layer":  "cold_path",
     "status":  "READY",
-    "objective":  "Independently verify that the governance artifacts permanently quarantine PR #19, authorize only a fresh clean-room redelivery after this governance change lands on main, prohibit reuse of legacy code or evidence, require independent audit and a final double-parent merge commit, contain no private absolute paths, remain consistent with the task ledger, and do not modify product or Harness runtime.",
+    "objective":  "Independently verify that the governance artifacts permanently quarantine PR #19, authorize only a fresh clean-room redelivery after this governance change lands on main, prohibit reuse of legacy code or evidence, require independent audit and a final double-parent merge commit, contain no private absolute paths, remain consistent with the task ledger, and do not modify product or Harness runtime. Treat npm run harness:doctor as a required baseline diagnostic, not a pass/fail acceptance gate, because this task exists to authorize repair of the pre-existing forbidden-path issue that currently makes the doctor fail on main; the governance write set forbids modifying the doctor runtime, harness/config/project.json, or the three existing forbidden tracked wallet artifacts.",
     "dependencies":  [
                          "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001"
                      ],
@@ -29,14 +29,14 @@
                               "Do not modify, close, ready, merge, squash, rebase, force-push, or rewrite history for PR #19.",
                               "Do not approve or certify the future clean-room Delivery without independent evidence.",
                               "Do not use real local absolute paths, usernames, drive letters, credentials, raw provider payloads, or plaintext addresses in Git artifacts.",
-                              "Do not run network, provider, wallet, or live-chain operations."
+                              "Do not run network, provider, wallet, or live-chain operations.",
+                              "Do not modify the Harness Doctor runtime, harness/config/project.json, or the three existing forbidden tracked wallet artifacts."
                           ],
     "deliverables":  [
                          "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001/acceptance.md"
                      ],
     "acceptance_commands":  [
                                 "npm run harness:task -- validate harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001.json",
-                                "npm run harness:doctor",
                                 "npm run typecheck",
                                 "npm test",
                                 "npm run build",
