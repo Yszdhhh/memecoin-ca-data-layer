@@ -1,31 +1,78 @@
 {
-  "schema_version": "deterministic-replay-result-v2",
-  "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
-  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
-  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "schema_version": "deterministic-replay-result-v3",
+  "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
+  "base_sha": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "starting_head_sha": "c7adf7376118e1c04fe139639a402940cc6b6559",
+  "audited_code_sha": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "repair_code_anchor_sha": "d167e2d72b964ef9513e2bb8614250d781db7352",
+  "repair_code_parent_sha": "3b9dbaaca0b153c897f7f910774c4799fba33685",
+  "evidence_commit_parent_sha": "d167e2d72b964ef9513e2bb8614250d781db7352",
+  "delivery_head_sha": null,
+  "original_red_audit_manifest_sha256": "f463bedd31caa991e890808798f5a1bade8413fe9e3265f6aa923cc782fe509f",
+  "original_red_audit_comment_id": "5159384652",
+  "blocking_finding": "P1-FORBIDDEN-PATH-CASE-FAIL-CLOSED",
   "runs": 2,
   "identical": true,
-  "result_sha256": "d7609181461cd397d54a262ba5afc1515bf5e96bbe6c55201ddb280f628b4d80",
-  "result": [
+  "result_sha256": "30834b6f087643b1e09bba02302b42fa35e19f474174bb89197ac18d0506e883",
+  "path_boundary_matrix": [
     {
-      "file": "apps/operator-console/src/data/fixtures/wallets.json",
-      "forbidden": false
+      "category": "canonical allowlist cases",
+      "cases": 3,
+      "expected": "allowed",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
-      "forbidden": false
+      "category": "separator variants",
+      "cases": 3,
+      "expected": "allowed",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
-      "forbidden": false
+      "category": "filename case variants",
+      "cases": 7,
+      "expected": "rejected",
+      "status": "PASS"
     },
     {
-      "file": "private/exports/wallets.json",
-      "forbidden": true
+      "category": "directory case variants",
+      "cases": 7,
+      "expected": "rejected",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_master.json",
-      "forbidden": true
+      "category": "dot-relative cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "traversal cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "private/raw cases",
+      "cases": 6,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "chainfm_out cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "unrelated wallet-like cases",
+      "cases": 6,
+      "expected": "rejected",
+      "status": "PASS"
     }
-  ]
+  ],
+  "raw_output_sha256_runs": [
+    "30834b6f087643b1e09bba02302b42fa35e19f474174bb89197ac18d0506e883",
+    "30834b6f087643b1e09bba02302b42fa35e19f474174bb89197ac18d0506e883"
+  ],
+  "private_data_policy": "No wallet addresses, transaction hashes, raw exports, provider records, credentials, or private manifests are included."
 }

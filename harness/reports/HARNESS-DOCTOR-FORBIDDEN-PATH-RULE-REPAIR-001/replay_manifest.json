@@ -1,33 +1,197 @@
 {
-  "schema_version": "replay-manifest-v2",
+  "schema_version": "replay-manifest-v3",
   "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001",
-  "base_commit": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "repository": "Yszdhhh/memecoin-ca-data-layer",
   "branch": "chore/harness-doctor-forbidden-path-rule-repair",
-  "current_commit": "d5230971b98539989e0c8cad427b92ddddbc6661",
-  "final_head": "d5230971b98539989e0c8cad427b92ddddbc6661",
-  "rule": "wallet*.json with exact-path exemption for three documented scrubbed public artifacts",
-  "cases": [
+  "base_sha": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+  "starting_head_sha": "c7adf7376118e1c04fe139639a402940cc6b6559",
+  "audited_code_sha": "d5230971b98539989e0c8cad427b92ddddbc6661",
+  "repair_code_anchor_sha": "d167e2d72b964ef9513e2bb8614250d781db7352",
+  "repair_code_parent_sha": "3b9dbaaca0b153c897f7f910774c4799fba33685",
+  "evidence_commit_parent_sha": "d167e2d72b964ef9513e2bb8614250d781db7352",
+  "delivery_head_sha": null,
+  "original_red_audit_manifest_sha256": "f463bedd31caa991e890808798f5a1bade8413fe9e3265f6aa923cc782fe509f",
+  "original_red_audit_comment_id": "5159384652",
+  "blocking_finding": "P1-FORBIDDEN-PATH-CASE-FAIL-CLOSED",
+  "repair_semantics": [
+    "Normalize backslashes to POSIX separators.",
+    "Apply the three-path allowlist to the raw normalized path with exact case.",
+    "Case-fold only forbidden pattern comparison and derive basename from normalized POSIX paths.",
+    "Keep global globMatches and write-set semantics unchanged.",
+    "Exclude six exact non-wallet task-spec filenames only from the doctor wallet-pattern scan; direct matcher coverage rejects a wallet-named task path."
+  ],
+  "allowlisted_paths": [
+    "apps/operator-console/src/data/fixtures/wallets.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json"
+  ],
+  "path_boundary_matrix": [
     {
-      "file": "apps/operator-console/src/data/fixtures/wallets.json",
-      "forbidden": false
+      "category": "canonical allowlist cases",
+      "cases": 3,
+      "expected": "allowed",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
-      "forbidden": false
+      "category": "separator variants",
+      "cases": 3,
+      "expected": "allowed",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
-      "forbidden": false
+      "category": "filename case variants",
+      "cases": 7,
+      "expected": "rejected",
+      "status": "PASS"
     },
     {
-      "file": "private/exports/wallets.json",
-      "forbidden": true
+      "category": "directory case variants",
+      "cases": 7,
+      "expected": "rejected",
+      "status": "PASS"
     },
     {
-      "file": "artifacts/wallet_intelligence_v0_1/wallet_master.json",
-      "forbidden": true
+      "category": "dot-relative cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "traversal cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "private/raw cases",
+      "cases": 6,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "chainfm_out cases",
+      "cases": 2,
+      "expected": "rejected",
+      "status": "PASS"
+    },
+    {
+      "category": "unrelated wallet-like cases",
+      "cases": 6,
+      "expected": "rejected",
+      "status": "PASS"
     }
   ],
-  "result_sha256": "d7609181461cd397d54a262ba5afc1515bf5e96bbe6c55201ddb280f628b4d80",
-  "private_data_policy": "No wallet addresses, transaction hashes, raw exports, or private manifests are included."
+  "command_results": [
+    {
+      "command": "npm run harness:task -- validate harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+      "started_at": "2026-08-03T10:44:36.5619907+08:00",
+      "finished_at": "2026-08-03T10:44:37.2264515+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "2d900bd1916afd7ecd3e7af9898f283cf4514f3f3da87a29b3cdc4588ea62011",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm run harness:doctor",
+      "started_at": "2026-08-03T10:44:37.2399613+08:00",
+      "finished_at": "2026-08-03T10:44:38.6978771+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "2022c9b6796ce9f0156e4a999a71572fd1886161523f50d54de795f38e5cda4b",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm run typecheck",
+      "started_at": "2026-08-03T10:44:38.7008757+08:00",
+      "finished_at": "2026-08-03T10:44:41.0866254+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "3abae08db5b04132f88cfa1814daa7b750b82c4a0b0a1370a54137a8b27afab8",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm test",
+      "started_at": "2026-08-03T10:44:41.0886249+08:00",
+      "finished_at": "2026-08-03T10:44:44.5570547+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "5041d4980da13a8c9fac839661af34b3c2bccbe2f89c39e8f86d733f970f74b7",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm run build",
+      "started_at": "2026-08-03T10:44:44.5630564+08:00",
+      "finished_at": "2026-08-03T10:44:47.1511953+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "6239db9cd264411159f68be40e450c93c143cb151f53d693a731ba58facd021f",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm run security:scan",
+      "started_at": "2026-08-03T10:44:47.1531954+08:00",
+      "finished_at": "2026-08-03T10:44:47.7624486+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "8923f62f27a05ed5b801c4a8ebfa6fa154613dd2666317bd9fcafba0cf203eb1",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "git diff --check",
+      "started_at": "2026-08-03T10:44:47.7644485+08:00",
+      "finished_at": "2026-08-03T10:44:47.8049592+08:00",
+      "exit_code": 0,
+      "key_result": "PASS",
+      "raw_output_sha256": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm exec -- tsx path-boundary-test.ts",
+      "run": 1,
+      "started_at": "2026-08-03T10:46:09.9828559+08:00",
+      "finished_at": "2026-08-03T10:46:11.0230480+08:00",
+      "exit_code": 0,
+      "key_result": "all categories PASS",
+      "raw_output_sha256": "30834b6f087643b1e09bba02302b42fa35e19f474174bb89197ac18d0506e883",
+      "raw_output_saved_unmodified_outside_git": true
+    },
+    {
+      "command": "npm exec -- tsx path-boundary-test.ts",
+      "run": 2,
+      "started_at": "2026-08-03T10:46:11.0350481+08:00",
+      "finished_at": "2026-08-03T10:46:12.0603284+08:00",
+      "exit_code": 0,
+      "key_result": "all categories PASS",
+      "raw_output_sha256": "30834b6f087643b1e09bba02302b42fa35e19f474174bb89197ac18d0506e883",
+      "raw_output_saved_unmodified_outside_git": true
+    }
+  ],
+  "inspected_write_set": [
+    "harness/cli.ts",
+    "test/harness.test.ts",
+    "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001/"
+  ],
+  "privacy_findings": {
+    "status": "PASS",
+    "security_scan": "PASS; classifiedLeaks=0",
+    "manual_review": "No real wallet addresses, transaction hashes, raw provider outputs, private paths, credentials, or key material observed.",
+    "chainfm_out_tracked": false
+  },
+  "provenance": {
+    "base_sha_matches": true,
+    "repair_code_parent_is_first_fix": true,
+    "evidence_commit_parent_is_repair_code_anchor": true,
+    "delivery_head_pending_authenticated_post_push": true
+  },
+  "P0": [],
+  "P1": [],
+  "P2": [
+    {
+      "id": "P2-INDEPENDENT-REAUDIT-REQUIRED",
+      "status": "ADVISORY",
+      "finding": "Independent re-audit on post-push delivery HEAD remains mandatory before PR readiness or merge."
+    }
+  ],
+  "verdict": "GREEN_WITH_ADVISORY",
+  "verdict_reason": "The RED case-boundary finding is repaired and formal/path-boundary validation passes; merge authorization remains blocked pending a different independent auditor."
 }
