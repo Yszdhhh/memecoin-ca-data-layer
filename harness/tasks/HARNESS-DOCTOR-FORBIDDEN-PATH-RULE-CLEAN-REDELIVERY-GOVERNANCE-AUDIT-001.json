@@ -1,0 +1,46 @@
+{
+    "schema_version":  "task-v1",
+    "task_id":  "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001",
+    "title":  "Independently audit clean-room redelivery governance authorization",
+    "tier":  "T1",
+    "role":  "auditor",
+    "chain":  null,
+    "layer":  "cold_path",
+    "status":  "READY",
+    "objective":  "Independently verify that the governance artifacts permanently quarantine PR #19, authorize only a fresh clean-room redelivery after this governance change lands on main, prohibit reuse of legacy code or evidence, require independent audit and a final double-parent merge commit, contain no private absolute paths, remain consistent with the task ledger, and do not modify product or Harness runtime.",
+    "dependencies":  [
+                         "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001"
+                     ],
+    "inputs":  [
+                   "PROJECT_REQUIRED_READING.md",
+                   "AGENTS.md",
+                   "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001.json",
+                   "harness/dispatches/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001.md",
+                   "harness/inputs/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001/manifest.json",
+                   "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001/acceptance.md",
+                   "harness/ledger/tasks.json"
+               ],
+    "write_set":  [
+                      "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001/acceptance.md"
+                  ],
+    "forbidden_actions":  [
+                              "Do not modify the governance implementation Task Spec, dispatch, input manifest, or acceptance report.",
+                              "Do not modify product code, Harness runtime, tests, package metadata, or project configuration.",
+                              "Do not modify, close, ready, merge, squash, rebase, force-push, or rewrite history for PR #19.",
+                              "Do not approve or certify the future clean-room Delivery without independent evidence.",
+                              "Do not use real local absolute paths, usernames, drive letters, credentials, raw provider payloads, or plaintext addresses in Git artifacts.",
+                              "Do not run network, provider, wallet, or live-chain operations."
+                          ],
+    "deliverables":  [
+                         "harness/reports/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001/acceptance.md"
+                     ],
+    "acceptance_commands":  [
+                                "npm run harness:task -- validate harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001.json",
+                                "npm run harness:doctor",
+                                "npm run typecheck",
+                                "npm test",
+                                "npm run build",
+                                "npm run security:scan",
+                                "git diff --check"
+                            ]
+}

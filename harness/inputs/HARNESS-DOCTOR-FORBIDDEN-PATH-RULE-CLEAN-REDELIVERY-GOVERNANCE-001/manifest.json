@@ -1,0 +1,46 @@
+{
+    "manifest_version":  "manifest-v1",
+    "task_id":  "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001",
+    "created_at_utc":  "2026-08-03T16:06:22.861Z",
+    "baseline_commit":  "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+    "inputs":  [
+                   "PROJECT_REQUIRED_READING.md",
+                   "AGENTS.md",
+                   "PROJECT_CONSTITUTION.md",
+                   "PROJECT_ARCHITECTURE.md",
+                   "PROJECT_OPERATING_PLAYBOOK.md",
+                   "KNOWN_LIMITATIONS.md",
+                   "OWNER_DECISIONS_NEEDED.md",
+                   "harness/config/project.json",
+                   "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001.json",
+                   "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-REPAIR-001-AUDIT-001.json",
+                   "harness/ledger/tasks.json"
+               ],
+    "fixed_facts":  {
+                        "repository":  "Yszdhhh/memecoin-ca-data-layer",
+                        "origin_main":  "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+                        "legacy_pr":  19,
+                        "legacy_pr_state":  "OPEN / Draft / unmerged",
+                        "legacy_pr_head":  "0159af6a89968f01c1d220a3890acb4c169e1f69",
+                        "original_audit_manifest_sha256":  "e6b7140d4d9fc73a02d14e64cf744d4f3eee85abd3bb4119d73725ac99ece749",
+                        "blocking_finding":  "P1-PRIVATE-ABSOLUTE-PATH-IN-COMMITTED-EVIDENCE"
+                    },
+    "authorization":  {
+                          "authorized_future_task":  "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-001",
+                          "future_task_created_here":  false,
+                          "future_task_started_here":  false,
+                          "future_task_implementation_started_here":  false,
+                          "fresh_implementation_required":  true,
+                          "legacy_pr_merge_forbidden":  true,
+                          "legacy_pr_cherry_pick_forbidden":  true,
+                          "legacy_evidence_reuse_forbidden":  true,
+                          "independent_audit_required":  true,
+                          "final_merge_mode":  "two-parent merge commit only"
+                      },
+    "privacy":  {
+                    "private_absolute_path_matches":  0,
+                    "real_paths_in_git_artifacts":  false,
+                    "secrets":  false,
+                    "plaintext_addresses":  false
+                }
+}

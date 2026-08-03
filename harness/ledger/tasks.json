@@ -1,6 +1,6 @@
 {
   "schema_version": "ledger-v1",
-  "updated_at_utc": "2026-08-02T08:45:00Z",
+  "updated_at_utc": "2026-08-03T00:00:00.000Z",
   "tasks": [
     {
       "task_id": "HARNESS-001",
@@ -1256,6 +1256,16 @@
       "task_id": "EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001",
       "spec": "harness/tasks/EXTERNAL-ARCHITECTURE-PROJECT-INTEGRATION-001.json",
       "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-001.json",
+      "status": "DONE"
+    },
+    {
+      "task_id": "HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001",
+      "spec": "harness/tasks/HARNESS-DOCTOR-FORBIDDEN-PATH-RULE-CLEAN-REDELIVERY-GOVERNANCE-AUDIT-001.json",
+      "status": "READY"
     }
   ]
 }
