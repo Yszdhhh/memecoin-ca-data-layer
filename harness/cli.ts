@@ -86,9 +86,18 @@ export function isDocumentedScrubbedPublicWalletArtifact(file: string): boolean 
   return DOCUMENTED_SCRUBBED_PUBLIC_WALLET_ARTIFACTS.has(file.replaceAll("\\", "/"));
 }
 
+function forbiddenPatternMatches(pattern: string, file: string): boolean {
+  const normalizedPattern = pattern.replaceAll("\\", "/").toLowerCase();
+  const normalizedFile = file.replaceAll("\\", "/");
+  const caseFoldedFile = normalizedFile.toLowerCase();
+  const basename = caseFoldedFile.slice(caseFoldedFile.lastIndexOf("/") + 1);
+  return globMatches(normalizedPattern, basename) || globMatches(normalizedPattern, caseFoldedFile);
+}
+
 export function forbiddenTrackedFileMatches(pattern: string, file: string): boolean {
-  if (pattern === "wallet*.json" && isDocumentedScrubbedPublicWalletArtifact(file)) return false;
-  return globMatches(pattern, path.basename(file)) || globMatches(pattern, file);
+  const normalizedFile = file.replaceAll("\\", "/");
+  if (pattern === "wallet*.json" && isDocumentedScrubbedPublicWalletArtifact(normalizedFile)) return false;
+  return forbiddenPatternMatches(pattern, normalizedFile);
 }
 
 function decodeGitPath(file: string): string {

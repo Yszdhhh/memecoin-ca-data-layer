@@ -318,24 +318,42 @@ test("apply-readiness flips BLOCKED_DEPENDENCY to READY when deps are DONE", asy
   assert.ok(written.includes("ledger:READY"));
 });
 
-test("forbidden wallet rule exempts only documented scrubbed public artifacts", () => {
-  const documented = [
+test("forbidden wallet rule is exact-path allowlisted and fail-closed on case variants", () => {
+  const canonical = [
     "apps/operator-console/src/data/fixtures/wallets.json",
     "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
     "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
   ];
-  for (const file of documented) {
-    assert.equal(isDocumentedScrubbedPublicWalletArtifact(file), true);
-    assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), false);
+  const withSeparators = (files: string[]) =>
+    files.flatMap((file) => [file, file.replaceAll("/", "\\")]);
+  const allowCases = withSeparators(canonical);
+  const denyCases = withSeparators([
+    "apps/operator-console/src/data/fixtures/WALLETS.json",
+    "apps/operator-console/src/data/fixtures/Wallets.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.JSON",
+    "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.Json",
+    "Apps/operator-console/src/data/fixtures/wallets.json",
+    "apps/Operator-console/src/data/fixtures/wallets.json",
+    "artifacts/Wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
+    "artifacts/wallet_Intelligence_v0_1/wallet_replay_manifest_v0_1.json",
+    "./apps/operator-console/src/data/fixtures/wallets.json",
+    "apps/operator-console/src/data/fixtures/../fixtures/wallets.json",
+    "private/raw/wallets.json",
+    "private/wallet.json",
+    "chainfm_out/sol/wallet_export.json",
+    "artifacts/wallet_intelligence_v0_1/wallet_master.json",
+    "wallets.json",
+    "other/wallet_backup.json",
+  ]);
+
+  for (const file of allowCases) {
+    assert.equal(isDocumentedScrubbedPublicWalletArtifact(file), true, file);
+    assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), false, file);
   }
-  assert.equal(
-    forbiddenTrackedFileMatches("wallet*.json", "private/exports/wallets.json"),
-    true,
-  );
-  assert.equal(
-    forbiddenTrackedFileMatches("wallet*.json", "artifacts/wallet_intelligence_v0_1/wallet_master.json"),
-    true,
-  );
+  for (const file of denyCases) {
+    assert.equal(isDocumentedScrubbedPublicWalletArtifact(file), false, file);
+    assert.equal(forbiddenTrackedFileMatches("wallet*.json", file), true, file);
+  }
 });
 
 test("project config preserves the governed baseline fields", async () => {
