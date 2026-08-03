@@ -344,6 +344,7 @@ test("forbidden wallet rule is exact-path allowlisted and fail-closed on case va
     "artifacts/wallet_intelligence_v0_1/wallet_master.json",
     "wallets.json",
     "other/wallet_backup.json",
+    "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
   ]);
 
   for (const file of allowCases) {

@@ -37,6 +37,14 @@ const DOCUMENTED_SCRUBBED_PUBLIC_WALLET_ARTIFACTS = new Set([
   "artifacts/wallet_intelligence_v0_1/wallet_data_quality_report_v0_1.json",
   "artifacts/wallet_intelligence_v0_1/wallet_replay_manifest_v0_1.json",
 ]);
+const NON_WALLET_TASK_SPEC_PATHS = new Set([
+  "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001.json",
+  "harness/tasks/WALLET-SHADOW-LIVE-OBSERVATION-PILOT-001-AUDIT-001.json",
+  "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001.json",
+  "harness/tasks/WALLET-SHADOW-REPLAY-ENGINE-V0-1-001-AUDIT-001.json",
+  "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001.json",
+  "harness/tasks/WALLET-SHADOW-TRADE-CONTRACTS-V0-1-001-AUDIT-001.json",
+]);
 const REQUIRED_FILES = [
   "AGENTS.md",
   "PROJECT_REQUIRED_READING.md",
@@ -167,7 +175,11 @@ async function doctor(): Promise<number> {
     }
     const tracked = gitTrackedFiles().map(decodeGitPath);
     for (const pattern of config.forbidden_repository_patterns) {
-      const matches = tracked.filter((file) => forbiddenTrackedFileMatches(pattern, file));
+      const matches = tracked.filter((file) =>
+        pattern === "wallet*.json" && NON_WALLET_TASK_SPEC_PATHS.has(file)
+          ? false
+          : forbiddenTrackedFileMatches(pattern, file),
+      );
       if (matches.length > 0) errors.push(`forbidden tracked files for ${pattern}: ${matches.join(", ")}`);
     }
     for (const match of await forbiddenTrackedContent(tracked)) {
