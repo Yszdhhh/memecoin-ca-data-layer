@@ -2,7 +2,7 @@
 
 This MVP is a deterministic local refresh over a private, normalized input file. It keeps identity, social influence, trading quality, data confidence, followability, and freshness as separate fields and scores. Follower counts never affect the trading-quality score, and a follower count is eligible for a GMGN note only when the input explicitly records `VERIFIED_WALLET_MATCH`.
 
-The repository does not contain wallet data, provider responses, social cookies, or absolute machine paths. Build a private `wallet-library-input-v1.json` from the existing SOL and BSC masters. The input contains one record per address, normalized statistics, raw labels, and source hashes; it is not a provider raw-response cache.
+The repository does not contain wallet data, provider responses, logged-in browser state, or absolute machine paths. Build a private `wallet-library-input-v1.json` from the existing SOL and BSC masters. The input contains one record per address, normalized statistics, raw labels, and source hashes; it is not a provider raw-response cache.
 
 ## Run
 
