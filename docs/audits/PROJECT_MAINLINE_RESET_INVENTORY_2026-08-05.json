@@ -187,7 +187,7 @@
       "unique_input_address_count": 1433,
       "candidate_union_count": 32,
       "gmgn_import_record_count": 32,
-      "status": "private_borrowed_unverified_with_selected_chain_verification_not_full_e2e"
+      "status": "private_artifact_use_now_manual_review_and_incremental_refresh_pending"
     },
     "bsc": {
       "unique_valid_evm_address_count": 1034,
@@ -198,17 +198,36 @@
       "candidate_review_count": 32,
       "pnl_field_coverage_ratio": 0,
       "cost_basis_coverage_ratio": 0,
-      "status": "private_offline_artifact_stage_blocked"
+      "status": "private_artifact_keep_use_now_for_manual_observation;production_adapter_auto_refresh_cross_chain_parked"
     },
     "interpretation": "Counts and coverage are not product verification; no address, note, transaction identifier, or provider raw response is retained in this JSON."
+  },
+  "bsc_classification": {
+    "private_1034_addresses_first30_gmgn_notes_manual_observation": {
+      "classification": "KEEP",
+      "overlay": "USE_NOW",
+      "access": "offline_private_read_only",
+      "next_step": "import_manual_spot_check_selected_verification_and_incremental_refresh"
+    },
+    "production_adapter_automatic_refresh_cross_chain_ca_mainline": {
+      "classification": "PARK",
+      "access": "production_scope_only",
+      "next_step": "revisit_under_strict_owner_gate"
+    }
+  },
+  "stage_lock_classification": {
+    "classification": "OWNER_OVERRIDABLE_RISK_CONFIGURATION",
+    "offline_private_read_only_analysis_blocked": false,
+    "production_writes_credentials_real_trades": "STRICT_ONLY",
+    "harness_code_changed": false
   },
   "user_value_chain": [
     {
       "stage": "CA_or_wallet_input",
-      "runnable": "manual_SOL_CA_first_and_1_to_10_batch",
-      "data_level": "bounded_Helius_live_plus_fixture_console_plus_private_wallet_input",
+      "runnable": "manual_SOL_CA_first_plus_SOL32_BSC30_observation_wallet_import_and_spot_check",
+      "data_level": "bounded_Helius_live_plus_fixture_console_plus_private_SOL32_BSC30_observation_input",
       "trust": "first_hand_for_Helius_fields_but_bounded_summary_only",
-      "gap": "no_discovery_no_automatic_daily_no_full_CA_card"
+      "gap": "no_discovery_no_automatic_daily_no_full_CA_card;selected_10_to_15_fact_review_and_replay_still_pending"
     },
     {
       "stage": "third_party_factual_data",
@@ -247,10 +266,10 @@
     },
     {
       "stage": "GMGN_notes",
-      "runnable": "private_SOL_1433_to_32_and_BSC_1034_to_first_30_artifact_shapes",
+      "runnable": "existing_private_SOL32_and_BSC30_artifacts_for_import_manual_observation_and_incremental_refresh",
       "data_level": "private_borrowed_unverified",
       "trust": "not_chain_confirmed_and_no_GMGN_writeback",
-      "gap": "needs_stable_Chinese_pack_incremental_refresh_and_chain_check_columns"
+      "gap": "needs_manual_spot_check_selected_10_to_15_fact_review_and_incremental_chain_checked_columns_no_GMGN_writeback"
     },
     {
       "stage": "historical_buy_sell_replay",
@@ -268,28 +287,105 @@
     }
   ],
   "classification_counts": {
-    "MAINLINE_NOW": 9,
-    "KEEP": 9,
-    "SIMPLIFY": 8,
+    "MAINLINE_NOW": 7,
+    "KEEP": 10,
+    "SIMPLIFY": 10,
     "MERGE": 4,
     "PARK": 7,
     "ARCHIVE": 3,
     "DELETE_CANDIDATE": 1,
-    "total_classified_surfaces": 41,
-    "deletions_executed": 0
+    "total_classified_surfaces": 42,
+    "deletions_executed": 0,
+    "USE_NOW_overlay": 2,
+    "primary_category_note": "USE_NOW overlays KEEP for existing SOL32 and BSC30 private artifacts and is not additive"
+  },
+  "proposed_priorities": [
+    {
+      "rank": 1,
+      "name": "SOL32+BSC30_import_and_manual_spot_check",
+      "mode": "USE_NOW",
+      "status": "existing_private_artifacts_use_now",
+      "next_step": "import_observe_spot_check_and_incremental_diff",
+      "not_to_do": "do_not_regenerate_SOL1433_or_SOL32_and_do_not_write_back_to_GMGN"
+    },
+    {
+      "rank": 2,
+      "name": "10_to_15_selected_address_chain_fact_review",
+      "mode": "MAINLINE_NOW",
+      "status": "selected_read_only_verification",
+      "next_step": "review_selected_records_with_source_as_of_partial_and_trust_labels",
+      "not_to_do": "no_full_rerun_no_cross_chain_identity_merge_no_production_adapter"
+    },
+    {
+      "rank": 3,
+      "name": "offline_replay_v0_1",
+      "mode": "MAINLINE_NOW",
+      "status": "direct_next_product_slice",
+      "next_step": "replay_delay_slippage_liquidity_fee_tax_non_fill_and_unknown",
+      "not_to_do": "no_live_shadow_signing_broadcast_or_real_trade"
+    },
+    {
+      "rank": 4,
+      "name": "minimal_CA_card_parallel",
+      "mode": "MAINLINE_NOW",
+      "status": "parallel_product_slice",
+      "next_step": "connect_bounded_facts_cleaning_library_hit_warnings_and_trust",
+      "not_to_do": "no_new_provider_discovery_cron_or_production_backfill"
+    },
+    {
+      "rank": 5,
+      "name": "observation_and_replay_incremental_library_note_refresh",
+      "mode": "MAINLINE_NOW",
+      "status": "feedback_loop",
+      "next_step": "update_changed_or_selected_records_and_preserve_unknown",
+      "not_to_do": "no_auto_sedimentation_no_GMGN_writeback_no_borrowed_to_verified_promotion"
+    }
+  ],
+  "timeline": {
+    "mode": "7_to_10_day_parallel_MVP",
+    "days": [
+      {
+        "day": "Day 1",
+        "work": "import_and_manual_spot_check"
+      },
+      {
+        "day": "Day 2-4",
+        "work": "selected_wallet_replay_v0_1"
+      },
+      {
+        "day": "Day 2-5",
+        "work": "selected_chain_fact_review_10_to_15"
+      },
+      {
+        "day": "Day 3-7",
+        "work": "minimal_CA_card_parallel"
+      },
+      {
+        "day": "Day 6-10",
+        "work": "result_backflow_and_incremental_refresh"
+      }
+    ],
+    "four_week_serial_plan": false
+  },
+  "open_pr_recommendations": {
+    "#19": "CLOSE_NO_MERGE",
+    "#20": "CLOSE_AS_SUPERSEDED_AFTER_PR21_MERGES_NO_MERGE",
+    "#2": "CLOSE_AS_HISTORICAL_SMOKE_EVIDENCE",
+    "#3": "CLOSE_AS_SUPERSEDED_STACKED_PR",
+    "#9": "SALVAGE_ONLY_REUSE_CODE_THEN_CLOSE_NO_DIRECT_MERGE"
   },
   "harness_review": {
     "A_hard_boundaries": [
       "secret_wallet_artifact_raw_provider_payload_trade_signing_broadcast禁止",
-      "BSC_Robinhood_stage_lock_and_SOL_only_active_stage",
       "raw_integer_owner_aggregation_borrowed_unverified_partial_completeness_creator_precedence",
-      "task_schema_hash_write_set_forbidden_action_tracked_input",
-      "quality_commands_and_security_scan",
-      "independent_auditor_for_T2_semantic_work"
+      "task_schema_hash_write_set_forbidden_action_tracked_input_for_strict_or_code_changes",
+      "relevant_quality_commands_and_security_scan_for_code_changes"
     ],
     "B_keep_lighten": [
       "four_dimensions_latency_replay_source_degradation_label_decision",
-      "Standard_acceptance_for_code_provider_adapter_replay_and_cleaning",
+      "Fast_short_scope_note_and_relevant_privacy_diff_schema_checks",
+      "Standard_short_task_note_relevant_tests_security_scan_one_normal_review",
+      "Strict_task_spec_manifest_independent_audit_owner_gate_rollback",
       "manifest_watermark_source_hash_for_data_and_replay",
       "lifecycle_dependency_and_readiness_checks"
     ],
@@ -299,12 +395,62 @@
       "global_serialization_when_write_sets_do_not_overlap",
       "doctor_baseline_failure_blocks_unrelated_read_only_work",
       "historical_DONE_reports_without_ignored_run_manifests_cannot_close_evidence",
-      "root_path_documentation_mismatch"
+      "root_path_documentation_mismatch",
+      "universal_T2_independent_auditor_requirement",
+      "automatic_repair_chain_after_FAIL",
+      "historical_evidence_in_required_reading_or_lifecycle_gate",
+      "per_file_repair_for_archive"
     ],
+    "risk_configuration": {
+      "stage_lock_owner_overridable": true,
+      "offline_private_read_only_not_blocked": true,
+      "production_writes_credentials_real_trades_strict_only": true
+    },
     "lean_modes": {
-      "Fast": "read_only_docs_desensitized_summary_fixture_research",
-      "Standard": "product_code_rules_adapters_offline_replay",
-      "Strict": "live_credentials_stage_flip_sensitive_write"
+      "Fast": {
+        "task_spec": false,
+        "ledger": false,
+        "manifest": false,
+        "independent_auditor": false,
+        "full_repo_doctor": false,
+        "required": [
+          "short_scope_note",
+          "relevant_privacy_or_diff_or_schema_check"
+        ]
+      },
+      "Standard": {
+        "task_spec": "short_task_note_only",
+        "ledger": false,
+        "manifest": false,
+        "independent_auditor": false,
+        "full_repo_doctor": false,
+        "required": [
+          "relevant_tests",
+          "security_scan",
+          "one_normal_review"
+        ]
+      },
+      "Strict": {
+        "task_spec": true,
+        "ledger": true,
+        "manifest": true,
+        "independent_auditor": true,
+        "owner_gate": true,
+        "rollback_plan": true,
+        "required": [
+          "secret_scan",
+          "budget_and_timeout",
+          "retention_or_rollback"
+        ]
+      }
+    },
+    "lifecycle_policy": {
+      "historical_evidence_removed_from_required_reading_and_lifecycle_gate": true,
+      "new_tasks_reports_dispatches_ledger_frozen": true,
+      "old_dirs_read_only_archive": true,
+      "bulk_delete_immediate": false,
+      "per_file_repair_chain": false,
+      "one_time_archive": true
     }
   },
   "task_ledger": {
@@ -408,6 +554,7 @@
     "classification_note": "heuristic path and subject buckets; pathless merge commits are other"
   },
   "validation": {
+    "scope": "carried_from_previous_commit_not_rerun_in_this_owner_alignment",
     "npm_ci": "PASS",
     "npm_run_typecheck": "PASS",
     "npm_test": {
@@ -450,16 +597,30 @@
     "transaction_hashes": 0,
     "api_keys_or_cookies": 0
   },
+  "revision_validation": {
+    "full_repo_tests_rerun": false,
+    "harness_lifecycle_rerun": false,
+    "new_evidence_created": false,
+    "json_parse": "PASS",
+    "mermaid_basic_check": "PASS",
+    "git_diff_check": "PASS",
+    "privacy_scan": "PASS"
+  },
   "delivery": {
     "files_allowed": [
       "docs/audits/PROJECT_MAINLINE_RESET_AUDIT_2026-08-05.md",
       "docs/audits/PROJECT_MAINLINE_RESET_INVENTORY_2026-08-05.json",
       "docs/audits/PROJECT_MAINLINE_RESET_DIAGRAMS_2026-08-05.md"
     ],
-    "commit_message": "docs: audit project mainline and harness scope",
+    "commit_message": "docs: align mainline reset with owner priorities",
     "draft_pr_title": "docs: audit project mainline and reset priorities",
+    "starting_head": "e365d52ccdec8bcba1f1b5fa22cd3e25103142e2",
     "ready_pr": false,
     "merge_performed": false,
-    "force_push_performed": false
+    "force_push_performed": false,
+    "task_spec_ledger_manifest_or_auditor_created": false,
+    "product_code_or_harness_modified": false,
+    "other_prs_modified": false,
+    "other_prs_closed_or_merged": false
   }
 }

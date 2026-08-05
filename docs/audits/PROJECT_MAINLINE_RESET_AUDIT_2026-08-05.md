@@ -11,20 +11,20 @@
 
 仓库当前是一个“规则和离线骨架已经很厚、用户可直接复现的主链仍很窄”的研究/运营数据层。最值得继续投入的主线是：
 
-CA 输入与校验 → Helius 只读链上事实 → 完整 holder owner 聚合与地址清洗 → 地址库命中/沉淀 → CA first-screen 卡片 → 32 个 SOL 候选的 GMGN 备注导入 → 有延迟、滑点、费用、税和不可成交语义的离线历史回放。
+SOL 32 + BSC 30 观察钱包导入与人工抽查 → 10–15 个重点地址链上事实复核 → 离线可复制性 replay v0.1；同时并行推进最小 CA 判断卡 → 用观察/replay 结果增量更新地址库和备注。
 
 当前主线并非 SOL 全量 E2E，也不是可生产的多供应商热路径。代码、测试与文档明确表明：
 
 - Solana 的 mint、metadata、完整 token-account 读取、规则测试和 Pump 版本化解码已有可复用能力；但是 live Helius 数据源的 address tags、wallet facts、holder snapshot、Pump creator evidence、Dev history 仍未闭合到完整 AnalysisService 路径。
 - CA-first live 入口只返回三项有无/数量/完整性摘要，不调用 AnalysisService、地址库、持久化、队列或推断层；Operator Console 的默认数据仍是 fixture。
 - hot-path 卡片的市场、安全、holder 是 fixture-backed borrowed/unverified；library lookup 只接受调用方另传的 candidateWallets，粘贴 CA 本身不能产生真正的地址库命中。
-- SOL 1,433 个地址和 32 个候选、BSC 1,034 个有效地址和前 30 导入在私有输出中有数量级产物，但没有成为 Git 中的真实地址/原始备注，也没有因此自动获得链上确认或生产主链地位。
+- SOL 1,433 个地址已完成私有清洗，SOL 32 候选导入 pack 和 BSC 1,034 个有效地址的首批 30 条 GMGN 备注也已存在于外部私有输出；下一步是立即使用、人工抽查和增量刷新，而不是重新生成这些产物。它们仍不会因此自动获得链上确认或生产主链地位。
 - FIFO/weighted-average 的 first-hand leaderboard 规则存在，治理 Harness 也有一个通用 replay suite；但真正的 wallet shadow replay engine、现实执行成本模型和链上适配器尚未落入 src。不能把治理对象的“deterministic replay”当成交易回放已经可用。
-- BSC、Robinhood、自动发现、cron、实时增长循环、宏观 Dune、生产 PostgreSQL/Redis、Live Shadow Trading 均被现有阶段锁或 Owner 决策挡住。BSC 私有导入不是解除阶段锁的理由。
+- BSC 生产 adapter、自动刷新、跨链 CA 主链、Robinhood、自动发现、cron、实时增长循环、宏观 Dune、生产 PostgreSQL/Redis、Live Shadow Trading 仍然 PARK；BSC 私有离线、人工、只读观察不应被生产阶段配置误伤。
 
 ### 总体判定
 
-建议把接下来四周收敛为一个 SOL-only、手动触发、Helius-only、证据可复现的产品主线。P0 不是继续增加更多研究面，而是把已有能力接成一条用户能走完、失败会明确降级、再次运行能复现的 CA→判断链。
+建议把接下来 7–10 天收敛为 SOL32 + BSC30 观察钱包和最小 CA 卡并行的 MVP。P0 不是继续生成已有清洗/导入产物，而是把它们用起来：先人工抽查，再做 10–15 个重点地址事实复核和离线 replay，最后把结果回流到地址库/备注增量刷新。
 
 ### Owner Override 记录
 
@@ -124,13 +124,13 @@ tracked extension 的主要构成为 .json 468、.md 339、.ts 205、.gitkeep 26
 
 | 链路段 | 当前可运行形态 | 数据是真实、fixture、私有还是正式主链 | 信任级别 | 主要缺口与 Harness 阻塞 |
 | --- | --- | --- | --- | --- |
-| CA / wallet 输入 | SOL manual CA-first；单个和 1–10 批量入口有严格地址校验；wallet 侧有私有 1,433 输入清洗代码 | CA-first live 是受限 Helius read-only；Console 默认 fixture；1,433 输入在外部私有目录 | Helius 链上读取可作 A 类输入，但当前结果只是 bounded summary | 无 discovery、无自动 daily、无完整 CA card；live full fact 还受 Helius adapter 缺口和 live task evidence gate 阻塞 |
+| CA / wallet 输入 | SOL manual CA-first；单个和 1–10 批量入口有严格地址校验；wallet 侧已有私有 1,433 输入清洗结果，另有 SOL32＋BSC30 观察钱包 | CA-first live 是受限 Helius read-only；Console 默认 fixture；SOL32 与 BSC30 在外部私有产物中可供人工导入/抽查 | Helius 链上读取可作 A 类输入，但当前结果只是 bounded summary；观察钱包仍按 borrowed/unverified 与 chain_checked 分层 | 无 discovery、无自动 daily、无完整 CA card；live full fact 仍受 Helius adapter 缺口和 live task evidence gate 阻塞 |
 | 第三方事实数据 | free-provider ports + borrowed market/security/holder interfaces；实现主要是 fixture provider；GMGN 有 parser/transport diagnostics | fixture/离线为正式 Git 主线；GMGN 运行产物和 32 候选 pack 在私有目录；没有正式 live multi-provider adapter | 一律 borrowed/unverified，不能覆盖链上事实 | Owner 已把当前 runtime 收窄为 Helius-only；因此旧 dispatch 中“全免费多供应商热路径”应改为可选 Tier-B，而不是继续扩张 |
 | 链上校验 | LiveHeliusDataSource 可读 mint、metadata、完整 token accounts、部分 transaction history；Pinned Pump decoder 支持 create_v2/buy/sell/migrate fixture | live Helius 是受限公共 CA smoke；Pump decoder 和 adapter fixture 是正式 Git；full Pump/PumpSwap live E2E 未闭合 | mint/owner account 是 first-hand 输入；Pump creator/Dev/holder audited facts 在 live 数据源仍不可用 | live data source 的 getAddressTags/getWalletFacts 直接 fail closed；可选 audited holder/pump/dev 方法未实现，AnalysisService 因此只能 indeterminate |
 | 地址清洗 / labels | Base58 normalize、dedupe、owner aggregation、exclusion reason/confidence/evidence/ruleVersion；candidate screening、master table、chainfm cleaner 已有 | 规则和 fixture 在 Git；SOL 1,433 master/candidate 输出私有；label 默认 unverified | 借用 label 不升级为 verified；first-hand confirmation 分开 | CA→address library 没有从粘贴 CA 的用户路径闭合；in-memory library 主要用于 offline acceptance，Postgres 为 later |
 | 市场 / 流动性上下文 | append-only market_observations selection；hot-path 可以展示 price/liquidity/FDV 的 fixture quote | 仅离线 append-only / fixture；没有 live Dexscreener/Birdeye/Gecko adapter | B 类 borrowed/unverified；只用于上下文和阈值辅助 | live card 没有可依赖的市场来源；宏观 Dune 有研究/离线设计但不应挡住 SOL CA-first |
 | CA judgment | AnalysisService 在 fixture/接口上组织 market、holders、trades、transfers、funding、tags、wallet facts、holder concentration、creator/Dev/large-order 等 | 规则和 fixture 可复现；完整 live output 还不是正式主链 | first-hand 与 borrowed 分层明确；partial 会 warnings/completeness | Helius live 先在 tags/facts 处失败；没有从 live CA first 入口进入 AnalysisService 的正式全链路 |
-| GMGN notes | parser/transport/normalization、candidate screening 和私有导入产物存在；不会自动写回 GMGN | SOL 1,433 → 32 候选/32 import rows；BSC 1,034 → first 30 import rows；均为外部私有产物，不在 Git | provider fields borrowed/unverified；不能称为链上已确认智能钱 | 缺一个 32 条中文简洁导入、更新、变更、chain-check 状态都明确的收口命令；禁止把 notes 反写 GMGN、禁止把平台 label 变 verified |
+| GMGN notes | parser/transport/normalization、candidate screening 和私有导入产物存在；不会自动写回 GMGN | SOL32 import pack、BSC 1,034 中首批 30 条 GMGN 备注均已存在于外部私有产物，不在 Git；下一步是导入、人工观察、抽查和增量刷新 | provider fields borrowed/unverified；不能称为链上已确认智能钱 | 仍需把人工抽查/chain_checked/diff 状态作为旁路结果维护；禁止把 notes 反写 GMGN、禁止把平台 label 变 verified |
 | 历史 buy/sell 与 leaderboard | first-hand FIFO/weighted-average realized PnL 规则、borrow-then-confirm leaderboard 和 fixture replay suite 已有 | 规则/fixture 正式；部分 wallet profile/holdings history 只在私有或诊断产物；没有完整生产回放 | confirmed 只来自 first_hand swap evidence 且 completeness=1 | 没有交易 shadow replay engine；当前 generic replay 不是交易执行回测，无法回答“观察延迟后用户是否可成交” |
 | 可复现性 | ruleVersion、input/output hash、source watermark、scrubbed manifests、四个 Harness dimensions、461 个测试 | Git fixture 和 scrubbed evidence 正式；Harness runs ignored，历史 runs 缺失 | 代码/fixture 可复现；历史 DONE 的 audit closure 不一定可 lifecycle 验证 | lifecycle plan 报告 107 个 audit-evidence gaps；“报告写了 PASS”不等于“有独立有效 auditor run” |
 
@@ -138,24 +138,24 @@ tracked extension 的主要构成为 .json 468、.md 339、.ts 205、.gitkeep 26
 
 只记录聚合，不把真实地址或原始 GMGN/链响应写入 Git：
 
-- SOL 侧：唯一输入地址计数 1,433；候选 union 32；中文导入 pack 32；私有输出同时有 master、质量报告、replay manifest 和候选差异统计。
-- BSC 侧：唯一有效 EVM 地址计数 1,034；私有 source inventory 5,170 行引用、5 个来源、地址格式通过率 100%；紧凑导入前 30；私有候选 review 32；但 PnL/cost basis 覆盖率不能因此被解释为链上 verified。
+- SOL 侧：唯一输入地址计数 1,433；候选 union 32；中文导入 pack 32；私有输出同时有 master、质量报告、replay manifest 和候选差异统计。该产物已可使用，下一步是人工抽查、选样本复核和增量刷新，不是重新生成。
+- BSC 侧：唯一有效 EVM 地址计数 1,034；私有 source inventory 5,170 行引用、5 个来源、地址格式通过率 100%；紧凑导入前 30；私有候选 review 32；该私有离线/只读观察产物 KEEP / USE_NOW；但 PnL/cost basis 覆盖率不能因此被解释为链上 verified，生产 adapter、自动刷新和跨链 CA 主链仍 PARK。
 - 私有输出总量约 3,967 个文件、约 81 MB；BSC 约 3,442 个、SOL 约 514 个，其余为聚合/清单。它们位于外部 CHAINFM_OUT_DIR，未纳入 Git。
-- SOL 1,433 全量重抓、累计 PnL、GMGN signed/cumulative、BSC chain verification 都不应因“已有私有文件”直接改成生产 GREEN；必须经过当前阶段、独立审计和 source watermark/规则版本绑定。
+- 私有文件不等于生产 GREEN：后续只对选定地址做有界事实复核，把观察/replay 结果带着 source watermark、规则版本和 trust 状态增量回流；不因已有产物重新启动全量重抓、GMGN signed/cumulative、生产 BSC chain verification。
 
 ### 3.3 关键问题的直接回答
 
 #### SOL 1,433 → 32、GMGN 中文导入
 
-这条数据准备链已经有可复用的 clean-rank、candidate screening、hash guard 和私有 32 条导入形状，但“有产物”与“用户可用”之间还差三件事：稳定的 32 条 schema、增量刷新/变更输出、明确的链上确认列。建议 P0 只收口为“私有、手动、可重复、借用字段带 unverified 的中文导入 pack”，不做 GMGN 页面/API 写回，不把候选名称改成 confirmed。
+这条数据准备链已经有可复用的 clean-rank、candidate screening、hash guard 和私有 32 条导入形状；SOL32 导入 pack 已是现有私有产物，不应再描述成待生成任务。下一步是立即导入、人工抽查、对选定地址做事实复核，并以差异/chain_checked 状态做增量刷新；不做 GMGN 页面/API 写回，不把候选名称改成 confirmed。
 
 #### BSC 1,034 → 前 30
 
-数据层面已有 inventory、质量覆盖和 first-30 import 的私有聚合；产品层面仍是 BLOCKED_STAGE。当前 Constitution/Owner decision 明确要求 Solana E2E GREEN 后才可重新讨论 BSC，故本次不建议创建“BSC 已完成”主线，也不建议为导入产物绕过 stage lock。
+BSC 必须拆成两层：私有 1,034 地址、首批 30 条 GMGN 备注和人工观察是 KEEP / USE_NOW，可离线、私有、只读地立即导入和抽查；BSC 生产 adapter、自动刷新和跨链 CA 主链是 PARK。BSC/SOL stage lock 应记录为 Owner 可覆盖的风险配置：离线、私有、只读分析不受阻断，生产写入、凭据和真实交易才进入 Strict；本次不修改 Harness 配置。
 
 #### 外部链验证
 
-SOL 侧可做有限、手动、Helius-only 的 selected verification；可以确认 mint/account/transaction shape、creator precedence、funding edge 等有证据的字段，但当前 full AnalysisService live path 会撞到 tags/facts/audited fact 缺口。1,433 和 1,034 的全量“已链上确认”均不成立。
+从 SOL32＋BSC30 观察钱包中选 10–15 个重点地址做有限、手动、只读的链上事实复核；按实际链和 Owner 授权的只读来源记录 mint/account/transaction shape、creator precedence、funding edge 等有证据字段。当前 full AnalysisService live path 仍有 tags/facts/audited fact 缺口；1,433 和 1,034 的全量“已链上确认”均不成立，也不需要先完成 BSC 生产 adapter。
 
 #### 热路径、流动性 / 宏观、holder / dev / funding / cluster
 
@@ -167,29 +167,29 @@ hot-path 代码已经有并行扇出、2 秒虚拟 P95 budget、degrade warnings
 
 ## 4. 产品与工程面分类
 
-分类含义：KEEP 保留既有硬边界或稳定规则；SIMPLIFY 减少表面积；MERGE 合并重复实现/证据链；PARK 保留但不进当前主线；ARCHIVE 保留为历史研究；DELETE_CANDIDATE 只表示可再生成/可清理候选，本次不执行删除；MAINLINE_NOW 表示四周内应直接产出用户结果。
+分类含义：KEEP 保留既有硬边界或稳定规则；SIMPLIFY 减少表面积；MERGE 合并重复实现/证据链；PARK 保留但不进当前主线；ARCHIVE 保留为历史研究；DELETE_CANDIDATE 只表示可再生成/可清理候选，本次不执行删除；MAINLINE_NOW 表示 7–10 天并行 MVP 应直接产出用户结果；USE_NOW 是叠加在既有 KEEP 之上的使用状态，不是新的主分类。
 
 ### 4.1 产品面
 
 | 面 | 分类 | 审查意见 |
 | --- | --- | --- |
 | CA 输入、严格地址校验、手动入口 | KEEP | 这是低成本的主入口和安全边界，继续保留 fail-closed |
-| Helius mint/metadata/token-account live read | MAINLINE_NOW | 作为 SOL-only first-hand 起点，但必须把 watermarks/partial 直接带到卡片 |
+| Helius mint/metadata/token-account live read | MAINLINE_NOW | 作为 SOL first-hand 起点，但必须把 watermarks/partial 直接带到卡片 |
 | owner aggregation、余额清洗、exclusion evidence | KEEP | 这是项目差异化的事实层，不能被 borrowed top-N 替代 |
 | Pump creator precedence、版本化 decoder、fixture | KEEP | create.creator precedence 和 pinned fixtures 是高信任基础 |
 | Dev history | SIMPLIFY | 只基于完整 creation-to-now normalized trades；不完整就 null/warning，不扩张假设 |
 | funding edge、service-funder suppression、cluster rules | KEEP | 保留 evidence/confidence/ruleVersion 和可逆快照 |
 | alpha、bot/sniper、independent-smart-money detector | KEEP | 只做 judgment layer，不把 label 当 chain fact |
-| address library exact lookup | MAINLINE_NOW | 从 CA first-screen 真正传入 holder candidates，先完成 SOL-only |
+| address library exact lookup | MAINLINE_NOW | 从 CA first-screen 真正传入 holder candidates，并接收观察/replay 结果的增量回流 |
 | sedimentAnalysis / wallet-token-edge wiring | MERGE | 把 in-memory acceptance、Postgres adapter 和 AnalysisService after-analysis hook 统一在一个 contract |
 | append-only market observation | SIMPLIFY | 先保留离线 observation/context；不再把多供应商 live 设计当作当前事实 |
 | CA hotpath card | MAINLINE_NOW | 接 Helius holder facts、library hit、可选 unverified context 和明确 completeness |
 | AnalysisService full audited Solana path | MAINLINE_NOW | 这是从 smoke 到产品的关键连接，不另造第二套 CA 判断器 |
 | GMGN parser / transport diagnostics | MERGE | parser contract 保留；重复的 transport repair/audit chain 归并为少量可复现 schema fixtures |
-| SOL 1,433 profile/master refresh | MAINLINE_NOW | 只做私有、手动、增量和 hash-bound refresh，不宣称全量链上 verified |
-| SOL 32 Chinese GMGN import pack | MAINLINE_NOW | 作为用户直接可复制/审阅的脱敏产物收口 |
-| BSC 1,034 / first-30 import | PARK | 私有产物可留存，阶段锁未解除 |
-| selected SOL external chain verification | MAINLINE_NOW | 先做 5–10 个手动样本/候选的事实核对，沉淀方法和可复现 manifest |
+| SOL 1,433 existing private cleaning/master + SOL32 existing GMGN import | KEEP / USE_NOW | 已有私有产物；下一步是使用、人工抽查、差异复核和增量刷新，不再把清洗/生成 pack 写成未完成工作 |
+| BSC private 1,034 addresses + first-30 GMGN notes + manual observation | KEEP / USE_NOW | 现有私有、离线、只读观察产物立即可用；不升级为链上 verified，不写回 GMGN |
+| BSC production adapter + automatic refresh + cross-chain CA mainline | PARK | 保留设计/代码候选；生产写入、凭据、真实交易或跨链生产接线进入 Strict，当前不进 MVP |
+| selected 10–15-address chain fact verification | MAINLINE_NOW | 从 SOL32＋BSC30 观察钱包中选样本做只读事实核对，按来源保留 chain_checked/unknown/partial 状态 |
 | historical buy/sell leaderboard | MAINLINE_NOW | 复用 first-hand FIFO/weighted 规则，分开 borrowed lead 与 confirmed result |
 | delay/slippage/fees/taxes/liquidity/non-fill model | MAINLINE_NOW | 放进离线 replay v0.1；结果必须区分 wallet performance 与 user-replicable performance |
 | Live Shadow Trading / resident observation | PARK | 不能先于 replay、适配器、审计和 Owner 网络授权 |
@@ -206,10 +206,11 @@ hot-path 代码已经有并行扇出、2 秒虚拟 P95 budget、degrade warnings
 
 | 面 | 分类 | 审查意见 |
 | --- | --- | --- |
-| required-reading chain、Constitution、stage lock、no-trade/no-secret | KEEP | 属于不可弱化的硬边界 |
+| required-reading chain、Constitution、no-trade/no-secret | KEEP | 保留安全、事实语义和禁止真实交易的硬边界；stage lock 单独按风险配置处理 |
+| BSC/SOL stage lock | SIMPLIFY | 改为 Owner 可覆盖的风险配置；离线、私有、只读分析不受阻断，生产写入、凭据和真实交易才进入 Strict |
 | task schema、hash、write-set、forbidden action 校验 | KEEP | 继续保护安全和可追溯性 |
 | typecheck/test/build/security scan/diff check | KEEP | 代码任务的最小质量门 |
-| T2 独立 auditor 身份和 fail-closed evidence | KEEP | 高风险/数据语义任务必须保留 |
+| 按 Fast/Standard/Strict 分层的 review 与 evidence | SIMPLIFY | 不再要求所有 T2 语义工作独立 Auditor；只有 Strict 才要求独立审计、Owner gate 和回滚方案 |
 | manifest、watermark、source hash | SIMPLIFY | 对 provider/data/replay 任务保留；纯文档和本次 Owner audit 不应强制虚构 run |
 | 全部工作串行 run | SIMPLIFY | 只锁定同一共享 run/overlap；不把所有离线研究串成一个队列 |
 | 每项工作必须精确 dispatch、偏离即 PARK | SIMPLIFY | 对产品代码任务保留；Owner 审查、只读汇总、私有研究应走轻量路径 |
@@ -220,44 +221,60 @@ hot-path 代码已经有并行扇出、2 秒虚拟 P95 budget、degrade warnings
 | harness:doctor 对无关文档任务的全仓强阻塞 | SIMPLIFY | 仍扫描 secrets/wallet artifacts；把与 write set 无关的既有 baseline 分层为 warning |
 | npm build 生成的忽略 .js/.d.ts | DELETE_CANDIDATE | 可再生成；本次没有删除，正式统计已排除 |
 
-分类计数：MAINLINE_NOW 9、KEEP 9、SIMPLIFY 8、MERGE 4、PARK 7、ARCHIVE 3、DELETE_CANDIDATE 1。计数覆盖上面 41 个产品/治理面；没有任何删除动作。
+分类计数：MAINLINE_NOW 7、KEEP 10、SIMPLIFY 10、MERGE 4、PARK 7、ARCHIVE 3、DELETE_CANDIDATE 1；USE_NOW overlay 2（SOL32 与 BSC30 私有产物）。计数覆盖上面 42 个产品/治理面；没有任何删除动作。
 
 ## 5. Harness 审查：保留什么、减轻什么
 
 ### 5.1 A 类：必须保留的硬边界
 
 1. 禁止 secret、wallet artifact、raw provider payload、交易签名、broadcast 和 real trade；security scan 必须 fail closed。
-2. BSC/Robinhood stage lock、SOL-only 当前 active chain、Owner live gate；不能因私有文件或文档研究越过。
+2. BSC/SOL stage lock 是 Owner 可覆盖的风险配置：离线、私有、只读分析不受阻断；生产写入、凭据和真实交易才进入 Strict，并保留 Owner live gate。
 3. raw integer、transfers 不等于 sales、owner aggregation、borrowed/unverified、partial/completeness、creator precedence 等产品事实规则。
 4. task schema/hash、write-set、forbidden actions、tracked input 检查；防止“报告说做了但代码没进 Git”。
-5. typecheck/test/build/diff-check；数据任务再加 source watermark、double-run hash、record counts。
-6. T2 实现与最终 auditor 身份分离；一旦出现 FAIL，必须开明确 repair 链。
+5. 对相关代码任务保留 typecheck/test/build/diff-check；数据/回放任务按需要加 source watermark、double-run hash、record counts。
+6. review 深度按 Fast/Standard/Strict 风险分层；不再要求所有 T2 语义工作必须独立 Auditor。FAIL 形成有界 finding 和 review decision，不自动创建 repair 链。
 
 ### 5.2 B 类：保留但按风险轻量化
 
-- 四个 Harness dimensions：latency、replay、source-degradation、label-decision 仍有价值；扩充应绑定真实 product path，而不是增加更多纯 governance cases。
-- Standard acceptance：代码、provider adapter、replay 和 data cleaning 任务保留 typecheck/test/build/security/diff；纯文档、聚合审查用 Fast。
-- manifest/source hash：provider/data/replay 和私有输出继续保留，但路径使用外部 alias，Git 只保存 scrubbed aggregate。
-- lifecycle readiness：保留自动发现依赖完成和审计证据缺口的能力，但不能把它当成所有工作都必须长期占用的协作锁。
+- 四个 Harness dimensions：latency、replay、source-degradation、label-decision 仍有价值；只在相关产品路径需要时使用，不再为每类只读工作增加 governance cases。
+- Fast：只需要简短范围说明和相关 privacy/diff/schema 自检；不需要 Task Spec、ledger、manifest、independent auditor 或全仓 doctor。
+- Standard：只需要简短任务说明、相关测试、安全扫描和一次普通 review；不强制完整 manifest、独立审计或全仓生命周期闭环。
+- Strict：涉及生产写入、凭据、真实交易、阶段切换或不可逆 schema 时，才需要 Task Spec、manifest、独立审计、Owner gate 和回滚方案。
 
 ### 5.3 C 类：当前造成延迟或重复的 over-constraint
 
-- “所有 agent 只执行 exact task spec”无法覆盖 Owner 直接授权的全仓审查；本次例外证明需要一个受控 audit role。
-- 对纯文档、轻量私有聚合、研究型 replay 设计也强制完整 task/manifest/independent-run，会把证据工作变成主线瓶颈。
+- “所有 agent 只执行 exact task spec”无法覆盖 Owner 直接授权的全仓审查；Owner 直接授权的只读审查应走 Fast 或 Standard 的轻量说明。
+- 对纯文档、轻量私有聚合、研究型 replay 设计也强制完整 task/manifest/independent-run，会把证据工作变成主线瓶颈；独立 Auditor 只在 Strict 中成为必需。
 - shared worktree 全树串行适合会改代码的 Harness run，不应约束彼此不重叠的只读分析。
 - lifecycle 目前把 107 个 DONE 关联项判为 evidence gap，因为 ignored run 目录没有可验证 finished manifest；这更像历史证据迁移缺口，不等同于 107 个产品实现全部错误。
 - harness:doctor 当前因三项既有 wallet*.json tracked 内容失败；对真正修改产品代码的任务应阻塞，对只写本审查文档不应要求“先修完别人的 baseline”。
-- dispatch 文档声明的多供应商 hot-path 与当前 Owner 决定的 Helius-only runtime 不一致，应以 Owner 决定覆盖旧 blueprint。
+- dispatch 文档声明的多供应商 hot-path 与当前 Owner 决定的 Helius-only runtime 不一致，应以 Owner 决定覆盖旧 blueprint；BSC 私有只读观察不应被生产 stage 配置阻断。
 
 ### 5.4 Lean Harness 建议
 
 | 模式 | 适用 | 必做 | 不必做 |
 | --- | --- | --- | --- |
-| Fast | 只读审查、文档、脱敏汇总、fixture 研究 | required-reading、diff/privacy scan、JSON/schema 自检、明确不改产品/ledger | run start/finish、独立 auditor、全仓 doctor、完整 manifest |
-| Standard | 产品代码、规则、fixture adapter、CA card、offline replay | write-set、typecheck/test/build/security/diff、相关四维 suite、source/hash/replay 证据、一次同行审查 | 与目标无关的 live provider、全量历史 audit closure |
-| Strict | live credential、真实 provider、敏感数据、阶段切换、不可逆 schema/生产写入 | Owner gate、secret scan、预算/timeout、tracked scrubbed manifest、独立 auditor、stage/ledger/lifecycle、回滚/保留策略 | 无明确授权的自动化、交易和跨链扩张 |
+| Fast | 只读审查、文档、脱敏汇总、fixture 研究 | 简短范围说明、相关 privacy/diff/schema 自检、明确不改产品/Harness | Task Spec、ledger、manifest、independent auditor、全仓 doctor |
+| Standard | 产品代码、规则、fixture adapter、CA card、offline replay | 简短任务说明、相关测试、安全扫描、一次普通 review | Task Spec/manifest/independent auditor/全仓 lifecycle，除非风险实际升级 |
+| Strict | 生产写入、凭据、真实交易、阶段切换、不可逆 schema | Task Spec、manifest、独立审计、Owner gate、secret scan、预算/timeout、回滚方案与保留策略 | 无明确授权的自动化、交易和跨链扩张 |
 
-Lean Harness 的原则是“风险驱动，不是证据样式驱动”。现有 hard boundary 继续存在；需要减轻的是低风险工作被同一种 Strict 流程阻塞，以及历史 reports 与 ignored runs 之间的断裂。
+Lean Harness 的原则是“风险驱动，不是证据样式驱动”。生产写入、凭据和真实交易仍然严格；低风险离线、私有、只读分析不应被 Strict 流程阻塞，也不应因为 T2 标签自动生成独立审计或 repair 链。
+
+### 5.5 Harness 处理建议
+
+- 立即冻结新增 tasks、reports、dispatches 和 ledger；本次只继续修改现有三份审查文件。
+- 旧目录先只读归档，不立即批量删除；从 required reading 和 lifecycle gate 移除历史 evidence 的强制依赖。
+- 后续做一次性归档和索引迁移，不逐文件开启 repair 任务；归档动作完成前保留可追溯的只读入口。
+
+### 5.6 PR 处理建议
+
+以下是主线治理建议，本次只记录在 PR #21 的审查文件中，不代为修改、关闭或合并其他 PR：
+
+- #19：关闭，不合并。
+- #20：待 #21 合并后关闭为 superseded，不合并。
+- #2：关闭为历史 smoke evidence。
+- #3：关闭为 superseded stacked PR。
+- #9：标记 SALVAGE_ONLY，不直接合并；复用代码后关闭。
 
 ## 6. Task / Ledger / 依赖健康度
 
@@ -301,7 +318,7 @@ task filename keyword 统计（可重叠）：AUDIT 125、REAUDIT 2、REPAIR 97�
 
 ### 6.3 Lifecycle 诊断
 
-直接运行 npx tsx harness/cli.ts lifecycle plan 的脱敏摘要：
+以下仅引用原始审查基线的 lifecycle plan 脱敏摘要；本次 Owner 对齐没有重新运行 lifecycle，也没有创建新的 evidence、task 或 manifest：
 
 - runnable 3 个；
 - not runnable 38 个；
@@ -309,7 +326,7 @@ task filename keyword 统计（可重叠）：AUDIT 125、REAUDIT 2、REPAIR 97�
 - audit-evidence gaps 107；
 - readiness suggestion 1 个。
 
-阻塞的主要来源是：BSC/Robinhood stage、Shadow contracts/engine/adapter dependency chain、GMGN signed/full rerun 的 PARK/READY 状态，以及大量已标 DONE 但没有被当前 ignored-run 机制认可的有效独立 auditor manifest。这个结果应推动“证据迁移/历史归档”和 Lean Harness，而不是直接重做 107 个产品功能。
+原始阻塞的主要来源是：BSC/Robinhood stage、Shadow contracts/engine/adapter dependency chain、GMGN signed/full rerun 的 PARK/READY 状态，以及大量已标 DONE 但没有被当前 ignored-run 机制认可的有效独立 auditor manifest。这个结果应推动“证据迁移/历史归档”和 Lean Harness，而不是直接重做 107 个产品功能；按新的风险配置，离线/私有/只读分析不应被该历史诊断阻断。
 
 ## 7. Git 历史信号
 
@@ -329,82 +346,70 @@ task filename keyword 统计（可重叠）：AUDIT 125、REAUDIT 2、REPAIR 97�
 
 结论：近期仓库主要在修复协作、证据和边界流程，产品功能推进很少。治理并非无价值，但当 process-fix 接近八成、而用户路径触点约四分之一时，下一阶段必须把审计产物绑定到真实 CA card、address library、replay 输出，而不是继续单独增长 Harness 表面积。
 
-## 8. P0 / P1 / P2 优先级
+## 8. 主线优先级（Owner 直接授权的 7–10 天并行 MVP）
 
-### P0：把 SOL CA 主线做成可复现用户结果
+以下是主线工作流排序，不创建新的 Task Spec、ledger、dispatch、manifest 或独立审计 Agent；实施时按 Fast/Standard/Strict 风险档位取所需检查。
 
-1. **SOL-CA-FIRST-CARD-AND-FACTS-001**
-   - 用户结果：粘贴一个公开 SOL CA，得到 mint/metadata/holder owner aggregation、watermark、completeness、可解释 warnings 和明确的 CA 判断卡；市场/安全等 borrowed 字段若存在必须标 unverified。
-   - 输入：公开 CA、Helius process-only credential、现有 fixture pack、holder cleaning、Pump decoder、AnalysisService。
-   - 最小实现：补齐 live Helius boundary 到 audited holder snapshot/Pump creator/Dev history 的最小闭环；从 CA first 进入 AnalysisService；保留 Helius-only、请求预算、partial fail-closed；不复制第二套规则引擎。
-   - 不做：不接新 provider、不做 discovery/cron、不写交易、不把 top-100 borrowed concentration 当链上事实。
-   - 短验收：一组 pinned fixture 与一组授权 public CA 各跑两次；source watermark、owner completeness、creator precedence、warnings 和 scrubbed hash 可复现；typecheck/test/build/security/diff 通过。
-   - 独立审计：T2 read-only auditor，核对输入边界、partial 语义、provider budget、无 raw payload/secret 和卡片字段信任。
-   - 依赖/复用：复用 LiveHeliusDataSource、HeliusSolanaAdapter、SolanaHolderSnapshotService、Pump decoder、AnalysisService、ca-holder API contracts。
+### 1. SOL32＋BSC30 立即导入 GMGN 并人工抽查
 
-2. **SOL-CA-ADDRESS-LIBRARY-WIRING-001**
-   - 用户结果：CA card 的清洗 owner/候选地址可以命中地址库，并把有证据的 wallet/token edge 写成可追溯观察；再次分析同一 CA 不产生重复 observation。
-   - 输入：任务 1 的 complete holder snapshot、funding edges、ruleVersion、source watermark、现有 AddressLibrary contract。
-   - 最小实现：把 sedimentAnalysis 接到明确的 after-analysis seam；统一 in-memory fixture 与 Postgres adapter contract；为 CA→lookup 命中补测试。
-   - 不做：不自动沉淀所有发现、不跨链合并、不把 borrowed GMGN label 变 verified、不开放生产 backfill。
-   - 短验收：fixture double-run 输出相同；selected live/manual CA 只写 scrubbed structured observation；verified 只能由 first_hand evidence 进入；partial 不写伪完整结论。
-   - 独立审计：核对重复 fingerprint、borrowed/first-hand promotion、owner aggregation 和可逆性。
-   - 依赖/复用：InMemoryAddressLibrary、PostgresAddressLibrary、observation schema、holder cleaning tests、existing trust rules。
+- 用户结果：直接使用已有的 SOL32 import pack 和 BSC 1,034 地址中首批 30 条 GMGN 备注，形成可读的观察钱包清单、人工抽查记录和未核验项列表。
+- 输入：外部私有产物、现有 parser/normalizer、已有地址清洗/候选筛选结果；不把真实地址、原始备注或 provider payload 写入 Git。
+- 最小动作：导入、抽查、标记 chain_checked/unknown/partial、记录差异；不重新生成 SOL1,433 清洗结果或 SOL32 pack，不把 BSC 私有观察误写为生产 adapter，也不自动写回 GMGN。
+- 验收：SOL32＋BSC30 都可被人工打开和复核；抽查结论带 as_of、source/trust 标签；未核验字段保持 unknown/unverified；结果可以作为后续 10–15 地址选择和 replay 输入。
+- 风险档位：本步骤是私有、离线、只读观察，Fast 或 Standard 足够；只有触及生产凭据、生产写入或真实交易时才升级 Strict。
 
-3. **SOL-GMGN-32-CHINESE-IMPORT-REFRESH-001**
-   - 用户结果：把私有 SOL 1,433 输入稳定收敛成 32 条简洁中文 GMGN 导入/审阅 pack，并能重复刷新、显示新增/更新/无变化和链上核验状态。
-   - 输入：外部 CHAINFM_OUT_DIR 中已授权的 normalized profile、source hash、candidate union、既有 parser output。
-   - 最小实现：固定 32 条 schema；字段按 borrowed/unverified、chain_checked、unknown、as_of、ruleVersion 分栏；同输入输出 hash；变更 diff 只写聚合；不改原始 notes。
-   - 不做：不把 notes 自动写回 GMGN、不提交地址/原始备注/provider payload、不宣称 1,433 全量 verified、不使用签名页面自动化。
-   - 短验收：32 条 record count；两次相同输入 hash 相同；privacy scan 通过；缺失字段保持 null/unknown；README/报告可用外部 alias 复现。
-   - 独立审计：零网络、只读私有输出和 committed parser；验证脱敏、计数、hash、状态语义。
-   - 依赖/复用：clean-solana-address-directory、candidate-screening、master-table-builder、GMGN parser/normalizer、replay manifest。
+### 2. 选 10–15 个重点地址做链上事实复核
 
-### P1：建立可解释的可复制性，而非只展示 wallet PnL
+- 用户结果：从 SOL32＋BSC30 观察钱包中选出 10–15 个重点地址，对 creator/funding/transaction shape/账户事实等可核对字段形成带来源和完整性状态的复核结果。
+- 最小动作：按链使用 Owner 允许的只读来源，控制预算和范围；只更新选定记录，不做全量重抓，不做跨链身份合并，不把 borrowed label 升级为 verified。
+- 验收：每个样本有 first-hand/borrowed/unknown、as_of、partial/completeness 和可解释差异；复核结果可被 replay 和最小 CA 卡消费。
+- 风险档位：离线或私有只读分析不受 stage lock 阻断；涉及生产凭据或生产写入才进入 Strict。
 
-4. **SOL-WALLET-REPLAY-V0-1-001**
-   - 用户结果：对于选定 wallet/token，分开显示 wallet 实际表现与用户在观察延迟下可能复制的表现；明确 fill/no-fill、滑点、流动性约束、手续费、税和未知项。
-   - 输入：pinned Solana swap/transfer fixtures、first-hand normalized swaps、append-only market observations、手动 observed_at/latency scenarios。
-   - 最小实现：先落 shadow contracts + deterministic replay engine + SOL adapter；5m/30m/2h/24h window；source_trade_at、observed_at、simulated_order_at 三时间；no-lookahead；unfillable 不计盈利；复用 FIFO/weighted rule。
-   - 不做：不连 trading wallet、不 broadcast、不做 resident monitor、不先做 BSC adapter、不把未来高点当成交价。
-   - 短验收：相同输入两次输出 hash 相同；成本后结果守恒；延迟/流动性变化会影响 fill；tax/fee missing 不当 0；replay report 能解释每个 no-fill。
-   - 独立审计：T2 auditor 检查时间因果、金额守恒、成本模型、unknown/null、source/verification 标签。
-   - 依赖/复用：现有 shadow task contract 设计、token-profit-leaderboard、Harness replay suite、market observation schema；Live Shadow Observation 仍 PARK。
+### 3. 直接做离线可复制性 replay v0.1
 
-5. **SOL-1433-INCREMENTAL-REFRESH-AND-VERIFY-001**
-   - 用户结果：对 1,433 地址做预算可控的增量更新，对 32 候选和少量手动样本做 first-hand chain verification，用户能看到“未检查/借用/已核验/数据不足”而不是一个总分。
-   - 输入：私有 1,433 master/replay manifest、previous source hash、5–10 个手动选定样本、Helius free budget。
-   - 最小实现：输入/输出计数和 hash guard；只更新 changed/selected records；核验 creator/funding/trade shape 的证据包；选定结果进入 replay/library，不把全量 profile 直接升级。
-   - 不做：不做自动发现、全量无预算重抓、跨链身份合并、GMGN signed automation。
-   - 短验收：同输入 replay；delta count 可解释；预算耗尽显式 DEGRADED；私有输出未 tracked；独立审计能从 manifest 重算聚合。
-   - 独立审计：零 provider 或按 Owner 明确授权的 bounded live read 分开审；不能用旧 report 代替新 evidence。
-   - 依赖/复用：wallet profile pilot、master table、data-quality report、provider executor、source hash/replay manifest。
+- 用户结果：对选定 wallet/token 区分 wallet 实际表现与观察延迟下用户可能复制的表现，明确 fill/no-fill、delay、slippage、liquidity、fees、tax、non-fill 和 unknown。
+- 最小动作：复用现有 shadow contract、FIFO/weighted-average 规则、fixture 和 observation schema；使用 source_trade_at、observed_at、simulated_order_at 三个时间并禁止 look-ahead；先做离线可复制路径，不做 Live Shadow。
+- 不做：不连接 trading wallet、不签名、不 broadcast、不真实交易、不把未来高点当成交价、不以 BSC 生产 adapter 作为前置。
+- 验收：相同输入输出稳定；成本后结果守恒；延迟/流动性影响 fill；缺少 fee/tax 不当作 0；每个 no-fill 有解释。
+- 风险档位：实现或规则变更用 Standard（简短说明、相关测试、安全扫描、一次普通 review）；只有生产接线才 Strict。
 
-### P2 / PARK：有价值但不应挤占当前主线
+### 4. 并行完成最小 CA 判断卡
 
-- BSC 1,034 / first-30：等 Solana E2E GREEN 和 Owner stage activation；不借私有 coverage 绕过 stage lock。
-- 宏观 Dune、global liquidity、market dashboard：保留研究与 observation schema，等 CA-first 可用后再排。
-- 自动 top-token discovery、cron、automatic sedimentation：只保留 manual/offline implementation，等 Owner 明确启用。
-- Postgres/Redis production console path：等待部署目标、backfill 和保留策略决策。
-- Live Shadow Observation、cross-chain HUD、Robinhood：等待 replay/adapter/audit/Owner gates；不作为简单 replay 前置。
+- 用户结果：从 CA first 输入得到 mint/metadata/holder owner aggregation、watermark、completeness、warnings、address-library 命中和明确的 CA judgment；borrowed 字段始终标 unverified。
+- 最小动作：复用 Helius live boundary、现有 holder cleaning、Pump decoder、AnalysisService、AddressLibrary contract 和 fixture；保持 bounded summary、partial fail-closed，不扩张新 provider/discovery/cron。
+- 验收：fixture 与有界授权输入均能稳定输出；CA card 不把 borrowed label 当 chain fact；重复分析不产生重复 observation；敏感原始 payload 不落 Git。
+- 风险档位：代码/fixture 变更用 Standard；生产凭据、不可逆 schema 或生产写入才升级 Strict。
+
+### 5. 用观察和 replay 结果增量更新地址库和备注
+
+- 用户结果：把人工抽查、重点地址复核和 replay 的可追溯结果回流到地址库与 GMGN 备注的私有工作流，保留新增/更新/无变化、chain_checked、unknown 和数据不足状态。
+- 最小动作：只更新 changed/selected records；使用输入/输出计数、hash guard、ruleVersion 和 source watermark；不自动沉淀全部发现，不全量覆盖既有私有产物，不写回 GMGN。
+- 验收：delta count 可解释；同输入 replay 稳定；未核验项不被升级；私有输出仍不 tracked；观察钱包 → 重点复核 → replay → note update 闭环可重复。
+- 风险档位：离线/私有/只读增量用 Fast 或 Standard；生产 backfill、凭据或真实交易才 Strict。
+
+### PARK / 后置范围
+
+- BSC 生产 adapter、自动刷新、跨链 CA 生产主链、Robinhood、Live Shadow Trading、signing/broadcast/copy-trade CTA：PARK。
+- 宏观 Dune、global liquidity、market dashboard、自动 top-token discovery、cron、automatic sedimentation、生产 PostgreSQL/Redis Console path：保留研究或代码候选，不挤占 MVP。
 - 竞品 UI、Alpha Terminal、Telegram/social：ARCHIVE/DESIGN-FOR-LATER，不作为 implementation authority。
 
 ## 9. 当前与目标主线
 
-两张 Mermaid 图和四周节奏见同目录的 PROJECT_MAINLINE_RESET_DIAGRAMS_2026-08-05.md。当前系统的关键断点是“live CA first 只返回 bounded summary、hotpath 依赖 fixture/borrowed、library 没有由 CA 真正驱动、深度分析和 replay 没有形成可持久化/可验证用户结果”。目标系统把同一套 Helius facts、cleaning、library、judgment 和 replay 作为一条主线，Harness 作为按风险挂载的 sidecar，而不是产品流程本身。
+两张 Mermaid 图和 7–10 天节奏见同目录的 PROJECT_MAINLINE_RESET_DIAGRAMS_2026-08-05.md。当前系统的关键断点是“观察钱包、重点事实复核、replay 和备注更新没有形成闭环；live CA first 仍只返回 bounded summary；library 没有由 CA 真正驱动；深度分析和 replay 没有形成可持久化/可验证用户结果”。目标系统把 SOL32＋BSC30 观察、selected verification、离线 replay、最小 CA card 和增量 note/library update 并行推进，Harness 作为按风险挂载的 sidecar，而不是产品流程本身。
 
-四周建议节奏：
+7–10 天并行 MVP：
 
-| 周 | 主线交付 | 明确不做 |
+| 时间 | 主线交付 | 明确不做 |
 | --- | --- | --- |
-| 第 1 周 | Helius audited facts 最小闭环、CA card、partial/watermark、live/fixture 双验收 | 新 provider、自动发现、BSC |
-| 第 2 周 | CA→address library sedimentation、SOL 32 中文导入 pack、增量 refresh schema | GMGN 写回、全量 1,433 chain verification |
-| 第 3 周 | replay contracts/engine/SOL adapter，现实成本和 no-fill | Live shadow、交易 |
-| 第 4 周 | 5–10 个手动样本 chain verification、replay 与 library 交叉验收、历史 evidence 归档 | 宏观/跨链/cron/生产 DB |
+| Day 1 | SOL32＋BSC30 导入和人工抽查 | 不重新生成已有私有产物，不写回 GMGN |
+| Day 2–4 | 重点地址离线 replay v0.1 | 不做 Live Shadow、签名、broadcast 或真实交易 |
+| Day 2–5 | 10–15 个重点地址链上事实复核 | 不做全量重抓、跨链身份合并或 BSC 生产 adapter |
+| Day 3–7 | 最小 CA 判断卡并行闭环 | 不接新 provider、discovery、cron 或生产 backfill |
+| Day 6–10 | 观察/replay 结果回流和地址库/备注增量刷新 | 不把 borrowed/unknown 升级为 verified，不启动旧的串行长周期计划 |
 
 ## 10. 验证结果与残余风险
 
-在独立审查工作树执行：
+以下全仓测试、构建、security scan、doctor 和 lifecycle 数字是上一提交的审查基线；本次 Owner 对齐不重新运行全仓测试，不运行 Harness lifecycle，也不创建新的 evidence：
 
 | 命令 | 结果 |
 | --- | --- |
@@ -417,6 +422,8 @@ task filename keyword 统计（可重叠）：AUDIT 125、REAUDIT 2、REPAIR 97�
 | npx tsx harness/cli.ts doctor | FAIL，且为基线问题；3 个 forbidden wallet*.json tracked matches，未由本审查新增 |
 | npm run harness:status | PASS；active solana-pumpfun-e2e，blocked bsc/robinhood，3 READY |
 | npx tsx harness/cli.ts lifecycle plan | diagnostic；runnable 3、not runnable 38、sync errors 0、107 audit-evidence gaps、1 readiness suggestion |
+
+本次修订只做以下窄范围验证：三个审查文件的 JSON 解析、Mermaid 基本语法检查、`git diff --check` 和 privacy scan；不把上一提交的全仓基线误报成本次重跑结果。
 
 Doctor 的三个 baseline match 是 wallet artifact rule 的现有问题，和当前 Draft PR #19/#20 对应；本次没有借审查权限修改它们。其风险是如果把 doctor 单一 FAIL 作为所有任务的硬门，会阻断无关的文档/聚合审查；其安全价值是不能让新的 wallet artifact 进入 Git，这条边界必须保留。
 
@@ -440,7 +447,9 @@ Doctor 的三个 baseline match 是 wallet artifact rule 的现有问题，和�
 2. docs/audits/PROJECT_MAINLINE_RESET_INVENTORY_2026-08-05.json
 3. docs/audits/PROJECT_MAINLINE_RESET_DIAGRAMS_2026-08-05.md
 
-交付 commit message：docs: audit project mainline and harness scope
+交付 commit message：docs: align mainline reset with owner priorities
 Draft PR title：docs: audit project mainline and reset priorities
 
-不创建 Ready PR，不 merge，不 squash/rebase，不 force-push，不修改共享 checkout，不删除任何文件。
+starting HEAD：e365d52ccdec8bcba1f1b5fa22cd3e25103142e2
+
+不创建 Task Spec、ledger、manifest 或独立审计 Agent；不修改产品代码或 Harness；不创建 Ready PR，不 merge，不 squash/rebase，不 force-push，不修改共享 checkout，不修改、关闭或合并其他 PR。

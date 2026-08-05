@@ -1,123 +1,119 @@
 # PROJECT MAINLINE RESET DIAGRAMS 2026-08-05
 
-审查基线：origin/main @ fce42eeb560c85e4924399bdf08419f9ea7ba642
-用途：把当前断点和建议的 SOL-only 主线画成最小可读的产品视图。图中所有 borrowed 字段都保持 unverified；Harness 是风险 sidecar，不是用户价值链的替代物。
+用途：把 Owner 直接授权后的 7–10 天并行 MVP 画成最小可读的产品视图。主线从已有的 SOL32＋BSC30 观察钱包和人工抽查开始；私有、离线、只读观察与生产 adapter 分开。所有 borrowed 字段仍保持 unverified，Harness 作为风险 sidecar，不是用户价值链的替代物。
 
-## 当前链路
+## 主线与观察闭环
 
-~~~mermaid
+```mermaid
 flowchart LR
-  A["用户粘贴 SOL CA / 手动 batch"] --> B["narrow Helius live read"]
-  B --> B1["mint + metadata + token accounts"]
-  B --> B2["bounded summary + watermark"]
-  B1 --> C["holder cleaning pilot"]
-  C --> D["operator API / Console"]
-  D --> E["fixture-first card"]
-  F["fixture borrowed market/security/holders"] --> E
-  G["candidateWallets optional"] --> H["in-memory library lookup"]
-  H --> E
-  E --> I["in-memory deep-dive queue"]
-  I --> J["AnalysisService only after explicit drain"]
-  J --> K["no formal CA-to-library product write"]
-  L["private SOL 1433 / GMGN 32"] -.-> M["external CHAINFM_OUT_DIR"]
-  N["private BSC 1034 / first 30"] -.-> O["stage blocked"]
-  P["Harness reports + ignored runs"] -.-> Q["lifecycle evidence gaps"]
+    W["SOL32＋BSC30 观察钱包"] --> O["导入＋人工抽查"]
+    O --> V["选 10–15 个重点地址\n只读链上事实复核"]
+    V --> R["离线可复制性 replay v0.1"]
+    R --> N["地址库/备注增量更新\n新增・更新・无变化・unknown"]
+    N --> W
 
-  classDef gap fill:#ffe4e4,stroke:#a33;
-  classDef bounded fill:#e8f1ff,stroke:#467;
-  classDef private fill:#fff4d6,stroke:#a77b00;
-  class B,B1,B2,C bounded;
-  class K,O,Q gap;
-  class M,N,L,P private;
-~~~
+    C["CA 输入"] --> F["Helius bounded facts\nholder cleaning / creator precedence"]
+    F --> K["最小 CA 判断卡\ncompleteness / warnings / trust"]
+    K --> L["AddressLibrary 命中\n只写可追溯 observation"]
+    L -.-> N
 
-当前图的中心问题不是没有模块，而是没有一条从用户输入穿过同一套 first-hand facts、cleaning、library、judgment 并回到可复现结果的主路径：
+    B["BSC 私有 1,034 地址\n首批 30 条 GMGN 备注"] -.-> O
+    P["BSC 生产 adapter\n自动刷新 / 跨链 CA 主链"] -.-> PARK["PARK\n不进入当前 MVP"]
 
-- live CA first 在 Helius 上只做 mint、metadata、token-account 三项 bounded read；
-- hotpath 市场、安全、holder 和 library hit 在主应用代码中仍是 fixture/borrowed 或依赖调用方额外传入的 candidateWallets；
-- AnalysisService 有更完整的判断能力，但 live Helius source 对 tags/facts/audited Solana facts fail closed；
-- 结果没有形成面向用户的 durable CA card、地址库沉淀和现实成本 replay；
-- 私有 1,433/32 和 1,034/30 产物与正式 Git product path、stage lock、独立 audit evidence 之间仍是断开的。
+    classDef now fill:#e7f5ed,stroke:#2f855a,color:#173b2a;
+    classDef fact fill:#e8f0ff,stroke:#3b6db3,color:#172b4d;
+    classDef park fill:#f3f3f3,stroke:#777,color:#333;
+    class W,O,V,R,N now;
+    class C,F,K,L,B fact;
+    class P,PARK park;
+```
 
-## 目标主线
+这条闭环的顺序是：观察钱包 → 选定复核 → replay → note/library 更新 → 下一轮观察。BSC 私有观察作为 KEEP / USE_NOW 进入同一观察入口；BSC 生产 adapter、自动刷新和跨链 CA 主链不因私有产物而解除 PARK。
 
-~~~mermaid
-flowchart LR
-  A["用户粘贴公开 SOL CA"] --> G["输入门：Base58 + Owner live gate"]
-  G --> H["Helius-only first-hand facts"]
-  H --> H1["mint / metadata / full token accounts"]
-  H --> H2["Pump creator evidence"]
-  H --> H3["funding / normalized swaps / Dev history"]
-  H --> C["complete-or-partial holder cleaning"]
-  C --> L["SOL address library"]
-  L --> J["CA judgment"]
-  H --> J
-  J --> S["CA first-screen card"]
-  T["optional borrowed market/security context"] --> S
-  T --> U["unverified + source + observed_at"]
-  J --> R["offline replay dataset"]
-  R --> R1["observed_at → simulated_order_at"]
-  R1 --> R2["slippage / liquidity / fee / tax / non-fill"]
-  R2 --> R3["wallet performance vs copyable performance"]
-  S --> V["manual deep dive / scrubbed evidence"]
-  R3 --> V
-  V --> W["manifest + watermark + output hash"]
+## CA 卡与钱包闭环并行
 
-  X["Fast"] -.-> V
-  Y["Standard"] -.-> V
-  Z["Strict"] -.-> V
-  X --> X1["read-only audit / docs / fixture research"]
-  Y --> Y1["product code / offline adapter / replay"]
-  Z --> Z1["live credential / stage / sensitive write"]
-
-  classDef fact fill:#dff3e4,stroke:#287a3d;
-  classDef judgment fill:#e8f1ff,stroke:#467;
-  classDef replay fill:#fff4d6,stroke:#a77b00;
-  classDef harness fill:#f0e7ff,stroke:#7250a4;
-  class H,H1,H2,H3,C fact;
-  class J,L,S,T,U judgment;
-  class R,R1,R2,R3 replay;
-  class X,Y,Z,X1,Y1,Z1 harness;
-~~~
-
-目标图的收敛顺序：
-
-1. Helius facts 先可重复且明确 partial，不能用 borrowed top-N 补 authority。
-2. 同一份 complete holder/creator/funding/trade evidence 同时服务 CA card、地址库和判断层。
-3. borrowed market/security 只作为可选上下文，字段保留 origin、verificationStatus、observed_at 和 warnings。
-4. replay 先做离线、无未来数据、成本后、fill/no-fill；Live Shadow Observation 仍是后续 PARK 项。
-5. 用户看到的是 card、library hit、judgment、replay result 和 evidence link，而不是 Harness task 图。
-
-## Lean Harness 三档
-
-~~~mermaid
+```mermaid
 flowchart TB
-  R["工作项风险"] --> F["Fast"]
-  R --> S["Standard"]
-  R --> T["Strict"]
-  F --> F1["只读审查 / 文档 / 脱敏汇总"]
-  F --> F2["required reading + privacy/diff + schema check"]
-  S --> S1["代码 / fixture adapter / offline replay"]
-  S --> S2["write set + typecheck/test/build/security + relevant suites"]
-  S --> S3["source/hash/replay + peer review"]
-  T --> T1["live credential / stage flip / sensitive write"]
-  T --> T2["Owner gate + budget + secret scan + scrubbed manifest"]
-  T --> T3["independent auditor + lifecycle + rollback/retention"]
-~~~
+    subgraph WalletLoop["钱包观察闭环"]
+        W1["SOL32＋BSC30 观察钱包"] --> W2["人工抽查"]
+        W2 --> W3["10–15 个重点地址"]
+        W3 --> W4["事实复核"]
+        W4 --> W5["replay v0.1"]
+        W5 --> W6["备注与地址库增量更新"]
+        W6 --> W1
+    end
 
-## 四周主线
+    subgraph CALoop["CA card 闭环（并行）"]
+        C1["CA first input"] --> C2["Helius bounded facts"]
+        C2 --> C3["holder cleaning + library lookup"]
+        C3 --> C4["最小 CA 判断卡"]
+        C4 --> C5["warnings / completeness / trust"]
+    end
 
-~~~mermaid
-timeline
-  title SOL-only mainline reset — four weeks
-  第1周 : Helius audited facts minimum closure
-         : CA card, partial/watermark, fixture + bounded live verification
-  第2周 : CA-to-address-library wiring
-         : SOL 1433 to 32 Chinese import/refresh pack
-  第3周 : shadow contracts, deterministic replay, SOL adapter
-         : delay, slippage, liquidity, fees, taxes, non-fill
-  第4周 : 5-10 manual sample chain verification
-         : replay/library cross-check, scrubbed evidence, historical audit archive
-~~~
+    C5 -. "可追溯 observation" .-> W6
+    W4 -. "selected evidence" .-> C4
+    M["PARK：生产写入、凭据、真实交易\n以及 BSC 生产 adapter"] -.-> S["Owner gate / Strict"]
 
-四周内保持 PARK：BSC/Robinhood、全量 1,433 链上确认、自动发现/cron、宏观 Dune、生产 DB、Live Shadow Trading、signing/broadcast/copy-trade。
+    classDef wallet fill:#e7f5ed,stroke:#2f855a;
+    classDef ca fill:#e8f0ff,stroke:#3b6db3;
+    classDef side fill:#f0e7ff,stroke:#7250a4;
+    class W1,W2,W3,W4,W5,W6 wallet;
+    class C1,C2,C3,C4,C5 ca;
+    class M,S side;
+```
+
+CA card 和钱包观察不是串行门槛：前者提供可解释的 CA 判断与地址库命中，后者提供选样本、事实复核和 replay 反馈；两者通过 scrubbed structured observation 互相补充。
+
+## Lean Harness sidecar
+
+```mermaid
+flowchart LR
+    Product["产品主线\n观察钱包 / CA card / replay"] -. "按风险挂载" .-> Risk["Owner 可覆盖的风险配置"]
+    Risk --> Fast["Fast\n简短范围说明\n相关 privacy / diff / schema 自检"]
+    Risk --> Standard["Standard\n简短任务说明\n相关测试＋安全扫描＋一次普通 review"]
+    Risk --> Strict["Strict\nTask Spec＋manifest\n独立审计＋Owner gate＋回滚方案"]
+
+    Fast -. "不需要" .-> FNo["Task Spec / ledger / manifest\nindependent auditor / 全仓 doctor"]
+    Standard -. "不强制" .-> SNo["完整 manifest / 独立审计\n全仓 lifecycle"]
+    Strict --> Prod["生产写入 / 凭据 / 真实交易\n阶段切换或不可逆 schema"]
+
+    Lock["BSC/SOL stage lock"] --> Override["Owner 可覆盖"]
+    Lock --> ReadOnly["离线・私有・只读\n不受阻断"]
+    Lock --> StrictOnly["生产写入・凭据・真实交易\n进入 Strict"]
+    Override --> ReadOnly
+    Override --> StrictOnly
+
+    classDef product fill:#e7f5ed,stroke:#2f855a;
+    classDef mode fill:#e8f0ff,stroke:#3b6db3;
+    classDef strict fill:#fff0e6,stroke:#c05621;
+    classDef side fill:#f0e7ff,stroke:#7250a4;
+    class Product product;
+    class Fast,Standard mode;
+    class Strict,Prod,StrictOnly strict;
+    class Risk,FNo,SNo,Lock,Override,ReadOnly side;
+```
+
+Lean Harness 只把不可逆和高风险动作放进 Strict。T2 标签不再自动推出独立 Auditor；FAIL 形成有界 finding/review decision，不自动创建 repair 链。旧 reports、dispatches、ledger 和 evidence 先只读归档，归档前不逐文件开启 repair。
+
+## 7–10 天并行 MVP 时间线
+
+```mermaid
+flowchart LR
+    D1["Day 1\nSOL32＋BSC30 导入＋人工抽查"]
+    D24["Day 2–4\n重点地址 replay v0.1"]
+    D25["Day 2–5\n10–15 地址链上事实复核"]
+    D37["Day 3–7\n最小 CA 判断卡"]
+    D610["Day 6–10\n结果回流＋增量刷新"]
+
+    D1 --> D24
+    D1 --> D25
+    D24 --> D610
+    D25 --> D37
+    D37 --> D610
+    D610 -. "下一轮观察" .-> D1
+
+    classDef now fill:#e7f5ed,stroke:#2f855a,color:#173b2a;
+    class D1,D24,D25,D37,D610 now;
+```
+
+明确后置：BSC 生产 adapter、自动刷新、跨链 CA 生产主链、Robinhood、Live Shadow Trading、signing/broadcast/copy-trade CTA、宏观 Dune、自动 discovery/cron、生产 PostgreSQL/Redis 和竞品/社交接入。该时间线是 7–10 天并行 MVP。
