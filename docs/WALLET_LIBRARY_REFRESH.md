@@ -31,4 +31,3 @@ The private BSC review file `bsc_label_review.csv` contains addresses with at le
 ## Data semantics
 
 `null`, `0`, and unknown status are preserved separately. Payoff is emitted only from an explicit payoff ratio or both average-profit and average-loss fields. Provider PnL remains tagged as provider data and is not represented as chain-reconstructed profit. Contracts are retained in the full library with `EXCLUDED_CONTRACT` and are excluded from GMGN exports. Social enrichment in this MVP is cache-only and does not make public claims without a complete-wallet-address match.
-
