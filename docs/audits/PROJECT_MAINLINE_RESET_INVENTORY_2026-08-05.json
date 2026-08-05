@@ -1,0 +1,465 @@
+{
+  "schema_version": "project-mainline-reset-inventory-v1",
+  "audit_date": "2026-08-05",
+  "task_id": "PROJECT-MAINLINE-RESET-AUDIT-001",
+  "agent_id": "codex-project-mainline-auditor-001",
+  "repository": "Yszdhhh/memecoin-ca-data-layer",
+  "base": {
+    "remote": "origin/main",
+    "sha": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+    "audit_branch": "audit/project-mainline-reset-2026-08"
+  },
+  "authorization": {
+    "owner_direct_authorization": true,
+    "scope_exception": "read-only full-repository product-mainline audit plus exactly three new audit files",
+    "product_code_changed": false,
+    "harness_registry_changed": false,
+    "task_spec_ledger_dispatch_manifest_changed": false,
+    "files_deleted": false,
+    "shared_checkout_modified": false
+  },
+  "phase_0": {
+    "gh_auth_status": "PASS_authenticated_user_Yszdhhh",
+    "git_fetch_origin_prune": "PASS",
+    "gh_repo_view": "PASS",
+    "git_status_shared": {
+      "preserved_dirty_files": [
+        "README.md",
+        "docs/LOCAL_WORKSPACE_PATHS.md"
+      ],
+      "mutated": false
+    },
+    "origin_main_sha": "fce42eeb560c85e4924399bdf08419f9ea7ba642",
+    "worktree_records": 24,
+    "private_data_root": "CHAINFM_OUT_DIR_external_private_root_absolute_path_omitted"
+  },
+  "open_pull_requests": [
+    {
+      "number": 20,
+      "title": "chore: authorize clean Harness Doctor redelivery",
+      "state": "OPEN",
+      "is_draft": true
+    },
+    {
+      "number": 19,
+      "title": "chore: repair harness forbidden wallet artifact rule",
+      "state": "OPEN",
+      "is_draft": true
+    },
+    {
+      "number": 9,
+      "title": "test(stability): SOL-CA-HOLDER-STABILITY-BATCHES-001",
+      "state": "OPEN",
+      "is_draft": false
+    },
+    {
+      "number": 3,
+      "title": "feat: add bounded daily Solana token analysis",
+      "state": "OPEN",
+      "is_draft": false
+    },
+    {
+      "number": 2,
+      "title": "test: record bounded ten-CA Helius live smoke",
+      "state": "OPEN",
+      "is_draft": false
+    }
+  ],
+  "tracked_file_inventory": {
+    "total_files": 1095,
+    "directories": {
+      "src": {
+        "files": 107,
+        "code_nonempty_loc": 21442,
+        "test_files": 0,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 0,
+        "bytes": 955399
+      },
+      "test": {
+        "files": 87,
+        "code_nonempty_loc": 13031,
+        "test_files": 87,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 18,
+        "bytes": 599571
+      },
+      "apps": {
+        "files": 41,
+        "code_nonempty_loc": 3792,
+        "test_files": 7,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 8,
+        "bytes": 272113
+      },
+      "scripts": {
+        "files": 5,
+        "code_nonempty_loc": 219,
+        "test_files": 0,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 0,
+        "bytes": 9538
+      },
+      "docs": {
+        "files": 107,
+        "code_nonempty_loc": 1581,
+        "test_files": 0,
+        "doc_files": 101,
+        "json_manifest_evidence_files": 1,
+        "bytes": 1195835
+      },
+      "harness": {
+        "files": 710,
+        "code_nonempty_loc": 1743,
+        "test_files": 2,
+        "doc_files": 232,
+        "json_manifest_evidence_files": 443,
+        "bytes": 2927333
+      },
+      "artifacts": {
+        "files": 8,
+        "code_nonempty_loc": 0,
+        "test_files": 0,
+        "doc_files": 5,
+        "json_manifest_evidence_files": 3,
+        "bytes": 13409
+      },
+      "db": {
+        "files": 10,
+        "code_nonempty_loc": 555,
+        "test_files": 0,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 0,
+        "bytes": 26471
+      },
+      "fixtures": {
+        "files": 2,
+        "code_nonempty_loc": 0,
+        "test_files": 0,
+        "doc_files": 0,
+        "json_manifest_evidence_files": 2,
+        "bytes": 24175
+      }
+    },
+    "major_extensions": {
+      ".json": 468,
+      ".md": 339,
+      ".ts": 205,
+      ".gitkeep": 26,
+      ".sql": 13
+    },
+    "binary_files": 6,
+    "lock_files": 2,
+    "ignored_generated_files_observed_after_build": 372
+  },
+  "code_vs_harness": {
+    "product_implementation": {
+      "files": 156,
+      "code_nonempty_loc": 25165
+    },
+    "tests": {
+      "files": 94,
+      "code_nonempty_loc": 13874,
+      "loc_vs_product_ratio": 0.552
+    },
+    "harness_code": {
+      "code_nonempty_loc": 1743,
+      "loc_vs_product_ratio": 0.069
+    },
+    "harness_docs_and_evidence": {
+      "docs_nonempty_loc": 9313,
+      "json_data_nonempty_loc": 37048,
+      "combined_nonempty_loc": 46361,
+      "combined_vs_product_ratio": 1.843
+    },
+    "harness_tracked_files_vs_product_implementation_files": 4.551
+  },
+  "private_data_aggregates": {
+    "tracked_in_git": false,
+    "private_output_file_count": 3967,
+    "private_output_bytes_approx": 81263739,
+    "top_level_file_counts": {
+      "sol": 514,
+      "bsc": 3442,
+      "other_aggregate_or_metadata": 11
+    },
+    "solana": {
+      "unique_input_address_count": 1433,
+      "candidate_union_count": 32,
+      "gmgn_import_record_count": 32,
+      "status": "private_borrowed_unverified_with_selected_chain_verification_not_full_e2e"
+    },
+    "bsc": {
+      "unique_valid_evm_address_count": 1034,
+      "source_row_references": 5170,
+      "source_count": 5,
+      "address_format_rate": 1,
+      "gmgn_import_first_n": 30,
+      "candidate_review_count": 32,
+      "pnl_field_coverage_ratio": 0,
+      "cost_basis_coverage_ratio": 0,
+      "status": "private_offline_artifact_stage_blocked"
+    },
+    "interpretation": "Counts and coverage are not product verification; no address, note, transaction identifier, or provider raw response is retained in this JSON."
+  },
+  "user_value_chain": [
+    {
+      "stage": "CA_or_wallet_input",
+      "runnable": "manual_SOL_CA_first_and_1_to_10_batch",
+      "data_level": "bounded_Helius_live_plus_fixture_console_plus_private_wallet_input",
+      "trust": "first_hand_for_Helius_fields_but_bounded_summary_only",
+      "gap": "no_discovery_no_automatic_daily_no_full_CA_card"
+    },
+    {
+      "stage": "third_party_factual_data",
+      "runnable": "fixture_borrowed_provider_ports_and_GMGN_parser_diagnostics",
+      "data_level": "borrowed_unverified_or_private",
+      "trust": "Tier_B_context_only",
+      "gap": "no_current_live_multi_provider_adapter_and_owner_runtime_is_Helius_only"
+    },
+    {
+      "stage": "chain_validation",
+      "runnable": "Helius_mint_metadata_accounts_and_fixture_Pump_decoder",
+      "data_level": "first_hand_input_plus_pinned_fixture",
+      "trust": "A_input_for_available_fields",
+      "gap": "live_tags_facts_holder_snapshot_creator_and_Dev_methods_incomplete"
+    },
+    {
+      "stage": "address_cleaning_and_labels",
+      "runnable": "owner_aggregation_cleaning_candidate_screening_and_rules",
+      "data_level": "Git_rules_fixture_plus_private_SOL_1433",
+      "trust": "borrowed_labels_never_upgrade_without_first_hand_confirmation",
+      "gap": "CA_to_address_library_path_not_closed"
+    },
+    {
+      "stage": "market_and_liquidity_context",
+      "runnable": "append_only_offline_observation_and_fixture_quote",
+      "data_level": "offline_or_fixture",
+      "trust": "borrowed_unverified",
+      "gap": "no_live_market_adapter_in_current_runtime"
+    },
+    {
+      "stage": "CA_judgment",
+      "runnable": "AnalysisService_on_fixture_contracts",
+      "data_level": "fixture_reproducible_not_full_live",
+      "trust": "first_hand_and_borrowed_layers_are_separated",
+      "gap": "live_AnalysisService_hits_Helius_tags_facts_and_audited_fact_gaps"
+    },
+    {
+      "stage": "GMGN_notes",
+      "runnable": "private_SOL_1433_to_32_and_BSC_1034_to_first_30_artifact_shapes",
+      "data_level": "private_borrowed_unverified",
+      "trust": "not_chain_confirmed_and_no_GMGN_writeback",
+      "gap": "needs_stable_Chinese_pack_incremental_refresh_and_chain_check_columns"
+    },
+    {
+      "stage": "historical_buy_sell_replay",
+      "runnable": "first_hand_FIFO_weighted_leaderboard_rules_and_governance_replay_suite",
+      "data_level": "fixture_and_private_diagnostics_not_product_replay",
+      "trust": "confirmed_only_with_first_hand_complete_evidence",
+      "gap": "no_delay_slippage_fee_tax_liquidity_non_fill_engine"
+    },
+    {
+      "stage": "reproducibility",
+      "runnable": "tests_hashes_watermarks_and_four_Harness_dimensions",
+      "data_level": "Git_scrubbed_evidence_plus_ignored_run_dirs",
+      "trust": "code_fixture_reproducible_historical_audit_closure_incomplete",
+      "gap": "lifecycle_reports_107_audit_evidence_gaps"
+    }
+  ],
+  "classification_counts": {
+    "MAINLINE_NOW": 9,
+    "KEEP": 9,
+    "SIMPLIFY": 8,
+    "MERGE": 4,
+    "PARK": 7,
+    "ARCHIVE": 3,
+    "DELETE_CANDIDATE": 1,
+    "total_classified_surfaces": 41,
+    "deletions_executed": 0
+  },
+  "harness_review": {
+    "A_hard_boundaries": [
+      "secret_wallet_artifact_raw_provider_payload_trade_signing_broadcast禁止",
+      "BSC_Robinhood_stage_lock_and_SOL_only_active_stage",
+      "raw_integer_owner_aggregation_borrowed_unverified_partial_completeness_creator_precedence",
+      "task_schema_hash_write_set_forbidden_action_tracked_input",
+      "quality_commands_and_security_scan",
+      "independent_auditor_for_T2_semantic_work"
+    ],
+    "B_keep_lighten": [
+      "four_dimensions_latency_replay_source_degradation_label_decision",
+      "Standard_acceptance_for_code_provider_adapter_replay_and_cleaning",
+      "manifest_watermark_source_hash_for_data_and_replay",
+      "lifecycle_dependency_and_readiness_checks"
+    ],
+    "C_overconstraint_candidates": [
+      "exact_task_only_for_owner_direct_read_only_audit",
+      "full_manifest_and_independent_run_for_low_risk_docs_or_aggregate_research",
+      "global_serialization_when_write_sets_do_not_overlap",
+      "doctor_baseline_failure_blocks_unrelated_read_only_work",
+      "historical_DONE_reports_without_ignored_run_manifests_cannot_close_evidence",
+      "root_path_documentation_mismatch"
+    ],
+    "lean_modes": {
+      "Fast": "read_only_docs_desensitized_summary_fixture_research",
+      "Standard": "product_code_rules_adapters_offline_replay",
+      "Strict": "live_credentials_stage_flip_sensitive_write"
+    }
+  },
+  "task_ledger": {
+    "task_specs": 308,
+    "ledger_entries": 251,
+    "specs_not_in_ledger": 57,
+    "status_mismatches": 0,
+    "spec_status_counts": {
+      "DONE": 235,
+      "READY": 32,
+      "BLOCKED_DEPENDENCY": 13,
+      "BLOCKED_STAGE": 12,
+      "PARK": 12,
+      "IN_PROGRESS": 1,
+      "GREEN_noncanonical": 1,
+      "implementation_complete_pending_independent_audit_noncanonical": 1,
+      "READY_FOR_INDEPENDENT_AUDIT_noncanonical": 1
+    },
+    "ledger_status_counts": {
+      "DONE": 210,
+      "READY": 3,
+      "BLOCKED_DEPENDENCY": 13,
+      "BLOCKED_STAGE": 12,
+      "PARK": 12,
+      "IN_PROGRESS": 1,
+      "RED": 0
+    },
+    "filename_keyword_counts_overlap": {
+      "AUDIT": 125,
+      "REAUDIT": 2,
+      "REPAIR": 97,
+      "HARNESS": 37,
+      "EVIDENCE": 16,
+      "MANIFEST": 1,
+      "GOVERNANCE": 0
+    },
+    "implementation_vs_audit_repair": {
+      "implementation_without_audit_or_repair_keyword": 127,
+      "audit_or_reaudit": 125,
+      "repair": 97,
+      "any_audit_or_repair": 181,
+      "implementation_to_any_audit_or_repair_ratio": "127:181"
+    },
+    "current_status_summary": {
+      "blocked_total": 25,
+      "park_total": 12,
+      "in_progress_total": 1,
+      "ready_total": 3
+    },
+    "lifecycle_plan": {
+      "runnable": 3,
+      "not_runnable": 38,
+      "sync_errors": 0,
+      "audit_evidence_gaps": 107,
+      "readiness_suggestions": 1
+    },
+    "dependency_count_distribution": {
+      "0": 14,
+      "1": 159,
+      "2": 46,
+      "3": 16,
+      "4": 9,
+      "5": 6,
+      "7": 1
+    },
+    "product_function_proxy_average": {
+      "groups": 6,
+      "task_average": 43,
+      "audit_average": 17.5,
+      "repair_average": 14.2,
+      "implementation_average": 17.3,
+      "method": "fixed_filename_keyword_precedence; audit and repair overlap"
+    }
+  },
+  "git_history": {
+    "total_commits": 412,
+    "recent_100_bucket_counts": {
+      "audit_evidence": 12,
+      "data_processing": 11,
+      "tests": 14,
+      "product_function": 1,
+      "governance_docs": 4,
+      "harness_governance": 40,
+      "other": 18
+    },
+    "recent_50_bucket_counts": {
+      "audit_evidence": 11,
+      "data_processing": 3,
+      "tests": 6,
+      "product_function": 0,
+      "governance_docs": 2,
+      "harness_governance": 18,
+      "other": 10
+    },
+    "recent_100_signals": {
+      "harness_touch_pct": 70,
+      "governance_only_pct": 54,
+      "user_product_path_touch_pct": 26,
+      "process_fix_signal_pct": 79
+    },
+    "classification_note": "heuristic path and subject buckets; pathless merge commits are other"
+  },
+  "validation": {
+    "npm_ci": "PASS",
+    "npm_run_typecheck": "PASS",
+    "npm_test": {
+      "status": "PASS",
+      "total": 461,
+      "passed": 460,
+      "failed": 0,
+      "skipped": 1
+    },
+    "npm_run_build": "PASS",
+    "npm_run_security_scan": {
+      "status": "PASS",
+      "matched_policy_lines": 316,
+      "classified_leaks": 0
+    },
+    "git_diff_check": "PASS",
+    "harness_doctor": {
+      "status": "FAIL_BASELINE",
+      "new_forbidden_matches": 0,
+      "baseline_forbidden_matches": 3,
+      "scope": "existing_wallet_artifact_rule_matches_not_changed_by_audit"
+    },
+    "harness_status": {
+      "active_stage": "solana-pumpfun-e2e",
+      "active_chains": [
+        "solana"
+      ],
+      "blocked_chains": [
+        "bsc",
+        "robinhood"
+      ],
+      "ready": 3
+    }
+  },
+  "privacy_scan": {
+    "status": "PASS",
+    "local_absolute_paths": 0,
+    "full_solana_address_candidates": 0,
+    "full_evm_addresses": 0,
+    "transaction_hashes": 0,
+    "api_keys_or_cookies": 0
+  },
+  "delivery": {
+    "files_allowed": [
+      "docs/audits/PROJECT_MAINLINE_RESET_AUDIT_2026-08-05.md",
+      "docs/audits/PROJECT_MAINLINE_RESET_INVENTORY_2026-08-05.json",
+      "docs/audits/PROJECT_MAINLINE_RESET_DIAGRAMS_2026-08-05.md"
+    ],
+    "commit_message": "docs: audit project mainline and harness scope",
+    "draft_pr_title": "docs: audit project mainline and reset priorities",
+    "ready_pr": false,
+    "merge_performed": false,
+    "force_push_performed": false
+  }
+}
