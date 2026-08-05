@@ -1,0 +1,39 @@
+{
+  "shapeDriftCount": 3,
+  "shapeDriftRate": 0.12,
+  "affectedCas": [
+    "f249bbf137c2e667",
+    "acd24e2339bcc62a",
+    "8bfb558c17a61110"
+  ],
+  "samples": [
+    {
+      "sampleId": "B-06",
+      "mintFingerprint": "f249bbf137c2e667",
+      "failureReason": null,
+      "warningCodes": [
+        "provider_shape_drift_partial_skip",
+        "provider_shape_drift"
+      ]
+    },
+    {
+      "sampleId": "B-08",
+      "mintFingerprint": "acd24e2339bcc62a",
+      "failureReason": null,
+      "warningCodes": [
+        "provider_shape_drift_partial_skip",
+        "provider_shape_drift"
+      ]
+    },
+    {
+      "sampleId": "C-05",
+      "mintFingerprint": "8bfb558c17a61110",
+      "failureReason": null,
+      "warningCodes": [
+        "provider_shape_drift_partial_skip",
+        "provider_shape_drift"
+      ]
+    }
+  ],
+  "rawPayloadCommitted": 0
+}

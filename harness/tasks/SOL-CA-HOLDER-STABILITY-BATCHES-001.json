@@ -1,0 +1,49 @@
+{
+  "taskId": "SOL-CA-HOLDER-STABILITY-BATCHES-001",
+  "title": "SOL-CA Holder Stability Batches — 20–30 public CA executions on real product path",
+  "type": "stability",
+  "milestone": "G1",
+  "status": "IN_PROGRESS",
+  "objective": "Validate 20–30 public Solana CA holder executions through browser→Operator Console→loopback Operator API→Helius→holder pagination→owner aggregation→trust split→task lifecycle with scrubbed reports, hard-zero privacy/trust fields, measured provider shape drift, and fail-closed PARTIAL/FAILED/BLOCKED.",
+  "branch": "feature/sol-ca-holder-stability-batches-001",
+  "baseSha": "4947ac77a50eb7b5f9c488c2b0b5ce1dccc5e5db",
+  "allowedWriteSet": [
+    "scripts/stability/**",
+    "test/stability/**",
+    "docs/runbooks/**",
+    "harness/tasks/SOL-CA-HOLDER-STABILITY-BATCHES-001.json",
+    "harness/reports/SOL-CA-HOLDER-STABILITY-BATCHES-001/**"
+  ],
+  "productionRepairAllowedOnlyWithFinding": [
+    "src/application/operator-api/**",
+    "src/application/provider-executor/**",
+    "src/infrastructure/solana/helius/**",
+    "apps/operator-console/**"
+  ],
+  "forbidden": [
+    "G2 market/authority/pool confirmed conclusions",
+    "DexScreener",
+    "PostgreSQL",
+    "1433 wallets",
+    "BSC",
+    "auto discovery",
+    "trading/signing",
+    "chainfm_out",
+    "raw payload commit"
+  ],
+  "budgets": {
+    "uniquePublicCa": [20, 24],
+    "controlledRepeats": [2, 4],
+    "totalExecutions": [20, 30],
+    "concurrency": 1,
+    "perTaskHeliusHttp": 20,
+    "totalHeliusHttp": 600
+  },
+  "entrypoints": {
+    "operatorApi": "npx tsx src/cli/run-operator-api.ts --port 8787",
+    "stabilityRunner": "npx tsx scripts/stability/run-holder-stability-batches.ts",
+    "unitTests": "tsx --test test/stability/**/*.test.ts"
+  },
+  "mergeAllowedInImplementationTask": false,
+  "laterMergeMethod": "normal merge commit only"
+}

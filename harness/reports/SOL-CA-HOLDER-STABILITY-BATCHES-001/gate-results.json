@@ -1,0 +1,67 @@
+﻿{
+    "branch":  "feature/sol-ca-holder-stability-batches-001",
+    "baseSha":  "4947ac77a50eb7b5f9c488c2b0b5ce1dccc5e5db",
+    "gates":  [
+                  {
+                      "result":  "PASS",
+                      "name":  "typecheck",
+                      "command":  "npm run typecheck"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "test",
+                      "counts":  {
+                                     "pass":  443,
+                                     "skipped":  1,
+                                     "fail":  0
+                                 },
+                      "command":  "npm test"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "build",
+                      "command":  "npm run build"
+                  },
+                  {
+                      "consoleTests":  66,
+                      "result":  "PASS",
+                      "name":  "console:check",
+                      "command":  "npm run console:check"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "console:build",
+                      "command":  "npm run console:build"
+                  },
+                  {
+                      "result":  "FAIL_PREEXISTING",
+                      "name":  "harness:doctor",
+                      "note":  "wallets.json fixture on main",
+                      "command":  "npm run harness:doctor"
+                  },
+                  {
+                      "classifiedLeaks":  0,
+                      "result":  "PASS",
+                      "name":  "security:scan",
+                      "command":  "npm run security:scan"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "git-diff-check",
+                      "command":  "git diff --check"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "secret-grep-write-set",
+                      "note":  "no credentials/private keys in stability write-set"
+                  },
+                  {
+                      "result":  "PASS",
+                      "name":  "stability-live-batches",
+                      "executions":  25,
+                      "uniqueCa":  22,
+                      "totalHelius":  199
+                  }
+              ],
+    "taskId":  "SOL-CA-HOLDER-STABILITY-BATCHES-001"
+}

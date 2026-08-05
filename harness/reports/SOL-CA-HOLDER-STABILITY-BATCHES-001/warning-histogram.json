@@ -1,0 +1,9 @@
+{
+  "histogram": {
+    "pool_exclusion_coverage_incomplete": 25,
+    "pagination_incomplete": 15,
+    "supply_mismatch": 15,
+    "provider_shape_drift_partial_skip": 3,
+    "provider_shape_drift": 3
+  }
+}
