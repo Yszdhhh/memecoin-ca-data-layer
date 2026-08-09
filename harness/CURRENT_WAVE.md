@@ -9,34 +9,36 @@ parallel MVP of (1) SOL32+BSC30 observation-wallet structuring & value extractio
 macro/liquidity data-source research alongside. Governance is risk-tiered
 (Fast/Standard/Strict per audit §5.4), not evidence-style-driven.
 
-## Status as of 2026-08-09 (post-reset re-alignment + 3-branch merge)
+## Status as of 2026-08-09 (mainline reset execution — evening closeout)
 
 | Workstream | Status | Notes |
 | --- | --- | --- |
 | Mainline reset audit | DONE / MERGED | PR #21; merge `8cbf661` |
-| Wallet replay MVP v0.1 | DONE / MERGED | PR #22 (auto-merged on push); `wallet-replay-v0-1` CLI |
-| Wallet identity library refresh | DONE / MERGED | PR #23 (auto-merged on push); `wallet-library:refresh` CLI |
+| Wallet replay MVP v0.1 | DONE / MERGED | PR #22; `wallet-replay:v0-1` CLI |
+| Wallet identity library refresh | DONE / MERGED | PR #23; `wallet:library:refresh` CLI |
 | Wallet HUD v0.2 + Repair-002 | DONE / MERGED | Restored after 08-02 revert; merge `9676a0e` |
-| Main integration gates | CRITICAL PASS | 2026-08-09: typecheck/test/build/security:scan PASS; 482 tests (481 pass / 0 fail / 1 manual-live skip); git diff --check clean; harness:doctor still FAIL on pre-existing tracked wallet*.json baseline (P2, see below) |
-| SOL-CA-HOLDER-STABILITY-BATCHES-001 | CLOSED | PR #9 closed per audit §5.6 (SALVAGE_ONLY; code remains on branch) |
-| WALLET-VALUE-EXTRACTION-20260809 | ACTIVE (private) | Build private library input (SOL 1433 + BSC 1034) → daily refresh → tiered snapshot / diffs / exports / bsc_label_review; outputs in `G:\chainfm_out\library_refresh`, never in Git |
-| CA-CARD-ADAPTER-001 | ACTIVE | LiveHeliusDataSource audited methods (holder snapshot / pump creator / dev history) + adapter degradation for tags/facts |
-| MACRO-DATA-SOURCE-RESEARCH-001 | ACTIVE (research) | Solana DEX activity / meme launch / liquidation data-source survey (free/ official APIs only) |
+| WALLET-VALUE-EXTRACTION-20260809 | DONE (private) | SOL 1433 + BSC 1034 input built & refreshed; SOL CORE 36/WATCH 72/LEAD 180; BSC CORE 24/WATCH 48/LEAD 120; valuable filter → SOL 108 / BSC 67; 2,467 structured notes (2,182 distinct); bsc_label_review 263 rows; outputs `G:\chainfm_out\library_refresh` (never in Git) |
+| CA-CARD-ADAPTER-001 | DONE / MERGED | Audited methods (holder snapshot / pump creator / dev history) + tags/facts degrade-not-reject; merge `2c25182` |
+| CA-CARD-WIRING-001 | DONE / MERGED | Holder-driven library hits (top-50), AnalysisService integration, card CLI; merge `38fbb17` |
+| CA-CARD-REVIEW-001 | CHANGES_REQUESTED → CLOSED | 5 findings (2 P0 / 3 P1); report `docs/audits/CA_CARD_ADAPTER_WIRING_REVIEW_20260809.md`; fixes merged `c397ab1` |
+| CA CARD LIVE SMOKE | PASS (bounded) | Real Helius: dead CA → DEGRADED no-crash; fresh token (166 ATA) → full path: holders aggregated, funding capped top-20, exclusion-missing → concentration indeterminate (never confirmed), create/dev missing → honest partial; budget 250, ~33s deep path |
+| MACRO-LIQUIDITY-SNAPSHOT-V1 | DONE / MERGED | DefiLlama vol/fees/TVL + 7d/30d percentiles (live: 24h vol $1.49B, PumpSwap 46.08%, TVL $4.82B); Coinalyze fail-closed w/o key; `macro:liquidity:snapshot`; merge `fbddfca` |
+| Main integration gates | CRITICAL PASS | 2026-08-09 close: typecheck/test/build/security:scan PASS; 529 tests (528 pass / 0 fail / 1 manual-live skip); git diff --check clean; harness:doctor still FAIL on pre-existing tracked wallet*.json baseline (P2, see below) |
+| SOL-CA-HOLDER-STABILITY-BATCHES-001 | CLOSED | PR #9 closed per audit §5.6 (SALVAGE_ONLY) |
 
 ## ACTIVE
 
 ```text
-WALLET-VALUE-EXTRACTION-20260809   (private execution; no Git write)
-CA-CARD-ADAPTER-001                (implementation in progress)
-MACRO-DATA-SOURCE-RESEARCH-001     (research in progress)
+(none — wave closed; next wave starts with WALLET-CHAIN-FACT-VERIFY-001)
 ```
 
 ## NEXT
 
 ```text
-CA-CARD-WIRING-001      (connect AnalysisService + AddressLibrary + deep-dive queue into live CA-first entry; depends on CA-CARD-ADAPTER-001)
-WALLET-CHAIN-FACT-VERIFY-001   (10–15 key addresses; needs HELIUS_API_KEY — Owner gate)
-MACRO-LIQUIDITY-DATA-LAYER-001 (depends on research outcome)
+WALLET-CHAIN-FACT-VERIFY-001   (10–15 key addresses on-chain fact verification; HELIUS_API_KEY available in shell env — no Owner gate needed for read-only bounded use)
+BSC GMGN STATS + NOTES-001     (BSC 1,034 currently label-only: no GMGN 7d/30d stats; valuable filter hit 67/72 purely on label density)
+LIBRARY-NOTE-REFRESH-LOOP-001  (incremental refresh + GMGN note workflow from replay/verify results)
+COINALYZE-KEY-CONFIG-001       (register key at api.coinalyze.net, set COINALYZE_API_KEY; unblocks liquidation metrics)
 ```
 
 ## AFTER
