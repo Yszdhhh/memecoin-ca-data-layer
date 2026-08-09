@@ -21,6 +21,7 @@
     "harness:gmgn-wallet-profile-pilot": "tsx harness/gmgn-wallet-profile-pilot.ts",
     "wallet:screening:v0-1": "tsx src/cli/run-sol-wallet-candidate-screening-v0-1.ts",
     "wallet:replay:v0-1": "tsx src/cli/run-wallet-replay-v0-1.ts",
+    "wallet:library:refresh": "tsx src/cli/run-wallet-library-refresh.ts",
     "console:dev": "npm --prefix apps/operator-console run dev",
     "console:build": "npm --prefix apps/operator-console run build",
     "console:test": "npm --prefix apps/operator-console run test",
