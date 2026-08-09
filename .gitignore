@@ -23,6 +23,7 @@ artifacts/wallet_intelligence_v0_1/wallet_master_v0_1.*
 artifacts/wallet_intelligence_v0_1/candidate_union_v0_1.*
 artifacts/wallet_intelligence_v0_1/candidate_groups/
 artifacts/wallet_intelligence_v0_1/research_packs/
+artifacts/liquidity/
 **/wallet_master_private.*
 **/wallet_master_v0_1.jsonl
 **/wallet_master_v0_1.csv

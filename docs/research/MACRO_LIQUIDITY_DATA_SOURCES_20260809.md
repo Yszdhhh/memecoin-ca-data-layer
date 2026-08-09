@@ -65,6 +65,10 @@
 3. P1 Dune 日更（复用已有 solana_dex_volume.sql / memecoin_revenue.sql）或 GeckoTerminal new_pools（零 credit 发射代理）
 4. 后置：Birdeye/GMGN/DexScreener 继续服务 CA 卡，不进 v1 大盘主路径
 
+> 实现状态（2026-08-09）：P0（1）+ P0（2 的 fixture/无 key 路径）已落地为 `macro:liquidity:snapshot` 数据层，
+> 输出 LiquiditySnapshotV1，见 [docs/MACRO_LIQUIDITY_SNAPSHOT_V1.md](../MACRO_LIQUIDITY_SNAPSHOT_V1.md)。
+> Coinalyze 真实路径需先配置 COINALYZE_API_KEY（见该文档 §5）。
+
 ## 6. 实测记录（2026-08-09）
 
 - defillama dexs/fees/tvl solana：全部 HTTP 200
