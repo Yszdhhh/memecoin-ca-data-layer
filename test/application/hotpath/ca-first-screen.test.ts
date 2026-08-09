@@ -152,6 +152,72 @@ test("first-screen rejects a provider that attempts to elevate borrowed security
   assert.ok(card.warnings.includes("gmgn_invalid_security_contract"));
 });
 
+test("first-screen library hits are driven by the holder owners provider and capped at 50", async () => {
+  const library = new InMemoryAddressLibrary();
+  await library.upsertWallet({
+    chain: "solana",
+    address: "owner-49",
+    origin: "first_hand",
+    verificationStatus: "verified",
+    labels: ["alpha_SSR"],
+    dataCompleteness: 0.8,
+    updatedAt: at,
+  });
+  await library.upsertWallet({
+    chain: "solana",
+    address: "owner-51",
+    origin: "first_hand",
+    verificationStatus: "verified",
+    labels: ["alpha_SSR"],
+    dataCompleteness: 0.8,
+    updatedAt: at,
+  });
+
+  const card = await buildCaFirstScreenCard(ca, {
+    marketProviders: [new FixtureDexscreenerProvider({
+      [ca]: {
+        tokenCa: ca,
+        priceUsd: 1,
+        liquidityUsd: 80_000,
+        fdvUsd: 300_000,
+        volume24hUsd: 20_000,
+        observedAt: at,
+      },
+    })],
+    securityProviders: [new FixtureGmgnSecurityProvider({
+      [ca]: { isHoneypot: false, buyTaxBps: 0, sellTaxBps: 100 },
+    })],
+    holderProviders: [new FixtureBirdeyeHolderProvider({
+      [ca]: { top10Pct: 40, holderCount: 900 },
+    })],
+    library,
+    deepDiveQueue: { enqueue: async () => undefined },
+    holderOwnersProvider: async () => Array.from({ length: 60 }, (_, i) => `owner-${i}`),
+  });
+
+  // owner-49 sits inside the first 50 candidates; owner-51 is beyond the cap.
+  assert.deepEqual(card.libraryHits.map((hit) => hit.address), ["owner-49"]);
+  assert.equal(card.status, "OK");
+});
+
+test("first-screen holder owners provider failure degrades with a warning instead of failing the card", async () => {
+  const library = new InMemoryAddressLibrary();
+  const card = await buildCaFirstScreenCard(ca, {
+    marketProviders: [],
+    securityProviders: [],
+    holderProviders: [],
+    library,
+    deepDiveQueue: { enqueue: async () => undefined },
+    holderOwnersProvider: async () => {
+      throw new Error("owners source down");
+    },
+  });
+
+  assert.equal(card.status, "DEGRADED");
+  assert.ok(card.warnings.includes("holder_owners_unavailable"));
+  assert.deepEqual(card.libraryHits, []);
+});
+
 test("first-screen degrades when the virtual hotpath budget is not under two seconds", async () => {
   const library = new InMemoryAddressLibrary();
   const card = await buildCaFirstScreenCard(ca, {

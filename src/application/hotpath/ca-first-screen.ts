@@ -1,4 +1,4 @@
-﻿import type { AddressLibrary, WalletLibraryRecord } from "../sedimentation/address-library.js";
+import type { AddressLibrary, WalletLibraryRecord } from "../sedimentation/address-library.js";
 import {
   collectBorrowedMarket,
   type BorrowedHolderHint,
@@ -12,6 +12,8 @@ import type { VirtualClock } from "../../harness-suites/shared.js";
 
 export const HOTPATH_CARD_VERSION = "ca-first-screen-v1";
 export const HOTPATH_P95_BUDGET_MS = 2_000;
+/** Cap for holder-owner candidates feeding the address-library lookup. */
+export const HOLDER_OWNER_CANDIDATE_LIMIT = 50;
 
 export interface FirstScreenCard {
   tokenCa: string;
@@ -67,6 +69,8 @@ export interface HotpathDeps {
   clock?: VirtualClock;
   /** Optional known wallet addresses to cross-ref (e.g. from fixture top holders). */
   candidateWallets?: string[];
+  /** Optional holder-owner source (e.g. audited snapshot owners); feeds the address-library lookup, capped at HOLDER_OWNER_CANDIDATE_LIMIT. */
+  holderOwnersProvider?: () => Promise<string[]>;
 }
 
 interface SourceResult<T> {
@@ -150,17 +154,30 @@ export async function buildCaFirstScreenCard(
     .catch(() => ({ value: null, warnings: ["market_fanout_failed"], available: false }));
   const securityP = collectSecurity(deps.securityProviders, tokenCa);
   const holdersP = collectHolders(deps.holderProviders, tokenCa);
-  const libraryP = deps.library.lookupByAddresses("solana", deps.candidateWallets ?? [])
-    .then((value) => ({ value, warnings: [] as string[], available: true }))
-    .catch(() => ({ value: [] as WalletLibraryRecord[], warnings: ["address_library_unavailable"], available: false }));
+  const holderOwnersProvider = deps.holderOwnersProvider;
+  const holderOwnersP = holderOwnersProvider
+    ? Promise.resolve()
+        .then(() => holderOwnersProvider())
+        .then((owners) => ({
+          owners: [...new Set(owners)].slice(0, HOLDER_OWNER_CANDIDATE_LIMIT),
+          warnings: [] as string[],
+        }))
+        .catch(() => ({ owners: [] as string[], warnings: ["holder_owners_unavailable"] }))
+    : Promise.resolve({ owners: [] as string[], warnings: [] as string[] });
+  const libraryP = holderOwnersP.then(({ owners }) =>
+    deps.library.lookupByAddresses("solana", [...new Set([...(deps.candidateWallets ?? []), ...owners])])
+      .then((value) => ({ value, warnings: [] as string[], available: true }))
+      .catch(() => ({ value: [] as WalletLibraryRecord[], warnings: ["address_library_unavailable"], available: false })),
+  );
   const enqueueP = deps.deepDiveQueue.enqueue(tokenCa)
     .then(() => ({ enqueued: true, warnings: [] as string[] }))
     .catch(() => ({ enqueued: false, warnings: ["deep_dive_enqueue_failed"] }));
 
-  const [marketResult, securityResult, holdersResult, libraryResult, enqueueResult] = await Promise.all([
+  const [marketResult, securityResult, holdersResult, holderOwnersResult, libraryResult, enqueueResult] = await Promise.all([
     marketP,
     securityP,
     holdersP,
+    holderOwnersP,
     libraryP,
     enqueueP,
   ]);
@@ -175,6 +192,7 @@ export async function buildCaFirstScreenCard(
   clock?.advance(elapsed);
 
   const warnings = [
+    ...holderOwnersResult.warnings,
     ...marketResult.warnings,
     ...securityResult.warnings,
     ...holdersResult.warnings,
