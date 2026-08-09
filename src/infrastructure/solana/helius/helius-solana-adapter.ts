@@ -203,15 +203,22 @@ export class HeliusSolanaAdapter implements AuditedSolanaFactsAdapter {
   }
 
   async getAddressTags(_token: TokenRef, addresses: string[]): Promise<AddressTag[]> {
-    const tags = await this.record(this.source.getAddressTags(addresses));
-    return tags.map((tag) => ({
-      chain: "solana",
-      address: tag.address,
-      role: tag.role,
-      source: tag.source,
-      confidence: tag.confidence,
-      ...(tag.expiresAt ? { expiresAt: date(tag.expiresAt, `tag expiry for ${tag.address}`) } : {}),
-    }));
+    try {
+      const tags = await this.record(this.source.getAddressTags(addresses));
+      return tags.map((tag) => ({
+        chain: "solana",
+        address: tag.address,
+        role: tag.role,
+        source: tag.source,
+        confidence: tag.confidence,
+        ...(tag.expiresAt ? { expiresAt: date(tag.expiresAt, `tag expiry for ${tag.address}`) } : {}),
+      }));
+    } catch (error) {
+      // Helius tags are a Tier-B borrow; their absence must degrade the
+      // analysis (no exclusion inputs) instead of rejecting the whole chain.
+      if (error instanceof SourceDataUnavailableError) return [];
+      throw error;
+    }
   }
 
   async getRecentTrades(token: TokenRef, since: Date): Promise<NormalizedTrade[]> {
@@ -226,18 +233,7 @@ export class HeliusSolanaAdapter implements AuditedSolanaFactsAdapter {
     return transactions.flatMap((transaction) => {
       const blockTime = date(transaction.blockTime, `blockTime for ${transaction.signature}`);
       if (blockTime < since) return [];
-      return transaction.tokenTransfers
-        .filter((transfer) => transfer.mint === token.ca && transfer.kind === "transfer")
-        .map((transfer) => ({
-          chain: "solana" as const,
-          tokenId: token.id,
-          txHash: transaction.signature,
-          eventIndex: transfer.eventIndex,
-          blockTime,
-          from: transfer.from,
-          to: transfer.to,
-          amountRaw: rawInteger(transfer.amountRaw, `token transfer in ${transaction.signature}`),
-        }));
+      return normalizeTokenTransfers(token, transaction);
     });
   }
 
@@ -267,23 +263,30 @@ export class HeliusSolanaAdapter implements AuditedSolanaFactsAdapter {
   }
 
   async getWalletFacts(addresses: string[], at: Date): Promise<Map<string, WalletFacts>> {
-    const facts = await this.record(this.source.getWalletFacts(addresses, at));
-    return new Map(facts.map((fact) => [fact.address, {
-      address: fact.address,
-      transactionCount: fact.transactionCount,
-      swapsLast24h: fact.swapsLast24h,
-      ...(fact.firstSeenAt ? { firstSeenAt: date(fact.firstSeenAt, `first seen for ${fact.address}`) } : {}),
-      ...(fact.medianSwapIntervalSeconds !== undefined ? { medianSwapIntervalSeconds: fact.medianSwapIntervalSeconds } : {}),
-      ...(fact.failedTxRatio !== undefined ? { failedTxRatio: fact.failedTxRatio } : {}),
-      tags: fact.tags.map((tag) => ({
-        chain: "solana" as const,
-        address: tag.address,
-        role: tag.role,
-        source: tag.source,
-        confidence: tag.confidence,
-        ...(tag.expiresAt ? { expiresAt: date(tag.expiresAt, `tag expiry for ${tag.address}`) } : {}),
-      })),
-    }]));
+    try {
+      const facts = await this.record(this.source.getWalletFacts(addresses, at));
+      return new Map(facts.map((fact) => [fact.address, {
+        address: fact.address,
+        transactionCount: fact.transactionCount,
+        swapsLast24h: fact.swapsLast24h,
+        ...(fact.firstSeenAt ? { firstSeenAt: date(fact.firstSeenAt, `first seen for ${fact.address}`) } : {}),
+        ...(fact.medianSwapIntervalSeconds !== undefined ? { medianSwapIntervalSeconds: fact.medianSwapIntervalSeconds } : {}),
+        ...(fact.failedTxRatio !== undefined ? { failedTxRatio: fact.failedTxRatio } : {}),
+        tags: fact.tags.map((tag) => ({
+          chain: "solana" as const,
+          address: tag.address,
+          role: tag.role,
+          source: tag.source,
+          confidence: tag.confidence,
+          ...(tag.expiresAt ? { expiresAt: date(tag.expiresAt, `tag expiry for ${tag.address}`) } : {}),
+        })),
+      }]));
+    } catch (error) {
+      // Wallet facts are an optional enrichment; their absence must not
+      // reject the analysis (wallet quality falls back to defaults).
+      if (error instanceof SourceDataUnavailableError) return new Map();
+      throw error;
+    }
   }
 
   async getCreatorProfile(token: TokenRef): Promise<CreatorProfile> {
@@ -340,7 +343,7 @@ export class HeliusSolanaAdapter implements AuditedSolanaFactsAdapter {
   }
 }
 
-function normalizeSwap(token: TokenRef, transaction: HeliusTransaction): NormalizedTrade[] {
+export function normalizeSwap(token: TokenRef, transaction: HeliusTransaction): NormalizedTrade[] {
   const swap = transaction.swap;
   if (!swap) return [];
   const inputs = swap.tokenInputs.filter((leg) => leg.mint === token.ca);
@@ -368,6 +371,21 @@ function normalizeSwap(token: TokenRef, transaction: HeliusTransaction): Normali
     ...(swap.venueAddress ? { venueAddress: swap.venueAddress } : {}),
     ...(swap.venue ? { venue: swap.venue } : {}),
   }];
+}
+
+export function normalizeTokenTransfers(token: TokenRef, transaction: HeliusTransaction): TokenTransfer[] {
+  return transaction.tokenTransfers
+    .filter((transfer) => transfer.mint === token.ca && transfer.kind === "transfer")
+    .map((transfer) => ({
+      chain: "solana" as const,
+      tokenId: token.id,
+      txHash: transaction.signature,
+      eventIndex: transfer.eventIndex,
+      blockTime: date(transaction.blockTime, `blockTime for ${transaction.signature}`),
+      from: transfer.from,
+      to: transfer.to,
+      amountRaw: rawInteger(transfer.amountRaw, `token transfer in ${transaction.signature}`),
+    }));
 }
 
 function sumRaw(legs: HeliusSwapTokenLeg[], context: string): bigint {

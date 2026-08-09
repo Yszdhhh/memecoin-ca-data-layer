@@ -69,47 +69,7 @@ export class SolanaHolderSnapshotService {
 
   async build(request: SolanaHolderSnapshotRequest): Promise<SolanaHolderSnapshot> {
     const { accounts, watermarks } = await this.enumerateAll(request.tokenAddress);
-    const ownerBalances = aggregateByOwner(accounts);
-    const { completeness, warnings } = assessSnapshotCompleteness(watermarks);
-
-    if (completeness === "partial") {
-      return {
-        tokenAddress: request.tokenAddress,
-        totalSupplyRaw: request.totalSupplyRaw,
-        completeness,
-        rawTokenAccounts: accounts,
-        ownerBalances,
-        watermarks,
-        concentration: null,
-        cleaningEvidence: [],
-        warnings,
-      };
-    }
-
-    const concentration = calculateRealHolderConcentration({
-      holders: [...ownerBalances.entries()].map(([ownerAddress, balanceRaw]) => ({
-        address: ownerAddress,
-        ownerAddress,
-        balanceRaw,
-      })),
-      totalSupplyRaw: request.totalSupplyRaw,
-      addressTags: request.addressTags,
-      clusterMembers: request.clusterMembers,
-      minimumClusterConfidence: MINIMUM_CLUSTER_CONFIDENCE,
-    });
-    const cleaningEvidence = buildCleaningEvidence(concentration, accounts, request.addressTags, request.clusterMembers);
-
-    return {
-      tokenAddress: request.tokenAddress,
-      totalSupplyRaw: request.totalSupplyRaw,
-      completeness,
-      rawTokenAccounts: accounts,
-      ownerBalances,
-      watermarks,
-      concentration,
-      cleaningEvidence,
-      warnings,
-    };
+    return assembleSnapshot(request, accounts, watermarks);
   }
 
   private async enumerateAll(tokenAddress: string): Promise<{ accounts: SolanaTokenAccountBalance[]; watermarks: HolderSnapshotWatermark[] }> {
@@ -138,6 +98,60 @@ export class SolanaHolderSnapshotService {
 
     return { accounts, watermarks };
   }
+}
+
+/**
+ * Assembles a replayable holder snapshot from already-enumerated accounts and
+ * per-page watermarks. Transport/pagination belongs to the caller; this keeps
+ * owner aggregation, completeness assessment, concentration and cleaning
+ * evidence in one place so every driver applies the same rules.
+ */
+export function assembleSnapshot(
+  request: SolanaHolderSnapshotRequest,
+  accounts: readonly SolanaTokenAccountBalance[],
+  watermarks: readonly HolderSnapshotWatermark[],
+): SolanaHolderSnapshot {
+  const ownerBalances = aggregateByOwner(accounts);
+  const { completeness, warnings } = assessSnapshotCompleteness(watermarks);
+
+  if (completeness === "partial") {
+    return {
+      tokenAddress: request.tokenAddress,
+      totalSupplyRaw: request.totalSupplyRaw,
+      completeness,
+      rawTokenAccounts: [...accounts],
+      ownerBalances,
+      watermarks: [...watermarks],
+      concentration: null,
+      cleaningEvidence: [],
+      warnings,
+    };
+  }
+
+  const concentration = calculateRealHolderConcentration({
+    holders: [...ownerBalances.entries()].map(([ownerAddress, balanceRaw]) => ({
+      address: ownerAddress,
+      ownerAddress,
+      balanceRaw,
+    })),
+    totalSupplyRaw: request.totalSupplyRaw,
+    addressTags: request.addressTags,
+    clusterMembers: request.clusterMembers,
+    minimumClusterConfidence: MINIMUM_CLUSTER_CONFIDENCE,
+  });
+  const cleaningEvidence = buildCleaningEvidence(concentration, accounts, request.addressTags, request.clusterMembers);
+
+  return {
+    tokenAddress: request.tokenAddress,
+    totalSupplyRaw: request.totalSupplyRaw,
+    completeness,
+    rawTokenAccounts: [...accounts],
+    ownerBalances,
+    watermarks: [...watermarks],
+    concentration,
+    cleaningEvidence,
+    warnings,
+  };
 }
 
 function assessSnapshotCompleteness(watermarks: readonly HolderSnapshotWatermark[]): { completeness: "complete" | "partial"; warnings: string[] } {

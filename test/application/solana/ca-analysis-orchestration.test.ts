@@ -3,7 +3,7 @@ import test from "node:test";
 import { AnalysisService } from "../../../src/application/analysis-service.js";
 import type { AnalysisCache, AnalysisRepository } from "../../../src/application/ports.js";
 import type { DevBehavior } from "../../../src/domain/types.js";
-import { HeliusSolanaAdapter, type SolanaHeliusDataSource, type SourceResponse } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
+import { HeliusSolanaAdapter, SourceDataUnavailableError, type SolanaHeliusDataSource, type SourceResponse } from "../../../src/infrastructure/solana/helius/helius-solana-adapter.js";
 import { PUMP_IDL_COMMIT, PUMP_IDL_SHA256, PUMP_PROGRAM_ID } from "../../../src/infrastructure/solana/pump/pump-instruction-decoder.js";
 import type { PumpCreatorEvidence, SolanaDevHistoryResult } from "../../../src/infrastructure/solana/dev/solana-dev-history-service.js";
 import type { SolanaHolderSnapshot } from "../../../src/infrastructure/solana/holders/solana-holder-snapshot-service.js";
@@ -113,6 +113,7 @@ function fixtureAdapter(options: {
   creator?: PumpCreatorEvidence | null;
   devHistory?: SolanaDevHistoryResult | null;
   auditedServices?: boolean;
+  degradeTagsAndFacts?: boolean;
 }) {
   let devHistoryRequests = 0;
   const source: SolanaHeliusDataSource = {
@@ -130,8 +131,14 @@ function fixtureAdapter(options: {
       tokenTransfers: [],
       nativeTransfers: [{ eventIndex: 0, from: "creator", to: "related", amountRaw: "1" }],
     }]),
-    getAddressTags: async () => response([]),
-    getWalletFacts: async () => response([]),
+    getAddressTags: async () => {
+      if (options.degradeTagsAndFacts) throw new SourceDataUnavailableError("helius_address_tags_unavailable");
+      return response([]);
+    },
+    getWalletFacts: async () => {
+      if (options.degradeTagsAndFacts) throw new SourceDataUnavailableError("helius_wallet_facts_unavailable");
+      return response([]);
+    },
     ...(options.auditedServices === false ? {} : {
       getHolderSnapshot: async () => response(options.snapshot ?? completeSnapshot(), options.snapshot?.completeness ?? "complete"),
       getPumpCreatorEvidence: async () => response(options.creator === undefined ? creatorEvidence : options.creator),
@@ -256,4 +263,30 @@ test("does not fall back to generic holder or Dev calculations when Solana audit
   assert.ok(result.warnings.includes("SOLANA_AUDITED_FACT_SERVICES_UNAVAILABLE"));
   assert.ok(result.warnings.includes("HOLDER_CONCENTRATION_INDETERMINATE"));
   assert.ok(result.warnings.includes("DEV_TOTALS_INDETERMINATE"));
+});
+
+test("keeps the analysis usable when Helius tags and wallet facts are unavailable", async () => {
+  const fixture = fixtureAdapter({ degradeTagsAndFacts: true });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  // Tags/facts are a Tier-B borrow: their absence must not reject the chain.
+  assert.equal(result.holderCompleteness, "complete");
+  assert.equal(result.devCompleteness, "complete");
+  assert.equal(result.holders?.top10Pct, 100);
+  assert.equal(result.dev?.grossSoldPct, 5);
+  assert.equal(result.token.creatorAddress, "creator");
+  assert.ok(Array.isArray(result.warnings));
+  assert.equal(fixture.devHistoryRequests(), 1);
+});
+
+test("surfaces indeterminate warnings instead of crashing when tags and facts are missing and Dev history is incomplete", async () => {
+  const fixture = fixtureAdapter({ degradeTagsAndFacts: true, devHistory: partialDevHistory() });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  assert.equal(result.holderCompleteness, "complete");
+  assert.equal(result.dev, null);
+  assert.equal(result.devCompleteness, "partial");
+  assert.ok(result.warnings.includes("DEV_HISTORY_INCOMPLETE_FROM_CREATION"));
+  assert.ok(result.warnings.includes("DEV_TOTALS_INDETERMINATE"));
+  assert.equal(fixture.devHistoryRequests(), 1);
 });

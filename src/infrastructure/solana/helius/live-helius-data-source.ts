@@ -1,5 +1,7 @@
-﻿import type {
+import type {
   HeliusAddressTag,
+  HeliusSwap,
+  HeliusSwapTokenLeg,
   HeliusTokenMetadata,
   HeliusTransaction,
   HeliusWalletFacts,
@@ -9,8 +11,14 @@
   SourceResponse,
   SourceWatermark,
 } from "./helius-solana-adapter.js";
-import { SourceDataUnavailableError } from "./helius-solana-adapter.js";
+import { normalizeSwap, normalizeTokenTransfers, SourceDataUnavailableError } from "./helius-solana-adapter.js";
 import { normalizeSolanaAddress } from "../../../domain/solana-address.js";
+import type { AddressTag, ClusterMember, NormalizedTrade, TokenRef, TokenTransfer } from "../../../domain/types.js";
+import { SolanaDevHistoryService } from "../dev/solana-dev-history-service.js";
+import type { DevHistoryWatermark, PumpCreatorEvidence, SolanaDevHistoryResult } from "../dev/solana-dev-history-service.js";
+import { assembleSnapshot } from "../holders/solana-holder-snapshot-service.js";
+import type { HolderSnapshotWatermark, SolanaHolderSnapshot, SolanaTokenAccountBalance } from "../holders/solana-holder-snapshot-service.js";
+import { PUMP_PROGRAM_ID, PumpInstructionDecoder } from "../pump/pump-instruction-decoder.js";
 import {
   ProviderBudgetExhaustedError,
   type ProviderExecutor,
@@ -51,6 +59,9 @@ const ENHANCED_API_ENDPOINT = "https://api-mainnet.helius-rpc.com/";
 const DEFAULT_REQUEST_BUDGET = 8;
 const DEFAULT_MIN_REQUEST_INTERVAL_MS = 150;
 const DEFAULT_TIMEOUT_MS = 5_000;
+const HOLDER_ENUMERATION_MAX_PAGES = 50;
+/** Bounded raw-transaction scan for the Pump create instruction (oldest first). */
+const MAX_CREATE_EVIDENCE_SCAN_TRANSACTIONS = 4;
 
 /**
  * Small, read-only Helius boundary for bounded owner-approved live reads.
@@ -310,6 +321,170 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     throw new SourceDataUnavailableError("helius_wallet_facts_unavailable");
   }
 
+  /**
+   * Full holder enumeration reusing the existing pagination/budget mechanism,
+   * then the same owner aggregation, completeness assessment and cleaning rules
+   * as SolanaHolderSnapshotService. A truncated or boundary-less enumeration is
+   * reported partial so concentration is never confirmed on an incomplete set.
+   */
+  async getHolderSnapshot(
+    token: TokenRef,
+    addressTags: AddressTag[],
+    clusterMembers: ClusterMember[],
+  ): Promise<SourceResponse<SolanaHolderSnapshot>> {
+    const enumeration = await this.enumerateTokenAccounts(token.ca, { maxPages: HOLDER_ENUMERATION_MAX_PAGES });
+    const accounts: SolanaTokenAccountBalance[] = enumeration.accounts.map((account) => ({
+      tokenAccountAddress: account.tokenAccount,
+      ownerAddress: account.owner,
+      balanceRaw: BigInt(account.amountRaw),
+    }));
+    const snapshot = assembleSnapshot(
+      {
+        tokenAddress: token.ca,
+        totalSupplyRaw: token.totalSupplyRaw,
+        addressTags,
+        clusterMembers,
+      },
+      accounts,
+      this.holderWatermarks(enumeration),
+    );
+    return this.response(
+      snapshot,
+      enumeration.watermark.finalizedSlot,
+      enumeration.watermark.cursor,
+      snapshot.completeness,
+    );
+  }
+
+  /**
+   * Decodes the pinned Pump create_v2 instruction from the mint's oldest
+   * transactions and returns first-hand creator evidence. When no pinned
+   * create decodes, the response is null and marked partial — never treated
+   * as a confirmed negative.
+   */
+  async getPumpCreatorEvidence(token: TokenRef): Promise<SourceResponse<PumpCreatorEvidence | null>> {
+    const transactions = await this.getTransactions([token.ca], new Date(0));
+    // The enhanced list is newest-first; creation is the oldest transaction
+    // that touches the mint, so scan the oldest few for a create_v2.
+    const oldestFirst = transactions.data.slice(-MAX_CREATE_EVIDENCE_SCAN_TRANSACTIONS).reverse();
+    const decoder = new PumpInstructionDecoder();
+    for (const candidate of oldestFirst) {
+      const raw = await this.rpc("getTransaction", [
+        candidate.signature,
+        { encoding: "json", maxSupportedTransactionVersion: 0 },
+      ]);
+      if (raw === null) continue;
+      for (const instruction of rawInstructions(raw)) {
+        if (instruction.programId !== PUMP_PROGRAM_ID) continue;
+        const result = decoder.decode({
+          programId: instruction.programId,
+          accounts: instruction.accounts,
+          dataBase58: instruction.dataBase58,
+          signature: candidate.signature,
+          slot: BigInt(candidate.slot),
+          blockTime: new Date(candidate.blockTime),
+          retrieval: {
+            rpcEndpoint: this.rpcEndpoint,
+            commitment: "finalized",
+            retrievedAt: new Date(this.now()),
+          },
+        });
+        if (result.status !== "decoded" || result.instruction.kind !== "create") continue;
+        const create = result.instruction;
+        if (create.mint !== token.ca) continue;
+        return this.response({
+          source: "pump_create.creator",
+          creatorAddress: create.creator,
+          signature: create.provenance.signature,
+          slot: create.provenance.slot,
+          blockTime: new Date(create.provenance.blockTime),
+          programId: create.provenance.programId,
+          sourceCommit: create.provenance.sourceCommit,
+          idlSha256: create.provenance.idlSha256,
+        });
+      }
+    }
+    return this.response(null, undefined, undefined, "partial");
+  }
+
+  /**
+   * Bounded dev history: one enhanced transaction fetch, then normalized
+   * buy/sell swaps and token transfers from creation. The coverage watermark
+   * is honest about truncation (hasGaps when the enhanced list is partial) and
+   * about whether the fetch reaches back to creation; when it does not, the
+   * service reports DEV_HISTORY_INCOMPLETE_FROM_CREATION instead of totals.
+   */
+  async getDevHistory(input: {
+    token: TokenRef;
+    creatorEvidence: PumpCreatorEvidence;
+    holderSnapshot: SolanaHolderSnapshot;
+    relatedAddresses: string[];
+    at: Date;
+  }): Promise<SourceResponse<SolanaDevHistoryResult>> {
+    const since = input.token.createdAt ?? new Date(0);
+    const history = await this.getTransactions([input.token.ca], since);
+    const creationSlot = input.creatorEvidence.slot;
+    const trades: NormalizedTrade[] = [];
+    const transfers: TokenTransfer[] = [];
+    let oldestObservedSlot: bigint | undefined;
+    let newestObservedSlot: bigint | undefined;
+    let newestSignature = "";
+    for (const transaction of history.data) {
+      const slot = BigInt(transaction.slot);
+      if (oldestObservedSlot === undefined || slot < oldestObservedSlot) oldestObservedSlot = slot;
+      if (newestObservedSlot === undefined || slot > newestObservedSlot) newestObservedSlot = slot;
+      if (newestSignature === "") newestSignature = transaction.signature;
+      trades.push(...normalizeSwap(input.token, transaction));
+      transfers.push(...normalizeTokenTransfers(input.token, transaction));
+    }
+
+    const result = new SolanaDevHistoryService().analyze({
+      tokenId: input.token.id,
+      totalSupplyRaw: input.token.totalSupplyRaw,
+      creatorEvidence: input.creatorEvidence,
+      directCurrentBalanceRaw: input.holderSnapshot.ownerBalances.get(input.creatorEvidence.creatorAddress) ?? 0n,
+      relatedCurrentBalances: new Map(
+        input.relatedAddresses.map((address) => [address, input.holderSnapshot.ownerBalances.get(address) ?? 0n]),
+      ),
+      relatedAddresses: input.relatedAddresses,
+      trades,
+      transfers,
+      creationSlot,
+      watermark: {
+        oldestObservedSlot: oldestObservedSlot ?? creationSlot,
+        newestObservedSlot: newestObservedSlot ?? creationSlot,
+        finalizedSlot: newestObservedSlot ?? creationSlot,
+        cursor: newestSignature,
+        // The enhanced list marks partial when truncated at 100 or when a
+        // transfer event failed to normalize; either way trades are incomplete.
+        hasGaps: history.watermark.completeness !== "complete",
+        observedAt: new Date(this.now()),
+      },
+      calculatedAt: input.at,
+    });
+
+    return this.response(result, undefined, undefined, result.coverage.completeFromCreation ? "complete" : "partial");
+  }
+
+  private holderWatermarks(enumeration: TokenAccountEnumerationResult): HolderSnapshotWatermark[] {
+    const observedAt = new Date(this.now());
+    const watermarks: HolderSnapshotWatermark[] = enumeration.pageSlots.map((slot) => ({
+      source: "helius",
+      observedAt,
+      finalizedSlot: BigInt(slot),
+      completeness: "complete",
+    }));
+    // A page without a finalized boundary, or a truncated page set, must mark
+    // the snapshot partial so concentration is never confirmed.
+    if (enumeration.pageSlots.length < enumeration.pageCount || !enumeration.paginationComplete || watermarks.length === 0) {
+      watermarks.push({ source: "helius", observedAt, completeness: "partial" });
+    }
+    if (enumeration.watermark.cursor !== undefined) {
+      watermarks[watermarks.length - 1]!.cursor = enumeration.watermark.cursor;
+    }
+    return watermarks;
+  }
+
   private async rpc(method: string, params: unknown): Promise<unknown> {
     const url = new URL(this.rpcEndpoint);
     url.searchParams.set("api-key", this.apiKey);
@@ -554,15 +729,26 @@ function transactionFromEnhanced(value: unknown): { transaction: HeliusTransacti
   }
   const tokenTransfers = normalizedTransfers(row.tokenTransfers, enhancedTokenTransfer);
   const nativeTransfers = normalizedTransfers(row.nativeTransfers, enhancedNativeTransfer);
+  let incompleteTransferEvents = tokenTransfers.incomplete || nativeTransfers.incomplete;
+  let swap: HeliusSwap | undefined;
+  if (row.swap !== undefined) {
+    try {
+      swap = enhancedSwap(row.swap);
+    } catch (error) {
+      if (!(error instanceof SourceDataUnavailableError)) throw error;
+      incompleteTransferEvents = true;
+    }
+  }
   return {
     transaction: {
       signature,
       slot: slot.toString(),
       blockTime: new Date(timestamp * 1_000).toISOString(),
+      ...(swap ? { swap } : {}),
       tokenTransfers: tokenTransfers.values,
       nativeTransfers: nativeTransfers.values,
     },
-    incompleteTransferEvents: tokenTransfers.incomplete || nativeTransfers.incomplete,
+    incompleteTransferEvents,
   };
 }
 
@@ -607,6 +793,90 @@ function enhancedNativeTransfer(value: unknown, eventIndex: number) {
     throw new SourceDataUnavailableError("helius_native_transfer_malformed");
   }
   return { eventIndex, from, to, amountRaw: String(amount) };
+}
+
+/** Maps the Helius enhanced swap event onto the domain swap legs. */
+function enhancedSwap(value: unknown): HeliusSwap {
+  const row = record(value);
+  const user = optionalString(row.fromUserAccount);
+  if (!user) throw new SourceDataUnavailableError("helius_swap_malformed");
+  const nativeInput = optionalRecord(row.nativeInput);
+  const nativeOutput = optionalRecord(row.nativeOutput);
+  const venueAddress = optionalString(row.programId);
+  const venue = optionalString(row.programName);
+  return {
+    user,
+    tokenInputs: enhancedSwapLegs(row.tokenInputs),
+    tokenOutputs: enhancedSwapLegs(row.tokenOutputs),
+    ...(typeof nativeInput?.amount === "string" && /^\d+$/.test(nativeInput.amount) ? { quoteInputRaw: nativeInput.amount } : {}),
+    ...(typeof nativeOutput?.amount === "string" && /^\d+$/.test(nativeOutput.amount) ? { quoteOutputRaw: nativeOutput.amount } : {}),
+    ...(venueAddress ? { venueAddress } : {}),
+    ...(venue ? { venue } : {}),
+  };
+}
+
+function enhancedSwapLegs(value: unknown): HeliusSwapTokenLeg[] {
+  if (!Array.isArray(value)) return [];
+  const legs: HeliusSwapTokenLeg[] = [];
+  for (const entry of value) {
+    const row = record(entry);
+    const mint = optionalString(row.mint);
+    const rawTokenAmount = optionalRecord(row.rawTokenAmount)?.tokenAmount;
+    const tokenAmount = typeof rawTokenAmount === "string"
+      ? rawTokenAmount
+      : (typeof rawTokenAmount === "number" && Number.isSafeInteger(rawTokenAmount) && rawTokenAmount >= 0
+        ? String(rawTokenAmount)
+        : undefined);
+    if (!mint || !tokenAmount) throw new SourceDataUnavailableError("helius_swap_malformed");
+    legs.push({ mint, amountRaw: tokenAmount });
+  }
+  return legs;
+}
+
+/** Extracts pump-relevant instruction slices from an RPC getTransaction payload (encoding json). */
+function rawInstructions(
+  value: unknown,
+): Array<{ programId: string; accounts: string[]; dataBase58: string }> {
+  // getTransaction result shape: { slot, blockTime, transaction: { message: { accountKeys, instructions } } }.
+  const resultRow = optionalRecord(value);
+  const transaction = optionalRecord(resultRow?.transaction);
+  const message = optionalRecord(transaction?.message);
+  const accountKeys = message?.accountKeys;
+  const instructions = message?.instructions;
+  if (!Array.isArray(accountKeys) || !Array.isArray(instructions)) {
+    throw new SourceDataUnavailableError("helius_raw_transaction_malformed");
+  }
+  const keys: string[] = accountKeys.map((entry) => {
+    if (typeof entry === "string" && entry.length > 0) return entry;
+    const pubkey = optionalString(optionalRecord(entry)?.pubkey);
+    if (pubkey === undefined) throw new SourceDataUnavailableError("helius_raw_transaction_malformed");
+    return pubkey;
+  });
+  const result: Array<{ programId: string; accounts: string[]; dataBase58: string }> = [];
+  for (const entry of instructions) {
+    const instruction = record(entry);
+    const programIdIndex = instruction.programIdIndex;
+    const accountIndexes = instruction.accounts;
+    const dataBase58 = instruction.data;
+    if (
+      typeof programIdIndex !== "number"
+      || !Number.isInteger(programIdIndex)
+      || programIdIndex < 0
+      || programIdIndex >= keys.length
+      || !Array.isArray(accountIndexes)
+      || typeof dataBase58 !== "string"
+    ) {
+      throw new SourceDataUnavailableError("helius_raw_transaction_malformed");
+    }
+    const accounts = accountIndexes.map((index) => {
+      if (typeof index !== "number" || !Number.isInteger(index) || index < 0 || index >= keys.length) {
+        throw new SourceDataUnavailableError("helius_raw_transaction_malformed");
+      }
+      return keys[index]!;
+    });
+    result.push({ programId: keys[programIdIndex]!, accounts, dataBase58 });
+  }
+  return result;
 }
 
 function delay(ms: number): Promise<void> {
