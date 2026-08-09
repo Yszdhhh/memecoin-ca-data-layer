@@ -114,8 +114,11 @@ function fixtureAdapter(options: {
   devHistory?: SolanaDevHistoryResult | null;
   auditedServices?: boolean;
   degradeTagsAndFacts?: boolean;
+  tokenAccountsPartial?: boolean;
+  degradeFunding?: boolean;
 }) {
   let devHistoryRequests = 0;
+  let maxFundingAddresses = 0;
   const source: SolanaHeliusDataSource = {
     getMint: async () => response({ decimals: 6, supplyRaw: "1000" }),
     getTokenMetadata: async () => response({ createdAt: createdAt.toISOString(), creationTx: "create-signature" }),
@@ -123,14 +126,20 @@ function fixtureAdapter(options: {
       { tokenAccount: "creator-ata", owner: "creator", amountRaw: "400" },
       { tokenAccount: "related-ata", owner: "related", amountRaw: "30" },
       { tokenAccount: "alice-ata", owner: "alice", amountRaw: "570" },
-    ]),
-    getTransactions: async () => response([{
-      signature: "fund-related",
-      slot: "550",
-      blockTime: "2026-07-23T00:00:00.000Z",
-      tokenTransfers: [],
-      nativeTransfers: [{ eventIndex: 0, from: "creator", to: "related", amountRaw: "1" }],
-    }]),
+    ], options.tokenAccountsPartial ? "partial" : "complete"),
+    getTransactions: async (addresses: string[]) => {
+      maxFundingAddresses = Math.max(maxFundingAddresses, addresses.length);
+      if (options.degradeFunding && addresses.length > 1) {
+        throw new SourceDataUnavailableError("helius_request_budget_exhausted");
+      }
+      return response([{
+        signature: "fund-related",
+        slot: "550",
+        blockTime: "2026-07-23T00:00:00.000Z",
+        tokenTransfers: [],
+        nativeTransfers: [{ eventIndex: 0, from: "creator", to: "related", amountRaw: "1" }],
+      }]);
+    },
     getAddressTags: async () => {
       if (options.degradeTagsAndFacts) throw new SourceDataUnavailableError("helius_address_tags_unavailable");
       return response([]);
@@ -144,13 +153,17 @@ function fixtureAdapter(options: {
       getPumpCreatorEvidence: async () => response(options.creator === undefined ? creatorEvidence : options.creator),
       getDevHistory: async (input: { relatedAddresses: string[]; holderSnapshot: SolanaHolderSnapshot }) => {
         devHistoryRequests += 1;
-        assert.deepEqual(input.relatedAddresses, ["related"]);
+        if (!options.degradeFunding) assert.deepEqual(input.relatedAddresses, ["related"]);
         assert.equal(input.holderSnapshot.completeness, "complete");
         return response(options.devHistory === undefined ? completeDevHistory() : options.devHistory!);
       },
     }),
   };
-  return { adapter: new HeliusSolanaAdapter(source), devHistoryRequests: () => devHistoryRequests };
+  return {
+    adapter: new HeliusSolanaAdapter(source),
+    devHistoryRequests: () => devHistoryRequests,
+    maxFundingAddresses: () => maxFundingAddresses,
+  };
 }
 
 function serviceFor(adapter: HeliusSolanaAdapter): AnalysisService {
@@ -288,5 +301,47 @@ test("surfaces indeterminate warnings instead of crashing when tags and facts ar
   assert.equal(result.devCompleteness, "partial");
   assert.ok(result.warnings.includes("DEV_HISTORY_INCOMPLETE_FROM_CREATION"));
   assert.ok(result.warnings.includes("DEV_TOTALS_INDETERMINATE"));
+  assert.equal(fixture.devHistoryRequests(), 1);
+});
+
+test("reaches the audited Solana facts path when the live holder read is truncated", async () => {
+  const fixture = fixtureAdapter({ tokenAccountsPartial: true });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  // A truncated first-page holder read degrades to a partial set instead of
+  // rejecting the whole chain, so the audited methods still run.
+  assert.equal(result.token.creatorAddress, "creator");
+  assert.equal(result.holderCompleteness, "complete");
+  assert.equal(result.devCompleteness, "complete");
+  assert.equal(result.holders?.top10Pct, 100);
+  assert.equal(fixture.devHistoryRequests(), 1);
+});
+
+test("bounds the funding-edge owner fan-out to the top-balance owners", async () => {
+  // 30 owners total; "related" is the largest so the fixture funding edge
+  // (creator -> related) survives the adapter's requested-recipient filter.
+  const ownerBalances = new Map<string, bigint>([["related", 10_000n]]);
+  for (let index = 0; index < 29; index += 1) ownerBalances.set(`holder-${index}`, BigInt(1_000 - index));
+  const fixture = fixtureAdapter({
+    snapshot: { ...completeSnapshot(), ownerBalances, rawTokenAccounts: [] },
+  });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  // The snapshot-aligned funding fan-out is capped at FUNDING_EDGES_OWNER_MAX
+  // (20) even though the complete snapshot enumerates 30 owners.
+  assert.ok(fixture.maxFundingAddresses() <= 20);
+  assert.ok(result.warnings.includes("FUNDING_EDGES_BOUNDED_TO_TOP20_OWNERS"));
+});
+
+test("degrades funding to a partial conclusion when the shared budget is exhausted", async () => {
+  const fixture = fixtureAdapter({ degradeFunding: true });
+  const result = await serviceFor(fixture.adapter).getQuickAnalysis(mint, { chainHint: "solana" });
+
+  // Budget exhaustion stops the funding fan-out and warns instead of
+  // rejecting the whole chain; the audited facts still run.
+  assert.ok(result.warnings.includes("FUNDING_EDGES_BUDGET_EXHAUSTED_PARTIAL"));
+  assert.equal(result.token.creatorAddress, "creator");
+  assert.equal(result.holderCompleteness, "complete");
+  assert.equal(result.devCompleteness, "complete");
   assert.equal(fixture.devHistoryRequests(), 1);
 });

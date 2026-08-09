@@ -4,6 +4,7 @@ import type {
   Chain,
   ClusterMember,
   FirstBuy,
+  FundingEdge,
   HolderBalance,
   HolderSnapshotEvidence,
   LargeOrder,
@@ -15,8 +16,12 @@ import { calculateDevBehavior } from "../domain/rules/dev-behavior.js";
 import { calculateRealHolderConcentration } from "../domain/rules/real-holders.js";
 import { classifyWallet } from "../domain/rules/wallet-quality.js";
 import type { AnalysisCache, AnalysisRepository, AuditedSolanaFactsAdapter, ChainDataAdapter, MarketDataProvider } from "./ports.js";
+import { isBudgetExhaustedError } from "./provider-executor/budgeted-pilot-source.js";
 import type { PumpCreatorEvidence, SolanaDevHistoryResult } from "../infrastructure/solana/dev/solana-dev-history-service.js";
 import type { HolderCleaningEvidence, SolanaHolderSnapshot } from "../infrastructure/solana/holders/solana-holder-snapshot-service.js";
+
+/** Funding-edge owner fan-out cap (top owners by balance); funding stays partial beyond it. */
+const FUNDING_EDGES_OWNER_MAX = 20;
 
 export interface AnalysisServiceConfig {
   quickCacheTtlSeconds: number;
@@ -120,6 +125,7 @@ export class AnalysisService {
     const token = await adapter.getToken(ca);
     const fundingSince = new Date(now.getTime() - this.config.devFundingLookbackDays * 86_400_000);
     const historySince = token.createdAt ?? new Date(0);
+    const warnings: string[] = [];
 
     const [marketResult, rawHolders, trades, transfers] = await Promise.all([
       this.getMarketSafely(token),
@@ -130,7 +136,13 @@ export class AnalysisService {
 
     // Generic top-100 path remains for non-Solana and for wallet-quality on recent large trades.
     const genericOwners = uniqueOwners(rawHolders).slice(0, 100);
-    const genericFunding = await adapter.getFundingEdges(genericOwners, fundingSince);
+    // Funding edges are fetched per owner over HTTP; bound the fan-out to the
+    // top-balance owners and keep the funding conclusion partial beyond it.
+    const genericFundingOwners = genericOwners.slice(0, FUNDING_EDGES_OWNER_MAX);
+    if (genericOwners.length > FUNDING_EDGES_OWNER_MAX) {
+      warnings.push("FUNDING_EDGES_BOUNDED_TO_TOP20_OWNERS");
+    }
+    const genericFunding = await this.getFundingEdgesSafely(adapter, genericFundingOwners, fundingSince, warnings);
     // Funder addresses are usually NOT holders (a CEX hot wallet funds buyers but
     // holds no token), so their tags must be fetched separately or service-funder
     // suppression can never fire and exchange fan-outs get wrongly clustered.
@@ -149,6 +161,7 @@ export class AnalysisService {
     );
     let clusterMembers = clusterDetection.members;
     let exclusionInputsAlignedToSnapshot = false;
+    let holderExclusionInputsPresent = false;
 
     const largeOrderFloorUsd = largeOrderMinimumUsd(this.config, marketResult.market);
     const largeTrades = trades.filter((trade) => (trade.quoteUsd ?? 0) >= largeOrderFloorUsd);
@@ -167,7 +180,7 @@ export class AnalysisService {
       ),
     }));
 
-    const warnings: string[] = [...marketResult.warnings];
+    warnings.push(...marketResult.warnings);
     if (marketResult.market?.liquidityUsd != null && largeOrderFloorUsd > this.config.largeOrderMinimumUsd) {
       warnings.push("LARGE_ORDER_FLOOR_RAISED_BY_LIQUIDITY_RATIO");
     }
@@ -193,10 +206,18 @@ export class AnalysisService {
         let holderSnapshot = enumerationSnapshot;
 
         if (enumerationSnapshot?.completeness === "complete") {
-          const snapshotOwners = [...enumerationSnapshot.ownerBalances.keys()];
+          // Funding edges are fetched per owner over HTTP; take the top-balance
+          // owners so the snapshot-aligned fan-out stays bounded.
+          const snapshotOwners = [...enumerationSnapshot.ownerBalances.entries()]
+            .sort((left, right) => (left[1] === right[1] ? 0 : left[1] > right[1] ? -1 : 1))
+            .map(([owner]) => owner);
+          const snapshotFundingOwners = snapshotOwners.slice(0, FUNDING_EDGES_OWNER_MAX);
+          if (snapshotOwners.length > FUNDING_EDGES_OWNER_MAX) {
+            warnings.push("FUNDING_EDGES_BOUNDED_TO_TOP20_OWNERS");
+          }
           const [snapshotOwnerTags, snapshotFunding, historyTrades] = await Promise.all([
             adapter.getAddressTags(token, snapshotOwners),
-            adapter.getFundingEdges(snapshotOwners, fundingSince),
+            this.getFundingEdgesSafely(adapter, snapshotFundingOwners, fundingSince, warnings),
             adapter.getRecentTrades(token, historySince),
           ]);
           // Fetch funder tags too (funders are usually not snapshot owners) so
@@ -226,6 +247,11 @@ export class AnalysisService {
           warnings.push("HOLDER_EXCLUSION_CLUSTERS_BOUNDED_TO_RECENT_TRADE_WINDOW");
           holderSnapshot = await solanaAdapter.getAuditedHolderSnapshot(token, addressTags, clusterMembers);
         }
+        // Fail closed: without any exclusion inputs (tags/clusters) the
+        // concentration must never be confirmed, even when owner enumeration
+        // was complete. The card maps this to unverified + warning.
+        holderExclusionInputsPresent = addressTags.length > 0 || clusterMembers.length > 0;
+        if (!holderExclusionInputsPresent) warnings.push("HOLDER_EXCLUSION_INPUTS_MISSING");
 
         holderCompleteness = snapshotCompleteness(holderSnapshot);
         if (holderSnapshot?.completeness === "complete" && holderSnapshot.concentration !== null) {
@@ -272,6 +298,8 @@ export class AnalysisService {
         }
       }
     } else {
+      holderExclusionInputsPresent = addressTags.length > 0 || clusterMembers.length > 0;
+      if (!holderExclusionInputsPresent) warnings.push("HOLDER_EXCLUSION_INPUTS_MISSING");
       holders = calculateRealHolderConcentration({
         holders: rawHolders,
         totalSupplyRaw: token.totalSupplyRaw,
@@ -298,6 +326,7 @@ export class AnalysisService {
       })),
       holderExclusionUsesWalletQuality: false as const,
       exclusionInputsAlignedToSnapshot,
+      holderExclusionInputsPresent,
     };
 
     const creatorProfile = deep && resultToken.creatorAddress ? await adapter.getCreatorProfile(resultToken) : undefined;
@@ -328,6 +357,29 @@ export class AnalysisService {
       return { market: await this.marketData.getMarket(token), warnings: [] };
     } catch {
       return { market: null, warnings: ["MARKET_ENRICHMENT_UNAVAILABLE"] };
+    }
+  }
+
+  /**
+   * Bounded funding-edge read: an empty owner set short-circuits, and a shared
+   * budget exhaustion mid-fan-out stops the scan and degrades funding to empty
+   * (partial conclusion + warning) instead of rejecting the whole analysis.
+   */
+  private async getFundingEdgesSafely(
+    adapter: ChainDataAdapter,
+    owners: string[],
+    since: Date,
+    warnings: string[],
+  ): Promise<FundingEdge[]> {
+    if (owners.length === 0) return [];
+    try {
+      return await adapter.getFundingEdges(owners, since);
+    } catch (error) {
+      if (isBudgetExhaustedError(error)) {
+        warnings.push("FUNDING_EDGES_BUDGET_EXHAUSTED_PARTIAL");
+        return [];
+      }
+      throw error;
     }
   }
 }

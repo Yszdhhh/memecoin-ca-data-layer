@@ -62,6 +62,8 @@ const DEFAULT_TIMEOUT_MS = 5_000;
 const HOLDER_ENUMERATION_MAX_PAGES = 50;
 /** Bounded raw-transaction scan for the Pump create instruction (oldest first). */
 const MAX_CREATE_EVIDENCE_SCAN_TRANSACTIONS = 4;
+/** Enhanced-list pages walked backwards (oldest first) when hunting the Pump create. */
+const MAX_CREATE_EVIDENCE_PAGES = 6;
 
 /**
  * Small, read-only Helius boundary for bounded owner-approved live reads.
@@ -151,10 +153,12 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
     const hasMore = typeof total === "number"
       ? total > tokenAccounts.length
       : typeof row.cursor === "string" && row.cursor.length > 0;
-    if (hasMore) throw new SourceDataUnavailableError("helius_token_accounts_truncated");
-
     const accounts = tokenAccounts.map((entry) => tokenAccount(entry));
-    return this.response(accounts, indexedSlot(row));
+    const cursor = typeof row.cursor === "string" && row.cursor.length > 0 ? row.cursor : undefined;
+    // A truncated single-page read degrades to a partial holder set instead of
+    // rejecting the whole CA chain, so >1000-ATA tokens still reach the audited
+    // holder snapshot path (which enumerates with cursor pagination).
+    return this.response(accounts, indexedSlot(row), cursor, hasMore ? "partial" : "complete");
   }
 
   /**
@@ -358,53 +362,118 @@ export class LiveHeliusDataSource implements SolanaHeliusDataSource {
 
   /**
    * Decodes the pinned Pump create_v2 instruction from the mint's oldest
-   * transactions and returns first-hand creator evidence. When no pinned
-   * create decodes, the response is null and marked partial — never treated
-   * as a confirmed negative.
+   * transactions and returns first-hand creator evidence. The enhanced list is
+   * newest-first, so the scan pages backwards (oldest first) until the oldest
+   * page is reached; the create instruction is the mint's first transaction,
+   * so only the oldest page's tail is decoded. The walk is bounded by the
+   * request budget and a page cap; when no pinned create decodes within the
+   * window, the response is null and marked partial — never treated as a
+   * confirmed negative.
    */
   async getPumpCreatorEvidence(token: TokenRef): Promise<SourceResponse<PumpCreatorEvidence | null>> {
-    const transactions = await this.getTransactions([token.ca], new Date(0));
-    // The enhanced list is newest-first; creation is the oldest transaction
-    // that touches the mint, so scan the oldest few for a create_v2.
-    const oldestFirst = transactions.data.slice(-MAX_CREATE_EVIDENCE_SCAN_TRANSACTIONS).reverse();
     const decoder = new PumpInstructionDecoder();
+    const mint = requiredAddress(token.ca);
+    const oldestPage = await this.fetchOldestTransactionPage(mint);
+    if (oldestPage === null) return this.response(null, undefined, undefined, "partial");
+    const oldestFirst = oldestPage.slice(-MAX_CREATE_EVIDENCE_SCAN_TRANSACTIONS).reverse();
     for (const candidate of oldestFirst) {
-      const raw = await this.rpc("getTransaction", [
-        candidate.signature,
-        { encoding: "json", maxSupportedTransactionVersion: 0 },
-      ]);
-      if (raw === null) continue;
-      for (const instruction of rawInstructions(raw)) {
-        if (instruction.programId !== PUMP_PROGRAM_ID) continue;
-        const result = decoder.decode({
-          programId: instruction.programId,
-          accounts: instruction.accounts,
-          dataBase58: instruction.dataBase58,
-          signature: candidate.signature,
-          slot: BigInt(candidate.slot),
-          blockTime: new Date(candidate.blockTime),
-          retrieval: {
-            rpcEndpoint: this.rpcEndpoint,
-            commitment: "finalized",
-            retrievedAt: new Date(this.now()),
-          },
-        });
-        if (result.status !== "decoded" || result.instruction.kind !== "create") continue;
-        const create = result.instruction;
-        if (create.mint !== token.ca) continue;
-        return this.response({
-          source: "pump_create.creator",
-          creatorAddress: create.creator,
-          signature: create.provenance.signature,
-          slot: create.provenance.slot,
-          blockTime: new Date(create.provenance.blockTime),
-          programId: create.provenance.programId,
-          sourceCommit: create.provenance.sourceCommit,
-          idlSha256: create.provenance.idlSha256,
-        });
-      }
+      const evidence = await this.decodePumpCreate(decoder, mint, candidate);
+      if (evidence !== null) return this.response(evidence, undefined, undefined, "complete");
     }
     return this.response(null, undefined, undefined, "partial");
+  }
+
+  /**
+   * Walks the enhanced transactions list backwards (oldest first) until the
+   * oldest page is reached or the bounded scan budget is spent. The enhanced
+   * endpoint returns one page newest-first; passing `before` (the oldest
+   * signature of the current page) fetches the next older page. An empty page
+   * or a later-page failure means the previous page was the oldest; a first
+   * page failure still fails closed. Returns the oldest page observed, or null
+   * when no page could be fetched at all.
+   */
+  private async fetchOldestTransactionPage(mint: string): Promise<HeliusTransaction[] | null> {
+    let before: string | undefined;
+    let pageCount = 0;
+    let oldestPage: HeliusTransaction[] | null = null;
+    for (;;) {
+      if (pageCount >= MAX_CREATE_EVIDENCE_PAGES) break;
+      const url = new URL(`v0/addresses/${mint}/transactions`, ENHANCED_API_ENDPOINT);
+      url.searchParams.set("api-key", this.apiKey);
+      url.searchParams.set("commitment", "finalized");
+      url.searchParams.set("limit", "100");
+      if (before !== undefined) url.searchParams.set("before", before);
+      let payload: unknown;
+      try {
+        payload = await this.request(url);
+      } catch (error) {
+        // Budget or transport failure on a later page degrades to the oldest
+        // page observed so far; the first page still fails closed.
+        if (pageCount > 0) break;
+        throw error;
+      }
+      if (!Array.isArray(payload)) {
+        if (pageCount > 0) break;
+        throw new SourceDataUnavailableError("helius_transactions_malformed");
+      }
+      pageCount += 1;
+      if (payload.length === 0) break; // walked past the oldest transaction
+      let page: HeliusTransaction[];
+      try {
+        page = payload.map((entry) => transactionFromEnhanced(entry).transaction);
+      } catch (error) {
+        if (error instanceof SourceDataUnavailableError && pageCount > 1) break;
+        throw error;
+      }
+      oldestPage = page;
+      if (payload.length < 100) break; // this page reaches the oldest transaction
+      const oldestSignature = page[page.length - 1]?.signature;
+      if (oldestSignature === undefined) break;
+      before = oldestSignature;
+    }
+    return oldestPage;
+  }
+
+  private async decodePumpCreate(
+    decoder: PumpInstructionDecoder,
+    mint: string,
+    candidate: HeliusTransaction,
+  ): Promise<PumpCreatorEvidence | null> {
+    const raw = await this.rpc("getTransaction", [
+      candidate.signature,
+      { encoding: "json", maxSupportedTransactionVersion: 0 },
+    ]);
+    if (raw === null) return null;
+    for (const instruction of rawInstructions(raw)) {
+      if (instruction.programId !== PUMP_PROGRAM_ID) continue;
+      const result = decoder.decode({
+        programId: instruction.programId,
+        accounts: instruction.accounts,
+        dataBase58: instruction.dataBase58,
+        signature: candidate.signature,
+        slot: BigInt(candidate.slot),
+        blockTime: new Date(candidate.blockTime),
+        retrieval: {
+          rpcEndpoint: this.rpcEndpoint,
+          commitment: "finalized",
+          retrievedAt: new Date(this.now()),
+        },
+      });
+      if (result.status !== "decoded" || result.instruction.kind !== "create") continue;
+      const create = result.instruction;
+      if (create.mint !== mint) continue;
+      return {
+        source: "pump_create.creator",
+        creatorAddress: create.creator,
+        signature: create.provenance.signature,
+        slot: create.provenance.slot,
+        blockTime: new Date(create.provenance.blockTime),
+        programId: create.provenance.programId,
+        sourceCommit: create.provenance.sourceCommit,
+        idlSha256: create.provenance.idlSha256,
+      };
+    }
+    return null;
   }
 
   /**

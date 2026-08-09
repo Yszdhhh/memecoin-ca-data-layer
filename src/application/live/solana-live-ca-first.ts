@@ -138,6 +138,7 @@ export async function readSolanaLiveCaFirstCard(
   }
 
   const holderOwners = holderOwnersFrom(analysisResult).slice(0, HOLDER_OWNER_CANDIDATE_LIMIT);
+  let libraryDegraded = false;
   const [libraryHits, deepDiveEnqueued] = await Promise.all([
     deps.library.lookupByAddresses("solana", holderOwners)
       .then((records) => records.map((wallet) => ({
@@ -146,14 +147,18 @@ export async function readSolanaLiveCaFirstCard(
         alphaScoreTier: wallet.alphaScoreTier ?? null,
         verificationStatus: wallet.verificationStatus,
       })))
-      .catch(() => []),
+      .catch(() => {
+        libraryDegraded = true;
+        return [];
+      }),
     deepDiveQueue.enqueue(ca).then(() => true).catch(() => false),
   ]);
 
   const degraded = summary.status !== "OK"
     || analysisResult === null
     || analysisResult.holderCompleteness !== "complete"
-    || !deepDiveEnqueued;
+    || !deepDiveEnqueued
+    || libraryDegraded;
 
   return {
     ...summary,
@@ -167,6 +172,7 @@ export async function readSolanaLiveCaFirstCard(
       ...(analysisWarning ? [analysisWarning] : []),
       ...(analysisResult?.warnings ?? []),
       ...(deepDiveEnqueued ? [] : ["deep_dive_enqueue_failed"]),
+      ...(libraryDegraded ? ["address_library_unavailable"] : []),
     ],
   };
 }
@@ -317,17 +323,35 @@ function buildJudgment(
   }
 
   if (analysis.holderCompleteness === "complete" && analysis.holders !== null) {
-    items.push({
-      judgmentCode: "holder_concentration_confirmed",
-      humanReadableSummary: "Holder concentration is confirmed from a complete owner-aggregated audited snapshot.",
-      evidenceRefs: ["audited_holder_snapshot_complete", "owner_aggregation"],
-      confidence: 1,
-      ruleVersion: SOLANA_LIVE_CA_FIRST_VERSION,
-      sourceTier: "A",
-      completeness: "complete",
-      warnings: [],
-      status: "confirmed",
-    });
+    const exclusionInputsPresent = analysis.walletCleaningEvidence?.holderExclusionInputsPresent === true;
+    if (exclusionInputsPresent) {
+      items.push({
+        judgmentCode: "holder_concentration_confirmed",
+        humanReadableSummary: "Holder concentration is confirmed from a complete owner-aggregated audited snapshot.",
+        evidenceRefs: ["audited_holder_snapshot_complete", "owner_aggregation"],
+        confidence: 1,
+        ruleVersion: SOLANA_LIVE_CA_FIRST_VERSION,
+        sourceTier: "A",
+        completeness: "complete",
+        warnings: [],
+        status: "confirmed",
+      });
+    } else {
+      // Fail closed: the owner enumeration is complete, but without exclusion
+      // inputs (tags/clusters) the concentration may count addresses that
+      // would otherwise be excluded, so it must never be confirmed.
+      items.push({
+        judgmentCode: "holder_concentration_partial",
+        humanReadableSummary: "Holder concentration is not confirmed: the complete owner set was aggregated without any exclusion inputs (tags/clusters missing or empty).",
+        evidenceRefs: ["audited_holder_snapshot_complete", "exclusion_inputs_missing"],
+        confidence: 0.4,
+        ruleVersion: SOLANA_LIVE_CA_FIRST_VERSION,
+        sourceTier: "A",
+        completeness: "complete",
+        warnings: [...analysis.warnings, "HOLDER_EXCLUSION_INPUTS_MISSING"],
+        status: "unverified",
+      });
+    }
   } else if (analysis.holderCompleteness === "partial") {
     items.push({
       judgmentCode: "holder_concentration_partial",

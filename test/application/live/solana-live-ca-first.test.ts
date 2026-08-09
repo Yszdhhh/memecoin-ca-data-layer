@@ -265,7 +265,14 @@ function cardSource(overrides: Partial<SolanaHeliusDataSource> = {}): SolanaHeli
       }]);
     },
     async getAddressTags() {
-      return cardResponse([]);
+      // An exclusion input (bonding curve) is present so a complete snapshot
+      // with exclusions may legitimately confirm holder concentration.
+      return cardResponse([{
+        address: "creator",
+        role: "bonding_curve",
+        source: "system",
+        confidence: 1,
+      }]);
     },
     async getWalletFacts() {
       return cardResponse([]);
@@ -447,4 +454,44 @@ test("live CA card rejects an invalid CA without constructing the source", async
   assert.deepEqual(result.judgment, []);
   assert.equal(result.deepDiveEnqueued, false);
   assert.equal(created, 0);
+});
+
+test("live CA card degrades with an address_library_unavailable warning when the library lookup fails", async () => {
+  class ThrowingLibrary extends InMemoryAddressLibrary {
+    override async lookupByAddresses(): Promise<never> {
+      throw new Error("library unreachable");
+    }
+  }
+  const result = await readSolanaLiveCaFirstCard(ca, cardDeps(cardSource(), {
+    library: new ThrowingLibrary(),
+  }));
+
+  // An empty hit set from a dead library is distinguishable from a real miss.
+  assert.equal(result.status, "DEGRADED");
+  assert.ok(result.warnings.includes("address_library_unavailable"));
+  assert.deepEqual(result.libraryHits, []);
+});
+
+test("live CA card refuses to confirm holder concentration when exclusion inputs are missing", async () => {
+  const result = await readSolanaLiveCaFirstCard(ca, cardDeps(cardSource({
+    async getAddressTags() {
+      throw new SourceDataUnavailableError("helius_address_tags_unavailable");
+    },
+  })));
+
+  // The owner enumeration is still complete (account integrity is retained),
+  // but with no exclusion inputs the concentration must never be confirmed.
+  assert.equal(result.status, "OK");
+  assert.equal(result.holderFacts.available, true);
+  assert.equal(result.holderFacts.completeness, "complete");
+  assert.equal(result.holderFacts.top10Pct, 100);
+  assert.equal(
+    result.judgment.some((item) => item.judgmentCode === "holder_concentration_confirmed"),
+    false,
+  );
+  const holderJudgment = result.judgment.find((item) => item.judgmentCode === "holder_concentration_partial");
+  assert.ok(holderJudgment);
+  assert.equal(holderJudgment.status, "unverified");
+  assert.ok(holderJudgment.warnings.includes("HOLDER_EXCLUSION_INPUTS_MISSING"));
+  assert.ok(result.warnings.includes("HOLDER_EXCLUSION_INPUTS_MISSING"));
 });

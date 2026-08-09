@@ -352,6 +352,8 @@ export interface WalletCleaningEvidence {
   holderExclusionUsesWalletQuality: false;
   /** True when exclusion tags/clusters were rebuilt from the complete audited snapshot owners. */
   exclusionInputsAlignedToSnapshot: boolean;
+  /** True when the final holder snapshot received at least one exclusion input (tag or cluster). */
+  holderExclusionInputsPresent: boolean;
 }
 
 export interface AnalysisResult {

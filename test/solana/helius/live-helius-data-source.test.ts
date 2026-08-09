@@ -50,17 +50,23 @@ test("live Helius source reads finalized mint data without exposing its credenti
   assert.match(String(requests[0]?.init?.body), /getAccountInfo/);
 });
 
-test("live Helius source fails closed on a paginated holder response", async () => {
+test("live Helius source returns a partial holder set instead of rejecting a paginated response", async () => {
   const source = new LiveHeliusDataSource({
     apiKey: unitCredential,
     minRequestIntervalMs: 0,
-    fetchImpl: async () => json({ result: { token_accounts: [], cursor: "more" } }),
+    fetchImpl: async () => json({ result: {
+      token_accounts: [{ address: "AccountOne", ownership: { owner: "OwnerOne" }, token_info: { balance: "77" } }],
+      total: 1_001,
+      cursor: "more",
+      last_indexed_slot: 456,
+    } }),
   });
 
-  await assert.rejects(
-    () => source.getTokenAccounts(publicCa),
-    (error: unknown) => error instanceof SourceDataUnavailableError && error.message === "helius_token_accounts_truncated",
-  );
+  const accounts = await source.getTokenAccounts(publicCa);
+  assert.deepEqual(accounts.data, [{ tokenAccount: "AccountOne", owner: "OwnerOne", amountRaw: "77" }]);
+  assert.equal(accounts.watermark.completeness, "partial");
+  assert.equal(accounts.watermark.cursor, "more");
+  assert.equal(accounts.watermark.finalizedSlot, 456n);
 });
 
 test("live Helius source maps complete Helius DAS accounts and metadata", async () => {
@@ -369,6 +375,94 @@ test("live Helius source decodes pinned Pump create evidence from raw transactio
       assert.ok(input instanceof URL);
       if (init?.method === "GET") {
         assert.equal(input.pathname, `/v0/addresses/${pumpMint}/transactions`);
+        return json([{
+          signature: createSignature,
+          slot: createSlot,
+          timestamp: createBlockTime,
+          tokenTransfers: [],
+          nativeTransfers: [],
+        }]);
+      }
+      assert.match(String(init?.body ?? ""), /getTransaction/);
+      return json({
+        result: {
+          slot: createSlot,
+          blockTime: createBlockTime,
+          transaction: {
+            message: {
+              accountKeys: pumpAccounts,
+              instructions: [{
+                programIdIndex: 15,
+                accounts: pumpAccounts.map((_, index) => index),
+                data: createDataBase58,
+              }],
+            },
+          },
+        },
+      });
+    },
+  });
+
+  const evidence = await source.getPumpCreatorEvidence(tokenRef(pumpMint));
+
+  assert.equal(evidence.watermark.completeness, "complete");
+  assert.deepEqual(evidence.data, {
+    source: "pump_create.creator",
+    creatorAddress: "AjqkgiKvFqDs44wZQ3Zzd1FwkzrGN2hQ68FgrkyS6J9t",
+    signature: createSignature,
+    slot: BigInt(createSlot),
+    blockTime: new Date(createBlockTime * 1_000),
+    programId: PUMP_PROGRAM_ID,
+    sourceCommit: PUMP_IDL_COMMIT,
+    idlSha256: PUMP_IDL_SHA256,
+  });
+});
+
+test("live Helius source finds the Pump create by paging to the oldest transactions", async () => {
+  const pumpMint = "GyjN383QnJvUPbgNxaJBcWsKK35wU8HUnorKACsDpump";
+  const pumpAccounts = [
+    pumpMint,
+    "TSLvdd1pWpHVjahSpsvCXUbgwsL3JAcvokwaKt1eokM",
+    "264oL748gtjJ1DVMFxyAMxsZMVo1ZS4aSVG6i7VAqwWw",
+    "AKjd7FPHnHbA4EDJNs9jWiUFs6Y3H6SKrfUjGBABDbEb",
+    "4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf",
+    "AjqkgiKvFqDs44wZQ3Zzd1FwkzrGN2hQ68FgrkyS6J9t",
+    "11111111111111111111111111111111",
+    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+    "MAyhSmzXzV1pTf7LsNkrNwkWKTo4ougAJ1PPg47MD4e",
+    "13ec7XdrjF3h3YcqBTFDSReRcUFwbCnJaAQspM4j6DDJ",
+    "BwWK17cbHxwWBKZkUYvzxLcNQ1YVyaFezduWbtm2de6s",
+    "Hh6rWxCLXgkZ3Kc7weSzSwggrTeQCmrySYh1JhjNgtJF",
+    "EMxKgzhkK1YdqTCK2kwQr9XhrmVb6N22agZbwJsRD7sY",
+    "Ce6TQqeHC9p8KetsN6JsjHK7UTZk7nasjjnr7XxXp9F1",
+    PUMP_PROGRAM_ID,
+  ];
+  const createDataBase58 = "7A4gXKnR533VcdxJ85Szdwps5LxLpGqNVoc4sdGn4NHgM27Yw6VPdUJFwatvexkZC5gGtQv7BTEd4ejHJJuWhgCgqEinjcfokqS59qHwbi1T2aXN6gvt4xaAjq7xoCUg425fYeBFBcyjEPG1uifa";
+  const createSignature = "4VXF3mBhmFYkSXuminmxq9g3VK59bVtBESy3dE3NVjFdEQXPpwvmT8DwobgwNZALiJzv8BgQsp2tDBoPTL73rMq9";
+  const createSlot = 434_047_786;
+  const createBlockTime = 1_784_528_592;
+  const source = new LiveHeliusDataSource({
+    apiKey: unitCredential,
+    requestBudget: 30,
+    minRequestIntervalMs: 0,
+    fetchImpl: async (input, init) => {
+      assert.ok(input instanceof URL);
+      if (init?.method === "GET") {
+        assert.equal(input.pathname, `/v0/addresses/${pumpMint}/transactions`);
+        const before = input.searchParams.get("before");
+        if (before === null) {
+          // Newest page: 100 ordinary transactions (>=100 tx makes the create
+          // fall outside the first page, which previously hid it forever).
+          return json(Array.from({ length: 100 }, (_, index) => ({
+            signature: `filler-${String(index).padStart(3, "0")}`,
+            slot: 433_000_000 + index,
+            timestamp: 1_783_500_000 + index,
+            tokenTransfers: [],
+            nativeTransfers: [],
+          })));
+        }
+        // Oldest page: the create transaction.
         return json([{
           signature: createSignature,
           slot: createSlot,
