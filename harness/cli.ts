@@ -28,6 +28,7 @@ import {
   gitTrackedFiles,
 } from "./lib/git.js";
 import { applyReadinessUpdates, deriveLifecyclePlan, validateLedger, validateTask } from "./lib/validation.js";
+import { buildHandoffEnvelope } from "./lib/handoff.js";
 
 const CONFIG_PATH = "harness/config/project.json";
 const LEDGER_PATH = "harness/ledger/tasks.json";
@@ -503,12 +504,22 @@ function normalizeRunDir(input: string): string {
     : `harness/runs/${path.basename(normalized)}`;
 }
 
+async function handoffRun(input: string): Promise<number> {
+  const normalized = input.replaceAll("\\", "/");
+  const match = /^(?:harness\/runs\/)?([A-Za-z0-9_-]{4,100})$/.exec(normalized);
+  if (!match) throw new Error("invalid run id");
+  const manifest = await readJson<RunManifest>("harness/runs/" + match[1] + "/manifest.json");
+  console.log(JSON.stringify(buildHandoffEnvelope(manifest), null, 2));
+  return 0;
+}
+
 async function main(): Promise<number> {
   const [command, subcommand, arg1, arg2, ...rest] = process.argv.slice(2);
   if (command === "doctor") return doctor();
   if (command === "status") return status();
   if (command === "task" && subcommand === "validate" && arg1) return validateTaskFile(arg1);
   if (command === "run" && subcommand === "start" && arg1) return startRun(arg1, arg2);
+  if (command === "run" && subcommand === "handoff" && arg1) return handoffRun(arg1);
   if (command === "run" && subcommand === "verify" && arg1) return verifyRun(arg1);
   if (command === "run" && subcommand === "finish" && arg1 && arg2) {
     return finishRun(arg1, arg2 as Verdict, rest.join(" "));
@@ -518,7 +529,7 @@ async function main(): Promise<number> {
   if (command === "lifecycle" && subcommand === "apply-readiness") return lifecycleApplyReadinessCommand();
   console.error(
     "Usage: doctor | status | task validate <spec> | run start <spec> [run_id] | "
-    + "run verify <run_dir> | run finish <run_dir> <verdict> <reason> | "
+    + "run verify <run_dir> | run finish <run_dir> <verdict> <reason> | run handoff <run_id> | "
     + "lifecycle plan | lifecycle verify | lifecycle apply-readiness",
   );
   return 2;
